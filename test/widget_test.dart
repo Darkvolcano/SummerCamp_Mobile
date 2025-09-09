@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/main.dart';
@@ -31,7 +32,13 @@ void main() {
       ),
     );
 
-    // Kiểm tra màn hình Login có hiển thị
-    expect(find.text("Login"), findsOneWidget);
+    // Kiểm tra có AppBar title "Login"
+    expect(
+      find.descendant(of: find.byType(AppBar), matching: find.text("Login")),
+      findsOneWidget,
+    );
+
+    // Kiểm tra có nút Login
+    expect(find.widgetWithText(ElevatedButton, "Login"), findsOneWidget);
   });
 }
