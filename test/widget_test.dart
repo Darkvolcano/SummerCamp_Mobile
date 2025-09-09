@@ -1,30 +1,37 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:provider/provider.dart';
 import 'package:summercamp/main.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
+import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
+import 'package:summercamp/features/auth/data/repositories/user_repository_impl.dart';
+import 'package:summercamp/features/auth/data/services/auth_api_service.dart';
+import 'package:summercamp/core/network/api_client.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App loads login screen', (WidgetTester tester) async {
+    final apiClient = ApiClient();
+    final authService = AuthApiService(apiClient);
+    final userRepo = UserRepositoryImpl(authService);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => AuthProvider(
+              loginUser: LoginUser(userRepo),
+              registerUser: RegisterUser(userRepo),
+              getUserProfile: GetUserProfile(userRepo),
+              repository: userRepo,
+            ),
+          ),
+        ],
+        child: const SummerCampApp(),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Kiểm tra màn hình Login có hiển thị
+    expect(find.text("Login"), findsOneWidget);
   });
 }

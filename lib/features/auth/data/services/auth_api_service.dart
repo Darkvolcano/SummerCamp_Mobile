@@ -31,6 +31,37 @@ class AuthApiService {
     }
   }
 
+  Future<Map<String, dynamic>> register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+  }) async {
+    try {
+      final res = await client.post(
+        'auth/register',
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'phoneNumber': phoneNumber,
+          'password': password,
+        },
+      );
+      final data = res.data as Map<String, dynamic>;
+
+      // Backend có thể trả token ngay sau khi đăng ký
+      if (data['token'] != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(AppConstants.tokenKey, data['token']);
+      }
+      return data;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
   /// Get user profile => cần token, Interceptor sẽ tự thêm
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
