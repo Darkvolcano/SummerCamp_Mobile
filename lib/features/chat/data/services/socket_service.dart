@@ -9,6 +9,7 @@ class SocketService {
       StreamController.broadcast();
   final StreamController<ChatModel> _ackController =
       StreamController.broadcast();
+  void connectSocket() => _socket?.connect;
 
   Stream<ChatModel> get onMessage => _messageController.stream;
   Stream<ChatModel> get onAck => _ackController.stream;

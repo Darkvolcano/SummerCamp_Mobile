@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/main.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
@@ -24,6 +26,8 @@ void main() {
               loginUser: LoginUser(userRepo),
               registerUser: RegisterUser(userRepo),
               getUserProfile: GetUserProfile(userRepo),
+              getUserProfiles: GetUserProfiles(userRepo),
+              getUsersUseCase: GetUsers(userRepo),
               repository: userRepo,
             ),
           ),

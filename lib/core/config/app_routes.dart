@@ -11,6 +11,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String verifyOTP = '/verify-otp'; // hiện tại chưa có
   static const String chat = '/chat'; // hiện tại chưa có
+  static const String chatDetail = '/chat-detail'; // hiện tại chưa có
   static const String chatAI = '/chat-ai'; // hiện tại chưa có
   static const String report = '/report'; // hiện tại chưa có
   static const String registrationDetail =

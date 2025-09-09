@@ -40,6 +40,7 @@ dependencies:
   dio: ^5.9.0 # Dùng để thực hiện các tác vụ API
   shared_preferences: ^2.5.3 # Lưu các data dưới dạng local storage
   socket_io_client: ^3.1.2 # Kết nối với socket
+  url_launcher: ^6.3.1 # Mở đường dẫn web trong app
 
 dev_dependencies:
   flutter_test:

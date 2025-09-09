@@ -71,6 +71,20 @@ class AuthApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getUserProfiles() async {
+    try {
+      final res = await client.get('users');
+      return res.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
+  Future<List<dynamic>> fetchUsers() async {
+    final res = await client.get('users');
+    return res.data as List;
+  }
+
   /// Đăng xuất: xoá token
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();

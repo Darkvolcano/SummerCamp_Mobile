@@ -10,5 +10,8 @@ abstract class UserRepository {
     required String password,
   });
   Future<User> getUserProfile(String userId);
+  Future<User> getUserProfiles();
   Future<void> logout();
+  Future<List<User>> getUsers();
+  Future<String?> getToken();
 }
