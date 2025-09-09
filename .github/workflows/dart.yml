@@ -24,7 +24,7 @@ jobs:
       # - uses: dart-lang/setup-dart@v1
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.0" # chọn version bạn đang dùng
+          flutter-version: "3.35.3" # chọn version bạn đang dùng
 
       - name: Install dependencies
         run: flutter pub get
