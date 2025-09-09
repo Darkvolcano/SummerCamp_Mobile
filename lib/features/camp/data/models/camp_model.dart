@@ -1,4 +1,4 @@
-import '../../domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
 class CampModel extends Camp {
   const CampModel({

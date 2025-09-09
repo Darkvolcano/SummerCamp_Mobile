@@ -1,7 +1,7 @@
-import '../../domain/entities/camp.dart';
-import '../../domain/repositories/camp_repository.dart';
-import '../models/camp_model.dart';
-import '../services/camp_api_service.dart';
+import 'package:summercamp/features/camp/data/models/camp_model.dart';
+import 'package:summercamp/features/camp/data/services/camp_api_service.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/repositories/camp_repository.dart';
 
 class CampRepositoryImpl implements CampRepository {
   final CampApiService service;

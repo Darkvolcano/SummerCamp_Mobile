@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../config/constants.dart';
+import 'package:summercamp/core/config/constants.dart';
 
 class ApiInterceptor extends Interceptor {
   @override

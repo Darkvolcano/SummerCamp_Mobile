@@ -1,4 +1,4 @@
-import '../../../../core/network/api_client.dart';
+import 'package:summercamp/core/network/api_client.dart';
 
 class CampApiService {
   final ApiClient client;

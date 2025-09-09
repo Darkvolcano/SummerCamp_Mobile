@@ -1,4 +1,4 @@
-import '../../domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/entities/registration.dart';
 
 class RegistrationModel extends Registration {
   const RegistrationModel({

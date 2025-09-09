@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../state/registration_provider.dart';
+import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 
 class RegistrationListScreen extends StatelessWidget {
   const RegistrationListScreen({super.key});

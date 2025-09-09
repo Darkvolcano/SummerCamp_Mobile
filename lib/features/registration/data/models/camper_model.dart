@@ -1,19 +1,32 @@
-class CamperModel {
-  final String id;
-  final String firstName;
-  final String lastName;
+import 'package:summercamp/features/registration/domain/entities/camper.dart';
 
-  CamperModel({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
+class CamperModel extends Camper {
+  const CamperModel({
+    required super.id,
+    required super.fullName,
+    required super.dob,
+    required super.gender,
+    required super.createAt,
+    required super.parentId,
   });
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
     return CamperModel(
       id: json['camperId'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      fullName: json['fullName'],
+      dob: json['dob'],
+      gender: json['gender'],
+      createAt: DateTime.parse(json['createAt']),
+      parentId: json['parentId'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'camperId': id,
+    'fullName': fullName,
+    'dob': dob,
+    'gender': gender,
+    'createAt': createAt.toIso8601String(),
+    'parentId': parentId,
+  };
 }

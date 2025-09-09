@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/registration.dart';
-import '../../domain/use_cases/register_camper.dart';
-import '../../domain/use_cases/cancel_registration.dart';
-import '../../domain/use_cases/get_registration.dart';
+import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/register_camper.dart';
 
 class RegistrationProvider with ChangeNotifier {
   final RegisterCamper registerUseCase;

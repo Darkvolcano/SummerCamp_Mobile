@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/camp.dart';
-import '../screens/camp_detail_screen.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 
 class CampCard extends StatelessWidget {
   final Camp camp;

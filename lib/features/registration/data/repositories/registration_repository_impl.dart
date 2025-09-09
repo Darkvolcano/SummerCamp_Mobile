@@ -1,7 +1,7 @@
-import '../../domain/entities/registration.dart';
-import '../../domain/repositories/registration_repository.dart';
-import '../models/registration_model.dart';
-import '../services/registration_api_service.dart';
+import 'package:summercamp/features/registration/data/models/registration_model.dart';
+import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
+import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
 
 class RegistrationRepositoryImpl implements RegistrationRepository {
   final RegistrationApiService service;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
 class CampDetailScreen extends StatelessWidget {
   final Camp camp;

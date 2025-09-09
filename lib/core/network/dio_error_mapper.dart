@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../error/exceptions.dart';
+import 'package:summercamp/core/error/exceptions.dart';
 
 NetworkException mapDioError(DioException e) {
   switch (e.type) {

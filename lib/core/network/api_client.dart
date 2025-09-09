@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../config/constants.dart';
+import 'package:summercamp/core/config/constants.dart';
 import 'api_interceptor.dart';
 
 class ApiClient {

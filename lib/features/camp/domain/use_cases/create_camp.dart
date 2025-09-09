@@ -1,5 +1,5 @@
-import '../entities/camp.dart';
-import '../repositories/camp_repository.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/repositories/camp_repository.dart';
 
 class CreateCamp {
   final CampRepository repository;

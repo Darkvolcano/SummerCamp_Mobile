@@ -1,4 +1,4 @@
-import '../entities/camp.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
 abstract class CampRepository {
   Future<List<Camp>> getCamps();

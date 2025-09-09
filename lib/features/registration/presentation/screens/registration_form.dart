@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../domain/entities/registration.dart';
-import '../state/registration_provider.dart';
+import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 
 class RegistrationForm extends StatefulWidget {
   const RegistrationForm({super.key});

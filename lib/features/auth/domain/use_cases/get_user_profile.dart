@@ -1,5 +1,5 @@
-import '../entities/user.dart';
-import '../repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/entities/user.dart';
+import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 
 class GetUserProfile {
   final UserRepository repository;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../state/camp_provider.dart';
-import '../widgets/camp_card.dart';
+import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
+import 'package:summercamp/features/camp/presentation/widgets/camp_card.dart';
 
 class CampListScreen extends StatelessWidget {
   const CampListScreen({super.key});

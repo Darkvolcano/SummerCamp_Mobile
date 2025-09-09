@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/entities/user.dart';
-import '../../domain/use_cases/login_user.dart';
-import '../../domain/use_cases/register_user.dart';
-import '../../domain/use_cases/get_user_profile.dart';
-import '../../domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/entities/user.dart';
+import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
+import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
+import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 
 class AuthProvider with ChangeNotifier {
   final LoginUser loginUser;
   final RegisterUser registerUser;
   final GetUserProfile getUserProfile;
-  final UserRepository repository; // dùng cho logout()
+  final UserRepository repository;
 
   AuthProvider({
     required this.loginUser,

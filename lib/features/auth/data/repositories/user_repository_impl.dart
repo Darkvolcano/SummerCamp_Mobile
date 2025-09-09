@@ -1,7 +1,7 @@
-import '../../domain/entities/user.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../models/user_model.dart';
-import '../services/auth_api_service.dart';
+import 'package:summercamp/features/auth/data/models/user_model.dart';
+import 'package:summercamp/features/auth/data/services/auth_api_service.dart';
+import 'package:summercamp/features/auth/domain/entities/user.dart';
+import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final AuthApiService service;

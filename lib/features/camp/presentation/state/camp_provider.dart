@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/camp.dart';
-import '../../domain/use_cases/get_camps.dart';
-import '../../domain/use_cases/create_camp.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/use_cases/create_camp.dart';
+import 'package:summercamp/features/camp/domain/use_cases/get_camps.dart';
 
 class CampProvider with ChangeNotifier {
   final GetCamps getCampsUseCase;

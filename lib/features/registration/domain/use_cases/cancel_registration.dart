@@ -1,4 +1,4 @@
-import '../repositories/registration_repository.dart';
+import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
 
 class CancelRegistration {
   final RegistrationRepository repository;

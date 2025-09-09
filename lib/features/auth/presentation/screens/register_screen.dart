@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../state/auth_provider.dart';
-import '../../../../core/config/app_routes.dart';
+import 'package:summercamp/core/config/app_routes.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

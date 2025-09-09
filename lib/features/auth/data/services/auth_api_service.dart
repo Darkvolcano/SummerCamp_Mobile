@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/network/api_client.dart';
-import '../../../../core/network/dio_error_mapper.dart';
-import '../../../../core/config/constants.dart';
+import 'package:summercamp/core/config/constants.dart';
+import 'package:summercamp/core/network/api_client.dart';
+import 'package:summercamp/core/network/dio_error_mapper.dart';
 
 class AuthApiService {
   final ApiClient client;
@@ -19,7 +19,7 @@ class AuthApiService {
 
       final data = res.data as Map<String, dynamic>;
 
-      // ✅ Lưu token vào SharedPreferences
+      // Lưu token vào SharedPreferences
       if (data['token'] != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.tokenKey, data['token']);
@@ -51,7 +51,6 @@ class AuthApiService {
       );
       final data = res.data as Map<String, dynamic>;
 
-      // Backend có thể trả token ngay sau khi đăng ký
       if (data['token'] != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.tokenKey, data['token']);
