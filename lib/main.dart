@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
-import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 
 import 'core/config/app_routes.dart';
 import 'core/config/app_theme.dart';
@@ -13,11 +11,41 @@ import 'features/auth/data/repositories/user_repository_impl.dart';
 import 'features/auth/domain/use_cases/login_user.dart';
 import 'features/auth/domain/use_cases/register_user.dart';
 import 'features/auth/domain/use_cases/get_user_profile.dart';
+import 'features/auth/domain/use_cases/get_user_profiles.dart';
+import 'features/auth/domain/use_cases/get_users.dart';
+
+import 'features/camp/data/services/camp_api_service.dart';
+import 'features/camp/data/repositories/camp_repository_impl.dart';
+import 'features/camp/domain/use_cases/get_camps.dart';
+import 'features/camp/domain/use_cases/create_camp.dart';
+import 'features/camp/presentation/state/camp_provider.dart';
+
+import 'features/registration/data/services/registration_api_service.dart';
+import 'features/registration/data/repositories/registration_repository_impl.dart';
+import 'features/registration/domain/use_cases/get_registration.dart';
+import 'features/registration/domain/use_cases/register_camper.dart';
+import 'features/registration/domain/use_cases/cancel_registration.dart';
+import 'features/registration/presentation/state/registration_provider.dart';
 
 void main() {
   final apiClient = ApiClient();
+
+  // Auth
   final authService = AuthApiService(apiClient);
   final userRepo = UserRepositoryImpl(authService);
+
+  // Camp
+  final campApiService = CampApiService(apiClient);
+  final campRepo = CampRepositoryImpl(campApiService);
+  final getCampsUseCase = GetCamps(campRepo);
+  final createCampUseCase = CreateCamp(campRepo);
+
+  // Registration
+  final registrationApi = RegistrationApiService(apiClient);
+  final registrationRepo = RegistrationRepositoryImpl(registrationApi);
+  final getRegistrationsUseCase = GetRegistrations(registrationRepo);
+  final registerCamperUseCase = RegisterCamper(registrationRepo);
+  final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
 
   runApp(
     MultiProvider(
@@ -32,7 +60,20 @@ void main() {
             repository: userRepo,
           ),
         ),
-        // ... các provider khác (Camp, Registration) của bạn
+
+        // CampProvider cần 2 usecases (GetCamps, CreateCamp)
+        ChangeNotifierProvider(
+          create: (_) => CampProvider(getCampsUseCase, createCampUseCase),
+        ),
+
+        // RegistrationProvider cần 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
+        ChangeNotifierProvider(
+          create: (_) => RegistrationProvider(
+            getRegistrationsUseCase,
+            registerCamperUseCase,
+            cancelRegistrationUseCase,
+          ),
+        ),
       ],
       child: const SummerCampApp(),
     ),
@@ -49,7 +90,7 @@ class SummerCampApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.home,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

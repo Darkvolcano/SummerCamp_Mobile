@@ -3,6 +3,7 @@ import 'package:summercamp/features/auth/presentation/screens/login_screen.dart'
 import 'package:summercamp/features/auth/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
+import 'package:summercamp/features/home/presentation/screens/home.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
 
 class AppRoutes {
@@ -39,6 +40,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case register:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case home:
+        return MaterialPageRoute(builder: (_) => const Home());
 
       // Parent + Staff đều có thể vào
       case profile:
