@@ -33,7 +33,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ❌ Không dùng AppBar nữa
       body: SafeArea(child: _pages[_selectedIndex]),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
@@ -100,7 +99,7 @@ class _HomeContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 5,
                         offset: const Offset(0, 3),
                       ),
