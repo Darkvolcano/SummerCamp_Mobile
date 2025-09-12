@@ -16,12 +16,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const _HomeContent(),
-    const CampListScreen(),
-    const AIChatScreen(),
-    const RegistrationListScreen(),
-    const ProfileScreen(),
+  // dùng HomeContent (public) thay vì _HomeContent để tránh lỗi private across files
+  final List<Widget> _pages = const [
+    HomeContent(),
+    CampListScreen(),
+    AIChatScreen(),
+    RegistrationListScreen(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,24 +34,19 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ❌ Không dùng AppBar nữa
+      // không dùng AppBar như bạn muốn
       body: SafeArea(child: _pages[_selectedIndex]),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFA05A2C),
-        onPressed: () => _onItemTapped(2),
-        child: const Icon(Icons.smart_toy, size: 28),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
 
-class _HomeContent extends StatelessWidget {
-  const _HomeContent();
+/// Public widget (dùng từ nhiều file an toàn)
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,18 +54,18 @@ class _HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Banner carousel
+          // Banner carousel (custom)
+          const SizedBox(height: 12),
           CustomCarousel(
-            images: [
+            images: const [
               "https://picsum.photos/800/300?1",
               "https://picsum.photos/800/300?2",
               "https://picsum.photos/800/300?3",
             ],
           ),
-
           const SizedBox(height: 16),
 
-          // Section: Camps preview
+          // Section header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -85,6 +81,7 @@ class _HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
+          // Horizontal camps preview
           SizedBox(
             height: 180,
             child: ListView.builder(
@@ -100,7 +97,7 @@ class _HomeContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 5,
                         offset: const Offset(0, 3),
                       ),
@@ -136,7 +133,7 @@ class _HomeContent extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Section: Registration quick access
+          // Quick registration button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: ElevatedButton.icon(
