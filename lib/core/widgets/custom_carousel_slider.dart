@@ -10,7 +10,7 @@ class CustomCarousel extends StatefulWidget {
     super.key,
     required this.images,
     this.height = 180,
-    this.interval = const Duration(seconds: 5), // ⏱ mặc định 5 giây
+    this.interval = const Duration(seconds: 5), // mặc định 5 giây
   });
 
   @override

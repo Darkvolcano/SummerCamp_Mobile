@@ -34,7 +34,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // không dùng AppBar như bạn muốn
       body: SafeArea(child: _pages[_selectedIndex]),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
