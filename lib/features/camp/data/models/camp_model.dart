@@ -8,6 +8,11 @@ class CampModel extends Camp {
     required super.place,
     required super.startDate,
     required super.endDate,
+    required super.image,
+    required super.maxParticipants,
+    required super.price,
+    required super.status,
+    required super.campTypeId,
   });
 
   factory CampModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +23,11 @@ class CampModel extends Camp {
       place: json['place'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
+      image: json['image'],
+      maxParticipants: json['maxParticipants'],
+      price: json['price'],
+      status: json['status'],
+      campTypeId: json['campTypeId'],
     );
   }
 
@@ -28,5 +38,10 @@ class CampModel extends Camp {
     'place': place,
     'startDate': startDate.toIso8601String(),
     'endDate': endDate.toIso8601String(),
+    'image': image,
+    'maxParticipants': maxParticipants,
+    'price': price,
+    'status': status,
+    'campTypeId': campTypeId,
   };
 }

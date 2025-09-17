@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_theme.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -12,109 +13,86 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color activeColor = AppTheme.summerAccent;
+    const Color inactiveColor = Colors.white70;
+
     return SizedBox(
-      height: 91, // cao hơn để chứa bubble
+      height: 90,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           // Thanh bar chính
           BottomAppBar(
+            color: AppTheme.summerPrimary,
             shape: const CircularNotchedRectangle(),
             notchMargin: 8.0,
             child: SizedBox(
               height: 56,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(Icons.home, "Home", 0),
-                  _buildNavItem(Icons.terrain, "Camp", 1),
-                  // Transform.translate(
-                  //   offset: const Offset(0, -50),
-                  //   child: GestureDetector(
-                  //     onTap: () => onItemTapped(2),
-                  //     child: Column(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         Container(
-                  //           padding: const EdgeInsets.all(
-                  //             6,
-                  //           ), // khoảng cách để tạo nền bao quanh
-                  //           decoration: BoxDecoration(
-                  //             color:
-                  //                 Theme.of(context).bottomAppBarTheme.color ??
-                  //                 Colors.teal,
-                  //             shape: BoxShape.circle,
-                  //           ),
-                  //           child: Container(
-                  //             width: 53,
-                  //             height: 53,
-                  //             decoration: BoxDecoration(
-                  //               shape: BoxShape.circle,
-                  //               color: const Color(0xFFA05A2C),
-                  //               boxShadow: [
-                  //                 BoxShadow(
-                  //                   color: Colors.black.withOpacity(0.25),
-                  //                   blurRadius: 8,
-                  //                   offset: const Offset(0, 4),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             child: const Icon(
-                  //               Icons.smart_toy,
-                  //               color: Colors.white,
-                  //               size: 30,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(height: 4),
-                  //         Text(
-                  //           "AI Chat",
-                  //           style: TextStyle(
-                  //             fontSize: 12,
-                  //             color: currentIndex == 2
-                  //                 ? const Color(0xFFA05A2C)
-                  //                 : Colors.grey,
-                  //             fontWeight: currentIndex == 2
-                  //                 ? FontWeight.bold
-                  //                 : FontWeight.normal,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  const SizedBox(height: 60),
-                  _buildNavItem(Icons.assignment, "Register", 3),
-                  _buildNavItem(Icons.person, "Profile", 4),
-                ],
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildNavItem(
+                      Icons.home,
+                      "Home",
+                      0,
+                      activeColor,
+                      inactiveColor,
+                    ),
+                    _buildNavItem(
+                      Icons.terrain,
+                      "Camp",
+                      1,
+                      activeColor,
+                      inactiveColor,
+                    ),
+                    const SizedBox(width: 50),
+                    _buildNavItem(
+                      Icons.assignment,
+                      "Register",
+                      3,
+                      activeColor,
+                      inactiveColor,
+                    ),
+                    _buildNavItem(
+                      Icons.person,
+                      "Profile",
+                      4,
+                      activeColor,
+                      inactiveColor,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
 
           // Bubble AI Chat
           Positioned(
-            top: -36,
-            left: MediaQuery.of(context).size.width / 2 - 37,
+            top: -37,
+            left: MediaQuery.of(context).size.width / 2 - 42,
             child: GestureDetector(
               onTap: () => onItemTapped(2),
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(
-                      6,
-                    ), // khoảng cách để tạo nền bao quanh
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      left: 10,
+                      right: 10,
+                      bottom: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(context).bottomAppBarTheme.color ??
-                          Colors.teal,
+                      color: AppTheme.summerPrimary,
                       shape: BoxShape.circle,
                     ),
                     child: Container(
-                      width: 55,
-                      height: 55,
+                      width: 58,
+                      height: 58,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFA05A2C),
+                        color: AppTheme.summerAccent, // cam đậm hơn để nổi bật
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.25),
@@ -126,21 +104,19 @@ class CustomBottomNavBar extends StatelessWidget {
                       child: const Icon(
                         Icons.smart_toy,
                         color: Colors.white,
-                        size: 30,
+                        size: 28,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 7),
                   Text(
                     "AI Chat",
                     style: TextStyle(
+                      fontFamily: "Nunito",
                       fontSize: 12,
-                      color: currentIndex == 2
-                          ? const Color(0xFFA05A2C)
-                          : Colors.grey,
                       fontWeight: currentIndex == 2
                           ? FontWeight.bold
-                          : FontWeight.normal,
+                          : FontWeight.w500,
+                      color: currentIndex == 2 ? activeColor : inactiveColor,
                     ),
                   ),
                 ],
@@ -152,26 +128,35 @@ class CustomBottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(
+    IconData icon,
+    String label,
+    int index,
+    Color activeColor,
+    Color inactiveColor,
+  ) {
     final isSelected = currentIndex == index;
     return GestureDetector(
       onTap: () => onItemTapped(index),
       child: SizedBox(
+        height: 56,
         child: Column(
-          mainAxisSize: MainAxisSize.min, // quan trọng, để Column co lại
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              size: 24, // giảm chút để an toàn
-              color: isSelected ? const Color(0xFFA05A2C) : Colors.grey,
+              size: 24,
+              color: isSelected ? activeColor : inactiveColor,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 5),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12, // giảm 1 chút tránh tràn
-                color: isSelected ? const Color(0xFFA05A2C) : Colors.grey,
+                fontFamily: "Nunito",
+                fontSize: 12,
+                height: 1.0, // tránh dư pixel
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? activeColor : inactiveColor,
               ),
             ),
           ],
