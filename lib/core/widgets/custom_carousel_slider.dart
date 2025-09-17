@@ -10,7 +10,7 @@ class CustomCarousel extends StatefulWidget {
     super.key,
     required this.images,
     this.height = 180,
-    this.interval = const Duration(seconds: 5), // mặc định 5 giây
+    this.interval = const Duration(seconds: 5),
   });
 
   @override
@@ -27,7 +27,6 @@ class _CustomCarouselState extends State<CustomCarousel> {
     super.initState();
     _controller = PageController(viewportFraction: 0.9);
 
-    // ⏱ Tự động chuyển trang sau interval
     _timer = Timer.periodic(widget.interval, (timer) {
       if (_controller.hasClients && widget.images.isNotEmpty) {
         int nextPage = (_currentPage + 1) % widget.images.length;

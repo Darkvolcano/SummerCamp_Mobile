@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Màu chủ đạo mùa hè
-  static const Color summerPrimary = Color(0xFFFFA726); // cam nắng
-  static const Color summerAccent = Color(0xFFFF7043); // cam đậm
-  static const Color summerBackground = Color(0xFFFFF8E7); // vàng nhạt nền
-  static const Color summerBlue = Color(0xFF4FC3F7); // xanh biển nhạt
+  // Primary color summer
+  static const Color summerPrimary = Color(0xFFFFA726); // orange sun
+  static const Color summerAccent = Color(0xFFFF7043); // orange bold
+  static const Color summerBackground = Color(0xFFFFF8E7); // yellow light
+  static const Color summerBlue = Color(0xFF4FC3F7); // blue light
 
-  // Màu sáng (Summer Day)
+  // Light theme
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     useMaterial3: true,
@@ -49,7 +49,7 @@ class AppTheme {
     ),
   );
 
-  // Màu tối (Summer Night)
+  // Dark theme
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     useMaterial3: true,
@@ -65,7 +65,7 @@ class AppTheme {
           error: Colors.redAccent,
           onError: Colors.white,
         ),
-    scaffoldBackgroundColor: const Color(0xFF1B1B2F), // tím than đêm
+    scaffoldBackgroundColor: const Color(0xFF1B1B2F),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF2C2C54),
       foregroundColor: Colors.white,

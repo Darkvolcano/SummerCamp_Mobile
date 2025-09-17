@@ -3,5 +3,5 @@ import 'package:summercamp/features/registration/domain/entities/registration.da
 abstract class RegistrationRepository {
   Future<List<Registration>> getRegistrations();
   Future<void> registerCamper(Registration registration);
-  Future<void> cancelRegistration(String id);
+  Future<void> cancelRegistration(int id);
 }

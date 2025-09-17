@@ -21,7 +21,6 @@ class CustomBottomNavBar extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Thanh bar chính
           BottomAppBar(
             color: AppTheme.summerPrimary,
             shape: const CircularNotchedRectangle(),
@@ -68,7 +67,6 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
           ),
 
-          // Bubble AI Chat
           Positioned(
             top: -37,
             left: MediaQuery.of(context).size.width / 2 - 42,
@@ -92,7 +90,7 @@ class CustomBottomNavBar extends StatelessWidget {
                       height: 58,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppTheme.summerAccent, // cam đậm hơn để nổi bật
+                        color: AppTheme.summerAccent,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.25),
@@ -154,7 +152,7 @@ class CustomBottomNavBar extends StatelessWidget {
               style: TextStyle(
                 fontFamily: "Nunito",
                 fontSize: 12,
-                height: 1.0, // tránh dư pixel
+                height: 1.0,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 color: isSelected ? activeColor : inactiveColor,
               ),

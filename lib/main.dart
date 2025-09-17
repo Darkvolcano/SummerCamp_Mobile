@@ -61,12 +61,12 @@ void main() {
           ),
         ),
 
-        // CampProvider cần 2 usecases (GetCamps, CreateCamp)
+        // CampProvider need 2 usecases (GetCamps, CreateCamp)
         ChangeNotifierProvider(
           create: (_) => CampProvider(getCampsUseCase, createCampUseCase),
         ),
 
-        // RegistrationProvider cần 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
+        // RegistrationProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,

@@ -27,12 +27,12 @@ class _ChatBubbleState extends State<ChatBubble> {
   String formatTimestamp(DateTime dt) {
     final now = DateTime.now();
 
-    // hôm nay
+    // for today
     if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
       return DateFormat('HH:mm').format(dt);
     }
 
-    // trong tuần này (thứ 2 -> CN)
+    // in this week (from 2 -> CN)
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(
       const Duration(days: 6, hours: 23, minutes: 59),
@@ -51,7 +51,7 @@ class _ChatBubbleState extends State<ChatBubble> {
       return '${weekdays[dt.weekday]} ${DateFormat('HH:mm').format(dt)}';
     }
 
-    // tuần trước trở về sau
+    // last week before
     return DateFormat('dd/MM HH:mm').format(dt);
   }
 
@@ -64,9 +64,9 @@ class _ChatBubbleState extends State<ChatBubble> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch, // chiếm full width
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // bubble căn trái/phải theo Align
+            // bubble align follow left/right
             Align(
               alignment: widget.isMe
                   ? Alignment.centerRight
@@ -97,7 +97,7 @@ class _ChatBubbleState extends State<ChatBubble> {
               ),
             ),
 
-            // thời gian xổ xuống khi click, căn cùng phía với bubble
+            // dropdown time when click, align with bubble
             if (_showTime)
               Align(
                 alignment: widget.isMe

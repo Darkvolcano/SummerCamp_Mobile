@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/register_camper.dart';
+import 'package:summercamp/features/registration/data/models/registration_model.dart';
 
 class RegistrationProvider with ChangeNotifier {
   final RegisterCamper registerUseCase;
@@ -25,7 +29,18 @@ class RegistrationProvider with ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    _registrations = await getRegistrationsUseCase();
+    final jsonString = await rootBundle.loadString(
+      'assets/mock/registrations.json',
+    );
+
+    final List<dynamic> jsonList = json.decode(jsonString);
+
+    _registrations = jsonList
+        .map((e) => RegistrationModel.fromJson(e))
+        .toList();
+
+    // _registrations = await getRegistrationsUseCase();
+
     _loading = false;
     notifyListeners();
   }
@@ -36,7 +51,7 @@ class RegistrationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeRegistration(String id) async {
+  Future<void> removeRegistration(int id) async {
     await cancelUseCase(id);
     _registrations.removeWhere((r) => r.id == id);
     notifyListeners();

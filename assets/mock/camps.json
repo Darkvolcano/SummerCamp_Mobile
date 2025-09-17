@@ -1,0 +1,41 @@
+[
+  {
+    "campId": 1,
+    "name": "Trại hè Khám phá Thiên nhiên",
+    "description": "Trại hè 7 ngày khám phá rừng và kỹ năng sinh tồn.",
+    "place": "Đà Lạt",
+    "startDate": "2025-06-10T00:00:00.000Z",
+    "endDate": "2025-06-17T00:00:00.000Z",
+    "image": "https://picsum.photos/200/120?random=1",
+    "maxParticipants": 50,
+    "price": 1500000,
+    "status": "open",
+    "campTypeId": 1
+  },
+  {
+    "campId": 2,
+    "name": "Trại hè Kỹ năng Lãnh đạo",
+    "description": "Trại hè rèn luyện kỹ năng làm việc nhóm và lãnh đạo.",
+    "place": "Hà Nội",
+    "startDate": "2025-07-01T00:00:00.000Z",
+    "endDate": "2025-07-07T00:00:00.000Z",
+    "image": "https://picsum.photos/200/120?random=2",
+    "maxParticipants": 40,
+    "price": 1800000,
+    "status": "open",
+    "campTypeId": 2
+  },
+  {
+    "campId": 3,
+    "name": "Trại hè Công nghệ",
+    "description": "Khám phá lập trình, robotics và trí tuệ nhân tạo.",
+    "place": "TP. Hồ Chí Minh",
+    "startDate": "2025-08-05T00:00:00.000Z",
+    "endDate": "2025-08-12T00:00:00.000Z",
+    "image": "https://picsum.photos/200/120?random=3",
+    "maxParticipants": 60,
+    "price": 2000000,
+    "status": "open",
+    "campTypeId": 3
+  }
+]

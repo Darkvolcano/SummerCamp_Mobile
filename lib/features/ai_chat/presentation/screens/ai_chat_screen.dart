@@ -10,7 +10,7 @@ class AIChatScreen extends StatefulWidget {
 
 class _AIChatScreenState extends State<AIChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = []; // {text, isMe}
+  final List<Map<String, dynamic>> _messages = [];
 
   final List<String> aiReplies = [
     "Xin chào 👋, tôi là trợ lý AI của bạn!",
@@ -28,7 +28,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
     });
     _controller.clear();
 
-    // giả lập AI trả lời sau 1s
     Future.delayed(const Duration(seconds: 1), () {
       final aiMsg = (aiReplies..shuffle()).first;
       setState(() {

@@ -16,11 +16,9 @@ class PlaceholderDialog extends StatelessWidget {
   final String? title;
   final String? message;
 
-  /// Success button (bắt buộc)
   final String successText;
   final VoidCallback onSuccess;
 
-  /// Cancel button (tùy chọn)
   final String cancelText;
   final VoidCallback? onCancel;
 
@@ -38,17 +36,16 @@ class PlaceholderDialog extends StatelessWidget {
       actionsAlignment: MainAxisAlignment.center,
       actionsOverflowButtonSpacing: 8.0,
       actions: [
-        // Cancel button (xám nhạt + hover / press hiệu ứng)
         ElevatedButton(
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
               if (states.contains(WidgetState.pressed)) {
-                return Colors.grey[300]!; // khi nhấn
+                return Colors.grey[300]!;
               }
               if (states.contains(WidgetState.hovered)) {
-                return Colors.grey[250]!; // khi hover
+                return Colors.grey[250]!;
               }
-              return Colors.grey[200]!; // mặc định
+              return Colors.grey[200]!;
             }),
             foregroundColor: WidgetStateProperty.all(Colors.grey[800]),
             padding: WidgetStateProperty.all(
@@ -67,17 +64,16 @@ class PlaceholderDialog extends StatelessWidget {
           ),
         ),
 
-        // Success button (primary + hover / press hiệu ứng)
         ElevatedButton(
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
               if (states.contains(WidgetState.pressed)) {
-                return const Color(0xFF125FCC); // đậm hơn khi nhấn
+                return const Color(0xFF125FCC);
               }
               if (states.contains(WidgetState.hovered)) {
-                return const Color(0xFF3B8CFF); // sáng hơn khi hover
+                return const Color(0xFF3B8CFF);
               }
-              return const Color(0xFF1677FF); // mặc định
+              return const Color(0xFF1677FF);
             }),
             foregroundColor: WidgetStateProperty.all(Colors.white),
             padding: WidgetStateProperty.all(

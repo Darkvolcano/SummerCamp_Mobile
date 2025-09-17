@@ -22,7 +22,7 @@ class CustomBottomNavBarStaff extends StatelessWidget {
           children: [
             _buildNavItem(Icons.home, "Home", 0),
             _buildNavItem(Icons.terrain, "Camp", 1),
-            const SizedBox(width: 40), // chừa chỗ AI Chat
+            const SizedBox(width: 40),
             _buildNavItem(Icons.assignment, "Schedule", 3),
             _buildNavItem(Icons.person, "Profile", 4),
           ],

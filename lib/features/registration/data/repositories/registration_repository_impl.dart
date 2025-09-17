@@ -16,18 +16,25 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
 
   @override
   Future<void> registerCamper(Registration registration) async {
-    // convert entity -> model -> json
     final model = RegistrationModel(
       id: registration.id,
       camperId: registration.camperId,
       campId: registration.campId,
-      date: registration.date,
+      paymentId: registration.paymentId,
+      registrationCreateAt: registration.registrationCreateAt,
+      status: registration.status,
+      price: registration.price,
+      campName: registration.campName,
+      campDescription: registration.campDescription,
+      campPlace: registration.campPlace,
+      campStartDate: registration.campStartDate,
+      campEndDate: registration.campEndDate,
     );
     await service.registerCamper(model.toJson());
   }
 
   @override
-  Future<void> cancelRegistration(String id) async {
+  Future<void> cancelRegistration(int id) async {
     await service.cancelRegistration(id);
   }
 }

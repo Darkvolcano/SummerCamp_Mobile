@@ -3,6 +3,7 @@ class Camper {
   final String fullName;
   final String dob;
   final String gender;
+  final int healthRecordId;
   final DateTime createAt;
   final int parentId;
 
@@ -11,6 +12,7 @@ class Camper {
     required this.fullName,
     required this.dob,
     required this.gender,
+    required this.healthRecordId,
     required this.createAt,
     required this.parentId,
   });

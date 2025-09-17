@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final provider = context.read<AuthProvider>();
-    // Nếu đã có user (sau login/register) thì có thể refresh lại từ server:
+    // If user login successful can refresh from server:
     if (provider.user != null) {
       _load = provider.fetchProfileById(provider.user!.id.toString());
     }

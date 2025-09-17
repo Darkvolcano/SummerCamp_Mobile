@@ -9,7 +9,6 @@ class AuthApiService {
 
   AuthApiService(this.client);
 
-  /// Login không cần token
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final res = await client.post(
@@ -19,7 +18,7 @@ class AuthApiService {
 
       final data = res.data as Map<String, dynamic>;
 
-      // Lưu token vào SharedPreferences
+      // Save token to SharedPreferences
       if (data['token'] != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.tokenKey, data['token']);
@@ -61,7 +60,6 @@ class AuthApiService {
     }
   }
 
-  /// Get user profile => cần token, Interceptor sẽ tự thêm
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
       final res = await client.get('users/$userId');
@@ -85,7 +83,6 @@ class AuthApiService {
     return res.data as List;
   }
 
-  /// Đăng xuất: xoá token
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(AppConstants.tokenKey);

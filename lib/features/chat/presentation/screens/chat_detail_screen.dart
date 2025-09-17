@@ -12,19 +12,18 @@ class ChatDetailScreen extends StatelessWidget {
   String formatTimestamp(DateTime dt) {
     final now = DateTime.now();
 
-    // hôm nay
+    // for today
     if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
       return DateFormat('HH:mm').format(dt);
     }
 
-    // trong cùng 1 tuần (tính từ thứ 2 -> CN)
+    // in this week (from 2 -> CN)
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(
       const Duration(days: 6, hours: 23, minutes: 59),
     );
 
     if (dt.isAfter(startOfWeek) && dt.isBefore(endOfWeek)) {
-      // vd: Thứ 2, Thứ 3... (ở VN Thứ 2 = weekday 1)
       final weekdays = {
         1: 'T2',
         2: 'T3',
@@ -37,7 +36,7 @@ class ChatDetailScreen extends StatelessWidget {
       return '${weekdays[dt.weekday]} lúc ${DateFormat('HH:mm').format(dt)}';
     }
 
-    // tuần trước trở về sau
+    // last week before
     return DateFormat('dd/MM HH:mm').format(dt);
   }
 
@@ -82,7 +81,7 @@ class ChatDetailScreen extends StatelessWidget {
                       final c = chatProv.chats[idx];
                       final isMe = c.senderId == authProv.user?.id;
 
-                      // quyết định có chèn timestamp separator hay không
+                      // decide insert timestamp separator or not
                       bool showTimeSeparator = false;
                       String? timeText;
 

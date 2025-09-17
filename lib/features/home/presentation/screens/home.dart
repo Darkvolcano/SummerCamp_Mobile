@@ -41,7 +41,6 @@ class _HomeState extends State<Home> {
   }
 }
 
-/// Nội dung tab Home
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
 
@@ -55,7 +54,6 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Greeting
           Container(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -81,7 +79,6 @@ class HomeContent extends StatelessWidget {
             ),
           ),
 
-          // Carousel
           CustomCarousel(
             images: const [
               "https://picsum.photos/800/300?summer1",
@@ -133,8 +130,6 @@ class HomeContent extends StatelessWidget {
           //   ),
           // ),
           // const SizedBox(height: 24),
-
-          // Featured camps
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -150,10 +145,9 @@ class HomeContent extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Gọi sang parent để đổi tab
                     final homeState = context
                         .findAncestorStateOfType<_HomeState>();
-                    homeState?._onItemTapped(1); // CampListScreen
+                    homeState?._onItemTapped(1);
                   },
                   child: Text(
                     "Xem tất cả",
@@ -231,7 +225,6 @@ class HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Call to action
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: ElevatedButton.icon(

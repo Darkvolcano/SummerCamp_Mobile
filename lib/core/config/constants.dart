@@ -5,7 +5,7 @@ class AppConstants {
   // Socket
   static const String socketUrl = 'https://wdp301-su25.space/';
 
-  // Keys lưu trong SharedPreferences
+  // Keys store in SharedPreferences
   static const String tokenKey = 'TOKEN';
   static const String userKey = 'USER';
 }

@@ -15,7 +15,7 @@ class ApiClient {
           headers: {"Content-Type": "application/json"},
         ),
       ) {
-    _dio.interceptors.add(ApiInterceptor()); // Gắn token interceptor
+    _dio.interceptors.add(ApiInterceptor()); // Put token interceptor
     if (kDebugMode) {
       _dio.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -23,7 +23,6 @@ class ApiClient {
     }
   }
 
-  // Hàm gọi API
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,

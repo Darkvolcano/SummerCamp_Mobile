@@ -18,12 +18,12 @@ class SocketClient {
   Stream<ChatModel> get onAck => _ackController.stream;
   bool get connected => _socket?.connected ?? false;
 
-  /// Set token sau khi login
+  // set token after login
   void setToken(String token) {
     _token = token;
   }
 
-  /// Connect socket với token
+  // Connect socket with token
   void connect() {
     disconnect();
 
@@ -57,7 +57,6 @@ class SocketClient {
     });
   }
 
-  /// Gửi message
   void sendMessage(int receiverId, String content) {
     if (connected) {
       _socket!.emit('sendMessage', {

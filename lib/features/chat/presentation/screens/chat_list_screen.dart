@@ -17,7 +17,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     final chatProv = Provider.of<ChatProvider>(context);
     final authProv = Provider.of<AuthProvider>(context);
 
-    final userList = authProv.users; // giả sử bạn load danh sách user
+    final userList = authProv.users;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),

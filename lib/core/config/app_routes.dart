@@ -7,7 +7,7 @@ import 'package:summercamp/features/home/presentation/screens/home.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
 
 class AppRoutes {
-  // Định nghĩa route
+  // Define route
   static const String login = '/login';
   static const String register = '/register';
   static const String verifyOTP = '/verify-otp'; // hiện tại chưa có
@@ -15,10 +15,9 @@ class AppRoutes {
   static const String chatDetail = '/chat-detail'; // hiện tại chưa có
   static const String chatAI = '/chat-ai'; // hiện tại chưa có
   static const String report = '/report'; // hiện tại chưa có
-  static const String registrationDetail =
-      '/registration-detail'; // hiện tại chưa có
-  static const String home = '/home'; // hiện tại chưa có
-  static const String campDetail = '/camp-detail'; // hiện tại chưa có
+  static const String registrationDetail = '/registration-detail';
+  static const String home = '/home';
+  static const String campDetail = '/camp-detail';
   static const String camperList = '/camper-list'; // hiện tại chưa có
   static const String formRegisterCamper =
       '/form-register-camper'; // hiện tại chưa có
@@ -26,14 +25,14 @@ class AppRoutes {
       '/registration-cancel'; // hiện tại chưa có
   static const String blog = '/blog'; // hiện tại chưa có
   static const String blogDetail = '/blog-detail'; // hiện tại chưa có
-  static const String profile = '/profile';
+  static const String profile = '/profile'; // hiện tại chưa có
   static const String campList = '/camp-list';
   static const String registrationList = '/registration-list';
   static const String album = '/album'; // hiện tại chưa có
 
-  // Hàm generate route
+  // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final role = settings.arguments as String?; // role được truyền khi navigate
+    final role = settings.arguments as String?;
 
     switch (settings.name) {
       case login:
@@ -43,7 +42,7 @@ class AppRoutes {
       case home:
         return MaterialPageRoute(builder: (_) => const Home());
 
-      // Parent + Staff đều có thể vào
+      // Parent, Staff can use this screen
       case profile:
         return MaterialPageRoute(builder: (_) => ProfileScreen());
 
@@ -59,7 +58,7 @@ class AppRoutes {
         }
         return _unauthorizedRoute();
 
-      // Ví dụ: sau này Staff-only page
+      // Ex: staff only
       // case '/staff-dashboard':
       //   if (role == "Staff") {
       //     return MaterialPageRoute(builder: (_) => StaffDashboardScreen());
@@ -71,7 +70,6 @@ class AppRoutes {
     }
   }
 
-  // Trang Unauthorized
   static Route<dynamic> _unauthorizedRoute() {
     return MaterialPageRoute(
       builder: (context) => Scaffold(
@@ -92,7 +90,6 @@ class AppRoutes {
     );
   }
 
-  // Trang Not found
   static Route<dynamic> _notFoundRoute() {
     return MaterialPageRoute(
       builder: (context) => Scaffold(

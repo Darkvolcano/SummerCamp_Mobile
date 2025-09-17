@@ -14,7 +14,7 @@ class RegistrationApiService {
     return res.data;
   }
 
-  Future<void> cancelRegistration(String id) async {
+  Future<void> cancelRegistration(int id) async {
     await client.delete('registrations/$id');
   }
 }

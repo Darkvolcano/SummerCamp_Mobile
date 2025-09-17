@@ -19,7 +19,7 @@ class ApiInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    // Bạn có thể xử lý 401 ở đây (refresh token, điều hướng login, v.v.)
+    // Execute error 401 (refresh token, navigate login, v.v.)
     // if (err.response?.statusCode == 401) { ... }
     return handler.next(err);
   }

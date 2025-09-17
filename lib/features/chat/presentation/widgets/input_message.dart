@@ -35,15 +35,11 @@ class _InputMessageState extends State<InputMessage> {
             onPressed: _send,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFA05A2C),
-              padding: EdgeInsets.zero, // bỏ padding mặc định
-              shape: const CircleBorder(), // bo tròn nút
-              alignment: Alignment.center, // căn giữa icon
+              padding: EdgeInsets.zero,
+              shape: const CircleBorder(),
+              alignment: Alignment.center,
             ),
-            child: const Icon(
-              Icons.send,
-              color: Colors.white,
-              size: 20, // chỉnh nhỏ vừa khít
-            ),
+            child: const Icon(Icons.send, color: Colors.white, size: 20),
           ),
         ),
       ],
