@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 10),
             _buildProfileMenuItem(
               "Đăng ký trại hè",
-              Icons.event_note,
+              Icons.assignment,
               () => Navigator.push(
                 context,
                 MaterialPageRoute(

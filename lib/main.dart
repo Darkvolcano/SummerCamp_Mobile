@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
+import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
+import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';
+import 'package:summercamp/features/blog/presentation/state/blog_provider.dart';
 
 import 'core/config/app_routes.dart';
 import 'core/config/app_theme.dart';
@@ -47,6 +51,11 @@ void main() {
   final registerCamperUseCase = RegisterCamper(registrationRepo);
   final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
 
+  // Blog
+  final blogApi = BlogApiService(apiClient);
+  final blogRepo = BlogRepositoryImpl(blogApi);
+  final getBlogsUseCase = GetBlogs(blogRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -74,6 +83,9 @@ void main() {
             cancelRegistrationUseCase,
           ),
         ),
+
+        // BlogProvider need 1 usecases (GetBlogs)
+        ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
       ],
       child: const SummerCampApp(),
     ),

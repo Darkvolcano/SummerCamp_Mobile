@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar.dart';
 import 'package:summercamp/core/widgets/custom_carousel_slider.dart';
+import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
-
 import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
 
 class Home extends StatefulWidget {
@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
     HomeContent(),
     CampListScreen(),
     AIChatScreen(),
-    RegistrationListScreen(),
+    BlogListScreen(),
     ProfileScreen(),
   ];
 

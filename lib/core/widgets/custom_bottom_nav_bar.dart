@@ -48,8 +48,8 @@ class CustomBottomNavBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 50),
                     _buildNavItem(
-                      Icons.assignment,
-                      "Register",
+                      Icons.event_note,
+                      "Blog",
                       3,
                       activeColor,
                       inactiveColor,
