@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/registration/presentation/widgets/registration_card.dart';
-import 'package:summercamp/features/registration/presentation/screens/registration_detail_screen.dart';
 
 class RegistrationListScreen extends StatefulWidget {
   const RegistrationListScreen({super.key});
@@ -60,12 +60,10 @@ class _RegistrationListScreenState extends State<RegistrationListScreen> {
                 return RegistrationCard(
                   registration: r,
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            RegistrationDetailScreen(registration: r),
-                      ),
+                      AppRoutes.registrationDetail,
+                      arguments: r,
                     );
                   },
                   onDelete: () => provider.removeRegistration(r.id),

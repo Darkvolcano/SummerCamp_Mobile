@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 
 class BlogCard extends StatelessWidget {
@@ -24,7 +25,6 @@ class BlogCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tiêu đề blog
               Text(
                 blog.title,
                 style: textTheme.titleMedium?.copyWith(
@@ -35,7 +35,6 @@ class BlogCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // Nội dung tóm tắt
               Text(
                 blog.content,
                 maxLines: 3,
@@ -48,30 +47,29 @@ class BlogCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Trạng thái + ngày
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        blog.isActive ? Icons.check_circle : Icons.cancel,
-                        color: blog.isActive ? Colors.green : Colors.red,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        blog.isActive ? "Đang hiển thị" : "Đã ẩn",
-                        style: textTheme.bodySmall?.copyWith(
-                          fontFamily: "Nunito",
-                          color: blog.isActive ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Icon(
+                  //       blog.isActive ? Icons.check_circle : Icons.cancel,
+                  //       color: blog.isActive ? Colors.green : Colors.red,
+                  //       size: 18,
+                  //     ),
+                  //     const SizedBox(width: 6),
+                  //     Text(
+                  //       blog.isActive ? "Đang hiển thị" : "Đã ẩn",
+                  //       style: textTheme.bodySmall?.copyWith(
+                  //         fontFamily: "Nunito",
+                  //         color: blog.isActive ? Colors.green : Colors.red,
+                  //         fontWeight: FontWeight.w600,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   Text(
-                    "Ngày đăng: ${DateTime.now().toString().substring(0, 10)}",
+                    "Ngày đăng: ${DateFormatter.formatDate(blog.creatAt)}",
                     style: textTheme.bodySmall?.copyWith(
                       fontFamily: "Nunito",
                       color: Colors.grey[600],

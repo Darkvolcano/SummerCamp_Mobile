@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
-import 'package:summercamp/features/registration/presentation/screens/registration_form.dart';
 
 class CampDetailScreen extends StatelessWidget {
   final Camp camp;
@@ -87,7 +88,7 @@ class CampDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "${camp.startDate.toLocal().toString().split(' ')[0]} - ${camp.endDate.toLocal().toString().split(' ')[0]}",
+                        "${DateFormatter.formatDate(camp.startDate)} - ${DateFormatter.formatDate(camp.endDate)}",
                         style: textTheme.bodyMedium?.copyWith(
                           fontFamily: "Nunito",
                           color: Colors.grey[700],
@@ -140,11 +141,10 @@ class CampDetailScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => RegistrationForm(camp: camp),
-                          ),
+                          AppRoutes.registrationForm,
+                          arguments: camp,
                         );
                       },
                       icon: const Icon(Icons.assignment),

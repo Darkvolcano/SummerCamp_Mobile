@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/state/blog_provider.dart';
@@ -62,7 +63,11 @@ class _BlogListScreenState extends State<BlogListScreen> {
                 return BlogCard(
                   blog: blog,
                   onTap: () {
-                    // TODO: chuyển sang màn chi tiết blog
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.blogDetail,
+                      arguments: blog,
+                    );
                   },
                 );
               },

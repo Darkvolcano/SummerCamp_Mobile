@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
-import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 
 class CampCard extends StatelessWidget {
   final Camp camp;
@@ -15,10 +15,7 @@ class CampCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => CampDetailScreen(camp: camp)),
-        );
+        Navigator.pushNamed(context, AppRoutes.campDetail, arguments: camp);
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),

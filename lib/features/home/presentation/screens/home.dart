@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar.dart';
 import 'package:summercamp/core/widgets/custom_carousel_slider.dart';
-import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
-import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
-import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
-import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,12 +15,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomeContent(),
-    CampListScreen(),
-    AIChatScreen(),
-    BlogListScreen(),
-    ProfileScreen(),
+  final List<Widget> _pages = [
+    const HomeContent(),
+    const _RouteWrapper(AppRoutes.campList),
+    const _RouteWrapper(AppRoutes.chatAI),
+    const _RouteWrapper(AppRoutes.blog),
+    const _RouteWrapper(AppRoutes.profile),
   ];
 
   void _onItemTapped(int index) {
@@ -299,4 +296,21 @@ class HomeContent extends StatelessWidget {
   //     ),
   //   );
   // }
+}
+
+class _RouteWrapper extends StatelessWidget {
+  final String routeName;
+
+  const _RouteWrapper(this.routeName);
+
+  @override
+  Widget build(BuildContext context) {
+    // Enter tab, navigate to route click
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(context, routeName);
+    });
+
+    // Waiting navigate, show loading
+    return const Center(child: CircularProgressIndicator());
+  }
 }

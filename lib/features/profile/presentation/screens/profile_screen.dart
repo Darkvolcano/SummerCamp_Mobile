@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
-import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -171,22 +171,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildProfileMenuItem(
               "Đăng ký trại hè",
               Icons.assignment,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const RegistrationListScreen(),
-                ),
-              ),
+              () => Navigator.pushNamed(context, AppRoutes.registrationList),
             ),
             _buildProfileMenuItem(
               "Hồ sơ của trẻ",
               Icons.assignment_ind,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const RegistrationListScreen(),
-                ),
-              ),
+              () => Navigator.pushNamed(context, AppRoutes.registrationList),
             ),
             _buildProfileMenuItem(
               "Thay đổi mật khẩu",
