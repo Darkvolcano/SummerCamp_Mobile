@@ -14,6 +14,16 @@ class RegistrationListScreen extends StatefulWidget {
 
 class _RegistrationListScreenState extends State<RegistrationListScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<RegistrationProvider>().loadRegistrations();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = context.watch<RegistrationProvider>();
     final textTheme = Theme.of(context).textTheme;
