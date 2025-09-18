@@ -30,7 +30,6 @@ class _RegistrationListScreenState extends State<RegistrationListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text(
           "Danh sách đăng ký",
           style: textTheme.titleMedium?.copyWith(

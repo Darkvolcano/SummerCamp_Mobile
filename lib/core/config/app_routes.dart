@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
-import 'package:summercamp/features/auth/presentation/screens/profile_screen.dart';
+import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home.dart';
@@ -25,7 +25,7 @@ class AppRoutes {
       '/registration-cancel'; // hiện tại chưa có
   static const String blog = '/blog'; // hiện tại chưa có
   static const String blogDetail = '/blog-detail'; // hiện tại chưa có
-  static const String profile = '/profile'; // hiện tại chưa có
+  static const String profile = '/profile';
   static const String campList = '/camp-list';
   static const String registrationList = '/registration-list';
   static const String album = '/album'; // hiện tại chưa có
