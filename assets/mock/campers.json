@@ -1,0 +1,20 @@
+[
+  {
+    "camperId": 1,
+    "fullName": "Nguyễn Văn A",
+    "dob": "2012-05-10",
+    "gender": "Nam",
+    "healthRecordId": 101,
+    "createAt": "2025-01-01T08:00:00",
+    "parentId": 1
+  },
+  {
+    "camperId": 2,
+    "fullName": "Trần Thị B",
+    "dob": "2013-09-22",
+    "gender": "Nữ",
+    "healthRecordId": 102,
+    "createAt": "2025-02-01T09:00:00",
+    "parentId": 2
+  }
+]

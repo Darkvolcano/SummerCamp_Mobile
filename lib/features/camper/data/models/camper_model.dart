@@ -1,4 +1,4 @@
-import 'package:summercamp/features/registration/domain/entities/camper.dart';
+import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class CamperModel extends Camper {
   const CamperModel({

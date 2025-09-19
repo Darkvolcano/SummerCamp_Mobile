@@ -176,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildProfileMenuItem(
               "Hồ sơ của trẻ",
               Icons.assignment_ind,
-              () => Navigator.pushNamed(context, AppRoutes.registrationList),
+              () => Navigator.pushNamed(context, AppRoutes.camperList),
             ),
             _buildProfileMenuItem(
               "Thay đổi mật khẩu",

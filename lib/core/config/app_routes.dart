@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
+import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
+import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
+import 'package:summercamp/features/camper/presentation/screens/camper_detail_screen.dart';
+import 'package:summercamp/features/camper/presentation/screens/camper_list_screen.dart';
+import 'package:summercamp/features/camper/presentation/screens/camper_update_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
@@ -26,12 +32,13 @@ class AppRoutes {
   static const String registrationForm = '/registration-form';
   static const String home = '/home';
   static const String campDetail = '/camp-detail';
-  static const String camperList = '/camper-list'; // hiện tại chưa có
-  static const String formRegisterCamper =
-      '/form-register-camper'; // hiện tại chưa có
+  static const String camperList = '/camper-list';
+  static const String camperDetail = '/camper-detail';
+  static const String createCamper = '/create-camper';
+  static const String updateCamper = '/update-camper';
   static const String registrationCancel =
       '/registration-cancel'; // hiện tại chưa có
-  static const String blog = '/blog';
+  static const String blogList = '/blog';
   static const String blogDetail = '/blog-detail';
   static const String profile = '/profile';
   static const String campList = '/camp-list';
@@ -60,6 +67,10 @@ class AppRoutes {
       // }
       // return _unauthorizedRoute();
 
+      case blogList:
+        // if (role == "Parent" || role == "Staff") {
+        return MaterialPageRoute(builder: (_) => BlogListScreen());
+
       case registrationList:
         // if (role == "Parent" || role == "Staff") {
         return MaterialPageRoute(builder: (_) => RegistrationListScreen());
@@ -85,6 +96,23 @@ class AppRoutes {
           builder: (_) => RegistrationFormScreen(camp: camp),
         );
 
+      case camperList:
+        return MaterialPageRoute(builder: (_) => CamperListScreen());
+
+      case camperDetail:
+        final camper = settings.arguments as Camper;
+        return MaterialPageRoute(
+          builder: (_) => CamperDetailScreen(camper: camper),
+        );
+
+      case createCamper:
+        return MaterialPageRoute(builder: (_) => CamperCreateScreen());
+
+      case updateCamper:
+        final camper = settings.arguments as Camper;
+        return MaterialPageRoute(
+          builder: (_) => CamperUpdateScreen(camper: camper),
+        );
       // Ex: staff only
       // case '/staff-dashboard':
       //   if (role == "Staff") {

@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
     const HomeContent(),
     const _RouteWrapper(AppRoutes.campList),
     const _RouteWrapper(AppRoutes.chatAI),
-    const _RouteWrapper(AppRoutes.blog),
+    const _RouteWrapper(AppRoutes.blogList),
     const _RouteWrapper(AppRoutes.profile),
   ];
 
@@ -300,17 +300,17 @@ class HomeContent extends StatelessWidget {
 
 class _RouteWrapper extends StatelessWidget {
   final String routeName;
-
   const _RouteWrapper(this.routeName);
 
   @override
   Widget build(BuildContext context) {
-    // Enter tab, navigate to route click
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushReplacementNamed(context, routeName);
-    });
+    final settings = RouteSettings(name: routeName);
+    final route = AppRoutes.generateRoute(settings);
 
-    // Waiting navigate, show loading
-    return const Center(child: CircularProgressIndicator());
+    if (route is MaterialPageRoute) {
+      return route.builder(context);
+    } else {
+      return const Scaffold(body: Center(child: Text("Route not found")));
+    }
   }
 }

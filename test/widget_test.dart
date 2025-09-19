@@ -14,7 +14,7 @@ import 'package:summercamp/features/registration/data/repositories/registration_
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
-import 'package:summercamp/features/registration/domain/use_cases/register_camper.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/main.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
@@ -190,7 +190,7 @@ void main() {
     final registrationApi = RegistrationApiService(apiClient);
     final registrationRepo = RegistrationRepositoryImpl(registrationApi);
     final getRegistrationsUseCase = GetRegistrations(registrationRepo);
-    final registerCamperUseCase = RegisterCamper(registrationRepo);
+    final createRegisterUseCase = CreateRegister(registrationRepo);
     final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
 
     await tester.pumpWidget(
@@ -216,7 +216,7 @@ void main() {
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
-              registerCamperUseCase,
+              createRegisterUseCase,
               cancelRegistrationUseCase,
             ),
           ),

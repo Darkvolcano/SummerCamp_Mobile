@@ -4,6 +4,12 @@ import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
 import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';
 import 'package:summercamp/features/blog/presentation/state/blog_provider.dart';
+import 'package:summercamp/features/camper/data/repositories/camper_repository_impl.dart';
+import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
+import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
+import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 
 import 'core/config/app_routes.dart';
 import 'core/config/app_theme.dart';
@@ -27,7 +33,7 @@ import 'features/camp/presentation/state/camp_provider.dart';
 import 'features/registration/data/services/registration_api_service.dart';
 import 'features/registration/data/repositories/registration_repository_impl.dart';
 import 'features/registration/domain/use_cases/get_registration.dart';
-import 'features/registration/domain/use_cases/register_camper.dart';
+import 'features/registration/domain/use_cases/create_register.dart';
 import 'features/registration/domain/use_cases/cancel_registration.dart';
 import 'features/registration/presentation/state/registration_provider.dart';
 
@@ -48,13 +54,20 @@ void main() {
   final registrationApi = RegistrationApiService(apiClient);
   final registrationRepo = RegistrationRepositoryImpl(registrationApi);
   final getRegistrationsUseCase = GetRegistrations(registrationRepo);
-  final registerCamperUseCase = RegisterCamper(registrationRepo);
+  final createRegisterUseCase = CreateRegister(registrationRepo);
   final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
 
   // Blog
   final blogApi = BlogApiService(apiClient);
   final blogRepo = BlogRepositoryImpl(blogApi);
   final getBlogsUseCase = GetBlogs(blogRepo);
+
+  // Camper
+  final camperApi = CamperApiService(apiClient);
+  final camperRepo = CamperRepositoryImpl(camperApi);
+  final getCampersUseCase = GetCampers(camperRepo);
+  final createCamperUseCase = CreateCamper(camperRepo);
+  final updateCamperUseCase = UpdateCamper(camperRepo);
 
   runApp(
     MultiProvider(
@@ -79,13 +92,22 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,
-            registerCamperUseCase,
+            createRegisterUseCase,
             cancelRegistrationUseCase,
           ),
         ),
 
         // BlogProvider need 1 usecases (GetBlogs)
         ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
+
+        // CamperProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
+        ChangeNotifierProvider(
+          create: (_) => CamperProvider(
+            createCamperUseCase,
+            getCampersUseCase,
+            updateCamperUseCase,
+          ),
+        ),
       ],
       child: const SummerCampApp(),
     ),

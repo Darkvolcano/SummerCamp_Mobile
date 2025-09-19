@@ -15,7 +15,7 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
-  Future<void> registerCamper(Registration registration) async {
+  Future<void> register(Registration registration) async {
     final model = RegistrationModel(
       id: registration.id,
       camperId: registration.camperId,

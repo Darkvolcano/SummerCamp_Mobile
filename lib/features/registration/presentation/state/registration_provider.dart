@@ -1,21 +1,20 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
-import 'package:summercamp/features/registration/domain/use_cases/register_camper.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/data/models/registration_model.dart';
 
 class RegistrationProvider with ChangeNotifier {
-  final RegisterCamper registerUseCase;
+  final CreateRegister createRegisterUseCase;
   final CancelRegistration cancelUseCase;
   final GetRegistrations getRegistrationsUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
-    this.registerUseCase,
+    this.createRegisterUseCase,
     this.cancelUseCase,
   );
 
@@ -46,7 +45,7 @@ class RegistrationProvider with ChangeNotifier {
   }
 
   Future<void> addRegistration(Registration r) async {
-    await registerUseCase(r);
+    await createRegisterUseCase(r);
     _registrations.add(r);
     notifyListeners();
   }

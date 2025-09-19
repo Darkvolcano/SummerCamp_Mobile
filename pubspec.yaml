@@ -97,6 +97,7 @@ flutter:
     - assets/mock/camps.json
     - assets/mock/registrations.json
     - assets/mock/blogs.json
+    - assets/mock/campers.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
