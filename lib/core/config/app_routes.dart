@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
@@ -60,6 +61,9 @@ class AppRoutes {
       // Parent, Staff can use this screen
       case profile:
         return MaterialPageRoute(builder: (_) => ProfileScreen());
+
+      case chatAI:
+        return MaterialPageRoute(builder: (_) => AIChatScreen());
 
       case campList:
         // if (role == "Parent" || role == "Staff") {

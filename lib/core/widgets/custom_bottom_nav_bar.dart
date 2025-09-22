@@ -17,7 +17,7 @@ class CustomBottomNavBar extends StatelessWidget {
     const Color inactiveColor = Colors.white70;
 
     return SizedBox(
-      height: 90,
+      height: 70,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -79,7 +79,7 @@ class CustomBottomNavBar extends StatelessWidget {
                       top: 10,
                       left: 10,
                       right: 10,
-                      bottom: 8,
+                      bottom: 10,
                     ),
                     decoration: BoxDecoration(
                       color: AppTheme.summerPrimary,
