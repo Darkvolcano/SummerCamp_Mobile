@@ -30,7 +30,6 @@ class CamperRepositoryImpl implements CamperRepository {
 
   @override
   Future<void> updateCamper(int id, Camper camper) {
-    // TODO: implement updateCamper
     throw UnimplementedError();
   }
 }

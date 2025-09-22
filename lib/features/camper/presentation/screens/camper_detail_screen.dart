@@ -59,7 +59,6 @@ class CamperDetailScreen extends StatelessWidget {
                       camper.parentId.toString(),
                       textTheme,
                     ),
-                    _infoRow("Ngày tạo", camper.createAt.toString(), textTheme),
                   ],
                 ),
               ),
