@@ -79,7 +79,7 @@ class ChatDetailScreen extends StatelessWidget {
                     itemCount: chatProv.chats.length,
                     itemBuilder: (_, idx) {
                       final c = chatProv.chats[idx];
-                      final isMe = c.senderId == authProv.user?.id;
+                      final isMe = c.senderId == authProv.user?.userId;
 
                       // decide insert timestamp separator or not
                       bool showTimeSeparator = false;
@@ -142,7 +142,8 @@ class ChatDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: InputMessage(
-                    onSend: (text) => chatProv.sendMessage(selected.id, text),
+                    onSend: (text) =>
+                        chatProv.sendMessage(selected.userId, text),
                   ),
                 ),
               ],

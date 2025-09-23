@@ -1,5 +1,5 @@
 class Camper {
-  final int id;
+  final int camperId;
   final String fullName;
   final String dob;
   final String gender;
@@ -8,7 +8,7 @@ class Camper {
   final int parentId;
 
   const Camper({
-    required this.id,
+    required this.camperId,
     required this.fullName,
     required this.dob,
     required this.gender,

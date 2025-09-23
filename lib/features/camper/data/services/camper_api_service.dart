@@ -15,10 +15,10 @@ class CamperApiService {
   }
 
   Future<Map<String, dynamic>> updateCamper(
-    int id,
+    int camperId,
     Map<String, dynamic> data,
   ) async {
-    final res = await client.put('campers/$id', data: data);
+    final res = await client.put('campers/$camperId', data: data);
     return res.data;
   }
 }

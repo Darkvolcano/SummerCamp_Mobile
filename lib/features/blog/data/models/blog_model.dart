@@ -2,7 +2,7 @@ import 'package:summercamp/features/blog/domain/entities/blog.dart';
 
 class BlogModel extends Blog {
   const BlogModel({
-    required super.id,
+    required super.blogId,
     required super.title,
     required super.content,
     required super.authorId,
@@ -12,7 +12,7 @@ class BlogModel extends Blog {
 
   factory BlogModel.fromJson(Map<String, dynamic> json) {
     return BlogModel(
-      id: json['blogId'],
+      blogId: json['blogId'],
       title: json['title'],
       content: json['content'],
       authorId: json['authorId'],
@@ -22,7 +22,7 @@ class BlogModel extends Blog {
   }
 
   Map<String, dynamic> toJson() => {
-    'blogId': id,
+    'blogId': blogId,
     'title': title,
     'content': content,
     'authorId': authorId,

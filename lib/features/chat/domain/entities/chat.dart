@@ -1,7 +1,7 @@
 import 'package:summercamp/features/auth/data/models/user_model.dart';
 
 class Chat {
-  final int id;
+  final int chatId;
   final int? chatRoomId;
   final int senderId;
   final int? receiverId;
@@ -11,7 +11,7 @@ class Chat {
   final UserModel? receiver;
 
   const Chat({
-    required this.id,
+    required this.chatId,
     this.chatRoomId,
     required this.senderId,
     this.receiverId,

@@ -46,10 +46,10 @@ class CamperProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateCamper(int id, Camper camper) async {
-    await updateCamperUseCase(id, camper);
+  Future<void> updateCamper(int camperId, Camper camper) async {
+    await updateCamperUseCase(camperId, camper);
 
-    final index = _campers.indexWhere((c) => c.id == id);
+    final index = _campers.indexWhere((c) => c.camperId == camperId);
     if (index != -1) {
       _campers[index] = camper;
       notifyListeners();

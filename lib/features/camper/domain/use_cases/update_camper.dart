@@ -5,7 +5,7 @@ class UpdateCamper {
   final CamperRepository repository;
   UpdateCamper(this.repository);
 
-  Future<void> call(int id, Camper camper) async {
-    await repository.updateCamper(id, camper);
+  Future<void> call(int camperId, Camper camper) async {
+    await repository.updateCamper(camperId, camper);
   }
 }

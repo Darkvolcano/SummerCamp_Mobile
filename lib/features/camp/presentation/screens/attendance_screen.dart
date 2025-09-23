@@ -24,7 +24,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void initState() {
     super.initState();
     for (var camper in widget.campers) {
-      attendance[camper.id] = false;
+      attendance[camper.camperId] = false;
     }
   }
 
@@ -99,10 +99,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     ),
                     trailing: Switch(
                       activeThumbColor: StaffTheme.staffPrimary,
-                      value: attendance[camper.id] ?? false,
+                      value: attendance[camper.camperId] ?? false,
                       onChanged: (val) {
                         setState(() {
-                          attendance[camper.id] = val;
+                          attendance[camper.camperId] = val;
                         });
                       },
                     ),

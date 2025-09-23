@@ -4,7 +4,7 @@ class CancelRegistration {
   final RegistrationRepository repository;
   CancelRegistration(this.repository);
 
-  Future<void> call(int id) {
-    return repository.cancelRegistration(id);
+  Future<void> call(int registrationId) {
+    return repository.cancelRegistration(registrationId);
   }
 }

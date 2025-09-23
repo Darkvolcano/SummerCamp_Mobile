@@ -50,8 +50,8 @@ class ChatProvider with ChangeNotifier {
   void _listenSocket() {
     _msgSub = socketClient.onMessage.listen((msg) {
       if (selectedUser != null &&
-          (msg.senderId == selectedUser!.id ||
-              msg.receiverId == selectedUser!.id)) {
+          (msg.senderId == selectedUser!.userId ||
+              msg.receiverId == selectedUser!.userId)) {
         _chats.add(msg);
         _chats.sort((a, b) => a.createAt.compareTo(b.createAt));
       } else {
@@ -63,7 +63,9 @@ class ChatProvider with ChangeNotifier {
 
     _ackSub = socketClient.onAck.listen((ack) {
       if (tempMessageId != null) {
-        _chats = _chats.map((c) => c.id == tempMessageId ? ack : c).toList();
+        _chats = _chats
+            .map((c) => c.chatId == tempMessageId ? ack : c)
+            .toList();
         _messages.insert(0, ack);
         _messages.sort((a, b) => b.createAt.compareTo(a.createAt));
 
@@ -79,7 +81,8 @@ class ChatProvider with ChangeNotifier {
     selectedUser = user;
     final conv = _messages
         .where(
-          (chat) => (chat.receiverId == user.id || chat.senderId == user.id),
+          (chat) =>
+              (chat.receiverId == user.userId || chat.senderId == user.userId),
         )
         .toList();
     conv.sort((a, b) => a.createAt.compareTo(b.createAt));
@@ -93,9 +96,9 @@ class ChatProvider with ChangeNotifier {
     isSending = true;
 
     final tempChat = Chat(
-      id: tempId,
+      chatId: tempId,
       chatRoomId: null,
-      senderId: auth.user!.id,
+      senderId: auth.user!.userId,
       receiverId: receiverId,
       content: content,
       createAt: DateTime.now(),

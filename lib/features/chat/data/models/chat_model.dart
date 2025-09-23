@@ -2,7 +2,7 @@ import 'package:summercamp/features/chat/domain/entities/chat.dart';
 
 class ChatModel extends Chat {
   const ChatModel({
-    required super.id,
+    required super.chatId,
     super.chatRoomId,
     required super.senderId,
     super.receiverId,
@@ -14,7 +14,7 @@ class ChatModel extends Chat {
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      id: json['id'],
+      chatId: json['chatId'],
       chatRoomId: json['chatRoomId'],
       senderId: json['senderId'],
       receiverId: json['receiverId'],
@@ -26,7 +26,7 @@ class ChatModel extends Chat {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
+    'chatId': chatId,
     'chatRoomId': chatRoomId,
     'senderId': senderId,
     'receiverId': receiverId,

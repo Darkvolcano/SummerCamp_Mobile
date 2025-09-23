@@ -1,5 +1,5 @@
 class Camp {
-  final int id;
+  final int campId;
   final String name;
   final String description;
   final String place;
@@ -12,7 +12,7 @@ class Camp {
   final int campTypeId;
 
   const Camp({
-    required this.id,
+    required this.campId,
     required this.name,
     required this.description,
     required this.place,

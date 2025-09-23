@@ -17,7 +17,7 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   @override
   Future<void> register(Registration registration) async {
     final model = RegistrationModel(
-      id: registration.id,
+      registrationId: registration.registrationId,
       camperId: registration.camperId,
       campId: registration.campId,
       paymentId: registration.paymentId,
@@ -34,7 +34,7 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
-  Future<void> cancelRegistration(int id) async {
-    await service.cancelRegistration(id);
+  Future<void> cancelRegistration(int registrationId) async {
+    await service.cancelRegistration(registrationId);
   }
 }

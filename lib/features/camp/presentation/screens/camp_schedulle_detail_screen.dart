@@ -94,7 +94,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
 
   final List<Camper> campers = [
     Camper(
-      id: 1,
+      camperId: 1,
       fullName: "Nguyễn Văn A",
       dob: "2010-05-12",
       gender: "Nam",
@@ -103,7 +103,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
       parentId: 101,
     ),
     Camper(
-      id: 2,
+      camperId: 2,
       fullName: "Trần Thị B",
       dob: "2011-09-20",
       gender: "Nữ",

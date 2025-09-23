@@ -1,5 +1,5 @@
 class Registration {
-  final int id;
+  final int registrationId;
   final int camperId;
   final int campId;
   final int paymentId;
@@ -16,7 +16,7 @@ class Registration {
   final int? discount;
 
   const Registration({
-    required this.id,
+    required this.registrationId,
     required this.camperId,
     required this.campId,
     required this.paymentId,

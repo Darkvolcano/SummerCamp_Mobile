@@ -1,5 +1,5 @@
 class User {
-  final int id;
+  final int userId;
   final String firstName;
   final String lastName;
   final String email;
@@ -7,7 +7,7 @@ class User {
   final String role;
 
   const User({
-    required this.id,
+    required this.userId,
     required this.firstName,
     required this.lastName,
     required this.email,

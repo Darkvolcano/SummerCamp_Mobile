@@ -2,7 +2,7 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class CamperModel extends Camper {
   const CamperModel({
-    required super.id,
+    required super.camperId,
     required super.fullName,
     required super.dob,
     required super.gender,
@@ -13,7 +13,7 @@ class CamperModel extends Camper {
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
     return CamperModel(
-      id: json['camperId'],
+      camperId: json['camperId'],
       fullName: json['fullName'],
       dob: json['dob'],
       gender: json['gender'],
@@ -24,7 +24,7 @@ class CamperModel extends Camper {
   }
 
   Map<String, dynamic> toJson() => {
-    'camperId': id,
+    'camperId': camperId,
     'fullName': fullName,
     'dob': dob,
     'gender': gender,

@@ -2,7 +2,7 @@ import 'package:summercamp/features/auth/domain/entities/user.dart';
 
 class UserModel extends User {
   const UserModel({
-    required super.id,
+    required super.userId,
     required super.firstName,
     required super.lastName,
     required super.email,
@@ -12,18 +12,18 @@ class UserModel extends User {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['userId'] as int,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      role: json['role'] as String,
+      userId: json['userId'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+      role: json['role'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': id,
+      'userId': userId,
       'firstName': firstName,
       'lastName': lastName,
       'email': email,

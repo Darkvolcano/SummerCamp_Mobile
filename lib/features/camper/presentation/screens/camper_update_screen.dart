@@ -63,7 +63,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                 ),
                 onPressed: () {
                   final updated = Camper(
-                    id: widget.camper.id,
+                    camperId: widget.camper.camperId,
                     fullName: nameCtrl.text,
                     dob: dobCtrl.text,
                     gender: genderCtrl.text,
@@ -71,7 +71,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                     createAt: widget.camper.createAt,
                     parentId: widget.camper.parentId,
                   );
-                  provider.updateCamper(widget.camper.id, updated);
+                  provider.updateCamper(widget.camper.camperId, updated);
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.save),

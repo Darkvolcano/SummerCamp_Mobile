@@ -17,7 +17,7 @@ class CamperRepositoryImpl implements CamperRepository {
   @override
   Future<void> createCamper(Camper camper) async {
     final model = CamperModel(
-      id: camper.id,
+      camperId: camper.camperId,
       fullName: camper.fullName,
       dob: camper.dob,
       gender: camper.gender,

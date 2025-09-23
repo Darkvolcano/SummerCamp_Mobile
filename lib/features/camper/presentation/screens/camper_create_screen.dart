@@ -54,7 +54,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                 ),
                 onPressed: () {
                   final newCamper = Camper(
-                    id: DateTime.now().millisecondsSinceEpoch,
+                    camperId: DateTime.now().millisecondsSinceEpoch,
                     fullName: nameCtrl.text,
                     dob: dobCtrl.text,
                     gender: genderCtrl.text,

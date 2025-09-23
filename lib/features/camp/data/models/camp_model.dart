@@ -2,7 +2,7 @@ import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
 class CampModel extends Camp {
   const CampModel({
-    required super.id,
+    required super.campId,
     required super.name,
     required super.description,
     required super.place,
@@ -17,7 +17,7 @@ class CampModel extends Camp {
 
   factory CampModel.fromJson(Map<String, dynamic> json) {
     return CampModel(
-      id: json['campId'],
+      campId: json['campId'],
       name: json['name'],
       description: json['description'],
       place: json['place'],
@@ -32,7 +32,7 @@ class CampModel extends Camp {
   }
 
   Map<String, dynamic> toJson() => {
-    'campId': id,
+    'campId': campId,
     'name': name,
     'description': description,
     'place': place,

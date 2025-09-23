@@ -1,13 +1,17 @@
 class CampTypeModel {
-  final String id;
+  final String campTypeId;
   final String name;
   final bool isActive;
 
-  CampTypeModel({required this.id, required this.name, required this.isActive});
+  CampTypeModel({
+    required this.campTypeId,
+    required this.name,
+    required this.isActive,
+  });
 
   factory CampTypeModel.fromJson(Map<String, dynamic> json) {
     return CampTypeModel(
-      id: json['id'],
+      campTypeId: json['campTypeId'],
       name: json['name'],
       isActive: json['isActive'] ?? false,
     );

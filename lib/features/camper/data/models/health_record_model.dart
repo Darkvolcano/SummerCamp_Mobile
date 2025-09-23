@@ -2,7 +2,7 @@ import 'package:summercamp/features/camper/domain/entities/health_record.dart';
 
 class HealthRecordModel extends HealthRecord {
   const HealthRecordModel({
-    required super.id,
+    required super.healthRecordId,
     required super.condition,
     required super.allergies,
     required super.note,
@@ -12,7 +12,7 @@ class HealthRecordModel extends HealthRecord {
 
   factory HealthRecordModel.fromJson(Map<String, dynamic> json) {
     return HealthRecordModel(
-      id: json['healthRecordId'],
+      healthRecordId: json['healthRecordId'],
       condition: json['condition'],
       allergies: json['allergies'],
       note: json['note'],
@@ -22,7 +22,7 @@ class HealthRecordModel extends HealthRecord {
   }
 
   Map<String, dynamic> toJson() => {
-    'healthRecordId': id,
+    'healthRecordId': healthRecordId,
     'condition': condition,
     'allergies': allergies,
     'note': note,

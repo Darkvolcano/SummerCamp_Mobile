@@ -1,5 +1,5 @@
 class BankUserModel {
-  final int id;
+  final int bankUserId;
   final int userId;
   final String bankCode;
   final String bankName;
@@ -8,7 +8,7 @@ class BankUserModel {
   final bool isActive;
 
   BankUserModel({
-    required this.id,
+    required this.bankUserId,
     required this.userId,
     required this.bankCode,
     required this.bankName,
@@ -19,7 +19,7 @@ class BankUserModel {
 
   factory BankUserModel.fromJson(Map<String, dynamic> json) {
     return BankUserModel(
-      id: json['bankUserId'],
+      bankUserId: json['bankUserId'],
       userId: json['userId'],
       bankCode: json['bankCode'],
       bankName: json['bankName'],
@@ -31,7 +31,7 @@ class BankUserModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'bankUserId': id,
+      'bankUserId': bankUserId,
       'userId': userId,
       'bankCode': bankCode,
       'bankName': bankName,

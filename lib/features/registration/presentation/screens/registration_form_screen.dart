@@ -160,8 +160,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                 ),
                 onPressed: () {
                   final r = Registration(
-                    id: DateTime.now().millisecondsSinceEpoch,
-                    campId: camp.id,
+                    registrationId: DateTime.now().millisecondsSinceEpoch,
+                    campId: camp.campId,
                     camperId: 1,
                     paymentId: _selectedPaymentId,
                     registrationCreateAt: DateTime.now(),

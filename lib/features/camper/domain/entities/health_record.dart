@@ -1,5 +1,5 @@
 class HealthRecord {
-  final int id;
+  final int healthRecordId;
   final String condition;
   final String allergies;
   final String note;
@@ -7,7 +7,7 @@ class HealthRecord {
   final int camperId;
 
   const HealthRecord({
-    required this.id,
+    required this.healthRecordId,
     required this.condition,
     required this.allergies,
     required this.note,

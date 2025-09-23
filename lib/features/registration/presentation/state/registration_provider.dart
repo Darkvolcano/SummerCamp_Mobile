@@ -50,9 +50,9 @@ class RegistrationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeRegistration(int id) async {
-    await cancelUseCase(id);
-    _registrations.removeWhere((r) => r.id == id);
+  Future<void> removeRegistration(int registrationId) async {
+    await cancelUseCase(registrationId);
+    _registrations.removeWhere((r) => r.registrationId == registrationId);
     notifyListeners();
   }
 }

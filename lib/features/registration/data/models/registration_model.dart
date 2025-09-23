@@ -2,7 +2,7 @@ import 'package:summercamp/features/registration/domain/entities/registration.da
 
 class RegistrationModel extends Registration {
   const RegistrationModel({
-    required super.id,
+    required super.registrationId,
     required super.camperId,
     required super.campId,
     required super.paymentId,
@@ -21,7 +21,7 @@ class RegistrationModel extends Registration {
 
   factory RegistrationModel.fromJson(Map<String, dynamic> json) {
     return RegistrationModel(
-      id: json['registrationId'],
+      registrationId: json['registrationId'],
       camperId: json['camperId'],
       campId: json['campId'],
       paymentId: json['paymentId'],
@@ -40,7 +40,7 @@ class RegistrationModel extends Registration {
   }
 
   Map<String, dynamic> toJson() => {
-    'registrationId': id,
+    'registrationId': registrationId,
     'camperId': camperId,
     'campId': campId,
     'paymentId': paymentId,

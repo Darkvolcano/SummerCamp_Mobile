@@ -35,8 +35,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 final a = userList[idx];
 
                 final lastMessage = chatProv.getLastMessage(
-                  a.id,
-                  authProv.user?.id ?? 0,
+                  a.userId,
+                  authProv.user?.userId ?? 0,
                 );
 
                 final content = lastMessage?['content'] ?? 'Chưa có tin nhắn';

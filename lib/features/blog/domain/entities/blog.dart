@@ -1,5 +1,5 @@
 class Blog {
-  final int id;
+  final int blogId;
   final String title;
   final String content;
   final int authorId;
@@ -7,7 +7,7 @@ class Blog {
   final DateTime creatAt;
 
   const Blog({
-    required this.id,
+    required this.blogId,
     required this.title,
     required this.content,
     required this.authorId,
