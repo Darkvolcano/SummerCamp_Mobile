@@ -3,7 +3,6 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar.dart';
 import 'package:summercamp/core/widgets/custom_carousel_slider.dart';
-import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,12 +17,17 @@ class _HomeState extends State<Home> {
   final List<Widget> _pages = [
     const HomeContent(),
     const _RouteWrapper(AppRoutes.campList),
-    const _RouteWrapper(AppRoutes.chatAI),
+    Container(),
     const _RouteWrapper(AppRoutes.blogList),
     const _RouteWrapper(AppRoutes.profile),
   ];
 
   void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushNamed(context, AppRoutes.chatAI);
+      return;
+    }
+
     setState(() => _selectedIndex = index);
   }
 
@@ -86,7 +90,6 @@ class HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Quick actions grid
           // Padding(
           //   padding: const EdgeInsets.symmetric(horizontal: 16),
           //   child: GridView.count(
@@ -235,12 +238,7 @@ class HomeContent extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const RegistrationListScreen(),
-                  ),
-                );
+                Navigator.pushNamed(context, AppRoutes.campList);
               },
               icon: const Icon(Icons.assignment),
               label: Text(

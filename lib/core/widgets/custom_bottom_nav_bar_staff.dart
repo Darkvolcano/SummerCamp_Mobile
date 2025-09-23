@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../config/staff_theme.dart';
 
-class CustomBottomNavBarStaff extends StatelessWidget {
+class StaffBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onItemTapped;
 
-  const CustomBottomNavBarStaff({
+  const StaffBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onItemTapped,
@@ -12,42 +13,89 @@ class CustomBottomNavBarStaff extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8.0,
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(Icons.home, "Home", 0),
-            _buildNavItem(Icons.terrain, "Camp", 1),
-            const SizedBox(width: 40),
-            _buildNavItem(Icons.assignment, "Schedule", 3),
-            _buildNavItem(Icons.person, "Profile", 4),
-          ],
+    const Color activeColor = Color(0xFF42A5F5);
+    const Color inactiveColor = Colors.white70;
+
+    return SizedBox(
+      height: 70,
+      child: BottomAppBar(
+        color: StaffTheme.staffPrimary,
+        child: SizedBox(
+          height: 56,
+          child: SafeArea(
+            top: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  Icons.home,
+                  "Home",
+                  0,
+                  activeColor,
+                  inactiveColor,
+                ),
+                _buildNavItem(
+                  Icons.schedule,
+                  "Schedule",
+                  1,
+                  activeColor,
+                  inactiveColor,
+                ),
+                _buildNavItem(
+                  Icons.report_problem,
+                  "Incident",
+                  2,
+                  activeColor,
+                  inactiveColor,
+                ),
+                _buildNavItem(
+                  Icons.person,
+                  "Profile",
+                  3,
+                  activeColor,
+                  inactiveColor,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(
+    IconData icon,
+    String label,
+    int index,
+    Color activeColor,
+    Color inactiveColor,
+  ) {
     final isSelected = currentIndex == index;
     return GestureDetector(
       onTap: () => onItemTapped(index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: isSelected ? const Color(0xFFA05A2C) : Colors.grey),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: isSelected ? const Color(0xFFA05A2C) : Colors.grey,
+      child: SizedBox(
+        height: 56,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: isSelected ? activeColor : inactiveColor,
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: "Nunito",
+                fontSize: 12,
+                height: 1.0,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? activeColor : inactiveColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

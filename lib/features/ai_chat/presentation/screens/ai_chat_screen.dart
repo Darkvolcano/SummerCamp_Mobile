@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_ai_chat_bubble.dart';
 
 class AIChatScreen extends StatefulWidget {
@@ -40,8 +41,14 @@ class _AIChatScreenState extends State<AIChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AI Chat 🤖"),
-        backgroundColor: const Color(0xFFA05A2C),
+        title: const Text(
+          "AI Chat 🤖",
+          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: AppTheme.summerPrimary,
+        foregroundColor: Colors.white,
+        elevation: 3,
       ),
       body: Column(
         children: [
@@ -57,16 +64,41 @@ class _AIChatScreenState extends State<AIChatScreen> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            color: Colors.white,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
+                    style: const TextStyle(fontFamily: "Nunito", fontSize: 15),
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
+                      hintStyle: const TextStyle(
+                        fontFamily: "Nunito",
+                        color: Colors.black54,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide(
+                          color: AppTheme.summerPrimary,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide(
+                          color: AppTheme.summerPrimary,
+                          width: 2,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -76,9 +108,13 @@ class _AIChatScreenState extends State<AIChatScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Color(0xFFA05A2C)),
-                  onPressed: _sendMessage,
+                CircleAvatar(
+                  backgroundColor: AppTheme.summerPrimary,
+                  radius: 24,
+                  child: IconButton(
+                    icon: const Icon(Icons.send, color: Colors.white),
+                    onPressed: _sendMessage,
+                  ),
                 ),
               ],
             ),

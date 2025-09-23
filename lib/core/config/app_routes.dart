@@ -5,12 +5,16 @@ import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
+import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
+import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_detail_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_list_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_update_screen.dart';
+import 'package:summercamp/features/home/presentation/screens/home_staff.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
@@ -27,11 +31,15 @@ class AppRoutes {
   static const String verifyOTP = '/verify-otp'; // hiện tại chưa có
   static const String chat = '/chat'; // hiện tại chưa có
   static const String chatDetail = '/chat-detail'; // hiện tại chưa có
-  static const String chatAI = '/chat-ai'; // hiện tại chưa có
+  static const String chatAI = '/chat-ai';
   static const String report = '/report'; // hiện tại chưa có
   static const String registrationDetail = '/registration-detail';
   static const String registrationForm = '/registration-form';
   static const String home = '/home';
+  static const String staffHome = '/staff-home';
+  static const String campSchedule = '/camp-schedule';
+  static const String campScheduleDetail = '/camp-schedule-detail';
+  static const String attendance = '/attendance';
   static const String campDetail = '/camp-detail';
   static const String camperList = '/camper-list';
   static const String camperDetail = '/camper-detail';
@@ -53,10 +61,32 @@ class AppRoutes {
     switch (settings.name) {
       case login:
         return MaterialPageRoute(builder: (_) => LoginScreen());
+
       case register:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+
       case home:
         return MaterialPageRoute(builder: (_) => const Home());
+
+      case staffHome:
+        return MaterialPageRoute(builder: (_) => const StaffHome());
+
+      case campSchedule:
+        return MaterialPageRoute(builder: (_) => const CampScheduleScreen());
+
+      case campScheduleDetail:
+        final camp = settings.arguments as Camp;
+        return MaterialPageRoute(
+          builder: (_) => CampScheduleDetailScreen(camp: camp),
+        );
+
+      case attendance:
+        final args = settings.arguments as Map<String, dynamic>;
+        final camp = args["camp"] as Camp;
+        final campers = args["campers"] as List<Camper>;
+        return MaterialPageRoute(
+          builder: (_) => AttendanceScreen(campers: campers, camp: camp),
+        );
 
       // Parent, Staff can use this screen
       case profile:
@@ -76,10 +106,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => BlogListScreen());
 
       case registrationList:
-        // if (role == "Parent" || role == "Staff") {
         return MaterialPageRoute(builder: (_) => RegistrationListScreen());
-      // }
-      // return _unauthorizedRoute();
+
       case registrationDetail:
         final registration = settings.arguments as Registration;
         return MaterialPageRoute(
