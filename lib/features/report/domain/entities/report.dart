@@ -5,7 +5,7 @@ class Report {
   final String image;
   final DateTime createAt;
   final String status;
-  final int level;
+  final String level;
   final int activityId;
 
   const Report({

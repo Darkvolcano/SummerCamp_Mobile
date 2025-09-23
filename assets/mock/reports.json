@@ -1,0 +1,32 @@
+[
+  {
+    "reportId": 1,
+    "camperId": 101,
+    "note": "Camper bị trượt ngã trong khi tham gia trò chơi ngoài trời.",
+    "image": "https://picsum.photos/200/300",
+    "createAt": "2025-09-10T08:30:00.000Z",
+    "status": "Pending",
+    "level": "Medium",
+    "activityId": 11
+  },
+  {
+    "reportId": 2,
+    "camperId": 102,
+    "note": "Camper cảm thấy mệt trong lúc leo núi, đã được nghỉ ngơi.",
+    "image": "",
+    "createAt": "2025-09-12T10:00:00.000Z",
+    "status": "Resolved",
+    "level": "Low",
+    "activityId": 12
+  },
+  {
+    "reportId": 3,
+    "camperId": 103,
+    "note": "Camper bị dị ứng thực phẩm sau bữa trưa.",
+    "image": "https://picsum.photos/200/301",
+    "createAt": "2025-09-14T14:45:00.000Z",
+    "status": "Pending",
+    "level": "High",
+    "activityId": 13
+  }
+]

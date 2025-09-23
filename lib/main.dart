@@ -10,6 +10,11 @@ import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
+import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
+import 'package:summercamp/features/report/data/services/report_api_service.dart';
+import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
+import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
+import 'package:summercamp/features/report/presentation/state/report_provider.dart';
 
 import 'core/config/app_routes.dart';
 import 'core/config/app_theme.dart';
@@ -69,6 +74,12 @@ void main() {
   final createCamperUseCase = CreateCamper(camperRepo);
   final updateCamperUseCase = UpdateCamper(camperRepo);
 
+  // Report
+  final reportApi = ReportApiService(apiClient);
+  final reportRepo = ReportRepositoryImpl(reportApi);
+  final getReportsUseCase = GetReports(reportRepo);
+  final createReportUseCase = CreateReport(reportRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -107,6 +118,11 @@ void main() {
             getCampersUseCase,
             updateCamperUseCase,
           ),
+        ),
+
+        // ReportProvider need 2 usecases (GetReports, CreateReport)
+        ChangeNotifierProvider(
+          create: (_) => ReportProvider(getReportsUseCase, createReportUseCase),
         ),
       ],
       child: const SummerCampApp(),

@@ -23,6 +23,8 @@ import 'package:summercamp/features/registration/domain/entities/registration.da
 import 'package:summercamp/features/registration/presentation/screens/registration_detail_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_form_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
+import 'package:summercamp/features/report/presentation/screens/report_form_screen.dart';
+import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
 
 class AppRoutes {
   // Define route
@@ -33,6 +35,7 @@ class AppRoutes {
   static const String chatDetail = '/chat-detail'; // hiện tại chưa có
   static const String chatAI = '/chat-ai';
   static const String report = '/report'; // hiện tại chưa có
+  static const String createReport = '/create-report'; // hiện tại chưa có
   static const String registrationDetail = '/registration-detail';
   static const String registrationForm = '/registration-form';
   static const String home = '/home';
@@ -145,6 +148,12 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => CamperUpdateScreen(camper: camper),
         );
+
+      case report:
+        return MaterialPageRoute(builder: (_) => ReportListScreen());
+
+      case createReport:
+        return MaterialPageRoute(builder: (_) => ReportCreateScreen());
       // Ex: staff only
       // case '/staff-dashboard':
       //   if (role == "Staff") {

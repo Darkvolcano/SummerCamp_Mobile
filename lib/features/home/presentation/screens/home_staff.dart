@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar_staff.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
+import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
 import '../../../../core/config/staff_theme.dart';
 
 class StaffHome extends StatefulWidget {
@@ -16,7 +17,7 @@ class _StaffHomeState extends State<StaffHome> {
   final List<Widget> _pages = [
     const StaffHomeContent(),
     const CampScheduleScreen(),
-    Center(child: Text("Incident Screen")),
+    const ReportListScreen(),
     Center(child: Text("Profile Screen")),
   ];
 
