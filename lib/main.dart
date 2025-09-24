@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
@@ -42,7 +43,10 @@ import 'features/registration/domain/use_cases/create_register.dart';
 import 'features/registration/domain/use_cases/cancel_registration.dart';
 import 'features/registration/presentation/state/registration_provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('vi_VN');
   final apiClient = ApiClient();
 
   // Auth

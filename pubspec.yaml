@@ -35,13 +35,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1 # Quản lý trạng thái (state management)
-  intl: ^0.17.0 # Format date
+  intl: ^0.18.0 # Format date
   jwt_decoder: ^2.0.1 # Decode token
   dio: ^5.9.0 # Dùng để thực hiện các tác vụ API
   shared_preferences: ^2.5.3 # Lưu các data dưới dạng local storage
   socket_io_client: ^3.1.2 # Kết nối với socket
   url_launcher: ^6.3.1 # Mở đường dẫn web trong app
   image_picker: ^1.1.2 # Chọn ảnh từ máy
+  table_calendar: ^3.0.8 # Show calendar
 
 dev_dependencies:
   flutter_test:

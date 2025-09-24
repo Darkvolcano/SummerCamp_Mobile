@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar_staff.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
+import 'package:summercamp/features/home/presentation/widgets/schedule_calendar.dart';
 import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
 import '../../../../core/config/staff_theme.dart';
 
@@ -180,6 +181,34 @@ class StaffHomeContent extends StatelessWidget {
                 labelStyle: const TextStyle(color: Colors.green),
               ),
             ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Text(
+            "Lịch làm việc",
+            style: textTheme.titleMedium?.copyWith(
+              fontFamily: "Fredoka",
+              fontWeight: FontWeight.bold,
+              color: StaffTheme.staffPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          Container(
+            height: 500,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.15),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const ScheduleCalendar(),
           ),
         ],
       ),

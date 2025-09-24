@@ -34,6 +34,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
           "Danh Sách Báo Cáo",
           style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
         ),
+        automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: StaffTheme.staffPrimary,
         foregroundColor: Colors.white,
