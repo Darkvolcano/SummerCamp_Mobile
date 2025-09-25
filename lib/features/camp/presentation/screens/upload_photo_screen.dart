@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import '../../../../core/config/staff_theme.dart';
 import '../../../camp/domain/entities/camp.dart';
 
@@ -14,53 +13,51 @@ class UploadPhotoScreen extends StatefulWidget {
 }
 
 class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
-  List<File> _images = [];
+  final List<File> _picked = [];
 
-  Future<bool> _requestPhotoPermission() async {
-    if (Platform.isAndroid) {
-      // For Android 13+, use Permission.photos; for older versions, use Permission.storage
-      final permission = await Permission.photos.request();
-      if (!permission.isGranted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Bạn cần cấp quyền để chọn ảnh")),
-        );
-        return false;
-      }
-      return true;
-    }
-    return true; // iOS handles permissions differently, assume granted for simplicity
-  }
-
-  Future<void> _pickImages() async {
-    // Request permission and proceed only if granted
-    final hasPermission = await _requestPhotoPermission();
-    if (!hasPermission) return;
-
-    // Open file picker for multiple image selection
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
+  /// chọn nhiều ảnh bằng wechat_assets_picker
+  Future<void> _pickMultiImages() async {
+    final List<AssetEntity>? result = await AssetPicker.pickAssets(
+      context,
+      pickerConfig: const AssetPickerConfig(
+        requestType: RequestType.image,
+        maxAssets: 20, // số ảnh tối đa chọn 1 lần
+      ),
     );
 
-    if (result != null && result.files.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
+      final files = await Future.wait(
+        result.map((e) async {
+          final file = await e.file;
+          return file!;
+        }),
+      );
+
       setState(() {
-        _images = result.paths.map((path) => File(path!)).toList();
+        _picked.addAll(files);
       });
     }
   }
 
-  void _uploadPhotos() {
-    if (_images.isEmpty) {
+  void _removeAt(int index) {
+    setState(() {
+      _picked.removeAt(index);
+    });
+  }
+
+  Future<void> _uploadPhotos() async {
+    if (_picked.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Vui lòng chọn ít nhất một ảnh để upload"),
-        ),
+        const SnackBar(content: Text("Vui lòng chọn ít nhất một ảnh")),
       );
       return;
     }
-    // Call API to upload multiple images (multipart)
+
+    // TODO: gọi API multipart thật
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Đã upload ${_images.length} ảnh thành công!")),
+      SnackBar(
+        content: Text("Giả lập upload ${_picked.length} ảnh thành công"),
+      ),
     );
   }
 
@@ -80,11 +77,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Expanded(
-              child: _images.isEmpty
+              child: _picked.isEmpty
                   ? Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -92,46 +89,42 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Center(
-                        child: Icon(Icons.image, size: 80, color: Colors.grey),
+                        child: Icon(
+                          Icons.photo_library,
+                          size: 80,
+                          color: Colors.grey,
+                        ),
                       ),
                     )
                   : GridView.builder(
-                      itemCount: _images.length,
+                      itemCount: _picked.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Changed to 2 columns
+                            crossAxisCount: 2,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
-                            childAspectRatio:
-                                1, // Maintain square aspect ratio for images
+                            childAspectRatio: 1,
                           ),
                       itemBuilder: (context, index) {
+                        final file = _picked[index];
                         return Stack(
+                          fit: StackFit.expand,
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                _images[index],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
+                              child: Image.file(file, fit: BoxFit.cover),
                             ),
                             Positioned(
-                              top: 4,
-                              right: 4,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _images.removeAt(index);
-                                  });
-                                },
+                              top: 6,
+                              right: 6,
+                              child: InkWell(
+                                onTap: () => _removeAt(index),
                                 child: Container(
+                                  padding: const EdgeInsets.all(6),
                                   decoration: const BoxDecoration(
                                     color: Colors.black54,
                                     shape: BoxShape.circle,
                                   ),
-                                  padding: const EdgeInsets.all(4),
                                   child: const Icon(
                                     Icons.close,
                                     size: 16,
@@ -145,12 +138,12 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                       },
                     ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: _pickImages,
+                    onPressed: _pickMultiImages,
                     icon: const Icon(Icons.photo_library),
                     label: const Text("Chọn ảnh"),
                     style: ElevatedButton.styleFrom(

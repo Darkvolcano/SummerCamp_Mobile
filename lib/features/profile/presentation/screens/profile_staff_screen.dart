@@ -121,7 +121,9 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: StaffTheme.staffPrimary.withOpacity(0.2)),
+          border: Border.all(
+            color: StaffTheme.staffPrimary.withValues(alpha: 0.2),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

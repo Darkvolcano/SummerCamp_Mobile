@@ -43,8 +43,9 @@ dependencies:
   url_launcher: ^6.3.1 # Mở đường dẫn web trong app
   image_picker: ^1.1.2 # Chọn ảnh từ máy
   table_calendar: ^3.0.8 # Show calendar
-  file_picker: ^8.0.3 # Chọn nhiều ảnh từ máy điện thoại
-  permission_handler: ^11.0.1
+  permission_handler: ^11.0.1 # Quyền chọn hình ảnh
+  device_info_plus: ^10.1.0
+  wechat_assets_picker: ^9.0.2
 
 dev_dependencies:
   flutter_test:
@@ -102,6 +103,8 @@ flutter:
     - assets/mock/blogs.json
     - assets/mock/campers.json
     - assets/mock/reports.json
+    - assets/images/default_avatar.png
+    - assets/images/default_avatar_2.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

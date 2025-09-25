@@ -144,7 +144,7 @@ class SummerCampApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.staffHome,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
