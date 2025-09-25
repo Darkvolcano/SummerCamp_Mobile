@@ -300,30 +300,58 @@ class CampScheduleDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: StaffTheme.staffAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: StaffTheme.staffAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.attendance,
+                        arguments: {"camp": camp, "campers": campers},
+                      );
+                    },
+                    icon: const Icon(Icons.check_circle),
+                    label: const Text(
+                      "Điểm danh",
+                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.attendance,
-                    arguments: {"camp": camp, "campers": campers},
-                  );
-                },
-                icon: const Icon(Icons.check_circle),
-                label: const Text(
-                  "Điểm danh",
-                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.uploadPhoto,
+                        arguments: camp,
+                      );
+                    },
+                    icon: const Icon(Icons.photo_camera),
+                    label: const Text(
+                      "Photo",
+                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

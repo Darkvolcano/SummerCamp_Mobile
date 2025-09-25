@@ -43,6 +43,8 @@ dependencies:
   url_launcher: ^6.3.1 # Mở đường dẫn web trong app
   image_picker: ^1.1.2 # Chọn ảnh từ máy
   table_calendar: ^3.0.8 # Show calendar
+  file_picker: ^8.0.3 # Chọn nhiều ảnh từ máy điện thoại
+  permission_handler: ^11.0.1
 
 dev_dependencies:
   flutter_test:

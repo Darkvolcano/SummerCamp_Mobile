@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/core/widgets/custom_bottom_nav_bar_staff.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/home/presentation/widgets/schedule_calendar.dart';
+import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
 import '../../../../core/config/staff_theme.dart';
 
@@ -19,7 +20,7 @@ class _StaffHomeState extends State<StaffHome> {
     const StaffHomeContent(),
     const CampScheduleScreen(),
     const ReportListScreen(),
-    Center(child: Text("Profile Screen")),
+    const StaffProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

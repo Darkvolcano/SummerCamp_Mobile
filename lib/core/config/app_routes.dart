@@ -9,6 +9,7 @@ import 'package:summercamp/features/camp/presentation/screens/attendance_screen.
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
+import 'package:summercamp/features/camp/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_detail_screen.dart';
@@ -55,6 +56,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String campList = '/camp-list';
   static const String registrationList = '/registration-list';
+  static const String uploadPhoto = '/upload-photo';
   static const String album = '/album'; // hiện tại chưa có
 
   // Generate route
@@ -133,6 +135,10 @@ class AppRoutes {
 
       case camperList:
         return MaterialPageRoute(builder: (_) => CamperListScreen());
+
+      case uploadPhoto:
+        final camp = settings.arguments as Camp;
+        return MaterialPageRoute(builder: (_) => UploadPhotoScreen(camp: camp));
 
       case camperDetail:
         final camper = settings.arguments as Camper;
