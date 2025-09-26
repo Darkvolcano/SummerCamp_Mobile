@@ -6,6 +6,10 @@ class Camper {
   final int healthRecordId;
   final DateTime createAt;
   final int parentId;
+  final String? condition;
+  final String? allergies;
+  final bool? isAllergy;
+  final String? note;
 
   const Camper({
     required this.camperId,
@@ -15,5 +19,9 @@ class Camper {
     required this.healthRecordId,
     required this.createAt,
     required this.parentId,
+    this.condition,
+    this.allergies,
+    this.isAllergy,
+    this.note,
   });
 }

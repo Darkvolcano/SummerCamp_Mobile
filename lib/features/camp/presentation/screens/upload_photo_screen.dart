@@ -15,13 +15,12 @@ class UploadPhotoScreen extends StatefulWidget {
 class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   final List<File> _picked = [];
 
-  /// chọn nhiều ảnh bằng wechat_assets_picker
   Future<void> _pickMultiImages() async {
     final List<AssetEntity>? result = await AssetPicker.pickAssets(
       context,
       pickerConfig: const AssetPickerConfig(
         requestType: RequestType.image,
-        maxAssets: 20, // số ảnh tối đa chọn 1 lần
+        maxAssets: 20, // max image in 1 pick
       ),
     );
 
@@ -53,7 +52,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       return;
     }
 
-    // TODO: gọi API multipart thật
+    // call API multipart
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("Giả lập upload ${_picked.length} ảnh thành công"),

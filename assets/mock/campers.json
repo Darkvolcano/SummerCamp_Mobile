@@ -6,7 +6,11 @@
     "gender": "Nam",
     "healthRecordId": 101,
     "createAt": "2025-01-01T08:00:00",
-    "parentId": 1
+    "parentId": 1,
+    "condition": "Asthma",
+    "allergies": "Peanuts",
+    "isAllergy": true,
+    "note": "Carries an inhaler"
   },
   {
     "camperId": 2,
@@ -15,6 +19,10 @@
     "gender": "Nữ",
     "healthRecordId": 102,
     "createAt": "2025-02-01T09:00:00",
-    "parentId": 2
+    "parentId": 2,
+    "condition": null,
+    "allergies": null,
+    "isAllergy": false,
+    "note": null
   }
 ]

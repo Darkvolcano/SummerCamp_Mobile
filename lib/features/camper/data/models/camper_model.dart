@@ -9,6 +9,10 @@ class CamperModel extends Camper {
     required super.healthRecordId,
     required super.createAt,
     required super.parentId,
+    super.condition,
+    super.allergies,
+    super.isAllergy,
+    super.note,
   });
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,10 @@ class CamperModel extends Camper {
       healthRecordId: json['healthRecordId'],
       createAt: DateTime.parse(json['createAt']),
       parentId: json['parentId'],
+      condition: json['condition'],
+      allergies: json['allergies'],
+      isAllergy: json['isAllergy'],
+      note: json['note'],
     );
   }
 
@@ -31,5 +39,9 @@ class CamperModel extends Camper {
     'healthRecordId': healthRecordId,
     'createAt': createAt.toIso8601String(),
     'parentId': parentId,
+    'condition': condition,
+    'allergies': allergies,
+    'isAllergy': isAllergy,
+    'note': note,
   };
 }

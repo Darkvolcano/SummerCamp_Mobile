@@ -76,7 +76,6 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
             return events[date] ?? [];
           },
 
-          // 🎨 Style Calendar
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
               color: StaffTheme.staffAccent.withValues(alpha: 0.7),
@@ -140,7 +139,6 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
 
         const SizedBox(height: 12),
 
-        // 📋 Danh sách record bên dưới
         Expanded(
           child: selectedRecords.isEmpty
               ? const Center(

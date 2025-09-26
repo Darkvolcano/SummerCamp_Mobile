@@ -105,7 +105,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
                     return;
                   }
 
-                  // TODO: gọi API / Provider để lưu feedback
+                  // call API to save feedback
                   debugPrint(
                     "Feedback: regId=${widget.registrationId}, rating=$_rating, comment=${_commentController.text}",
                   );

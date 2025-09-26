@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class CamperDetailScreen extends StatelessWidget {
@@ -47,7 +48,11 @@ class CamperDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _infoRow("Tên", camper.fullName, textTheme),
-                    _infoRow("Ngày sinh", camper.dob, textTheme),
+                    _infoRow(
+                      "Ngày sinh",
+                      DateFormatter.formatFromString(camper.dob),
+                      textTheme,
+                    ),
                     _infoRow("Giới tính", camper.gender, textTheme),
                     _infoRow(
                       "Health Record",
@@ -59,6 +64,13 @@ class CamperDetailScreen extends StatelessWidget {
                       camper.parentId.toString(),
                       textTheme,
                     ),
+                    _infoRow(
+                      "Tình trạng sức khỏe",
+                      camper.condition ?? "Bình thường",
+                      textTheme,
+                    ),
+                    _infoRow("Dị ứng", camper.allergies ?? "Không", textTheme),
+                    _infoRow("Note", camper.note ?? "", textTheme),
                   ],
                 ),
               ),
