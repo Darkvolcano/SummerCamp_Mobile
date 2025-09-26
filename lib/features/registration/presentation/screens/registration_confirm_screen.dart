@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
-import 'package:summercamp/features/registration/domain/entities/registration.dart';
-import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
+// import 'package:summercamp/features/registration/domain/entities/registration.dart';
+// import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 
 class RegistrationConfirmScreen extends StatelessWidget {
   final Camp camp;
@@ -25,7 +26,7 @@ class RegistrationConfirmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final provider = context.read<RegistrationProvider>();
+    // final provider = context.read<RegistrationProvider>();
 
     final String paymentMethod = switch (paymentId) {
       1 => "Chuyển khoản ngân hàng",
@@ -250,30 +251,31 @@ class RegistrationConfirmScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  for (final camper in campers) {
-                    final r = Registration(
-                      registrationId: DateTime.now().millisecondsSinceEpoch,
-                      campId: camp.campId,
-                      camperId: camper.camperId,
-                      paymentId: paymentId,
-                      registrationCreateAt: DateTime.now(),
-                      status: "pending",
-                      price: camp.price,
-                      promotionId: null,
-                      promotionCode: promotionCode,
-                      discount: 0,
-                      campName: camp.name,
-                      campDescription: camp.description,
-                      campPlace: camp.place,
-                      campStartDate: camp.startDate,
-                      campEndDate: camp.endDate,
-                    );
+                  // for (final camper in campers) {
+                  //   final r = Registration(
+                  //     registrationId: DateTime.now().millisecondsSinceEpoch,
+                  //     campId: camp.campId,
+                  //     camperId: camper.camperId,
+                  //     paymentId: paymentId,
+                  //     registrationCreateAt: DateTime.now(),
+                  //     status: "pending",
+                  //     price: camp.price,
+                  //     promotionId: null,
+                  //     promotionCode: promotionCode,
+                  //     discount: 0,
+                  //     campName: camp.name,
+                  //     campDescription: camp.description,
+                  //     campPlace: camp.place,
+                  //     campStartDate: camp.startDate,
+                  //     campEndDate: camp.endDate,
+                  //   );
 
-                    provider.addRegistration(r);
-                  }
+                  //   provider.addRegistration(r);
+                  // }
 
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
+                  Navigator.pushNamed(context, AppRoutes.registrationSuccess);
                 },
                 icon: const Icon(Icons.check_circle, size: 22),
                 label: Text(

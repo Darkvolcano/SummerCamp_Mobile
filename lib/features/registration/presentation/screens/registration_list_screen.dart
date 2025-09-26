@@ -66,7 +66,6 @@ class _RegistrationListScreenState extends State<RegistrationListScreen> {
                       arguments: r,
                     );
                   },
-                  onDelete: () => provider.removeRegistration(r.registrationId),
                 );
               },
             ),

@@ -3,18 +3,13 @@ import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
 
 class RegistrationCard extends StatelessWidget {
   final Registration registration;
   final VoidCallback? onTap;
-  final VoidCallback? onDelete;
 
-  const RegistrationCard({
-    super.key,
-    required this.registration,
-    this.onTap,
-    this.onDelete,
-  });
+  const RegistrationCard({super.key, required this.registration, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +40,6 @@ class RegistrationCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (onDelete != null)
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: onDelete,
-                    ),
                 ],
               ),
 
@@ -118,6 +108,44 @@ class RegistrationCard extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+
+              const SizedBox(height: 14),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.summerAccent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FeedbackFormScreen(
+                          registrationId: registration.registrationId,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.feedback, size: 18),
+                  label: const Text(
+                    "Feedback",
+                    style: TextStyle(
+                      fontFamily: "Fredoka",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

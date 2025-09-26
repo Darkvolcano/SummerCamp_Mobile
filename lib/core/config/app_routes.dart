@@ -22,42 +22,47 @@ import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.d
 import 'package:summercamp/features/home/presentation/screens/home.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_detail_screen.dart';
+import 'package:summercamp/features/registration/presentation/screens/registration_failure_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_form_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_list_screen.dart';
+import 'package:summercamp/features/registration/presentation/screens/registration_success_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_form_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
 
 class AppRoutes {
   // Define route
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String verifyOTP = '/verify-otp'; // hiện tại chưa có
-  static const String chat = '/chat'; // hiện tại chưa có
-  static const String chatDetail = '/chat-detail'; // hiện tại chưa có
-  static const String chatAI = '/chat-ai';
-  static const String report = '/report'; // hiện tại chưa có
-  static const String createReport = '/create-report'; // hiện tại chưa có
-  static const String registrationDetail = '/registration-detail';
-  static const String registrationForm = '/registration-form';
-  static const String home = '/home';
-  static const String staffHome = '/staff-home';
-  static const String campSchedule = '/camp-schedule';
-  static const String campScheduleDetail = '/camp-schedule-detail';
-  static const String attendance = '/attendance';
-  static const String campDetail = '/camp-detail';
-  static const String camperList = '/camper-list';
-  static const String camperDetail = '/camper-detail';
-  static const String createCamper = '/create-camper';
-  static const String updateCamper = '/update-camper';
+  static const String login = 'LOGIN';
+  static const String register = 'REGISTER';
+  static const String verifyOTP = 'VERIFY-OTP'; // hiện tại chưa có
+  static const String chat = 'CHAT'; // hiện tại chưa có
+  static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
+  static const String chatAI = 'CHAT-AI';
+  static const String report = 'REPORT'; // hiện tại chưa có
+  static const String createReport = 'CREATE-REPORT';
+  static const String registrationDetail = 'REGISTRATION-DETAIL';
+  static const String registrationForm = 'REGISTRATION-FORM';
+  static const String home = 'HOME';
+  static const String staffHome = 'STAFF-HOME';
+  static const String campSchedule = 'CAMP-SCHEDULE';
+  static const String campScheduleDetail = 'CAMP-SCHEDULE-DETAIL';
+  static const String attendance = 'ATTENDANCE';
+  static const String campDetail = 'CAMP-DETAIL';
+  static const String camperList = 'CAMPER-LIST';
+  static const String camperDetail = 'CAMPER-DETAIL';
+  static const String createCamper = 'CREATE-CAMPER';
+  static const String updateCamper = 'UPDATE-CAMPER';
   static const String registrationCancel =
-      '/registration-cancel'; // hiện tại chưa có
-  static const String blogList = '/blog';
-  static const String blogDetail = '/blog-detail';
-  static const String profile = '/profile';
-  static const String campList = '/camp-list';
-  static const String registrationList = '/registration-list';
-  static const String uploadPhoto = '/upload-photo';
-  static const String album = '/album'; // hiện tại chưa có
+      'REGISTRATION-CANCEL'; // hiện tại chưa có
+  static const String blogList = 'BLOG-LIST';
+  static const String blogDetail = 'BLOG-DETAIL';
+  static const String profile = 'PROFILE';
+  static const String campList = 'CAMP-LIST';
+  static const String registrationList = 'REGISTRATION-LIST';
+  static const String uploadPhoto = 'UPLOAD-PHOTO';
+  static const String registrationSuccess = 'REGISTRATION-SUCCESS';
+  static const String registrationFailure = 'REGISTRATION-FAILURE';
+  static const String album = 'ALBUM'; // hiện tại chưa có
+  static const String feedbackForm = 'FEEDBACK-FORM';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -160,6 +165,12 @@ class AppRoutes {
 
       case createReport:
         return MaterialPageRoute(builder: (_) => ReportCreateScreen());
+
+      case registrationSuccess:
+        return MaterialPageRoute(builder: (_) => RegistrationSuccessScreen());
+
+      case registrationFailure:
+        return MaterialPageRoute(builder: (_) => RegistrationFailureScreen());
       // Ex: staff only
       // case '/staff-dashboard':
       //   if (role == "Staff") {
