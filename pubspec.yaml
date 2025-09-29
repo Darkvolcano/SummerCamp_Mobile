@@ -50,6 +50,7 @@ dependencies:
   device_info_plus: ^10.1.0 # Lấy thông tin thiết bị
   wechat_assets_picker: ^9.0.2 # Chọn nhiều ảnh từ máy
   flutter_rating_bar: ^4.0.1 # Star rating
+  lottie: ^2.7.0 # Animation
 
 dev_dependencies:
   flutter_test:
@@ -109,6 +110,8 @@ flutter:
     - assets/mock/reports.json
     - assets/images/default_avatar.png
     - assets/images/default_avatar_2.png
+    - assets/mock/login_icons.json
+    - assets/images/google.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
