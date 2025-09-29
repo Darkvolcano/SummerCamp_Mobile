@@ -36,17 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 180,
-                  child: Lottie.asset(
-                    "assets/mock/login_icons.json",
-                    repeat: true,
-                    animate: true,
-                  ),
-                ),
-                const SizedBox(height: 12),
                 Text(
-                  "Summer Camp",
+                  "Chào mừng quay trở lại trại hè!",
                   style: textTheme.headlineSmall?.copyWith(
                     fontFamily: "Fredoka",
                     fontWeight: FontWeight.bold,
@@ -60,6 +51,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  height: 180,
+                  child: Lottie.asset(
+                    "assets/mock/login_icons.json",
+                    repeat: true,
+                    animate: true,
+                  ),
+                ),
+
                 const SizedBox(height: 32),
 
                 _buildInputField(emailController, "Email", Icons.email),
@@ -74,10 +77,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/forgot-password");
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.forgotPasswordEmail,
+                      );
                     },
                     child: const Text(
-                      "Forgot password?",
+                      "Quên mật khẩu?",
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
                         color: Colors.white,
@@ -122,7 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     Expanded(child: Divider(color: Colors.white70)),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text("or", style: TextStyle(color: Colors.white)),
+                      child: Text(
+                        "Hoặc",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     Expanded(child: Divider(color: Colors.white70)),
                   ],
@@ -132,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.9),
+                    backgroundColor: Colors.white.withValues(alpha: 0.9),
                     minimumSize: const Size(double.infinity, 50),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
@@ -140,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   onPressed: () {
-                    // TODO: Đăng nhập bằng Google
+                    // login Google
                   },
                   icon: Image.asset("assets/images/google.png", height: 24),
                   label: Text(
@@ -159,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.9),
+                      backgroundColor: Colors.white.withValues(alpha: 0.9),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -208,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
             color: AppTheme.summerPrimary,
           ),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.9),
+          fillColor: Colors.white.withValues(alpha: 0.9),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide.none,

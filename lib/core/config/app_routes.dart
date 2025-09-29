@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
+import 'package:summercamp/features/auth/presentation/screens/forgot_password_email_screen.dart';
+import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
+import 'package:summercamp/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
@@ -33,7 +36,9 @@ class AppRoutes {
   // Define route
   static const String login = 'LOGIN';
   static const String register = 'REGISTER';
-  static const String verifyOTP = 'VERIFY-OTP'; // hiện tại chưa có
+  static const String forgotPasswordEmail = 'FORGOT-PASSWORD-EMAIL';
+  static const String forgotPasswordOTP = 'FORGOT-PASSWORD-OTP';
+  static const String resetPassword = 'RESET-PASSWORD';
   static const String chat = 'CHAT'; // hiện tại chưa có
   static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
   static const String chatAI = 'CHAT-AI';
@@ -74,6 +79,15 @@ class AppRoutes {
 
       case register:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+
+      case forgotPasswordEmail:
+        return MaterialPageRoute(builder: (_) => ForgotPasswordEmailScreen());
+
+      case forgotPasswordOTP:
+        return MaterialPageRoute(builder: (_) => ForgotPasswordOtpScreen());
+
+      case resetPassword:
+        return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
 
       case home:
         return MaterialPageRoute(builder: (_) => const Home());
