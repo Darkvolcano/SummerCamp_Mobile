@@ -19,6 +19,7 @@ import 'package:summercamp/features/camper/presentation/screens/camper_detail_sc
 import 'package:summercamp/features/camper/presentation/screens/camper_list_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_update_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home_staff.dart';
+import 'package:summercamp/features/livestream/presentation/screens/join_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
@@ -42,6 +43,7 @@ class AppRoutes {
   static const String chat = 'CHAT'; // hiện tại chưa có
   static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
   static const String chatAI = 'CHAT-AI';
+  static const String joinLivestream = 'JOIN-LIVESTREAM';
   static const String report = 'REPORT'; // hiện tại chưa có
   static const String createReport = 'CREATE-REPORT';
   static const String registrationDetail = 'REGISTRATION-DETAIL';
@@ -94,6 +96,9 @@ class AppRoutes {
 
       case staffHome:
         return MaterialPageRoute(builder: (_) => const StaffHome());
+
+      case joinLivestream:
+        return MaterialPageRoute(builder: (_) => JoinScreen());
 
       case campSchedule:
         return MaterialPageRoute(builder: (_) => const CampScheduleScreen());

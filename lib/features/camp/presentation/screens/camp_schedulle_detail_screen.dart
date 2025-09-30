@@ -4,6 +4,9 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
+import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
+import 'package:videosdk/videosdk.dart';
 import '../../../../core/config/staff_theme.dart';
 
 class CampScheduleDetailScreen extends StatelessWidget {
@@ -112,6 +115,21 @@ class CampScheduleDetailScreen extends StatelessWidget {
       parentId: 102,
     ),
   ];
+
+  void onCreateButtonPressed(BuildContext context) async {
+    await createLivestream().then((liveStreamId) {
+      if (!context.mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ILSScreen(
+            liveStreamId: liveStreamId,
+            token: token,
+            mode: Mode.SEND_AND_RECV,
+          ),
+        ),
+      );
+    });
+  }
 
   CampScheduleDetailScreen({super.key, required this.camp});
 
@@ -347,6 +365,34 @@ class CampScheduleDetailScreen extends StatelessWidget {
                     icon: const Icon(Icons.photo_camera),
                     label: const Text(
                       "Photo",
+                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: StaffTheme.staffAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    // onPressed: () {
+                    //   Navigator.pushNamed(context, AppRoutes.joinLivestream);
+                    // },
+                    onPressed: () => onCreateButtonPressed(context),
+                    icon: const Icon(Icons.check_circle),
+                    label: const Text(
+                      "Livestream",
                       style: TextStyle(fontFamily: "Nunito", fontSize: 16),
                     ),
                   ),
