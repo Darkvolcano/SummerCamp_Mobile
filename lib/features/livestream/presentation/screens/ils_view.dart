@@ -48,14 +48,14 @@ class _ILSViewState extends State<ILSView> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: StaffTheme.staffBackground,
+      backgroundColor: Color(0xFF1C1C1E),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: StaffTheme.staffPrimary.withValues(alpha: 0.1),
+                color: StaffTheme.staffPrimary.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(12),
               ),
               margin: const EdgeInsets.all(12),
@@ -82,14 +82,14 @@ class _ILSViewState extends State<ILSView> {
                             Icon(
                               Icons.people,
                               size: 16,
-                              color: Colors.grey[700],
+                              color: Colors.grey[1000],
                             ),
                             const SizedBox(width: 4),
                             Text(
                               "${participants.length} ${participants.length == 1 ? 'participant' : 'participants'}",
                               style: textTheme.bodySmall?.copyWith(
                                 fontFamily: "Nunito",
-                                color: Colors.grey[700],
+                                color: Colors.grey[1000],
                                 fontSize: 13,
                               ),
                             ),
@@ -99,10 +99,7 @@ class _ILSViewState extends State<ILSView> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.copy,
-                      color: StaffTheme.staffPrimary,
-                    ),
+                    icon: const Icon(Icons.copy, color: Colors.white),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: widget.room.id));
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -7,6 +7,8 @@ class Activity {
   final String startTime;
   final String endTime;
   final int campId;
+  final bool isLivestream;
+  final String? livestreamId;
 
   const Activity({
     required this.activityId,
@@ -17,5 +19,7 @@ class Activity {
     required this.startTime,
     required this.endTime,
     required this.campId,
+    this.isLivestream = false,
+    this.livestreamId,
   });
 }
