@@ -7,6 +7,7 @@ class LivestreamControls extends StatefulWidget {
   final void Function()? onToggleCameraButtonPressed;
   final void Function()? onChangeModeButtonPressed;
   final void Function()? onLeaveButtonPressed;
+  final void Function()? onFlipCameraButtonPressed;
 
   const LivestreamControls({
     super.key,
@@ -15,6 +16,7 @@ class LivestreamControls extends StatefulWidget {
     this.onToggleCameraButtonPressed,
     this.onChangeModeButtonPressed,
     this.onLeaveButtonPressed,
+    this.onFlipCameraButtonPressed,
   });
 
   @override
@@ -30,19 +32,16 @@ class _LivestreamControlsState extends State<LivestreamControls> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 6),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         color: const Color(0xFF1C1C1E),
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(50),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.mode == Mode.SEND_AND_RECV) ...[
-            // Leave Button
             _buildControlButton(
               icon: Icons.call_end_rounded,
               backgroundColor: Colors.red,
@@ -52,12 +51,12 @@ class _LivestreamControlsState extends State<LivestreamControls> {
 
             const SizedBox(width: 12),
 
-            // Mic Button
             _buildControlButton(
               icon: isMicOn ? Icons.mic : Icons.mic_off,
               backgroundColor: isMicOn ? Colors.white : const Color(0xFF3A3A3C),
               iconColor: isMicOn ? Colors.black : Colors.white,
               isLoading: isMicLoading,
+              showDropdown: true,
               onPressed: () async {
                 if (isMicLoading) return;
 
@@ -87,7 +86,6 @@ class _LivestreamControlsState extends State<LivestreamControls> {
 
             const SizedBox(width: 12),
 
-            // Camera Button
             _buildControlButton(
               icon: isCameraOn ? Icons.videocam : Icons.videocam_off,
               backgroundColor: isCameraOn
@@ -121,8 +119,20 @@ class _LivestreamControlsState extends State<LivestreamControls> {
                 }
               },
             ),
+
             const SizedBox(width: 12),
-            // More Options Button
+
+            if (isCameraOn)
+              _buildControlButton(
+                icon: Icons.flip_camera_android,
+                backgroundColor: const Color(0xFF3A3A3C),
+                iconColor: Colors.white,
+                isLoading: false,
+                onPressed: widget.onFlipCameraButtonPressed,
+              ),
+
+            if (isCameraOn) const SizedBox(width: 12),
+
             _buildControlButton(
               icon: Icons.more_horiz,
               backgroundColor: const Color(0xFF3A3A3C),
@@ -133,15 +143,15 @@ class _LivestreamControlsState extends State<LivestreamControls> {
               },
             ),
           ] else if (widget.mode == Mode.RECV_ONLY) ...[
-            // Leave Button
             _buildControlButton(
               icon: Icons.call_end_rounded,
               backgroundColor: Colors.red,
               isLoading: false,
               onPressed: widget.onLeaveButtonPressed,
             ),
+
             const SizedBox(width: 12),
-            // Join as Host Button
+
             _buildControlButton(
               icon: Icons.person,
               backgroundColor: Colors.green,
@@ -164,10 +174,10 @@ class _LivestreamControlsState extends State<LivestreamControls> {
   }) {
     return Material(
       color: backgroundColor,
-      borderRadius: BorderRadius.circular(17),
+      borderRadius: BorderRadius.circular(30),
       child: InkWell(
         onTap: isLoading ? null : onPressed,
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(30),
         child: Container(
           padding: const EdgeInsets.all(12),
           child: Row(

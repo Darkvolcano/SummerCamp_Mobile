@@ -26,6 +26,7 @@ class _ILSViewState extends State<ILSView> {
 
   Map<String, Participant> participants = {};
   Mode? localMode;
+  VideoDeviceInfo? selectedCam;
 
   @override
   void initState() {
@@ -48,14 +49,14 @@ class _ILSViewState extends State<ILSView> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: Color(0xFF1C1C1E),
+      backgroundColor: StaffTheme.staffBackground,
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: StaffTheme.staffPrimary.withValues(alpha: 0.7),
+                color: StaffTheme.staffPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               margin: const EdgeInsets.all(12),
@@ -82,14 +83,14 @@ class _ILSViewState extends State<ILSView> {
                             Icon(
                               Icons.people,
                               size: 16,
-                              color: Colors.grey[1000],
+                              color: Colors.grey[700],
                             ),
                             const SizedBox(width: 4),
                             Text(
                               "${participants.length} ${participants.length == 1 ? 'participant' : 'participants'}",
                               style: textTheme.bodySmall?.copyWith(
                                 fontFamily: "Nunito",
-                                color: Colors.grey[1000],
+                                color: Colors.grey[700],
                                 fontSize: 13,
                               ),
                             ),
@@ -99,7 +100,10 @@ class _ILSViewState extends State<ILSView> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.white),
+                    icon: const Icon(
+                      Icons.copy,
+                      color: StaffTheme.staffPrimary,
+                    ),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: widget.room.id));
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -146,8 +150,36 @@ class _ILSViewState extends State<ILSView> {
           });
         },
         onLeaveButtonPressed: () {
-          // _showLeaveConfirmDialog(context);
-          widget.room.leave();
+          _showLeaveConfirmDialog(context);
+        },
+        onFlipCameraButtonPressed: () async {
+          // Get list camera
+          final List<VideoDeviceInfo>? cameras =
+              await VideoSDK.getVideoDevices();
+
+          if (!mounted) return;
+
+          if (cameras == null || cameras.length < 2) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Không thể đổi camera")),
+            );
+            return;
+          }
+
+          // If camera not choose, default get first camera
+          selectedCam ??= cameras.first;
+
+          // Find camera dirrent with camera choosen
+          final newCam = cameras.firstWhere(
+            (cam) => cam.deviceId != selectedCam?.deviceId,
+            orElse: () => cameras.first,
+          );
+
+          widget.room.changeCam(newCam);
+
+          setState(() {
+            selectedCam = newCam;
+          });
         },
       );
     } else {
@@ -160,53 +192,52 @@ class _ILSViewState extends State<ILSView> {
           });
         },
         onLeaveButtonPressed: () {
-          // _showLeaveConfirmDialog(context);
-          widget.room.leave();
+          _showLeaveConfirmDialog(context);
         },
       );
     }
   }
 
-  // void _showLeaveConfirmDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text(
-  //           'Rời khỏi Livestream?',
-  //           style: TextStyle(fontFamily: "Nunito", fontWeight: FontWeight.bold),
-  //         ),
-  //         content: const Text(
-  //           'Bạn có chắc muốn rời khỏi livestream này?',
-  //           style: TextStyle(fontFamily: "Nunito"),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: const Text('Hủy', style: TextStyle(fontFamily: "Nunito")),
-  //           ),
-  //           ElevatedButton(
-  //             style: ElevatedButton.styleFrom(
-  //               backgroundColor: Colors.redAccent,
-  //             ),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               widget.room.leave();
-  //             },
-  //             child: const Text(
-  //               'Rời',
-  //               style: TextStyle(
-  //                 fontFamily: "Nunito",
-  //                 color: Colors.white,
-  //                 fontWeight: FontWeight.bold,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  void _showLeaveConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Rời khỏi Livestream?',
+            style: TextStyle(fontFamily: "Nunito", fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'Bạn có chắc muốn rời khỏi livestream này?',
+            style: TextStyle(fontFamily: "Nunito"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Hủy', style: TextStyle(fontFamily: "Nunito")),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.room.leave();
+              },
+              child: const Text(
+                'Rời',
+                style: TextStyle(
+                  fontFamily: "Nunito",
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void setLivestreamEventListener() {
     widget.room.on(Events.participantJoined, (Participant participant) {
