@@ -601,7 +601,7 @@ class RegistrationDetailScreen extends StatelessWidget {
       endTime: "10:00",
       campId: 1,
       isLivestream: true,
-      livestreamId: "abcd-efgh-ijkl",
+      livestreamId: "ic99-z3ap-2yns",
     ),
     Activity(
       activityId: 2,
@@ -613,7 +613,7 @@ class RegistrationDetailScreen extends StatelessWidget {
       endTime: "20:00",
       campId: 1,
       isLivestream: true,
-      livestreamId: "mnop-qrst-uvwx",
+      livestreamId: "ic99-z3ap-2yns",
     ),
     Activity(
       activityId: 3,
@@ -672,7 +672,8 @@ class RegistrationDetailScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => ILSScreen(
           liveStreamId: activity.livestreamId!,
-          token: "YOUR_VIDEOSDK_TOKEN",
+          token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
           mode: Mode.RECV_ONLY,
         ),
       ),
@@ -958,8 +959,9 @@ class RegistrationDetailScreen extends StatelessWidget {
                           )
                         else
                           ...activitiesOfDay.map((act) {
-                            final isLive =
-                                act.isLivestream && isActivityLive(act);
+                            // final isLive =
+                            //     act.isLivestream && isActivityLive(act);
+                            final isLive = act.isLivestream;
 
                             return Container(
                               margin: const EdgeInsets.symmetric(vertical: 6),
@@ -1108,7 +1110,7 @@ class RegistrationDetailScreen extends StatelessWidget {
                                           size: 16,
                                         ),
                                         label: Text(
-                                          isLive ? "Join" : "Chưa bắt đầu",
+                                          isLive ? "Tham gia" : "Chưa bắt đầu",
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             fontFamily: "Nunito",

@@ -131,6 +131,19 @@ class CampScheduleDetailScreen extends StatelessWidget {
     });
   }
 
+  void onJoinLivestreamPressed(BuildContext context, String roomId, Mode mode) {
+    if (!context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ILSScreen(
+          liveStreamId: roomId,
+          token: token,
+          mode: Mode.SEND_AND_RECV,
+        ),
+      ),
+    );
+  }
+
   CampScheduleDetailScreen({super.key, required this.camp});
 
   Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
@@ -389,7 +402,15 @@ class CampScheduleDetailScreen extends StatelessWidget {
                     // onPressed: () {
                     //   Navigator.pushNamed(context, AppRoutes.joinLivestream);
                     // },
-                    onPressed: () => onCreateButtonPressed(context),
+                    // onPressed: () => onCreateButtonPressed(context),
+                    onPressed: () {
+                      onJoinLivestreamPressed(
+                        context,
+                        // camp.roomId,
+                        'ic99-z3ap-2yns',
+                        Mode.SEND_AND_RECV,
+                      );
+                    },
                     icon: const Icon(Icons.check_circle),
                     label: const Text(
                       "Livestream",
