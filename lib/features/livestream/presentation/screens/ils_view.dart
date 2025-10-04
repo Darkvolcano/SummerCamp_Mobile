@@ -150,10 +150,9 @@ class _ILSViewState extends State<ILSView> {
           });
         },
         onLeaveButtonPressed: () {
-          _showLeaveConfirmDialog(context);
+          widget.room.leave();
         },
         onFlipCameraButtonPressed: () async {
-          // Get list camera
           final List<VideoDeviceInfo>? cameras =
               await VideoSDK.getVideoDevices();
 
@@ -166,7 +165,6 @@ class _ILSViewState extends State<ILSView> {
             return;
           }
 
-          // If camera not choose, default get first camera
           selectedCam ??= cameras.first;
 
           // Find camera dirrent with camera choosen
@@ -192,51 +190,10 @@ class _ILSViewState extends State<ILSView> {
           });
         },
         onLeaveButtonPressed: () {
-          _showLeaveConfirmDialog(context);
+          widget.room.leave();
         },
       );
     }
-  }
-
-  void _showLeaveConfirmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Rời khỏi Livestream?',
-            style: TextStyle(fontFamily: "Nunito", fontWeight: FontWeight.bold),
-          ),
-          content: const Text(
-            'Bạn có chắc muốn rời khỏi livestream này?',
-            style: TextStyle(fontFamily: "Nunito"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy', style: TextStyle(fontFamily: "Nunito")),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.room.leave();
-              },
-              child: const Text(
-                'Rời',
-                style: TextStyle(
-                  fontFamily: "Nunito",
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void setLivestreamEventListener() {

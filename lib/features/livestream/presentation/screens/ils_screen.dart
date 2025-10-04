@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:videosdk/videosdk.dart';
 import 'ils_view.dart';
-import 'join_screen.dart';
 
 class ILSScreen extends StatefulWidget {
   final String liveStreamId;
@@ -53,11 +52,9 @@ class _ILSScreenState extends State<ILSScreen> {
     });
 
     _room.on(Events.roomLeft, () {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => JoinScreen()),
-        (route) => false,
-      );
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     });
   }
 
