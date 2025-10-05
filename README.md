@@ -378,50 +378,98 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Video Streaming
-  videosdk: ^1.2.8
+  flutter_localizations:
+    sdk: flutter
 
   # State Management
-  provider: ^6.0.5
+  provider: ^6.1.5+1
 
   # Networking
-  http: ^1.1.0
-  dio: ^5.3.3
+  dio: ^5.9.0 # API requests
+  http: ^1.5.0 # HTTP client
+  socket_io_client: ^3.1.2 # Real-time socket connection
 
   # Local Storage
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.3
+
+  # Video & Streaming
+  videosdk: ^3.0.0 # Live streaming (VideoSDK)
+  flutter_vlc_player: ^7.4.4 # Video player
 
   # Image Handling
-  image_picker: ^1.0.4
-  cached_network_image: ^3.3.0
+  image_picker: ^1.1.2 # Pick images from device
+  wechat_assets_picker: ^9.0.2 # Multi-image picker
 
-  # Notifications
+  # Firebase
   firebase_core: ^2.24.0
-  firebase_messaging: ^14.7.6
+  firebase_messaging: ^14.7.6 # Push notifications
+  firebase_storage: ^13.0.2 # Cloud storage
 
-  # Date/Time
-  intl: ^0.18.1
+  # UI Components
+  table_calendar: ^3.0.8 # Calendar widget
+  flutter_rating_bar: ^4.0.1 # Star ratings
+  lottie: ^3.0.0 # Animations
+
+  # Utilities
+  intl: ^0.20.2 # Date/time formatting
+  jwt_decoder: ^2.0.1 # JWT token handling
+  url_launcher: ^6.3.1 # Open URLs
+  permission_handler: ^12.0.0 # Device permissions
+  device_info_plus: ^11.3.0 # Device information
+  cupertino_icons: ^1.0.8 # iOS icons
 ```
 
 ---
 
 ## 🎨 App Themes
 
-### Parent Theme
+### Parent Theme (`AppTheme`)
+
+**Light Theme**:
 
 ```dart
-Primary: #FF6B35 (Orange)
-Accent: #FFB84D (Yellow)
-Background: #FFF5EB
+Primary: #FFA726 (Orange Sun)
+Accent: #FF7043 (Orange Bold)
+Background: #FFF8E7 (Light Yellow)
+Secondary: #4FC3F7 (Light Blue)
+Surface: White
 ```
 
-### Staff Theme
+**Dark Theme**:
 
 ```dart
-Primary: #00897B (Teal)
-Accent: #FF6F00 (Orange)
-Background: #F5F5F5
+Primary: #FF7043 (Orange Accent)
+Secondary: #4FC3F7 (Light Blue)
+Background: #1B1B2F (Dark Blue)
+Surface: #222244 (Dark Purple)
+AppBar: #2C2C54 (Medium Purple)
 ```
+
+**Features**:
+
+- Material 3 design
+- Rounded corners (12-16px)
+- Card elevation: 4 (light), 2 (dark)
+- Summer-themed warm colors
+
+### Staff Theme (`StaffTheme`)
+
+**Light Theme Only**:
+
+```dart
+Primary: #1565C0 (Dark Blue)
+Accent: #42A5F5 (Light Blue)
+Background: #F5F9FF (Very Light Blue)
+Surface: White
+```
+
+**Features**:
+
+- Professional blue palette
+- Material 3 design
+- Rounded corners (12-16px)
+- Card elevation: 4
+- Clean, business-oriented appearance
 
 ---
 
@@ -484,21 +532,27 @@ flutter build ios --release
 
 ### Livestream Issues
 
-- ✓ Check VideoSDK token validity
-- ✓ Verify camera/mic permissions
-- ✓ Test internet connection
+✓ Check VideoSDK token validity
+
+✓ Verify camera/mic permissions
+
+✓ Test internet connection
 
 ### Face Recognition Issues
 
-- ✓ Ensure good lighting
-- ✓ Check camera permissions
-- ✓ Use manual fallback
+✓ Ensure good lighting
+
+✓ Check camera permissions
+
+✓ Use manual fallback
 
 ### Photo Upload Issues
 
-- ✓ Verify storage permissions
-- ✓ Check file size limits
-- ✓ Confirm network connectivity
+✓ Verify storage permissions
+
+✓ Check file size limits
+
+✓ Confirm network connectivity
 
 ---
 
