@@ -7,7 +7,7 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:videosdk/videosdk.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class CampScheduleDetailScreen extends StatelessWidget {
   final Camp camp;

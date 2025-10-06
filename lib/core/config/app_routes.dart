@@ -13,7 +13,7 @@ import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/face_recognition_attendance_screen.dart';
-import 'package:summercamp/features/camp/presentation/screens/upload_photo_screen.dart';
+import 'package:summercamp/features/album/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_detail_screen.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class StaffBottomNavBar extends StatelessWidget {
   final int currentIndex;

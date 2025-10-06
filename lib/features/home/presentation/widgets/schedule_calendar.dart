@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class ScheduleCalendar extends StatefulWidget {
   const ScheduleCalendar({super.key});

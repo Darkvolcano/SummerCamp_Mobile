@@ -4,7 +4,7 @@ import 'package:summercamp/features/camp/presentation/screens/camp_schedule_scre
 import 'package:summercamp/features/home/presentation/widgets/schedule_calendar.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class StaffHome extends StatefulWidget {
   const StaffHome({super.key});

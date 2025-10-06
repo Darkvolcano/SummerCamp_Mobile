@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/report/domain/entities/report.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class ReportCreateScreen extends StatefulWidget {
   const ReportCreateScreen({super.key});

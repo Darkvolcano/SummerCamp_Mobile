@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class CampScheduleScreen extends StatelessWidget {
   const CampScheduleScreen({super.key});

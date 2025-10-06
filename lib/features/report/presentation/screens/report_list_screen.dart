@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
-import '../../../../core/config/staff_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class ReportListScreen extends StatefulWidget {
   const ReportListScreen({super.key});

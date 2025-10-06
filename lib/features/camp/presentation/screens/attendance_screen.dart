@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:summercamp/features/camp/domain/entities/camp.dart';
 // import 'package:summercamp/features/camper/domain/entities/camper.dart';
-// import '../../../../core/config/staff_theme.dart';
+// import 'package:summercamp/core/config/staff_theme.dart';
 
 // enum AttendanceStatus { absent, late, present }
 
@@ -225,9 +225,9 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
-import '../../../../core/config/staff_theme.dart';
 
 enum AttendanceStatus { absent, late, present }
 

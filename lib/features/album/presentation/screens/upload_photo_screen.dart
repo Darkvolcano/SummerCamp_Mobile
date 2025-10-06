@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import '../../../../core/config/staff_theme.dart';
-import '../../../camp/domain/entities/camp.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 
 class UploadPhotoScreen extends StatefulWidget {
   final Camp camp;
