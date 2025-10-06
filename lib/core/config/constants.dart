@@ -1,6 +1,7 @@
 class AppConstants {
   // API
-  static const String apiBaseUrl = 'https://wdp301-su25.space/api/';
+  static const String apiBaseUrl =
+      'https://summercampapi-339197681269.asia-southeast1.run.app/api/';
 
   // Socket
   static const String socketUrl = 'https://wdp301-su25.space/';
