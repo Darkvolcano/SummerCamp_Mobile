@@ -6,6 +6,7 @@ class Camper {
   final int healthRecordId;
   final DateTime createAt;
   final int parentId;
+  final String avatar;
   final String? condition;
   final String? allergies;
   final bool? isAllergy;
@@ -19,6 +20,7 @@ class Camper {
     required this.healthRecordId,
     required this.createAt,
     required this.parentId,
+    required this.avatar,
     this.condition,
     this.allergies,
     this.isAllergy,

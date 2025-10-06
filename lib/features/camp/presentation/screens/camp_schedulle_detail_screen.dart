@@ -104,6 +104,8 @@ class CampScheduleDetailScreen extends StatelessWidget {
       healthRecordId: 1,
       createAt: DateTime.now(),
       parentId: 101,
+      avatar:
+          "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80",
     ),
     Camper(
       camperId: 2,
@@ -113,6 +115,8 @@ class CampScheduleDetailScreen extends StatelessWidget {
       healthRecordId: 2,
       createAt: DateTime.now(),
       parentId: 102,
+      avatar:
+          "https://img.freepik.com/free-vector/woman-with-braided-hair-illustration_1308-174675.jpg?semt=ais_hybrid&w=740&q=80",
     ),
   ];
 
@@ -414,6 +418,33 @@ class CampScheduleDetailScreen extends StatelessWidget {
                     icon: const Icon(Icons.check_circle),
                     label: const Text(
                       "Livestream",
+                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.faceRecognitionAttendance,
+                        arguments: campers,
+                      );
+                    },
+                    icon: const Icon(Icons.photo_camera),
+                    label: const Text(
+                      "Điểm danh khuôn mặt",
                       style: TextStyle(fontFamily: "Nunito", fontSize: 16),
                     ),
                   ),

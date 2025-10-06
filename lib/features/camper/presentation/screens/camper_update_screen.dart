@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
@@ -15,27 +18,40 @@ class CamperUpdateScreen extends StatefulWidget {
 }
 
 class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
-  late TextEditingController nameCtrl;
-  late TextEditingController dobCtrl;
-  late TextEditingController conditionCtrl;
-  late TextEditingController allergiesCtrl;
-  late TextEditingController noteCtrl;
+  late TextEditingController nameController;
+  late TextEditingController dobController;
+  late TextEditingController conditionController;
+  late TextEditingController allergiesController;
+  late TextEditingController noteController;
 
   String? gender;
   bool? hasAllergy;
+  XFile? _avatar;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    nameCtrl = TextEditingController(text: widget.camper.fullName);
-    dobCtrl = TextEditingController(
+    nameController = TextEditingController(text: widget.camper.fullName);
+    dobController = TextEditingController(
       text: DateFormatter.formatFromString(widget.camper.dob),
     );
-    conditionCtrl = TextEditingController(text: widget.camper.condition ?? "");
-    allergiesCtrl = TextEditingController(text: widget.camper.allergies ?? "");
-    noteCtrl = TextEditingController(text: widget.camper.note ?? "");
+    conditionController = TextEditingController(
+      text: widget.camper.condition ?? "",
+    );
+    allergiesController = TextEditingController(
+      text: widget.camper.allergies ?? "",
+    );
+    noteController = TextEditingController(text: widget.camper.note ?? "");
     gender = widget.camper.gender;
     hasAllergy = widget.camper.isAllergy;
+  }
+
+  Future<void> _pickAvatar() async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() => _avatar = picked);
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -49,7 +65,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
     );
     if (picked != null) {
       setState(() {
-        dobCtrl.text = DateFormat("dd/MM/yyyy").format(picked);
+        dobController.text = DateFormat("dd/MM/yyyy").format(picked);
       });
     }
   }
@@ -75,14 +91,36 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            _buildTextField(nameCtrl, "Tên đầy đủ"),
+            GestureDetector(
+              onTap: _pickAvatar,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey.shade300,
+                backgroundImage: _avatar != null
+                    ? FileImage(File(_avatar!.path)) as ImageProvider
+                    : (widget.camper.avatar.isNotEmpty
+                          ? NetworkImage(widget.camper.avatar)
+                          : null),
+                child: (_avatar == null && widget.camper.avatar.isEmpty)
+                    ? const Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.white70,
+                      )
+                    : null,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            _buildTextField(nameController, "Tên đầy đủ"),
 
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: TextField(
-                controller: dobCtrl,
+                controller: dobController,
                 readOnly: true,
-                decoration: _inputDecoration("Ngày sinh (dd/MM/yyyy)").copyWith(
+                decoration: _inputDecoration("Ngày sinh").copyWith(
                   suffixIcon: const Icon(
                     Icons.calendar_today,
                     color: AppTheme.summerPrimary,
@@ -105,7 +143,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
               ),
             ),
 
-            _buildTextField(conditionCtrl, "Tình trạng sức khỏe"),
+            _buildTextField(conditionController, "Tình trạng sức khỏe"),
 
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -145,13 +183,16 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                   if (hasAllergy == true)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: _buildTextField(allergiesCtrl, "Nhập loại dị ứng"),
+                      child: _buildTextField(
+                        allergiesController,
+                        "Nhập loại dị ứng",
+                      ),
                     ),
                 ],
               ),
             ),
 
-            _buildTextField(noteCtrl, "Ghi chú thêm"),
+            _buildTextField(noteController, "Ghi chú thêm"),
 
             SizedBox(
               width: double.infinity,
@@ -167,16 +208,19 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                 onPressed: () {
                   final updated = Camper(
                     camperId: widget.camper.camperId,
-                    fullName: nameCtrl.text,
-                    dob: dobCtrl.text,
+                    fullName: nameController.text,
+                    dob: dobController.text,
                     gender: gender ?? "Nam",
                     healthRecordId: widget.camper.healthRecordId,
                     createAt: widget.camper.createAt,
                     parentId: widget.camper.parentId,
-                    condition: conditionCtrl.text,
-                    allergies: hasAllergy == true ? allergiesCtrl.text : null,
+                    avatar: _avatar?.path ?? widget.camper.avatar,
+                    condition: conditionController.text,
+                    allergies: hasAllergy == true
+                        ? allergiesController.text
+                        : null,
                     isAllergy: hasAllergy,
-                    note: noteCtrl.text,
+                    note: noteController.text,
                   );
                   provider.updateCamper(widget.camper.camperId, updated);
                   Navigator.pop(context);
@@ -197,10 +241,13 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String label) {
+  Widget _buildTextField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(controller: ctrl, decoration: _inputDecoration(label)),
+      child: TextField(
+        controller: controller,
+        decoration: _inputDecoration(label),
+      ),
     );
   }
 

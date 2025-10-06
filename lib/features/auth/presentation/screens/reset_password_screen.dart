@@ -10,8 +10,8 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  final newPasswordCtrl = TextEditingController();
-  final confirmPasswordCtrl = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +47,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                 const SizedBox(height: 24),
 
-                _buildPasswordField(newPasswordCtrl, "Mật khẩu mới"),
-                _buildPasswordField(confirmPasswordCtrl, "Xác nhận mật khẩu"),
+                _buildPasswordField(newPasswordController, "Mật khẩu mới"),
+                _buildPasswordField(
+                  confirmPasswordController,
+                  "Xác nhận mật khẩu",
+                ),
 
                 const SizedBox(height: 24),
 
@@ -63,8 +66,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                     ),
                     onPressed: () {
-                      final newPass = newPasswordCtrl.text.trim();
-                      final confirmPass = confirmPasswordCtrl.text.trim();
+                      final newPass = newPasswordController.text.trim();
+                      final confirmPass = confirmPasswordController.text.trim();
 
                       if (newPass == confirmPass && newPass.isNotEmpty) {
                         // call API resetPassword(email, otp, newPass)
@@ -109,11 +112,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 
-  Widget _buildPasswordField(TextEditingController ctrl, String label) {
+  Widget _buildPasswordField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
-        controller: ctrl,
+        controller: controller,
         obscureText: true,
         decoration: InputDecoration(
           labelText: label,

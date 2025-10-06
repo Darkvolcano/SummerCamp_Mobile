@@ -24,6 +24,7 @@ class CamperRepositoryImpl implements CamperRepository {
       healthRecordId: camper.healthRecordId,
       createAt: camper.createAt,
       parentId: camper.parentId,
+      avatar: camper.avatar,
     );
     await service.createCamper(model.toJson());
   }

@@ -11,7 +11,7 @@ class ForgotPasswordEmailScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
-  final emailCtrl = TextEditingController();
+  final emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                 ),
                 const SizedBox(height: 24),
                 TextField(
-                  controller: emailCtrl,
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
                     prefixIcon: const Icon(
@@ -71,7 +71,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                       ),
                     ),
                     onPressed: () {
-                      final email = emailCtrl.text.trim();
+                      final email = emailController.text.trim();
                       if (email.isNotEmpty) {
                         Navigator.pushNamed(
                           context,

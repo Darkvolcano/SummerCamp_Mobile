@@ -12,10 +12,10 @@ class ReportCreateScreen extends StatefulWidget {
 class _ReportCreateScreenState extends State<ReportCreateScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _camperIdCtrl = TextEditingController();
-  final TextEditingController _noteCtrl = TextEditingController();
-  final TextEditingController _imageCtrl = TextEditingController();
-  final TextEditingController _activityIdCtrl = TextEditingController();
+  final TextEditingController _camperIdController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _imageController = TextEditingController();
+  final TextEditingController _activityIdController = TextEditingController();
 
   String _status = "Pending";
   String _level = "Low";
@@ -24,13 +24,13 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
     if (_formKey.currentState!.validate()) {
       final report = Report(
         reportId: DateTime.now().millisecondsSinceEpoch,
-        camperId: int.tryParse(_camperIdCtrl.text) ?? 0,
-        note: _noteCtrl.text,
-        image: _imageCtrl.text,
+        camperId: int.tryParse(_camperIdController.text) ?? 0,
+        note: _noteController.text,
+        image: _imageController.text,
         createAt: DateTime.now(),
         status: _status,
         level: _level,
-        activityId: int.tryParse(_activityIdCtrl.text) ?? 0,
+        activityId: int.tryParse(_activityIdController.text) ?? 0,
       );
       Navigator.pop(context, report);
     }
@@ -56,7 +56,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
           child: ListView(
             children: [
               TextFormField(
-                controller: _camperIdCtrl,
+                controller: _camperIdController,
                 decoration: const InputDecoration(
                   labelText: "Camper ID",
                   labelStyle: TextStyle(fontFamily: "Nunito"),
@@ -67,7 +67,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
               ),
               const SizedBox(height: 12),
               TextFormField(
-                controller: _noteCtrl,
+                controller: _noteController,
                 decoration: const InputDecoration(
                   labelText: "Ghi chú",
                   labelStyle: TextStyle(fontFamily: "Nunito"),
@@ -78,7 +78,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
               ),
               const SizedBox(height: 12),
               TextFormField(
-                controller: _imageCtrl,
+                controller: _imageController,
                 decoration: const InputDecoration(
                   labelText: "Image URL",
                   labelStyle: TextStyle(fontFamily: "Nunito"),
@@ -86,7 +86,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
               ),
               const SizedBox(height: 12),
               TextFormField(
-                controller: _activityIdCtrl,
+                controller: _activityIdController,
                 decoration: const InputDecoration(
                   labelText: "Activity ID",
                   labelStyle: TextStyle(fontFamily: "Nunito"),

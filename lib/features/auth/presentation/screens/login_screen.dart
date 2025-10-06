@@ -197,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildInputField(
-    TextEditingController ctrl,
+    TextEditingController controller,
     String label,
     IconData icon, {
     bool obscure = false,
@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
-        controller: ctrl,
+        controller: controller,
         obscureText: obscure,
         style: const TextStyle(color: Colors.black87),
         decoration: InputDecoration(

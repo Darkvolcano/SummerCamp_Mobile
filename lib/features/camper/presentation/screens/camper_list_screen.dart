@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 
 class CamperListScreen extends StatefulWidget {
@@ -72,9 +73,8 @@ class _CamperListScreenState extends State<CamperListScreen> {
                         children: [
                           CircleAvatar(
                             radius: 35,
-                            backgroundImage: const AssetImage(
-                              "assets/images/default_avatar.png",
-                            ),
+                            backgroundImage:
+                                NetworkImage(camper.avatar) as ImageProvider,
                             backgroundColor: AppTheme.summerPrimary.withValues(
                               alpha: 0.2,
                             ),
@@ -91,7 +91,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            "DOB: ${camper.dob}",
+                            "DOB: ${DateFormatter.formatFromString(camper.dob)}",
                             style: textTheme.bodySmall?.copyWith(
                               fontFamily: "Nunito",
                               color: Colors.grey[700],

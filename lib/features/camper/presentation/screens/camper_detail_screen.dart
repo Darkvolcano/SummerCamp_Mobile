@@ -31,12 +31,12 @@ class CamperDetailScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage: const AssetImage(
-                "assets/images/default_avatar.png",
-              ),
+              backgroundImage: NetworkImage(camper.avatar) as ImageProvider,
               backgroundColor: AppTheme.summerPrimary.withValues(alpha: 0.2),
             ),
+
             const SizedBox(height: 20),
+
             Card(
               elevation: 3,
               shape: RoundedRectangleBorder(

@@ -12,6 +12,7 @@ import 'package:summercamp/features/camp/presentation/screens/attendance_screen.
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
+import 'package:summercamp/features/camp/presentation/screens/face_recognition_attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
@@ -70,6 +71,7 @@ class AppRoutes {
   static const String registrationFailure = 'REGISTRATION-FAILURE';
   static const String album = 'ALBUM'; // hiện tại chưa có
   static const String feedbackForm = 'FEEDBACK-FORM';
+  static const String faceRecognitionAttendance = 'FACE-RECOGNITION-ATTENDANCE';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -190,6 +192,12 @@ class AppRoutes {
 
       case registrationFailure:
         return MaterialPageRoute(builder: (_) => RegistrationFailureScreen());
+
+      case faceRecognitionAttendance:
+        final campers = settings.arguments as List<Camper>;
+        return MaterialPageRoute(
+          builder: (_) => FaceAttendanceScreen(campers: campers),
+        );
       // Ex: staff only
       // case '/staff-dashboard':
       //   if (role == "Staff") {

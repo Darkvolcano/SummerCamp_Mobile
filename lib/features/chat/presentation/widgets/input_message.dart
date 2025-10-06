@@ -9,7 +9,7 @@ class InputMessage extends StatefulWidget {
 }
 
 class _InputMessageState extends State<InputMessage> {
-  final TextEditingController _ctrl = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class _InputMessageState extends State<InputMessage> {
       children: [
         Expanded(
           child: TextField(
-            controller: _ctrl,
+            controller: _controller,
             decoration: InputDecoration(
               hintText: 'Nhập tin nhắn...',
               border: OutlineInputBorder(
@@ -47,9 +47,9 @@ class _InputMessageState extends State<InputMessage> {
   }
 
   void _send() {
-    final text = _ctrl.text.trim();
+    final text = _controller.text.trim();
     if (text.isEmpty) return;
     widget.onSend(text);
-    _ctrl.clear();
+    _controller.clear();
   }
 }

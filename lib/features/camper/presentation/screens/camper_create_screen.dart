@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
@@ -13,14 +16,23 @@ class CamperCreateScreen extends StatefulWidget {
 }
 
 class _CamperCreateScreenState extends State<CamperCreateScreen> {
-  final nameCtrl = TextEditingController();
-  final dobCtrl = TextEditingController();
-  final conditionCtrl = TextEditingController();
-  final allergiesCtrl = TextEditingController();
-  final noteCtrl = TextEditingController();
+  final nameController = TextEditingController();
+  final dobController = TextEditingController();
+  final conditionController = TextEditingController();
+  final allergiesController = TextEditingController();
+  final noteController = TextEditingController();
 
   String? gender;
   bool? hasAllergy;
+  XFile? _avatar;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickAvatar() async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() => _avatar = picked);
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime now = DateTime.now();
@@ -33,7 +45,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
     );
     if (picked != null) {
       setState(() {
-        dobCtrl.text = DateFormat("dd/MM/yyyy").format(picked);
+        dobController.text = DateFormat("dd/MM/yyyy").format(picked);
       });
     }
   }
@@ -59,14 +71,34 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            _buildTextField(nameCtrl, "Tên đầy đủ"),
+            GestureDetector(
+              onTap: _pickAvatar,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey.shade300,
+                backgroundImage: _avatar != null
+                    ? FileImage(File(_avatar!.path))
+                    : null,
+                child: _avatar == null
+                    ? const Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.white70,
+                      )
+                    : null,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            _buildTextField(nameController, "Tên đầy đủ"),
 
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: TextField(
-                controller: dobCtrl,
+                controller: dobController,
                 readOnly: true,
-                decoration: _inputDecoration("Ngày sinh (dd/MM/yyyy)").copyWith(
+                decoration: _inputDecoration("Ngày sinh").copyWith(
                   suffixIcon: const Icon(
                     Icons.calendar_today,
                     color: AppTheme.summerPrimary,
@@ -89,7 +121,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
               ),
             ),
 
-            _buildTextField(conditionCtrl, "Tình trạng sức khỏe"),
+            _buildTextField(conditionController, "Tình trạng sức khỏe"),
 
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -129,13 +161,16 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                   if (hasAllergy == true)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: _buildTextField(allergiesCtrl, "Nhập loại dị ứng"),
+                      child: _buildTextField(
+                        allergiesController,
+                        "Nhập loại dị ứng",
+                      ),
                     ),
                 ],
               ),
             ),
 
-            _buildTextField(noteCtrl, "Ghi chú thêm"),
+            _buildTextField(noteController, "Ghi chú thêm"),
 
             SizedBox(
               width: double.infinity,
@@ -151,16 +186,19 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                 onPressed: () {
                   final newCamper = Camper(
                     camperId: DateTime.now().millisecondsSinceEpoch,
-                    fullName: nameCtrl.text,
-                    dob: dobCtrl.text,
+                    fullName: nameController.text,
+                    dob: dobController.text,
                     gender: gender ?? "Nam",
                     healthRecordId: 1,
                     createAt: DateTime.now(),
                     parentId: 1,
-                    condition: conditionCtrl.text,
-                    allergies: hasAllergy == true ? allergiesCtrl.text : null,
+                    avatar: _avatar!.path,
+                    condition: conditionController.text,
+                    allergies: hasAllergy == true
+                        ? allergiesController.text
+                        : null,
                     isAllergy: hasAllergy,
-                    note: noteCtrl.text,
+                    note: noteController.text,
                   );
                   provider.createCamper(newCamper);
                   Navigator.pop(context);
@@ -181,10 +219,13 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String label) {
+  Widget _buildTextField(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(controller: ctrl, decoration: _inputDecoration(label)),
+      child: TextField(
+        controller: controller,
+        decoration: _inputDecoration(label),
+      ),
     );
   }
 

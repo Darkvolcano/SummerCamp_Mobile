@@ -11,7 +11,7 @@ class ForgotPasswordOtpScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
-  final otpCtrl = TextEditingController();
+  final otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                 const SizedBox(height: 24),
 
                 TextField(
-                  controller: otpCtrl,
+                  controller: otpController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "OTP",
@@ -74,7 +74,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                       ),
                     ),
                     onPressed: () {
-                      final otp = otpCtrl.text.trim();
+                      final otp = otpController.text.trim();
                       if (otp.isNotEmpty) {
                         Navigator.pushNamed(
                           context,

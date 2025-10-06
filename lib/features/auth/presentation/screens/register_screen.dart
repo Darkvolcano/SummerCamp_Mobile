@@ -12,11 +12,11 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final firstNameCtrl = TextEditingController();
-  final lastNameCtrl = TextEditingController();
-  final emailCtrl = TextEditingController();
-  final phoneCtrl = TextEditingController();
-  final passwordCtrl = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +48,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                _buildInput(firstNameCtrl, "Họ", Icons.person),
-                _buildInput(lastNameCtrl, "Tên", Icons.person_outline),
-                _buildInput(emailCtrl, "Email", Icons.email),
-                _buildInput(phoneCtrl, "Số điện thoại", Icons.phone),
+                _buildInput(firstNameController, "Họ", Icons.person),
+                _buildInput(lastNameController, "Tên", Icons.person_outline),
+                _buildInput(emailController, "Email", Icons.email),
+                _buildInput(phoneController, "Số điện thoại", Icons.phone),
                 _buildInput(
-                  passwordCtrl,
+                  passwordController,
                   "Mật khẩu",
                   Icons.lock,
                   obscure: true,
@@ -78,11 +78,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             final nav = Navigator.of(context);
 
                             await provider.register(
-                              firstName: firstNameCtrl.text,
-                              lastName: lastNameCtrl.text,
-                              email: emailCtrl.text,
-                              phoneNumber: phoneCtrl.text,
-                              password: passwordCtrl.text,
+                              firstName: firstNameController.text,
+                              lastName: lastNameController.text,
+                              email: emailController.text,
+                              phoneNumber: phoneController.text,
+                              password: passwordController.text,
                             );
 
                             if (!mounted) return;
@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildInput(
-    TextEditingController ctrl,
+    TextEditingController controller,
     String label,
     IconData icon, {
     bool obscure = false,
@@ -135,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
-        controller: ctrl,
+        controller: controller,
         obscureText: obscure,
         style: const TextStyle(color: Colors.black87),
         decoration: InputDecoration(

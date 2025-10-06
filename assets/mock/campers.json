@@ -10,7 +10,8 @@
     "condition": "Asthma",
     "allergies": "Peanuts",
     "isAllergy": true,
-    "note": "Carries an inhaler"
+    "note": "Carries an inhaler",
+    "avatar": "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740&q=80"
   },
   {
     "camperId": 2,
@@ -23,6 +24,7 @@
     "condition": null,
     "allergies": null,
     "isAllergy": false,
-    "note": null
+    "note": null,
+    "avatar": "https://img.freepik.com/free-vector/woman-with-braided-hair-illustration_1308-174675.jpg?semt=ais_hybrid&w=740&q=80"
   }
 ]
