@@ -565,7 +565,6 @@ flutter build ios --release
 - [ ] Dark mode
 - [ ] Tablet optimization
 - [ ] Widget support
-- [ ] Apple Watch companion
 
 ---
 
