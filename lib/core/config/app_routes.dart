@@ -4,6 +4,7 @@ import 'package:summercamp/features/auth/presentation/screens/forgot_password_em
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/reset_password_screen.dart';
+import 'package:summercamp/features/auth/presentation/screens/verify_otp_screent.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
@@ -41,6 +42,7 @@ class AppRoutes {
   static const String forgotPasswordEmail = 'FORGOT-PASSWORD-EMAIL';
   static const String forgotPasswordOTP = 'FORGOT-PASSWORD-OTP';
   static const String resetPassword = 'RESET-PASSWORD';
+  static const String verifyOTP = 'VERIFY-OTP';
   static const String chat = 'CHAT'; // hiện tại chưa có
   static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
   static const String chatAI = 'CHAT-AI';
@@ -92,6 +94,9 @@ class AppRoutes {
 
       case resetPassword:
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
+
+      case verifyOTP:
+        return MaterialPageRoute(builder: (_) => VerifyOtpScreen());
 
       case home:
         return MaterialPageRoute(builder: (_) => const Home());

@@ -5,12 +5,12 @@ class CampApiService {
   CampApiService(this.client);
 
   Future<List<dynamic>> fetchCamps() async {
-    final res = await client.get('camps');
+    final res = await client.get('camp');
     return res.data as List;
   }
 
   Future<Map<String, dynamic>> createCamp(Map<String, dynamic> data) async {
-    final res = await client.post('camps', data: data);
+    final res = await client.post('camp', data: data);
     return res.data;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
 import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';
@@ -92,6 +93,7 @@ Future<void> main() async {
           create: (_) => AuthProvider(
             loginUser: LoginUser(userRepo),
             registerUser: RegisterUser(userRepo),
+            verifyOTP: VerifyOtp(userRepo),
             getUserProfile: GetUserProfile(userRepo),
             getUserProfiles: GetUserProfiles(userRepo),
             getUsersUseCase: GetUsers(userRepo),
@@ -145,7 +147,7 @@ class SummerCampApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.staffHome,
+      initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
 
       localizationsDelegates: const [

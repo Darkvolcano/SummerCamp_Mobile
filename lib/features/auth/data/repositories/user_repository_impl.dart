@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:summercamp/core/config/constants.dart';
 import 'package:summercamp/features/auth/data/models/user_model.dart';
 import 'package:summercamp/features/auth/data/services/auth_api_service.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final AuthApiService service;
@@ -13,25 +17,50 @@ class UserRepositoryImpl implements UserRepository {
     return UserModel.fromJson(Map<String, dynamic>.from(raw));
   }
 
+  // @override
+  // Future<User> login(String email, String password) async {
+  //   final data = await service.login(email, password);
+
+  //   if (data['token'] != null) {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString("token", data['token']);
+  //   }
+
+  //   return _parseUser(data);
+  // }
   @override
   Future<User> login(String email, String password) async {
-    final data = await service.login(email, password);
+    // 🔹 Gọi service login => nhận về token
+    final token = await service.login(email, password);
 
-    if (data['token'] != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("token", data['token']);
+    if (token == null) {
+      throw Exception('Login failed: No token received');
     }
 
-    return _parseUser(data);
+    // 🔹 Lưu token (đã làm trong service, nhưng ta lưu lại để chắc)
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(AppConstants.tokenKey, token);
+
+    // 🔹 Lấy user đã được decode & lưu trong SharedPreferences (từ AuthApiService)
+    final userJson = prefs.getString(AppConstants.userKey);
+    if (userJson == null) {
+      throw Exception('Login failed: Missing user data from token');
+    }
+
+    final Map<String, dynamic> userMap = jsonDecode(userJson);
+    final user = _parseUser(userMap);
+
+    return user;
   }
 
   @override
-  Future<User> register({
+  Future<RegisterResponse> register({
     required String firstName,
     required String lastName,
     required String email,
     required String phoneNumber,
     required String password,
+    required String dob,
   }) async {
     final data = await service.register(
       firstName: firstName,
@@ -39,12 +68,15 @@ class UserRepositoryImpl implements UserRepository {
       email: email,
       phoneNumber: phoneNumber,
       password: password,
+      dob: dob,
     );
 
-    if (data['token'] != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("token", data['token']);
-    }
+    return RegisterResponse.fromJson(data);
+  }
+
+  @override
+  Future<User> verifyOTP({required String email, required String otp}) async {
+    final data = await service.verifyOTP(email: email, otp: otp);
 
     return _parseUser(data);
   }
@@ -77,5 +109,21 @@ class UserRepositoryImpl implements UserRepository {
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("token");
+  }
+
+  @override
+  Future<User> forgotPassword(String email) async {
+    final data = await service.forgotPassword(email);
+    return _parseUser(data);
+  }
+
+  @override
+  Future<User> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
+    final data = await service.resetPassword(email, otp, newPassword);
+    return _parseUser(data);
   }
 }
