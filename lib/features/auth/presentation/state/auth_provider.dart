@@ -33,12 +33,14 @@ class AuthProvider with ChangeNotifier {
 
   User? _currentUser;
   String? _token;
+  String? _userRole;
   bool _isLoading = false;
   String? _error;
   RegisterResponse? _registerResponse;
 
   User? get user => _currentUser;
   String? get token => _token;
+  String? get userRole => _userRole;
   bool get isLoading => _isLoading;
   String? get error => _error;
   RegisterResponse? get registerResponse => _registerResponse;
@@ -48,6 +50,8 @@ class AuthProvider with ChangeNotifier {
     try {
       _currentUser = await loginUser(email, password);
       _token = await repository.getToken();
+
+      _userRole = _currentUser?.role;
 
       _error = null;
     } catch (e) {

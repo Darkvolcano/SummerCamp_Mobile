@@ -13,15 +13,23 @@ class UserModel extends User {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final fullName = json['name'] as String? ?? '';
+    final parts = fullName.split(' ');
+
+    String firstName = parts.isNotEmpty ? parts.first : '';
+    String lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+
     return UserModel(
-      userId: json['userId'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      role: json['role'],
-      avatar: json['avatar'],
-      dob: json['dob'],
+      userId: json['userId'] as int? ?? 0,
+
+      firstName: json['firstName'] as String? ?? firstName,
+      lastName: json['lastName'] as String? ?? lastName,
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      avatar: json['avatar'] as String? ?? '',
+      dob: json['dob'] as String? ?? '',
+
+      email: json['email'] as String? ?? '',
+      role: json['role'] as String? ?? '',
     );
   }
 

@@ -14,34 +14,33 @@ class UserRepositoryImpl implements UserRepository {
 
   User _parseUser(Map<String, dynamic> data) {
     final raw = (data['user'] is Map<String, dynamic>) ? data['user'] : data;
-    return UserModel.fromJson(Map<String, dynamic>.from(raw));
+
+    final processedData = Map<String, dynamic>.from(raw);
+
+    if (processedData['name'] == null) {
+      processedData['name'] = '';
+    }
+    if (processedData['email'] == null) {
+      processedData['email'] = '';
+    }
+    if (processedData['role'] == null) {
+      processedData['role'] = '';
+    }
+
+    return UserModel.fromJson(processedData);
   }
 
-  // @override
-  // Future<User> login(String email, String password) async {
-  //   final data = await service.login(email, password);
-
-  //   if (data['token'] != null) {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString("token", data['token']);
-  //   }
-
-  //   return _parseUser(data);
-  // }
   @override
   Future<User> login(String email, String password) async {
-    // 🔹 Gọi service login => nhận về token
     final token = await service.login(email, password);
 
     if (token == null) {
       throw Exception('Login failed: No token received');
     }
 
-    // 🔹 Lưu token (đã làm trong service, nhưng ta lưu lại để chắc)
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(AppConstants.tokenKey, token);
 
-    // 🔹 Lấy user đã được decode & lưu trong SharedPreferences (từ AuthApiService)
     final userJson = prefs.getString(AppConstants.userKey);
     if (userJson == null) {
       throw Exception('Login failed: Missing user data from token');

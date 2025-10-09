@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
-  const VerifyOtpScreen({super.key});
+  final String email;
+  const VerifyOtpScreen({super.key, required this.email});
 
   @override
   State<VerifyOtpScreen> createState() => _VerifyOtpScreenState();
@@ -18,7 +20,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   bool _isLoading = false;
-  late final provider = context.watch<AuthProvider>();
+  late final AuthProvider provider;
+
+  @override
+  void initState() {
+    super.initState();
+    provider = context.read<AuthProvider>();
+  }
 
   @override
   void dispose() {
@@ -103,8 +111,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             ),
             onPressed: () {
               Navigator.of(ctx).pop();
-              // TODO: Navigate to home or login screen
-              Navigator.of(context).pushReplacementNamed('/home');
+              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
             },
             child: const Text('Tiếp tục'),
           ),
@@ -153,7 +160,6 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         ),
       );
 
-      // Clear all fields
       for (var controller in _controllers) {
         controller.clear();
       }
@@ -170,7 +176,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final email = ModalRoute.of(context)!.settings.arguments as String;
+    final String currentEmail = widget.email;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -201,7 +207,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 32),
+
                   Text(
                     "Xác thực OTP",
                     style: textTheme.headlineSmall?.copyWith(
@@ -210,7 +218,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       color: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
                   Text(
                     "Mã OTP đã được gửi đến",
                     style: textTheme.bodyLarge?.copyWith(
@@ -218,21 +228,27 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       fontFamily: "Nunito",
                     ),
                   ),
+
                   const SizedBox(height: 4),
+
                   Text(
-                    email,
+                    currentEmail,
                     style: textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontFamily: "Nunito",
                     ),
                   ),
+
                   const SizedBox(height: 40),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(6, (index) => _buildOtpBox(index)),
                   ),
+
                   const SizedBox(height: 32),
+
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -244,7 +260,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: _isLoading ? null : () => _verifyOtp(email),
+                      onPressed: _isLoading
+                          ? null
+                          : () => _verifyOtp(currentEmail),
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,
@@ -263,7 +281,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             ),
                     ),
                   ),
+
                   const SizedBox(height: 24),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -275,7 +295,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: _isLoading ? null : () => _resendOtp(email),
+                        onPressed: _isLoading
+                            ? null
+                            : () => _resendOtp(currentEmail),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: const Size(0, 0),
@@ -288,11 +310,23 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                             decorationColor: Colors.white,
-                            fontFamily: "Nunito",
                           ),
                         ),
                       ),
                     ],
+                  ),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    },
+                    child: const Text(
+                      "Đã có tài khoản? Đăng nhập",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -306,10 +340,11 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   Widget _buildOtpBox(int index) {
     return Container(
       width: 50,
-      height: 60,
+      height: 50,
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),

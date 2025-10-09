@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summercamp/core/config/constants.dart';
@@ -12,26 +13,6 @@ class AuthApiService {
 
   AuthApiService(this.client);
 
-  // Future<Map<String, dynamic>> login(String email, String password) async {
-  //   try {
-  //     final res = await client.post(
-  //       'auth/login',
-  //       data: {'email': email, 'password': password},
-  //     );
-
-  //     final data = res.data as Map<String, dynamic>;
-
-  //     // Save token to SharedPreferences
-  //     if (data['token'] != null) {
-  //       final prefs = await SharedPreferences.getInstance();
-  //       await prefs.setString(AppConstants.tokenKey, data['token']);
-  //     }
-
-  //     return data;
-  //   } on DioException catch (e) {
-  //     throw mapDioError(e);
-  //   }
-  // }
   Future<String?> login(String email, String password) async {
     try {
       final res = await client.post(
@@ -40,13 +21,12 @@ class AuthApiService {
       );
 
       final data = res.data as Map<String, dynamic>;
-      final token = data['token'];
+      final token = data['accessToken'] as String?;
 
       if (token == null) {
         return null;
       }
 
-      // 🔹 Decode token để lấy thông tin user
       Map<String, dynamic> decoded = {};
       try {
         decoded = JwtDecoder.decode(token);
@@ -54,22 +34,37 @@ class AuthApiService {
         decoded = {};
       }
 
-      // 🔹 Chuẩn hoá lại data user cần lưu
+      final userIdRaw = decoded['sub'];
+      int userId = 0;
+      if (userIdRaw != null) {
+        userId = int.tryParse(userIdRaw.toString()) ?? 0;
+      }
+
+      final expRaw = decoded['exp'];
+      int exp = 0;
+      if (expRaw != null) {
+        exp = int.tryParse(expRaw.toString()) ?? 0;
+      }
+
       final userData = {
-        'userId': decoded['userId'] ?? 0,
-        'firstName': decoded['firstName'] ?? '',
-        'lastName': decoded['lastName'] ?? '',
-        'phoneNumber': decoded['phoneNumber'] ?? '',
+        'userId': userId,
+        'name': decoded['name'] ?? '',
+        'exp': exp,
         'email': decoded['email'] ?? '',
         'role': decoded['role'] ?? '',
       };
 
-      // 🔹 Lưu token & user data vào SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.tokenKey, token);
       await prefs.setString(AppConstants.userKey, jsonEncode(userData));
 
-      // ✅ Trả về token duy nhất
+      if (kDebugMode) {
+        print('=== LOGIN SUCCESS ===');
+        print('Token: ${token.substring(0, 20)}...');
+        print('User Data: $userData');
+        print('Role: ${userData['role']}');
+      }
+
       return token;
     } on DioException catch (e) {
       throw mapDioError(e);

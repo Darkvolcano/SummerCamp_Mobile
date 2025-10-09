@@ -4,7 +4,7 @@ import 'package:summercamp/features/auth/presentation/screens/forgot_password_em
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/reset_password_screen.dart';
-import 'package:summercamp/features/auth/presentation/screens/verify_otp_screent.dart';
+import 'package:summercamp/features/auth/presentation/screens/verify_otp_screen.dart';
 import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
@@ -96,7 +96,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
 
       case verifyOTP:
-        return MaterialPageRoute(builder: (_) => VerifyOtpScreen());
+        final email = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => VerifyOtpScreen(email: email));
 
       case home:
         return MaterialPageRoute(builder: (_) => const Home());
