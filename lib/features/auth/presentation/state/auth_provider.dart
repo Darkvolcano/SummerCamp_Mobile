@@ -7,6 +7,7 @@ import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
+import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -17,6 +18,7 @@ class AuthProvider with ChangeNotifier {
   final GetUserProfiles getUserProfiles;
   final UserRepository repository;
   final GetUsers getUsersUseCase;
+  final ResendOtp resendOTP;
 
   AuthProvider({
     required this.loginUser,
@@ -26,6 +28,7 @@ class AuthProvider with ChangeNotifier {
     required this.getUserProfiles,
     required this.repository,
     required this.getUsersUseCase,
+    required this.resendOTP,
   });
 
   List<User> _users = [];
@@ -142,6 +145,16 @@ class AuthProvider with ChangeNotifier {
     _currentUser = null;
     _token = null;
     notifyListeners();
+  }
+
+  Future<void> resendOtp({required String email}) async {
+    try {
+      await resendOTP(email: email);
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
   }
 
   void _setLoading(bool v) {

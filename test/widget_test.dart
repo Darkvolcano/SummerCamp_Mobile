@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
+import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/camp/data/repositories/camp_repository_impl.dart';
 import 'package:summercamp/features/camp/data/services/camp_api_service.dart';
@@ -205,6 +206,7 @@ void main() {
               getUserProfile: GetUserProfile(userRepo),
               getUserProfiles: GetUserProfiles(userRepo),
               getUsersUseCase: GetUsers(userRepo),
+              resendOTP: ResendOtp(userRepo),
               repository: userRepo,
             ),
           ),

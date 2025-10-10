@@ -179,4 +179,12 @@ class AuthApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<void> resendOtp({required String email}) async {
+    try {
+      await client.post('auth/resend-otp', queryParameters: {'email': email});
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
 }

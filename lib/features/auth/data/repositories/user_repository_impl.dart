@@ -125,4 +125,9 @@ class UserRepositoryImpl implements UserRepository {
     final data = await service.resetPassword(email, otp, newPassword);
     return _parseUser(data);
   }
+
+  @override
+  Future<void> resendOtp({required String email}) async {
+    return await service.resendOtp(email: email);
+  }
 }

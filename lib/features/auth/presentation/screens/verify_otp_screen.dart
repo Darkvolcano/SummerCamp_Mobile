@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   bool _isLoading = false;
   late final AuthProvider provider;
 
+  Timer? _timer;
+  int _countdownSeconds = 120;
+  bool get _isResendActive => _timer?.isActive ?? false;
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +41,33 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     for (var node in _focusNodes) {
       node.dispose();
     }
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void startTimer() {
+    _countdownSeconds = 120;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_countdownSeconds > 0) {
+        if (mounted) {
+          setState(() {
+            _countdownSeconds--;
+          });
+        }
+      } else {
+        _timer?.cancel();
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
+    setState(() {});
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = (seconds / 60).floor().toString().padLeft(2, '0');
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$remainingSeconds';
   }
 
   String get _otpCode {
@@ -144,18 +175,17 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   }
 
   Future<void> _resendOtp(String email) async {
+    startTimer();
     setState(() => _isLoading = true);
 
     try {
-      // await authProvider.resendOtp(email: email);
-
-      await Future.delayed(const Duration(seconds: 1)); // Mock API call
+      await provider.resendOtp(email: email);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Mã OTP mới đã được gửi đến email của bạn'),
+          content: Text('Mã OTP mới đã được gửi đến email của bạn.'),
           backgroundColor: Colors.green,
         ),
       );
@@ -166,7 +196,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       _focusNodes[0].requestFocus();
     } catch (e) {
       if (!mounted) return;
-      _showErrorDialog('Không thể gửi lại mã OTP. Vui lòng thử lại.');
+      _showErrorDialog('Không thể gửi lại mã OTP. Vui lòng thử lại sau.');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -295,22 +325,40 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: _isLoading
+                        onPressed: (_isLoading || _isResendActive)
                             ? null
                             : () => _resendOtp(currentEmail),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: const Size(0, 0),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          "Gửi lại",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
+                          disabledForegroundColor: Colors.white.withValues(
+                            alpha: 0.5,
                           ),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Gửi lại",
+                              style: TextStyle(
+                                color: (_isLoading || _isResendActive)
+                                    ? Colors.white.withValues(alpha: 0.5)
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.white,
+                              ),
+                            ),
+                            if (_isResendActive)
+                              Text(
+                                " (${_formatDuration(_countdownSeconds)})",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.yellow[200],
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ],

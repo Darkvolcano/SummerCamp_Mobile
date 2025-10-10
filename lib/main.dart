@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
@@ -97,6 +98,7 @@ Future<void> main() async {
             getUserProfile: GetUserProfile(userRepo),
             getUserProfiles: GetUserProfiles(userRepo),
             getUsersUseCase: GetUsers(userRepo),
+            resendOTP: ResendOtp(userRepo),
             repository: userRepo,
           ),
         ),
