@@ -164,7 +164,9 @@ class CampScheduleDetailScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final groupedActivities = groupActivitiesByDate(activities);
 
-    final totalDays = camp.endDate.difference(camp.startDate).inDays + 1;
+    final startDate = DateTime.parse(camp.startDate);
+    final endDate = DateTime.parse(camp.endDate);
+    final totalDays = endDate.difference(startDate).inDays + 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -238,7 +240,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
                 const Icon(Icons.date_range, size: 18, color: Colors.grey),
                 const SizedBox(width: 6),
                 Text(
-                  "${DateFormatter.formatDate(camp.startDate)} - ${DateFormatter.formatDate(camp.endDate)}",
+                  "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                   style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
                 ),
               ],
@@ -262,7 +264,9 @@ class CampScheduleDetailScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: totalDays,
               itemBuilder: (context, index) {
-                final dayDate = camp.startDate.add(Duration(days: index));
+                final dayDate = DateTime.parse(
+                  camp.startDate,
+                ).add(Duration(days: index));
                 final dateStr = DateFormatter.formatDate(dayDate);
                 final activitiesOfDay =
                     groupedActivities[dayDate.toIso8601String().substring(

@@ -88,7 +88,7 @@ class CampDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "${DateFormatter.formatDate(camp.startDate)} - ${DateFormatter.formatDate(camp.endDate)}",
+                        "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                         style: textTheme.bodyMedium?.copyWith(
                           fontFamily: "Nunito",
                           color: Colors.grey[700],

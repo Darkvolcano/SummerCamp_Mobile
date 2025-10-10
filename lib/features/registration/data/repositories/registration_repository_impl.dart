@@ -15,22 +15,20 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
-  Future<void> register(Registration registration) async {
-    final model = RegistrationModel(
-      registrationId: registration.registrationId,
-      camperId: registration.camperId,
-      campId: registration.campId,
-      paymentId: registration.paymentId,
-      registrationCreateAt: registration.registrationCreateAt,
-      status: registration.status,
-      price: registration.price,
-      campName: registration.campName,
-      campDescription: registration.campDescription,
-      campPlace: registration.campPlace,
-      campStartDate: registration.campStartDate,
-      campEndDate: registration.campEndDate,
+  Future<String> register({
+    required int campId,
+    required List<int> camperIds,
+    required int paymentId,
+    String? appliedPromotionId,
+    required DateTime registrationCreateAt,
+  }) async {
+    return await service.registerCamp(
+      camperIds: camperIds,
+      campId: campId,
+      paymentId: paymentId,
+      registrationCreateAt: registrationCreateAt,
+      appliedPromotionId: appliedPromotionId,
     );
-    await service.registerCamper(model.toJson());
   }
 
   @override

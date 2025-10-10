@@ -686,7 +686,9 @@ class RegistrationDetailScreen extends StatelessWidget {
     final discountedPrice = registration.price - (registration.discount ?? 0);
     final groupedActivities = groupActivitiesByDate(activities);
     final totalDays =
-        registration.campEndDate.difference(registration.campStartDate).inDays +
+        DateTime.parse(
+          registration.campEndDate!,
+        ).difference(DateTime.parse(registration.campStartDate!)).inDays +
         1;
 
     return Scaffold(
@@ -717,7 +719,7 @@ class RegistrationDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      registration.campName,
+                      registration.campName!,
                       style: textTheme.titleLarge?.copyWith(
                         fontFamily: "Fredoka",
                         fontWeight: FontWeight.bold,
@@ -726,7 +728,7 @@ class RegistrationDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      registration.campDescription,
+                      registration.campDescription!,
                       style: const TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 14,
@@ -743,7 +745,7 @@ class RegistrationDetailScreen extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            registration.campPlace,
+                            registration.campPlace!,
                             style: const TextStyle(
                               fontFamily: "Nunito",
                               fontSize: 14,
@@ -762,7 +764,7 @@ class RegistrationDetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "${DateFormatter.formatDate(registration.campStartDate)} - ${DateFormatter.formatDate(registration.campEndDate)}",
+                          "${DateFormatter.formatFromString(registration.campStartDate!)} - ${DateFormatter.formatFromString(registration.campEndDate!)}",
                           style: const TextStyle(
                             fontFamily: "Nunito",
                             fontSize: 14,
@@ -913,9 +915,9 @@ class RegistrationDetailScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: totalDays,
               itemBuilder: (context, index) {
-                final dayDate = registration.campStartDate.add(
-                  Duration(days: index),
-                );
+                final dayDate = DateTime.parse(
+                  registration.campStartDate!,
+                ).add(Duration(days: index));
                 final dateStr = DateFormatter.formatDate(dayDate);
                 final activitiesOfDay =
                     groupedActivities[dayDate.toIso8601String().substring(

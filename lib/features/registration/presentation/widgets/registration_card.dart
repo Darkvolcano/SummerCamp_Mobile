@@ -31,7 +31,7 @@ class RegistrationCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      registration.campName,
+                      registration.campName!,
                       style: const TextStyle(
                         fontFamily: "Fredoka",
                         fontSize: 18,
@@ -67,7 +67,7 @@ class RegistrationCard extends StatelessWidget {
                   const Icon(Icons.location_on, size: 16, color: Colors.grey),
                   const SizedBox(width: 6),
                   Text(
-                    registration.campPlace,
+                    registration.campPlace!,
                     style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
                   ),
                 ],
@@ -84,7 +84,7 @@ class RegistrationCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    "${DateFormatter.formatDate(registration.campStartDate)} → ${DateFormatter.formatDate(registration.campEndDate)}",
+                    "${DateFormatter.formatFromString(registration.campStartDate!)} → ${DateFormatter.formatFromString(registration.campEndDate!)}",
                     style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
                   ),
                 ],

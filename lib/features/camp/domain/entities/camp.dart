@@ -3,10 +3,11 @@ class Camp {
   final String name;
   final String description;
   final String place;
-  final DateTime startDate;
-  final DateTime endDate;
+  final String startDate;
+  final String endDate;
   final String image;
   final int maxParticipants;
+  final int minParticipants;
   final int price;
   final String status;
   final int campTypeId;
@@ -18,8 +19,9 @@ class Camp {
     required this.place,
     required this.startDate,
     required this.endDate,
-    required this.image,
-    required this.maxParticipants,
+    this.image = "",
+    this.maxParticipants = 0,
+    this.minParticipants = 0,
     required this.price,
     required this.status,
     required this.campTypeId,

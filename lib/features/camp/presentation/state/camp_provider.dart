@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:summercamp/features/camp/data/models/camp_model.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/domain/use_cases/create_camp.dart';
 import 'package:summercamp/features/camp/domain/use_cases/get_camps.dart';
@@ -23,13 +20,7 @@ class CampProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final jsonString = await rootBundle.loadString("assets/mock/camps.json");
-      final List<dynamic> jsonList = json.decode(jsonString);
-
-      _camps = jsonList.map((e) => CampModel.fromJson(e)).toList();
-
-      // Uncomment if use this line to call API
-      // _camps = await getCampsUseCase();
+      _camps = await getCampsUseCase();
     } catch (e) {
       print("Lỗi load camps: $e");
       _camps = [];

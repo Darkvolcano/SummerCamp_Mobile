@@ -6,12 +6,12 @@ class Registration {
   final DateTime registrationCreateAt;
   final String status;
   final int price;
-  final String campName;
-  final String campDescription;
-  final String campPlace;
-  final DateTime campStartDate;
-  final DateTime campEndDate;
-  final int? promotionId;
+  final String? campName;
+  final String? campDescription;
+  final String? campPlace;
+  final String? campStartDate;
+  final String? campEndDate;
+  final int appliedPromotionId;
   final String? promotionCode;
   final int? discount;
 
@@ -23,12 +23,12 @@ class Registration {
     required this.registrationCreateAt,
     required this.status,
     required this.price,
-    required this.campName,
-    required this.campDescription,
-    required this.campPlace,
-    required this.campStartDate,
-    required this.campEndDate,
-    this.promotionId,
+    this.campName,
+    this.campDescription,
+    this.campPlace,
+    this.campStartDate,
+    this.campEndDate,
+    required this.appliedPromotionId,
     this.promotionCode,
     this.discount,
   });

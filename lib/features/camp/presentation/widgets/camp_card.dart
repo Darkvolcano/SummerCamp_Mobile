@@ -88,7 +88,7 @@ class CampCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        "${DateFormatter.formatDate(camp.startDate)} - ${DateFormatter.formatDate(camp.endDate)}",
+                        "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                         style: textTheme.bodySmall?.copyWith(
                           fontFamily: "Nunito",
                           color: Colors.grey[600],
@@ -114,16 +114,18 @@ class CampCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: camp.status == "open"
+                          color: camp.status == "Active"
                               ? Colors.greenAccent.shade100
                               : Colors.redAccent.shade100,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          camp.status == "open" ? "Còn chỗ" : "Đã đầy",
+                          camp.status == "Active"
+                              ? "Hoạt động"
+                              : "Không hoạt động",
                           style: textTheme.bodySmall?.copyWith(
                             fontFamily: "Nunito",
-                            color: camp.status == "open"
+                            color: camp.status == "Active"
                                 ? Colors.green.shade800
                                 : Colors.red.shade800,
                           ),

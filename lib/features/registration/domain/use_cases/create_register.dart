@@ -1,11 +1,22 @@
-import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
 
 class CreateRegister {
   final RegistrationRepository repository;
   CreateRegister(this.repository);
 
-  Future<void> call(Registration registration) {
-    return repository.register(registration);
+  Future<String> call({
+    required int campId,
+    required List<int> camperIds,
+    required int paymentId,
+    String? appliedPromotionId,
+    required DateTime registrationCreateAt,
+  }) {
+    return repository.register(
+      campId: campId,
+      camperIds: camperIds,
+      paymentId: paymentId,
+      appliedPromotionId: appliedPromotionId,
+      registrationCreateAt: registrationCreateAt,
+    );
   }
 }
