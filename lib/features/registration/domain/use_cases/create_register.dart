@@ -7,16 +7,12 @@ class CreateRegister {
   Future<String> call({
     required int campId,
     required List<int> camperIds,
-    required int paymentId,
     String? appliedPromotionId,
-    required DateTime registrationCreateAt,
   }) {
     return repository.register(
       campId: campId,
       camperIds: camperIds,
-      paymentId: paymentId,
       appliedPromotionId: appliedPromotionId,
-      registrationCreateAt: registrationCreateAt,
     );
   }
 }

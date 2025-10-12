@@ -5,9 +5,7 @@ abstract class RegistrationRepository {
   Future<String> register({
     required int campId,
     required List<int> camperIds,
-    required int paymentId,
     String? appliedPromotionId,
-    required DateTime registrationCreateAt,
   });
   Future<void> cancelRegistration(int registrationId);
 }

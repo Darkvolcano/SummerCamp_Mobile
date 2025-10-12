@@ -33,27 +33,22 @@ class RegistrationApiService {
   Future<String> registerCamp({
     required int campId,
     required List<int> camperIds,
-    required int paymentId,
     String? appliedPromotionId,
-    required DateTime registrationCreateAt,
   }) async {
     final res = await client.post(
       'registration',
       data: {
         'campId': campId,
         'camperIds': camperIds,
-        'paymentId': paymentId,
         'appliedPromotionId': appliedPromotionId,
-        'registrationCreateAt': registrationCreateAt,
       },
     );
     final data = res.data as Map<String, dynamic>;
 
-    // Giả sử API trả về JSON có key là 'checkoutUrl'
-    if (data.containsKey('checkoutUrl')) {
-      return data['checkoutUrl'] as String;
+    if (data.containsKey('paymentUrl')) {
+      return data['paymentUrl'] as String;
     } else {
-      throw Exception('Checkout URL not found in API response');
+      throw Exception('Payment URL not found in API response');
     }
   }
 

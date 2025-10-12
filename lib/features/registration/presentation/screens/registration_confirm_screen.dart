@@ -326,15 +326,15 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
     final provider = context.read<RegistrationProvider>();
 
     try {
-      final checkoutUrl = await provider.createRegistration(
+      final paymentUrl = await provider.createRegistration(
         campId: widget.camp.campId,
         campers: widget.campers,
-        paymentId: widget.paymentId,
         appliedPromotionId: widget.promotionCode,
-        registrationCreateAt: DateTime.now(),
       );
 
-      final uri = Uri.tryParse(checkoutUrl);
+      print("URL nhận được tại UI: $paymentUrl");
+
+      final uri = Uri.tryParse(paymentUrl);
 
       if (uri != null && await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -343,7 +343,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       } else {
-        throw Exception('Không thể mở đường dẫn thanh toán: $checkoutUrl');
+        throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
       }
     } catch (e) {
       if (mounted) {

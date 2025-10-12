@@ -51,9 +51,7 @@ class RegistrationProvider with ChangeNotifier {
   Future<String> createRegistration({
     required int campId,
     required List<Camper> campers,
-    required int paymentId,
     String? appliedPromotionId,
-    required DateTime registrationCreateAt,
   }) async {
     _loading = true;
     _error = null;
@@ -62,15 +60,13 @@ class RegistrationProvider with ChangeNotifier {
     try {
       final camperIds = campers.map((c) => c.camperId).toList();
 
-      final checkoutUrl = await createRegisterUseCase(
+      final paymentUrl = await createRegisterUseCase(
         campId: campId,
         camperIds: camperIds,
-        paymentId: paymentId,
         appliedPromotionId: appliedPromotionId,
-        registrationCreateAt: registrationCreateAt,
       );
 
-      return checkoutUrl;
+      return paymentUrl;
     } catch (e) {
       _error = e.toString();
       rethrow;

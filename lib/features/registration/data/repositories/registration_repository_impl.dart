@@ -18,15 +18,11 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   Future<String> register({
     required int campId,
     required List<int> camperIds,
-    required int paymentId,
     String? appliedPromotionId,
-    required DateTime registrationCreateAt,
   }) async {
     return await service.registerCamp(
       camperIds: camperIds,
       campId: campId,
-      paymentId: paymentId,
-      registrationCreateAt: registrationCreateAt,
       appliedPromotionId: appliedPromotionId,
     );
   }
