@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
@@ -24,6 +25,9 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  int _currentPage = 1;
+  final int _pageSize = 10;
+
   final List<_TabInfo> _tabs = const [
     _TabInfo('Tất cả', []),
     _TabInfo('Chờ xử lý', [Status.PendingApproval]),
@@ -38,7 +42,9 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        setState(() {});
+        setState(() {
+          _currentPage = 1;
+        });
       }
     });
 
@@ -56,6 +62,10 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
   }
 
   List<Registration> _getFilteredList(List<Registration> allRegistrations) {
+    allRegistrations.sort(
+      (a, b) => b.registrationCreateAt.compareTo(a.registrationCreateAt),
+    );
+
     final selectedTab = _tabs[_tabController.index];
     if (selectedTab.statuses.isEmpty) {
       return allRegistrations;
@@ -65,12 +75,37 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
         .toList();
   }
 
+  void _nextPage(int totalPages) {
+    if (_currentPage < totalPages) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  void _previousPage() {
+    if (_currentPage > 1) {
+      setState(() {
+        _currentPage--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<RegistrationProvider>();
     final textTheme = Theme.of(context).textTheme;
 
     final filteredRegistrations = _getFilteredList(provider.registrations);
+
+    final totalPages = filteredRegistrations.isEmpty
+        ? 1
+        : (filteredRegistrations.length / _pageSize).ceil();
+    final startIndex = (_currentPage - 1) * _pageSize;
+    final endIndex = min(startIndex + _pageSize, filteredRegistrations.length);
+    final paginatedList = filteredRegistrations.isNotEmpty
+        ? filteredRegistrations.sublist(startIndex, endIndex)
+        : <Registration>[];
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +120,6 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
         backgroundColor: AppTheme.summerPrimary,
         elevation: 0,
       ),
-
       body: Column(
         children: [
           Container(
@@ -102,11 +136,10 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
               tabs: _tabs.map((tab) => Tab(text: tab.text)).toList(),
             ),
           ),
-
           Expanded(
             child: provider.loading
                 ? const Center(child: CircularProgressIndicator())
-                : filteredRegistrations.isEmpty
+                : paginatedList.isEmpty
                 ? Center(
                     child: Text(
                       "Không có đơn đăng ký nào trong mục này",
@@ -118,9 +151,9 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: filteredRegistrations.length,
+                    itemCount: paginatedList.length,
                     itemBuilder: (context, index) {
-                      final r = filteredRegistrations[index];
+                      final r = paginatedList[index];
                       return RegistrationCard(
                         registration: r,
                         onTap: () {
@@ -134,6 +167,38 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
                     },
                   ),
           ),
+
+          if (!provider.loading && filteredRegistrations.length > _pageSize)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    icon: const Icon(Icons.arrow_back_ios, size: 14),
+                    label: const Text('Trang trước'),
+                    onPressed: _currentPage > 1 ? _previousPage : null,
+                  ),
+                  Text(
+                    'Trang $_currentPage / $totalPages',
+                    style: const TextStyle(
+                      fontFamily: "Nunito",
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.arrow_forward_ios, size: 14),
+                    label: const Text('Trang sau'),
+                    onPressed: _currentPage < totalPages
+                        ? () => _nextPage(totalPages)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
