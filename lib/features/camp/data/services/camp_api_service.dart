@@ -13,4 +13,9 @@ class CampApiService {
     final res = await client.post('camp', data: data);
     return res.data;
   }
+
+  Future<List<dynamic>> fetchCampTypes() async {
+    final res = await client.get('camptype');
+    return res.data as List;
+  }
 }

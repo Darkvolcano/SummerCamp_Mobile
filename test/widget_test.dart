@@ -10,6 +10,7 @@ import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/camp/data/repositories/camp_repository_impl.dart';
 import 'package:summercamp/features/camp/data/services/camp_api_service.dart';
 import 'package:summercamp/features/camp/domain/use_cases/create_camp.dart';
+import 'package:summercamp/features/camp/domain/use_cases/get_camp_types.dart';
 import 'package:summercamp/features/camp/domain/use_cases/get_camps.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
@@ -187,6 +188,7 @@ void main() {
     final campRepo = CampRepositoryImpl(campApiService);
     final getCampsUseCase = GetCamps(campRepo);
     final createCampUseCase = CreateCamp(campRepo);
+    final getCampTypesUseCase = GetCampTypes(campRepo);
 
     // Registration
     final registrationApi = RegistrationApiService(apiClient);
@@ -213,7 +215,11 @@ void main() {
 
           // CampProvider cần 2 usecases (GetCamps, CreateCamp)
           ChangeNotifierProvider(
-            create: (_) => CampProvider(getCampsUseCase, createCampUseCase),
+            create: (_) => CampProvider(
+              getCampsUseCase,
+              createCampUseCase,
+              getCampTypesUseCase,
+            ),
           ),
 
           // RegistrationProvider cần 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)

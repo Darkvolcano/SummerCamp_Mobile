@@ -8,6 +8,7 @@ import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
 import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';
 import 'package:summercamp/features/blog/presentation/state/blog_provider.dart';
+import 'package:summercamp/features/camp/domain/use_cases/get_camp_types.dart';
 import 'package:summercamp/features/camper/data/repositories/camper_repository_impl.dart';
 import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
   final campRepo = CampRepositoryImpl(campApiService);
   final getCampsUseCase = GetCamps(campRepo);
   final createCampUseCase = CreateCamp(campRepo);
+  final getCampTypesUseCase = GetCampTypes(campRepo);
 
   // Registration
   final registrationApi = RegistrationApiService(apiClient);
@@ -105,7 +107,11 @@ Future<void> main() async {
 
         // CampProvider need 2 usecases (GetCamps, CreateCamp)
         ChangeNotifierProvider(
-          create: (_) => CampProvider(getCampsUseCase, createCampUseCase),
+          create: (_) => CampProvider(
+            getCampsUseCase,
+            createCampUseCase,
+            getCampTypesUseCase,
+          ),
         ),
 
         // RegistrationProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
