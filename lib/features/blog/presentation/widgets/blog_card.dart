@@ -69,7 +69,7 @@ class BlogCard extends StatelessWidget {
                   //   ],
                   // ),
                   Text(
-                    "Ngày đăng: ${DateFormatter.formatDate(blog.creatAt)}",
+                    "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
                     style: textTheme.bodySmall?.copyWith(
                       fontFamily: "Nunito",
                       color: Colors.grey[600],

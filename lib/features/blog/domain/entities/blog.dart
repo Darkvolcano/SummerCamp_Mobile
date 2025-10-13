@@ -4,7 +4,7 @@ class Blog {
   final String content;
   final int authorId;
   final bool isActive;
-  final DateTime creatAt;
+  final DateTime createAt;
 
   const Blog({
     required this.blogId,
@@ -12,6 +12,6 @@ class Blog {
     required this.content,
     required this.authorId,
     required this.isActive,
-    required this.creatAt,
+    required this.createAt,
   });
 }

@@ -5,7 +5,7 @@ class BlogApiService {
   BlogApiService(this.client);
 
   Future<List<dynamic>> fetchBlogs() async {
-    final res = await client.get('blogs');
+    final res = await client.get('blog');
     return res.data as List;
   }
 }

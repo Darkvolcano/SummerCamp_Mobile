@@ -7,7 +7,7 @@ class BlogModel extends Blog {
     required super.content,
     required super.authorId,
     required super.isActive,
-    required super.creatAt,
+    required super.createAt,
   });
 
   factory BlogModel.fromJson(Map<String, dynamic> json) {
@@ -17,7 +17,7 @@ class BlogModel extends Blog {
       content: json['content'],
       authorId: json['authorId'],
       isActive: json['isActive'],
-      creatAt: DateTime.parse(json['creatAt']),
+      createAt: DateTime.parse(json['createAt']),
     );
   }
 
@@ -27,6 +27,6 @@ class BlogModel extends Blog {
     'content': content,
     'authorId': authorId,
     'isActive': isActive,
-    'creatAt': creatAt.toIso8601String(),
+    'createAt': createAt.toIso8601String(),
   };
 }
