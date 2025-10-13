@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
-import 'package:summercamp/features/registration/data/models/registration_model.dart';
 
 class RegistrationProvider with ChangeNotifier {
   final CreateRegister createRegisterUseCase;
@@ -32,20 +29,16 @@ class RegistrationProvider with ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    final jsonString = await rootBundle.loadString(
-      'assets/mock/registrations.json',
-    );
-
-    final List<dynamic> jsonList = json.decode(jsonString);
-
-    _registrations = jsonList
-        .map((e) => RegistrationModel.fromJson(e))
-        .toList();
-
-    // _registrations = await getRegistrationsUseCase();
-
-    _loading = false;
-    notifyListeners();
+    try {
+      _registrations = await getRegistrationsUseCase();
+    } catch (e) {
+      _error = e.toString();
+      _registrations = [];
+      print('Lỗi khi tải danh sách đăng ký: $e');
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
   Future<String> createRegistration({
