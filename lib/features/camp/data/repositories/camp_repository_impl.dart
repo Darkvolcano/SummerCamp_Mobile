@@ -16,11 +16,6 @@ class CampRepositoryImpl implements CampRepository {
   }
 
   @override
-  Future<void> createCamp(Camp camp) async {
-    await service.createCamp((camp as CampModel).toJson());
-  }
-
-  @override
   Future<List<CampType>> getCampTypes() async {
     final list = await service.fetchCampTypes();
     return list.map((e) => CampTypeModel.fromJson(e)).toList();

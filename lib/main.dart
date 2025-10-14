@@ -37,7 +37,6 @@ import 'features/auth/domain/use_cases/get_users.dart';
 import 'features/camp/data/services/camp_api_service.dart';
 import 'features/camp/data/repositories/camp_repository_impl.dart';
 import 'features/camp/domain/use_cases/get_camps.dart';
-import 'features/camp/domain/use_cases/create_camp.dart';
 import 'features/camp/presentation/state/camp_provider.dart';
 
 import 'features/registration/data/services/registration_api_service.dart';
@@ -61,7 +60,6 @@ Future<void> main() async {
   final campApiService = CampApiService(apiClient);
   final campRepo = CampRepositoryImpl(campApiService);
   final getCampsUseCase = GetCamps(campRepo);
-  final createCampUseCase = CreateCamp(campRepo);
   final getCampTypesUseCase = GetCampTypes(campRepo);
 
   // Registration
@@ -105,13 +103,9 @@ Future<void> main() async {
           ),
         ),
 
-        // CampProvider need 2 usecases (GetCamps, CreateCamp)
+        // CampProvider need 2 usecases (GetCamps, GetCampTypes)
         ChangeNotifierProvider(
-          create: (_) => CampProvider(
-            getCampsUseCase,
-            createCampUseCase,
-            getCampTypesUseCase,
-          ),
+          create: (_) => CampProvider(getCampsUseCase, getCampTypesUseCase),
         ),
 
         // RegistrationProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
