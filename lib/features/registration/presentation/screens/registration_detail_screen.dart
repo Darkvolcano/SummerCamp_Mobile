@@ -560,111 +560,131 @@
 //     );
 //   }
 // }
-// lib/features/registration/presentation/screens/registration_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
+import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
 import 'package:videosdk/videosdk.dart';
 
-class RegistrationDetailScreen extends StatelessWidget {
+class RegistrationDetailScreen extends StatefulWidget {
   final Registration registration;
 
-  // Dữ liệu hoạt động mẫu (bạn sẽ thay thế bằng API call sau này)
-  final List<Activity> activities = [
-    Activity(
-      activityId: 1,
-      name: "Team Building",
-      description: "Trò chơi tập thể gắn kết",
-      location: "Sân trung tâm",
-      date: "2025-10-14",
-      startTime: "08:00",
-      endTime: "10:00",
-      campId: 1,
-      isLivestream: true,
-      livestreamId: "ic99-z3ap-2yns",
-    ),
-    Activity(
-      activityId: 2,
-      name: "Lửa trại",
-      description: "Giao lưu văn nghệ",
-      location: "Khu trại chính",
-      date: "2025-10-14",
-      startTime: "19:00",
-      endTime: "20:00",
-      campId: 1,
-      isLivestream: true,
-      livestreamId: "ic99-z3ap-2yns",
-    ),
-    Activity(
-      activityId: 3,
-      name: "Bơi lội",
-      description: "Học bơi cơ bản",
-      location: "Hồ bơi",
-      date: "2025-10-15",
-      startTime: "10:00",
-      endTime: "11:30",
-      campId: 1,
-      isLivestream: false,
-    ),
-  ];
+  const RegistrationDetailScreen({super.key, required this.registration});
 
-  RegistrationDetailScreen({super.key, required this.registration});
+  @override
+  State<RegistrationDetailScreen> createState() =>
+      _RegistrationDetailScreenState();
+}
 
-  // --- CÁC HÀM LOGIC (không đổi) ---
+class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
+  Camp? _campDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _fetchData();
+      }
+    });
+  }
+
+  Future<void> _fetchData() async {
+    final campProvider = context.read<CampProvider>();
+    final activityProvider = context.read<ActivityProvider>();
+    activityProvider.setLoading();
+
+    if (campProvider.camps.isEmpty) {
+      await campProvider.loadCamps();
+    }
+    if (!mounted) return;
+
+    int? campId;
+    try {
+      final foundCamp = campProvider.camps.firstWhere(
+        (camp) => camp.name == widget.registration.campName,
+      );
+      campId = foundCamp.campId;
+
+      if (mounted) {
+        setState(() {
+          _campDetails = foundCamp;
+        });
+      }
+    } catch (e) {
+      print(
+        "Lỗi: Không tìm thấy trại nào có tên '${widget.registration.campName}'",
+      );
+      activityProvider.setError("Không tìm thấy thông tin trại.");
+      return;
+    }
+
+    await activityProvider.loadActivities(campId);
+  }
+
   Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
     final Map<String, List<Activity>> grouped = {};
     for (var act in activities) {
-      grouped.putIfAbsent(act.date, () => []);
-      grouped[act.date]!.add(act);
+      String dateKey = DateFormatter.formatDate(act.startTime);
+      grouped.putIfAbsent(dateKey, () => []);
+      grouped[dateKey]!.add(act);
     }
     return grouped;
   }
 
   bool isActivityLive(Activity activity) {
     final now = DateTime.now();
-    final activityDate = DateTime.parse(activity.date);
-    final startTimeParts = activity.startTime.split(':');
-    final endTimeParts = activity.endTime.split(':');
-    final startTime = DateTime(
-      activityDate.year,
-      activityDate.month,
-      activityDate.day,
-      int.parse(startTimeParts[0]),
-      int.parse(startTimeParts[1]),
-    );
-    final endTime = DateTime(
-      activityDate.year,
-      activityDate.month,
-      activityDate.day,
-      int.parse(endTimeParts[0]),
-      int.parse(endTimeParts[1]),
-    );
-    return now.isAfter(startTime) && now.isBefore(endTime);
+    return now.isAfter(activity.startTime) && now.isBefore(activity.endTime);
   }
+  //   bool isActivityLive(Activity activity) {
+  //     final now = DateTime.now();
+  //     final activityDate = DateTime.parse(activity.date);
+  //     final startTimeParts = activity.startTime.split(':');
+  //     final endTimeParts = activity.endTime.split(':');
+  //     final startTime = DateTime(
+  //       activityDate.year,
+  //       activityDate.month,
+  //       activityDate.day,
+  //       int.parse(startTimeParts[0]),
+  //       int.parse(startTimeParts[1]),
+  //     );
+  //     final endTime = DateTime(
+  //       activityDate.year,
+  //       activityDate.month,
+  //       activityDate.day,
+  //       int.parse(endTimeParts[0]),
+  //       int.parse(endTimeParts[1]),
+  //     );
+  //     return now.isAfter(startTime) && now.isBefore(endTime);
+  //   }
 
   void joinLivestream(BuildContext context, Activity activity) {
-    if (activity.livestreamId == null) return;
+    if (activity.roomId == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ILSScreen(
-          liveStreamId: activity.livestreamId!,
-          token: "YOUR_VIDEOSDK_TOKEN",
+          liveStreamId: activity.roomId!.toString(),
+          token: "YOUR_VIDEOSDK_TOKEN", // Thay token của bạn ở đây
           mode: Mode.RECV_ONLY,
         ),
       ),
     );
   }
-  // ------------------------------------
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final activityProvider = context.watch<ActivityProvider>();
+    final activities = activityProvider.activities;
     final groupedActivities = groupActivitiesByDate(activities);
 
     return Scaffold(
@@ -681,7 +701,7 @@ class RegistrationDetailScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80), // Thêm padding dưới
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -698,7 +718,27 @@ class RegistrationDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _buildSchedule(context, groupedActivities),
+            if (activityProvider.loading)
+              const Center(child: CircularProgressIndicator())
+            else if (activityProvider.error != null)
+              Center(
+                child: Text(
+                  "Lỗi: ${activityProvider.error}",
+                  style: const TextStyle(
+                    fontFamily: "Nunito",
+                    color: Colors.red,
+                  ),
+                ),
+              )
+            else if (activities.isEmpty)
+              const Center(
+                child: Text(
+                  "Chưa có lịch trình hoạt động.",
+                  style: TextStyle(fontFamily: "Nunito"),
+                ),
+              )
+            else
+              _buildSchedule(context, groupedActivities),
           ],
         ),
       ),
@@ -708,7 +748,7 @@ class RegistrationDetailScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (_) => FeedbackFormScreen(
-                registrationId: registration.registrationId,
+                registrationId: widget.registration.registrationId,
               ),
             ),
           );
@@ -728,9 +768,10 @@ class RegistrationDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- WIDGET HELPER CHO GỌN GÀNG ---
-
   Widget _buildCampInfoCard(BuildContext context, TextTheme textTheme) {
+    final startDate = _campDetails?.startDate;
+    final endDate = _campDetails?.endDate;
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -740,7 +781,7 @@ class RegistrationDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              registration.campName ?? 'Chưa có tên trại',
+              widget.registration.campName ?? 'Chưa có tên trại',
               style: textTheme.titleLarge?.copyWith(
                 fontFamily: "Fredoka",
                 fontWeight: FontWeight.bold,
@@ -750,18 +791,18 @@ class RegistrationDetailScreen extends StatelessWidget {
             const SizedBox(height: 12),
             _buildDetailRow(
               Icons.calendar_today,
-              "${registration.campStartDate ?? 'N/A'} - ${registration.campEndDate ?? 'N/A'}",
+              "${DateFormatter.formatFromString(startDate!)} - ${DateFormatter.formatFromString(endDate!)}",
             ),
             const SizedBox(height: 8),
             _buildDetailRow(
               Icons.payment,
-              "Mã thanh toán: #${registration.paymentId}",
+              "Mã thanh toán: #${widget.registration.paymentId}",
             ),
             const SizedBox(height: 8),
             _buildDetailRow(
               Icons.info_outline,
-              "Trạng thái: ${registration.status.name}",
-            ), // Dùng .name để lấy tên từ enum
+              "Trạng thái: ${widget.registration.status.name}",
+            ),
           ],
         ),
       ),
@@ -785,18 +826,18 @@ class RegistrationDetailScreen extends StatelessWidget {
               ),
             ),
             const Divider(height: 20),
-            if (registration.campers.isEmpty)
+            if (widget.registration.campers.isEmpty)
               const Text(
                 "Không có thông tin camper.",
                 style: TextStyle(fontFamily: "Nunito", color: Colors.grey),
               )
             else
-              ...registration.campers.map(
+              ...widget.registration.campers.map(
                 (camper) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.person,
                         color: AppTheme.summerAccent,
                         size: 20,
@@ -823,19 +864,11 @@ class RegistrationDetailScreen extends StatelessWidget {
     BuildContext context,
     Map<String, List<Activity>> groupedActivities,
   ) {
-    if (groupedActivities.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text("Chưa có lịch trình."),
-        ),
-      );
-    }
-
     return Column(
       children: groupedActivities.entries.map((entry) {
         final dateStr = entry.key;
         final activitiesOfDay = entry.value;
+        activitiesOfDay.sort((a, b) => a.startTime.compareTo(b.startTime));
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -849,7 +882,7 @@ class RegistrationDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormatter.formatFromString(dateStr),
+                  dateStr,
                   style: const TextStyle(
                     fontFamily: "Fredoka",
                     fontWeight: FontWeight.bold,
@@ -875,11 +908,10 @@ class RegistrationDetailScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          // Cột thời gian
           Column(
             children: [
               Text(
-                act.startTime,
+                DateFormatter.formatTime(act.startTime),
                 style: TextStyle(
                   fontFamily: "Nunito",
                   fontWeight: FontWeight.bold,
@@ -888,7 +920,7 @@ class RegistrationDetailScreen extends StatelessWidget {
               ),
               const Text("|", style: TextStyle(color: Colors.grey)),
               Text(
-                act.endTime,
+                DateFormatter.formatTime(act.endTime),
                 style: const TextStyle(
                   fontFamily: "Nunito",
                   color: Colors.grey,
@@ -897,7 +929,6 @@ class RegistrationDetailScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(width: 16),
-          // Cột thông tin
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -911,11 +942,10 @@ class RegistrationDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                _buildDetailRow(Icons.place_outlined, act.location, size: 14),
+                _buildDetailRow(Icons.place_outlined, act.location, size: 15),
               ],
             ),
           ),
-          // Nút Livestream
           if (act.isLivestream)
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -934,6 +964,7 @@ class RegistrationDetailScreen extends StatelessWidget {
 
   Widget _buildDetailRow(IconData icon, String text, {double size = 16}) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: size, color: Colors.grey.shade600),

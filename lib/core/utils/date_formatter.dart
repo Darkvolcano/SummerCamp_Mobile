@@ -11,6 +11,11 @@ class DateFormatter {
     return DateFormat("dd/MM/yyyy").format(dateTime);
   }
 
+  // Format time
+  static String formatTime(DateTime dateTime) {
+    return DateFormat("HH:mm").format(dateTime);
+  }
+
   // Format date from string
   static String formatFromString(String dateStr) {
     try {

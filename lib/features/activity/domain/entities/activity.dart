@@ -3,23 +3,25 @@ class Activity {
   final String name;
   final String description;
   final String location;
-  final String date;
-  final String startTime;
-  final String endTime;
+  final DateTime startTime;
+  final DateTime endTime;
   final int campId;
   final bool isLivestream;
-  final String? livestreamId;
+  final int? roomId; // thay bằng String
+  final int? staffId;
+  final String activityType;
 
   const Activity({
     required this.activityId,
     required this.name,
     required this.description,
     required this.location,
-    required this.date,
     required this.startTime,
     required this.endTime,
     required this.campId,
     this.isLivestream = false,
-    this.livestreamId,
+    this.roomId,
+    this.staffId,
+    required this.activityType,
   });
 }

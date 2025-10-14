@@ -1,100 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:videosdk/videosdk.dart';
-import 'package:summercamp/core/config/staff_theme.dart';
 
-class CampScheduleDetailScreen extends StatelessWidget {
+class CampScheduleDetailScreen extends StatefulWidget {
   final Camp camp;
+  const CampScheduleDetailScreen({super.key, required this.camp});
 
-  final List<Activity> activities = [
-    Activity(
-      activityId: 1,
-      name: "Team Building",
-      description: "Trò chơi tập thể gắn kết",
-      location: "Sân trung tâm",
-      date: "2025-06-10",
-      startTime: "08:00",
-      endTime: "10:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 2,
-      name: "Lửa trại",
-      description: "Giao lưu văn nghệ",
-      location: "Khu trại chính",
-      date: "2025-06-10",
-      startTime: "19:00",
-      endTime: "20:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 3,
-      name: "Team Building",
-      description: "Trò chơi tập thể gắn kết",
-      location: "Sân trung tâm",
-      date: "2025-06-10",
-      startTime: "10:15",
-      endTime: "11:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 4,
-      name: "Lửa trại",
-      description: "Giao lưu văn nghệ",
-      location: "Khu trại chính",
-      date: "2025-06-10",
-      startTime: "13:00",
-      endTime: "14:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 5,
-      name: "Team Building",
-      description: "Trò chơi tập thể gắn kết",
-      location: "Sân trung tâm",
-      date: "2025-06-10",
-      startTime: "17:00",
-      endTime: "19:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 6,
-      name: "Lửa trại",
-      description: "Giao lưu văn nghệ",
-      location: "Khu trại chính",
-      date: "2025-06-11",
-      startTime: "19:00",
-      endTime: "20:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 7,
-      name: "Team Building",
-      description: "Trò chơi tập thể gắn kết",
-      location: "Sân trung tâm",
-      date: "2025-06-11",
-      startTime: "08:00",
-      endTime: "10:00",
-      campId: 1,
-    ),
-    Activity(
-      activityId: 8,
-      name: "Lửa trại",
-      description: "Giao lưu văn nghệ",
-      location: "Khu trại chính",
-      date: "2025-06-11",
-      startTime: "12:00",
-      endTime: "13:45",
-      campId: 1,
-    ),
-  ];
+  @override
+  State<CampScheduleDetailScreen> createState() =>
+      _CampScheduleDetailScreenState();
+}
 
+class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
   final List<Camper> campers = [
     Camper(
       camperId: 1,
@@ -120,18 +46,13 @@ class CampScheduleDetailScreen extends StatelessWidget {
     ),
   ];
 
-  void onCreateButtonPressed(BuildContext context) async {
-    await createLivestream().then((liveStreamId) {
-      if (!context.mounted) return;
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ILSScreen(
-            liveStreamId: liveStreamId,
-            token: token,
-            mode: Mode.SEND_AND_RECV,
-          ),
-        ),
-      );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ActivityProvider>().loadActivities(widget.camp.campId);
+      }
     });
   }
 
@@ -148,13 +69,13 @@ class CampScheduleDetailScreen extends StatelessWidget {
     );
   }
 
-  CampScheduleDetailScreen({super.key, required this.camp});
-
+  // Cập nhật hàm này để làm việc với DateTime
   Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
     final Map<String, List<Activity>> grouped = {};
     for (var act in activities) {
-      grouped.putIfAbsent(act.date, () => []);
-      grouped[act.date]!.add(act);
+      String dateKey = DateFormatter.formatDate(act.startTime);
+      grouped.putIfAbsent(dateKey, () => []);
+      grouped[dateKey]!.add(act);
     }
     return grouped;
   }
@@ -162,16 +83,18 @@ class CampScheduleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final activityProvider = context.watch<ActivityProvider>();
+    final activities = activityProvider.activities;
     final groupedActivities = groupActivitiesByDate(activities);
 
-    final startDate = DateTime.parse(camp.startDate);
-    final endDate = DateTime.parse(camp.endDate);
+    final startDate = DateTime.parse(widget.camp.startDate);
+    final endDate = DateTime.parse(widget.camp.endDate);
     final totalDays = endDate.difference(startDate).inDays + 1;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          camp.name,
+          widget.camp.name,
           style: const TextStyle(
             fontFamily: "Fredoka",
             fontWeight: FontWeight.bold,
@@ -186,11 +109,11 @@ class CampScheduleDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (camp.image.isNotEmpty)
+            if (widget.camp.image.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  camp.image,
+                  widget.camp.image,
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -204,7 +127,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             Text(
-              camp.name,
+              widget.camp.name,
               style: textTheme.titleLarge?.copyWith(
                 fontFamily: "Fredoka",
                 fontWeight: FontWeight.bold,
@@ -212,9 +135,9 @@ class CampScheduleDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            if (camp.description.isNotEmpty)
+            if (widget.camp.description.isNotEmpty)
               Text(
-                camp.description,
+                widget.camp.description,
                 style: const TextStyle(
                   fontFamily: "Nunito",
                   fontSize: 14,
@@ -228,7 +151,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    camp.place,
+                    widget.camp.place,
                     style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
                   ),
                 ),
@@ -240,14 +163,13 @@ class CampScheduleDetailScreen extends StatelessWidget {
                 const Icon(Icons.date_range, size: 18, color: Colors.grey),
                 const SizedBox(width: 6),
                 Text(
-                  "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                  "${DateFormatter.formatFromString(widget.camp.startDate)} - ${DateFormatter.formatFromString(widget.camp.endDate)}",
                   style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
                 ),
               ],
             ),
 
             const SizedBox(height: 20),
-
             Text(
               "Hoạt động",
               style: textTheme.titleLarge?.copyWith(
@@ -256,86 +178,89 @@ class CampScheduleDetailScreen extends StatelessWidget {
                 color: StaffTheme.staffPrimary,
               ),
             ),
-
             const SizedBox(height: 12),
 
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: totalDays,
-              itemBuilder: (context, index) {
-                final dayDate = DateTime.parse(
-                  camp.startDate,
-                ).add(Duration(days: index));
-                final dateStr = DateFormatter.formatDate(dayDate);
-                final activitiesOfDay =
-                    groupedActivities[dayDate.toIso8601String().substring(
-                      0,
-                      10,
-                    )] ??
-                    [];
+            if (activityProvider.loading)
+              const Center(child: CircularProgressIndicator())
+            else if (activities.isEmpty)
+              const Center(
+                child: Text(
+                  "Chưa có hoạt động nào cho trại này.",
+                  style: TextStyle(fontFamily: "Nunito"),
+                ),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: totalDays,
+                itemBuilder: (context, index) {
+                  final dayDate = startDate.add(Duration(days: index));
+                  final dateStr = DateFormatter.formatDate(dayDate);
+                  final activitiesOfDay = groupedActivities[dateStr] ?? [];
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Ngày ${index + 1} - $dateStr",
-                          style: const TextStyle(
-                            fontFamily: "Fredoka",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const Divider(),
-                        if (activitiesOfDay.isEmpty)
-                          const Text(
-                            "Không có hoạt động",
-                            style: TextStyle(
-                              fontFamily: "Nunito",
-                              fontSize: 14,
+                  activitiesOfDay.sort(
+                    (a, b) => a.startTime.compareTo(b.startTime),
+                  );
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Ngày ${index + 1} - $dateStr",
+                            style: const TextStyle(
+                              fontFamily: "Fredoka",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                          )
-                        else
-                          Column(
-                            children: activitiesOfDay.map((act) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: 18,
-                                      color: StaffTheme.staffAccent,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        "${act.startTime} - ${act.endTime} • ${act.name} @ ${act.location}",
-                                        style: const TextStyle(
-                                          fontFamily: "Nunito",
-                                          fontSize: 14,
+                          ),
+                          const Divider(),
+                          if (activitiesOfDay.isEmpty)
+                            const Text(
+                              "Không có hoạt động",
+                              style: TextStyle(fontFamily: "Nunito"),
+                            )
+                          else
+                            Column(
+                              children: activitiesOfDay.map((act) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 18,
+                                        color: StaffTheme.staffAccent,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.name} @ ${act.location}",
+                                          style: const TextStyle(
+                                            fontFamily: "Nunito",
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                      ],
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
 
             const SizedBox(height: 16),
 
@@ -355,7 +280,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.attendance,
-                        arguments: {"camp": camp, "campers": campers},
+                        arguments: {"camp": widget.camp, "campers": campers},
                       );
                     },
                     icon: const Icon(Icons.check_circle),
@@ -380,7 +305,7 @@ class CampScheduleDetailScreen extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.uploadPhoto,
-                        arguments: camp,
+                        arguments: widget.camp,
                       );
                     },
                     icon: const Icon(Icons.photo_camera),

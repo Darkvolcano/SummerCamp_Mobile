@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
+import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
+import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
@@ -62,6 +66,11 @@ Future<void> main() async {
   final getCampsUseCase = GetCamps(campRepo);
   final getCampTypesUseCase = GetCampTypes(campRepo);
 
+  // Activity
+  final activityApiService = ActivityApiService(apiClient);
+  final activityRepo = ActivityRepositoryImpl(activityApiService);
+  final getActivitiesUseCase = GetActivitiesByCampId(activityRepo);
+
   // Registration
   final registrationApi = RegistrationApiService(apiClient);
   final registrationRepo = RegistrationRepositoryImpl(registrationApi);
@@ -106,6 +115,11 @@ Future<void> main() async {
         // CampProvider need 2 usecases (GetCamps, GetCampTypes)
         ChangeNotifierProvider(
           create: (_) => CampProvider(getCampsUseCase, getCampTypesUseCase),
+        ),
+
+        // ActivityProvider need 1 usecases (GetActivitiess)
+        ChangeNotifierProvider(
+          create: (_) => ActivityProvider(getActivitiesUseCase),
         ),
 
         // RegistrationProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)

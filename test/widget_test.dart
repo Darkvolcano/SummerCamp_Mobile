@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
+import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
+import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
@@ -188,6 +192,11 @@ void main() {
     final getCampsUseCase = GetCamps(campRepo);
     final getCampTypesUseCase = GetCampTypes(campRepo);
 
+    // Activity
+    final activityApiService = ActivityApiService(apiClient);
+    final activityRepo = ActivityRepositoryImpl(activityApiService);
+    final getActivitiesUseCase = GetActivitiesByCampId(activityRepo);
+
     // Registration
     final registrationApi = RegistrationApiService(apiClient);
     final registrationRepo = RegistrationRepositoryImpl(registrationApi);
@@ -214,6 +223,11 @@ void main() {
           // CampProvider cần 2 usecases (GetCamps, CreateCamp)
           ChangeNotifierProvider(
             create: (_) => CampProvider(getCampsUseCase, getCampTypesUseCase),
+          ),
+
+          // ActivityProvider need 1 usecases (GetActivitiess)
+          ChangeNotifierProvider(
+            create: (_) => ActivityProvider(getActivitiesUseCase),
           ),
 
           // RegistrationProvider cần 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
