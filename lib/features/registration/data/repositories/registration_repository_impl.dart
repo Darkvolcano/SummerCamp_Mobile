@@ -31,4 +31,10 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   Future<void> cancelRegistration(int registrationId) async {
     await service.cancelRegistration(registrationId);
   }
+
+  @override
+  Future<Registration> getRegistrationById(int registrationId) async {
+    final data = await service.fetchRegistrationById(registrationId);
+    return RegistrationModel.fromJson(data);
+  }
 }

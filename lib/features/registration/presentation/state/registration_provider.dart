@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 
@@ -9,15 +10,20 @@ class RegistrationProvider with ChangeNotifier {
   final CreateRegister createRegisterUseCase;
   final CancelRegistration cancelUseCase;
   final GetRegistrations getRegistrationsUseCase;
+  final GetRegistrationById getRegistrationByIdUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
     this.createRegisterUseCase,
     this.cancelUseCase,
+    this.getRegistrationByIdUseCase,
   );
 
   List<Registration> _registrations = [];
   List<Registration> get registrations => _registrations;
+
+  Registration? _selectedRegistration;
+  Registration? get selectedRegistration => _selectedRegistration;
 
   bool _loading = false;
   String? _error;
@@ -73,5 +79,22 @@ class RegistrationProvider with ChangeNotifier {
     await cancelUseCase(registrationId);
     _registrations.removeWhere((r) => r.registrationId == registrationId);
     notifyListeners();
+  }
+
+  Future<void> loadRegistrationDetails(int registrationId) async {
+    _loading = true;
+    _error = null;
+    _selectedRegistration = null;
+    notifyListeners();
+
+    try {
+      _selectedRegistration = await getRegistrationByIdUseCase(registrationId);
+    } catch (e) {
+      _error = e.toString();
+      print('Lỗi khi tải chi tiết đăng ký: $e');
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 }

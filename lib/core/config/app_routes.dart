@@ -26,7 +26,6 @@ import 'package:summercamp/features/profile/presentation/screens/profile_screen.
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home.dart';
-import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_detail_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_failure_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_form_screen.dart';
@@ -146,9 +145,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => RegistrationListScreen());
 
       case registrationDetail:
-        final registration = settings.arguments as Registration;
+        final registrationId = settings.arguments as int;
         return MaterialPageRoute(
-          builder: (_) => RegistrationDetailScreen(registration: registration),
+          builder: (_) =>
+              RegistrationDetailScreen(registrationId: registrationId),
         );
 
       case campDetail:

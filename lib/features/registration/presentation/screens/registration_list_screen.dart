@@ -160,7 +160,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
                           Navigator.pushNamed(
                             context,
                             AppRoutes.registrationDetail,
-                            arguments: r,
+                            arguments: r.registrationId,
                           );
                         },
                       );

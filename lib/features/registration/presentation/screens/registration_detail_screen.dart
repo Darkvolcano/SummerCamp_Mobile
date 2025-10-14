@@ -572,12 +572,13 @@ import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
+import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:videosdk/videosdk.dart';
 
 class RegistrationDetailScreen extends StatefulWidget {
-  final Registration registration;
+  final int registrationId;
 
-  const RegistrationDetailScreen({super.key, required this.registration});
+  const RegistrationDetailScreen({super.key, required this.registrationId});
 
   @override
   State<RegistrationDetailScreen> createState() =>
@@ -592,14 +593,24 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _fetchData();
+        _fetchInitialData();
       }
     });
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchInitialData() async {
+    final registrationProvider = context.read<RegistrationProvider>();
+    await registrationProvider.loadRegistrationDetails(widget.registrationId);
+
+    if (!mounted || registrationProvider.selectedRegistration == null) return;
+
+    _fetchActivities(registrationProvider.selectedRegistration!);
+  }
+
+  Future<void> _fetchActivities(Registration registration) async {
     final campProvider = context.read<CampProvider>();
     final activityProvider = context.read<ActivityProvider>();
+
     activityProvider.setLoading();
 
     if (campProvider.camps.isEmpty) {
@@ -610,23 +621,16 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     int? campId;
     try {
       final foundCamp = campProvider.camps.firstWhere(
-        (camp) => camp.name == widget.registration.campName,
+        (camp) => camp.name == registration.campName,
       );
       campId = foundCamp.campId;
-
       if (mounted) {
-        setState(() {
-          _campDetails = foundCamp;
-        });
+        setState(() => _campDetails = foundCamp);
       }
     } catch (e) {
-      print(
-        "Lỗi: Không tìm thấy trại nào có tên '${widget.registration.campName}'",
-      );
       activityProvider.setError("Không tìm thấy thông tin trại.");
       return;
     }
-
     await activityProvider.loadActivities(campId);
   }
 
@@ -673,7 +677,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       MaterialPageRoute(
         builder: (context) => ILSScreen(
           liveStreamId: activity.roomId!.toString(),
-          token: "YOUR_VIDEOSDK_TOKEN", // Thay token của bạn ở đây
+          token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
           mode: Mode.RECV_ONLY,
         ),
       ),
@@ -682,10 +687,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final activityProvider = context.watch<ActivityProvider>();
-    final activities = activityProvider.activities;
-    final groupedActivities = groupActivitiesByDate(activities);
+    final registrationProvider = context.watch<RegistrationProvider>();
+    final registration = registrationProvider.selectedRegistration;
 
     return Scaffold(
       appBar: AppBar(
@@ -700,75 +703,106 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         backgroundColor: AppTheme.summerPrimary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCampInfoCard(context, textTheme),
-            const SizedBox(height: 16),
-            _buildCamperListCard(context, textTheme),
-            const SizedBox(height: 24),
-            Text(
-              "Lịch trình hoạt động",
-              style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
-                fontWeight: FontWeight.bold,
-                color: AppTheme.summerPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (activityProvider.loading)
-              const Center(child: CircularProgressIndicator())
-            else if (activityProvider.error != null)
-              Center(
-                child: Text(
-                  "Lỗi: ${activityProvider.error}",
-                  style: const TextStyle(
-                    fontFamily: "Nunito",
-                    color: Colors.red,
-                  ),
-                ),
-              )
-            else if (activities.isEmpty)
-              const Center(
-                child: Text(
-                  "Chưa có lịch trình hoạt động.",
-                  style: TextStyle(fontFamily: "Nunito"),
-                ),
-              )
-            else
-              _buildSchedule(context, groupedActivities),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => FeedbackFormScreen(
-                registrationId: widget.registration.registrationId,
-              ),
-            ),
-          );
+      body: Builder(
+        builder: (context) {
+          if (registrationProvider.loading && registration == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (registrationProvider.error != null) {
+            return Center(child: Text("Lỗi: ${registrationProvider.error}"));
+          }
+          if (registration == null) {
+            return const Center(
+              child: Text("Không tìm thấy thông tin đăng ký."),
+            );
+          }
+          return _buildContent(context, registration);
         },
-        backgroundColor: AppTheme.summerAccent,
-        icon: const Icon(Icons.feedback_outlined, color: Colors.white),
-        label: const Text(
-          "Gửi Feedback",
-          style: TextStyle(
-            fontFamily: "Fredoka",
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
       ),
+      floatingActionButton: registration != null
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => FeedbackFormScreen(
+                      registrationId: registration.registrationId,
+                    ),
+                  ),
+                );
+              },
+              backgroundColor: AppTheme.summerAccent,
+              icon: const Icon(Icons.feedback_outlined, color: Colors.white),
+              label: const Text(
+                "Gửi Feedback",
+                style: TextStyle(
+                  fontFamily: "Fredoka",
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  Widget _buildCampInfoCard(BuildContext context, TextTheme textTheme) {
+  Widget _buildContent(BuildContext context, Registration registration) {
+    final textTheme = Theme.of(context).textTheme;
+    final activityProvider = context.watch<ActivityProvider>();
+    final activities = activityProvider.activities;
+    final groupedActivities = groupActivitiesByDate(activities);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCampInfoCard(context, textTheme, registration),
+          const SizedBox(height: 16),
+          _buildCamperListCard(context, textTheme, registration),
+          const SizedBox(height: 24),
+          Text(
+            "Lịch trình hoạt động",
+            style: textTheme.titleLarge?.copyWith(
+              fontFamily: "Fredoka",
+              fontWeight: FontWeight.bold,
+              color: AppTheme.summerPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (activityProvider.loading)
+            const Center(child: CircularProgressIndicator())
+          else if (activityProvider.error != null)
+            Center(
+              child: Text(
+                "Lỗi: ${activityProvider.error}",
+                style: const TextStyle(fontFamily: "Nunito", color: Colors.red),
+              ),
+            )
+          else if (activities.isEmpty)
+            const Center(
+              child: Text(
+                "Chưa có lịch trình hoạt động.",
+                style: TextStyle(fontFamily: "Nunito"),
+              ),
+            )
+          else
+            _buildSchedule(context, groupedActivities),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCampInfoCard(
+    BuildContext context,
+    TextTheme textTheme,
+    Registration registration,
+  ) {
+    final campName =
+        _campDetails?.name ?? registration.campName ?? 'Chưa có tên trại';
+    final campDescription = _campDetails?.description;
+    final campPlace = _campDetails?.place;
     final startDate = _campDetails?.startDate;
     final endDate = _campDetails?.endDate;
 
@@ -781,27 +815,38 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.registration.campName ?? 'Chưa có tên trại',
+              campName,
               style: textTheme.titleLarge?.copyWith(
                 fontFamily: "Fredoka",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
               ),
             ),
+            if (campDescription != null && campDescription.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                campDescription,
+                style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+              ),
+            ],
             const SizedBox(height: 12),
-            _buildDetailRow(
-              Icons.calendar_today,
-              "${DateFormatter.formatFromString(startDate!)} - ${DateFormatter.formatFromString(endDate!)}",
-            ),
+            if (campPlace != null)
+              _buildDetailRow(Icons.location_on, campPlace),
+            const SizedBox(height: 6),
+            if (startDate != null && endDate != null)
+              _buildDetailRow(
+                Icons.calendar_month,
+                "${DateFormatter.formatFromString(startDate)} - ${DateFormatter.formatFromString(endDate)}",
+              ),
             const SizedBox(height: 8),
             _buildDetailRow(
               Icons.payment,
-              "Mã thanh toán: #${widget.registration.paymentId}",
+              "Mã thanh toán: #${registration.paymentId}",
             ),
             const SizedBox(height: 8),
             _buildDetailRow(
               Icons.info_outline,
-              "Trạng thái: ${widget.registration.status.name}",
+              "Trạng thái: ${registration.status.name}",
             ),
           ],
         ),
@@ -809,7 +854,11 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     );
   }
 
-  Widget _buildCamperListCard(BuildContext context, TextTheme textTheme) {
+  Widget _buildCamperListCard(
+    BuildContext context,
+    TextTheme textTheme,
+    Registration registration,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -826,13 +875,13 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               ),
             ),
             const Divider(height: 20),
-            if (widget.registration.campers.isEmpty)
+            if (registration.campers.isEmpty)
               const Text(
                 "Không có thông tin camper.",
                 style: TextStyle(fontFamily: "Nunito", color: Colors.grey),
               )
             else
-              ...widget.registration.campers.map(
+              ...registration.campers.map(
                 (camper) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
@@ -942,7 +991,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                _buildDetailRow(Icons.place_outlined, act.location, size: 15),
+                _buildDetailRow(Icons.place_outlined, act.location, size: 14),
               ],
             ),
           ),
@@ -964,7 +1013,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   Widget _buildDetailRow(IconData icon, String text, {double size = 16}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: size, color: Colors.grey.shade600),

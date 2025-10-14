@@ -19,6 +19,7 @@ import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
@@ -203,6 +204,7 @@ void main() {
     final getRegistrationsUseCase = GetRegistrations(registrationRepo);
     final createRegisterUseCase = CreateRegister(registrationRepo);
     final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
+    final getRegistrationByIdUseCase = GetRegistrationById(registrationRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -236,6 +238,7 @@ void main() {
               getRegistrationsUseCase,
               createRegisterUseCase,
               cancelRegistrationUseCase,
+              getRegistrationByIdUseCase,
             ),
           ),
         ],

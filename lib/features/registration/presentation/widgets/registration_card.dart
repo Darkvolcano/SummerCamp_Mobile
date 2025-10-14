@@ -127,14 +127,15 @@ class RegistrationCard extends StatelessWidget {
                           _buildStatusChip(registration.status),
                         ],
                       ),
+
                       const SizedBox(height: 12),
-                      // --- THAY ĐỔI Ở ĐÂY: Chỉ hiện số lượng camper ---
+
                       _buildInfoRow(
                         Icons.people_outline,
                         "Số lượng: $totalCampers camper",
                         iconColor: AppTheme.summerAccent,
                       ),
-                      // ---------------------------------------------
+
                       const SizedBox(height: 8),
                       _buildInfoRow(
                         Icons.today_outlined,
