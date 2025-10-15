@@ -89,7 +89,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => ForgotPasswordEmailScreen());
 
       case forgotPasswordOTP:
-        return MaterialPageRoute(builder: (_) => ForgotPasswordOtpScreen());
+        final email = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => ForgotPasswordOtpScreen(email: email),
+        );
 
       case resetPassword:
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());

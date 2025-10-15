@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/widgets/animated_gradient_background.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
@@ -210,177 +211,187 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          const AnimatedGradientBackground(
+            gradientColors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
+            blobColors: [
+              Color.fromARGB(40, 255, 255, 255),
+              Color.fromARGB(30, 102, 166, 255),
+              Color.fromARGB(35, 137, 247, 254),
+            ],
           ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.email_outlined,
-                      size: 64,
-                      color: Colors.white,
-                    ),
-                  ),
 
-                  const SizedBox(height: 32),
-
-                  Text(
-                    "Xác thực OTP",
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontFamily: "Fredoka",
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    "Mã OTP đã được gửi đến",
-                    style: textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontFamily: "Nunito",
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    currentEmail,
-                    style: textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Nunito",
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(6, (index) => _buildOtpBox(index)),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.summerPrimary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        shape: BoxShape.circle,
                       ),
-                      onPressed: _isLoading
-                          ? null
-                          : () => _verifyOtp(currentEmail),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              "Xác thực",
-                              style: textTheme.titleMedium?.copyWith(
-                                fontFamily: "Fredoka",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Không nhận được mã? ",
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontFamily: "Nunito",
-                        ),
+                      child: const Icon(
+                        Icons.email_outlined,
+                        size: 64,
+                        color: Colors.white,
                       ),
-                      TextButton(
-                        onPressed: (_isLoading || _isResendActive)
-                            ? null
-                            : () => _resendOtp(currentEmail),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          disabledForegroundColor: Colors.white.withValues(
-                            alpha: 0.5,
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    Text(
+                      "Xác thực OTP",
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontFamily: "Fredoka",
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Text(
+                      "Mã OTP đã được gửi đến",
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontFamily: "Nunito",
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      currentEmail,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Nunito",
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(
+                        6,
+                        (index) => _buildOtpBox(index),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.summerPrimary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Gửi lại",
-                              style: TextStyle(
-                                color: (_isLoading || _isResendActive)
-                                    ? Colors.white.withValues(alpha: 0.5)
-                                    : Colors.white,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.white,
-                              ),
-                            ),
-                            if (_isResendActive)
-                              Text(
-                                " (${_formatDuration(_countdownSeconds)})",
-                                style: TextStyle(
-                                  fontFamily: "Nunito",
+                        onPressed: _isLoading
+                            ? null
+                            : () => _verifyOtp(currentEmail),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                "Xác thực",
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontFamily: "Fredoka",
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.yellow[200],
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.login);
-                    },
-                    child: const Text(
-                      "Đã có tài khoản? Đăng nhập",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontStyle: FontStyle.italic,
                       ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 24),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Không nhận được mã? ",
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontFamily: "Nunito",
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: (_isLoading || _isResendActive)
+                              ? null
+                              : () => _resendOtp(currentEmail),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            disabledForegroundColor: Colors.white.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Gửi lại",
+                                style: TextStyle(
+                                  color: (_isLoading || _isResendActive)
+                                      ? Colors.white.withValues(alpha: 0.5)
+                                      : Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.white,
+                                ),
+                              ),
+                              if (_isResendActive)
+                                Text(
+                                  " (${_formatDuration(_countdownSeconds)})",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito",
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.yellow[200],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.login,
+                        );
+                      },
+                      child: const Text(
+                        "Đã có tài khoản? Đăng nhập",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -150,10 +150,7 @@ class AuthApiService {
 
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
-      final res = await client.post(
-        'auth/forgot-password',
-        data: {'email': email},
-      );
+      final res = await client.post('auth/forgot-password?email=$email');
       final data = res.data as Map<String, dynamic>;
 
       return data;

@@ -17,7 +17,7 @@ abstract class UserRepository {
   Future<void> logout();
   Future<List<User>> getUsers();
   Future<String?> getToken();
-  Future<User> forgotPassword(String email);
-  Future<User> resetPassword(String email, String otp, String newPassword);
+  Future<String> forgotPassword(String email);
+  Future<String> resetPassword(String email, String otp, String newPassword);
   Future<void> resendOtp({required String email});
 }

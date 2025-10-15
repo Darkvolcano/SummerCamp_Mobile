@@ -1,4 +1,3 @@
-import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 
 class ResetPassword {
@@ -6,7 +5,7 @@ class ResetPassword {
 
   ResetPassword(this.repository);
 
-  Future<User> call(String email, String otp, String newPassword) {
+  Future<String> call(String email, String otp, String newPassword) {
     return repository.resetPassword(email, otp, newPassword);
   }
 }

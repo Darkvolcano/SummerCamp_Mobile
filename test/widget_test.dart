@@ -7,9 +7,11 @@ import 'package:summercamp/features/activity/data/repositories/activity_reposito
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
+import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/camp/data/repositories/camp_repository_impl.dart';
 import 'package:summercamp/features/camp/data/services/camp_api_service.dart';
@@ -218,6 +220,8 @@ void main() {
               getUserProfiles: GetUserProfiles(userRepo),
               getUsersUseCase: GetUsers(userRepo),
               resendOTP: ResendOtp(userRepo),
+              forgotPassword: ForgotPassword(userRepo),
+              resetPassword: ResetPassword(userRepo),
               repository: userRepo,
             ),
           ),

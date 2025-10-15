@@ -111,19 +111,25 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> forgotPassword(String email) async {
+  Future<String> forgotPassword(String email) async {
     final data = await service.forgotPassword(email);
-    return _parseUser(data);
+    if (data.containsKey('message')) {
+      return data['message'] as String;
+    }
+    throw Exception('Forgot password failed: Invalid response from server');
   }
 
   @override
-  Future<User> resetPassword(
+  Future<String> resetPassword(
     String email,
     String otp,
     String newPassword,
   ) async {
     final data = await service.resetPassword(email, otp, newPassword);
-    return _parseUser(data);
+    if (data.containsKey('message')) {
+      return data['message'] as String;
+    }
+    throw Exception('Reset password failed: Invalid response from server');
   }
 
   @override

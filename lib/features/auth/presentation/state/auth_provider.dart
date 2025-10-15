@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
@@ -8,6 +9,7 @@ import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
+import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -19,6 +21,8 @@ class AuthProvider with ChangeNotifier {
   final UserRepository repository;
   final GetUsers getUsersUseCase;
   final ResendOtp resendOTP;
+  final ForgotPassword forgotPassword;
+  final ResetPassword resetPassword;
 
   AuthProvider({
     required this.loginUser,
@@ -29,6 +33,8 @@ class AuthProvider with ChangeNotifier {
     required this.repository,
     required this.getUsersUseCase,
     required this.resendOTP,
+    required this.forgotPassword,
+    required this.resetPassword,
   });
 
   List<User> _users = [];
@@ -154,6 +160,38 @@ class AuthProvider with ChangeNotifier {
       _error = e.toString();
       notifyListeners();
       rethrow;
+    }
+  }
+
+  Future<String> forgotPasswords(String email) async {
+    _setLoading(true);
+    try {
+      final message = await forgotPassword(email);
+      _error = null;
+      return message;
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<String> resetPasswords(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
+    _setLoading(true);
+    try {
+      final message = await resetPassword(email, otp, newPassword);
+      _error = null;
+      return message;
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
     }
   }
 

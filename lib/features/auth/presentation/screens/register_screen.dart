@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/widgets/animated_gradient_background.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -201,135 +202,145 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final provider = context.watch<AuthProvider>();
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          const AnimatedGradientBackground(
+            gradientColors: [
+              Color(0xFF581C87), // purple-900
+              Color(0xFF7C2D12), // orange-900
+              Color(0xFF92400E), // amber-900
+            ],
+            blobColors: [
+              Color.fromARGB(40, 249, 115, 22),
+              Color.fromARGB(40, 251, 146, 60),
+              Color.fromARGB(40, 251, 191, 36),
+            ],
           ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Tạo tài khoản",
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontFamily: "Fredoka",
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  _buildInput(
-                    firstNameController,
-                    "Họ",
-                    Icons.person,
-                    validator: (v) => _validateRequired(v, 'họ'),
-                  ),
-                  _buildInput(
-                    lastNameController,
-                    "Tên",
-                    Icons.person_outline,
-                    validator: (v) => _validateRequired(v, 'tên'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: TextFormField(
-                      controller: dobController,
-                      readOnly: true,
-                      style: const TextStyle(color: Colors.black87),
-                      decoration: _inputDecoration("Ngày sinh").copyWith(
-                        prefixIcon: const Icon(
-                          Icons.calendar_today,
-                          color: AppTheme.summerPrimary,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng chọn ngày sinh';
-                        }
-                        return null;
-                      },
-                      onTap: () => _selectDate(context),
-                    ),
-                  ),
-                  _buildInput(
-                    emailController,
-                    "Email",
-                    Icons.email,
-                    validator: _validateEmail,
-                  ),
-                  _buildInput(
-                    phoneController,
-                    "Số điện thoại",
-                    Icons.phone,
-                    validator: _validatePhone,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  _buildInput(
-                    passwordController,
-                    "Mật khẩu",
-                    Icons.lock,
-                    obscure: true,
-                    validator: _validatePassword,
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.summerPrimary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: provider.isLoading ? null : _handleRegister,
-                      child: provider.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              "Đăng ký",
-                              style: textTheme.titleMedium?.copyWith(
-                                fontFamily: "Fredoka",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.login);
-                    },
-                    child: const Text(
-                      "Đã có tài khoản? Đăng nhập",
-                      style: TextStyle(
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Tạo tài khoản",
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontFamily: "Fredoka",
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontStyle: FontStyle.italic,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 32),
+                    _buildInput(
+                      firstNameController,
+                      "Họ",
+                      Icons.person,
+                      validator: (v) => _validateRequired(v, 'họ'),
+                    ),
+                    _buildInput(
+                      lastNameController,
+                      "Tên",
+                      Icons.person_outline,
+                      validator: (v) => _validateRequired(v, 'tên'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TextFormField(
+                        controller: dobController,
+                        readOnly: true,
+                        style: const TextStyle(color: Colors.black87),
+                        decoration: _inputDecoration("Ngày sinh").copyWith(
+                          prefixIcon: const Icon(
+                            Icons.calendar_today,
+                            color: AppTheme.summerPrimary,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng chọn ngày sinh';
+                          }
+                          return null;
+                        },
+                        onTap: () => _selectDate(context),
+                      ),
+                    ),
+                    _buildInput(
+                      emailController,
+                      "Email",
+                      Icons.email,
+                      validator: _validateEmail,
+                    ),
+                    _buildInput(
+                      phoneController,
+                      "Số điện thoại",
+                      Icons.phone,
+                      validator: _validatePhone,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    _buildInput(
+                      passwordController,
+                      "Mật khẩu",
+                      Icons.lock,
+                      obscure: true,
+                      validator: _validatePassword,
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.summerPrimary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: provider.isLoading ? null : _handleRegister,
+                        child: provider.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                "Đăng ký",
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontFamily: "Fredoka",
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.login,
+                        );
+                      },
+                      child: const Text(
+                        "Đã có tài khoản? Đăng nhập",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
