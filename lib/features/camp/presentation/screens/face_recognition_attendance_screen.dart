@@ -162,12 +162,12 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
   //         children: [
   //           const Icon(Icons.info, color: Colors.blue, size: 32),
   //           const SizedBox(width: 12),
-  //           const Text('Đã điểm danh', style: TextStyle(fontFamily: "Fredoka")),
+  //           const Text('Đã điểm danh', style: TextStyle(fontFamily: "Quicksand")),
   //         ],
   //       ),
   //       content: Text(
   //         '$name đã được điểm danh rồi!',
-  //         style: const TextStyle(fontFamily: "Nunito"),
+  //         style: const TextStyle(fontFamily: "Quicksand"),
   //       ),
   //       actions: [
   //         ElevatedButton(
@@ -192,7 +192,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             const SizedBox(width: 12),
             const Text(
               'Nhận diện thành công',
-              style: TextStyle(fontFamily: "Fredoka", fontSize: 18),
+              style: TextStyle(fontFamily: "Quicksand", fontSize: 18),
             ),
           ],
         ),
@@ -219,7 +219,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             Text(
               result['name'],
               style: const TextStyle(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -235,7 +235,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
               child: Text(
                 'Độ chính xác: ${result['confidence'].toStringAsFixed(1)}%',
                 style: TextStyle(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: Colors.green.shade800,
                 ),
@@ -245,7 +245,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             Text(
               'Trạng thái: ${result['status']}',
               style: const TextStyle(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
@@ -262,7 +262,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             },
             child: const Text(
               'Tiếp tục quét',
-              style: TextStyle(fontFamily: "Nunito"),
+              style: TextStyle(fontFamily: "Quicksand"),
             ),
           ),
           ElevatedButton(
@@ -277,7 +277,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             ),
             child: const Text(
               'OK',
-              style: TextStyle(fontFamily: "Nunito", color: Colors.white),
+              style: TextStyle(fontFamily: "Quicksand", color: Colors.white),
             ),
           ),
         ],
@@ -295,13 +295,13 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             const SizedBox(width: 12),
             const Text(
               'Không tìm thấy',
-              style: TextStyle(fontFamily: "Fredoka", fontSize: 18),
+              style: TextStyle(fontFamily: "Quicksand", fontSize: 18),
             ),
           ],
         ),
         content: const Text(
           'Không tìm thấy camper phù hợp hoặc tất cả đã được điểm danh.',
-          style: TextStyle(fontFamily: "Nunito"),
+          style: TextStyle(fontFamily: "Quicksand"),
         ),
         actions: [
           ElevatedButton(
@@ -316,7 +316,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
             ),
             child: const Text(
               'Thử lại',
-              style: TextStyle(fontFamily: "Nunito", color: Colors.white),
+              style: TextStyle(fontFamily: "Quicksand", color: Colors.white),
             ),
           ),
         ],
@@ -330,7 +330,10 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
       appBar: AppBar(
         title: const Text(
           'Điểm danh khuôn mặt',
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: StaffTheme.staffPrimary,
         foregroundColor: Colors.white,
@@ -371,7 +374,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                                     'Đang so sánh với database...',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontFamily: "Nunito",
+                                      fontFamily: "Quicksand",
                                       fontSize: 16,
                                     ),
                                   ),
@@ -394,7 +397,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                           Text(
                             'Chưa có ảnh',
                             style: TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               fontSize: 16,
                               color: Colors.grey.shade600,
                             ),
@@ -403,7 +406,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                           Text(
                             'Nhấn nút bên dưới để quét khuôn mặt',
                             style: TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               fontSize: 14,
                               color: Colors.grey.shade500,
                             ),
@@ -432,7 +435,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                   child: Text(
                     'Có ${widget.campers.length} campers trong danh sách',
                     style: TextStyle(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       fontSize: 13,
                       color: Colors.purple.shade900,
                       fontWeight: FontWeight.bold,
@@ -465,7 +468,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                 label: Text(
                   _isProcessing ? 'Đang xử lý...' : 'Quét khuôn mặt',
                   style: const TextStyle(
-                    fontFamily: "Nunito",
+                    fontFamily: "Quicksand",
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -493,7 +496,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                   child: Text(
                     'Hệ thống sẽ so sánh khuôn mặt với avatar của campers',
                     style: TextStyle(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       fontSize: 13,
                       color: Colors.blue.shade900,
                     ),
@@ -532,7 +535,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                         const Text(
                           'Đã điểm danh',
                           style: TextStyle(
-                            fontFamily: "Fredoka",
+                            fontFamily: "Quicksand",
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -550,7 +553,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                           child: Text(
                             '${_attendanceList.length}/${widget.campers.length}',
                             style: TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.green.shade800,
@@ -567,7 +570,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                             child: Text(
                               'Chưa có ai điểm danh',
                               style: TextStyle(
-                                fontFamily: "Nunito",
+                                fontFamily: "Quicksand",
                                 color: Colors.grey.shade600,
                               ),
                             ),
@@ -607,14 +610,14 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                                 title: Text(
                                   attendance['name'],
                                   style: const TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Quicksand",
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 subtitle: Text(
                                   'Độ chính xác: ${attendance['confidence'].toStringAsFixed(1)}%',
                                   style: const TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Quicksand",
                                     fontSize: 12,
                                   ),
                                 ),
@@ -631,7 +634,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                                     Text(
                                       attendance['time'],
                                       style: TextStyle(
-                                        fontFamily: "Nunito",
+                                        fontFamily: "Quicksand",
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                       ),

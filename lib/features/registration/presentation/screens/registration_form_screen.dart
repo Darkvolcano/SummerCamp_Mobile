@@ -44,7 +44,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         title: Text(
           "Đăng ký trại",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -71,7 +71,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           Text(
                             camp.name,
                             style: textTheme.titleLarge?.copyWith(
-                              fontFamily: "Fredoka",
+                              fontFamily: "Quicksand",
                               fontWeight: FontWeight.bold,
                               color: AppTheme.summerAccent,
                             ),
@@ -80,7 +80,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           Text(
                             camp.description,
                             style: textTheme.bodyMedium?.copyWith(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               color: Colors.grey[700],
                               height: 1.4,
                             ),
@@ -96,7 +96,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                               Text(
                                 "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                                 style: textTheme.bodyMedium?.copyWith(
-                                  fontFamily: "Nunito",
+                                  fontFamily: "Quicksand",
                                   color: Colors.grey[700],
                                 ),
                               ),
@@ -113,7 +113,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                               Text(
                                 PriceFormatter.format(camp.price),
                                 style: textTheme.titleMedium?.copyWith(
-                                  fontFamily: "Fredoka",
+                                  fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.summerAccent,
                                 ),
@@ -130,7 +130,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                   Text(
                     "Chọn Camper",
                     style: textTheme.titleMedium?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -215,7 +215,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
-                                        fontFamily: "Fredoka",
+                                        fontFamily: "Quicksand",
                                         fontWeight: FontWeight.bold,
                                         color: isSelected
                                             ? AppTheme.summerAccent
@@ -229,7 +229,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                   "Camper",
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
-                                        fontFamily: "Nunito",
+                                        fontFamily: "Quicksand",
                                         color: Colors.grey.shade600,
                                       ),
                                 ),
@@ -246,7 +246,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                   Text(
                     "Phương thức thanh toán",
                     style: textTheme.titleMedium?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -364,7 +364,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       label: Text(
                         "Xem lại & Xác nhận",
                         style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

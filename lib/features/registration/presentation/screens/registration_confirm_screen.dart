@@ -41,7 +41,7 @@
 //         title: Text(
 //           "Xác nhận đăng ký",
 //           style: textTheme.titleLarge?.copyWith(
-//             fontFamily: "Fredoka",
+//             fontFamily: "Quicksand",
 //             fontWeight: FontWeight.bold,
 //             color: Colors.white,
 //           ),
@@ -66,7 +66,7 @@
 //                     Text(
 //                       camp.name,
 //                       style: textTheme.titleLarge?.copyWith(
-//                         fontFamily: "Fredoka",
+//                         fontFamily: "Quicksand",
 //                         fontWeight: FontWeight.bold,
 //                         color: AppTheme.summerAccent,
 //                       ),
@@ -82,7 +82,7 @@
 //                         Text(
 //                           "${DateFormatter.formatDate(camp.startDate)} - ${DateFormatter.formatDate(camp.endDate)}",
 //                           style: textTheme.bodyMedium?.copyWith(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                             color: Colors.grey[700],
 //                           ),
 //                         ),
@@ -96,7 +96,7 @@
 //                         Text(
 //                           "Giá: ${PriceFormatter.format(camp.price)} / Camper",
 //                           style: textTheme.bodyMedium?.copyWith(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                             fontWeight: FontWeight.bold,
 //                             color: Colors.green[700],
 //                           ),
@@ -113,7 +113,7 @@
 //             Text(
 //               "Camper đã chọn",
 //               style: textTheme.titleMedium?.copyWith(
-//                 fontFamily: "Fredoka",
+//                 fontFamily: "Quicksand",
 //                 fontWeight: FontWeight.bold,
 //                 color: AppTheme.summerPrimary,
 //               ),
@@ -153,7 +153,7 @@
 //                         c.fullName,
 //                         textAlign: TextAlign.center,
 //                         style: textTheme.bodyMedium?.copyWith(
-//                           fontFamily: "Nunito",
+//                           fontFamily: "Quicksand",
 //                           fontWeight: FontWeight.bold,
 //                           color: AppTheme.summerPrimary,
 //                         ),
@@ -171,7 +171,7 @@
 //             Text(
 //               "Thông tin thanh toán",
 //               style: textTheme.titleMedium?.copyWith(
-//                 fontFamily: "Fredoka",
+//                 fontFamily: "Quicksand",
 //                 fontWeight: FontWeight.bold,
 //                 color: AppTheme.summerPrimary,
 //               ),
@@ -194,7 +194,7 @@
 //                         Text(
 //                           paymentMethod,
 //                           style: textTheme.bodyMedium?.copyWith(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                           ),
 //                         ),
 //                       ],
@@ -208,7 +208,7 @@
 //                           Text(
 //                             "Mã khuyến mãi: $promotionCode",
 //                             style: textTheme.bodyMedium?.copyWith(
-//                               fontFamily: "Nunito",
+//                               fontFamily: "Quicksand",
 //                               color: Colors.deepOrange,
 //                             ),
 //                           ),
@@ -226,7 +226,7 @@
 //                         Text(
 //                           "Tổng tiền: ${PriceFormatter.format(totalPrice)}",
 //                           style: textTheme.titleMedium?.copyWith(
-//                             fontFamily: "Fredoka",
+//                             fontFamily: "Quicksand",
 //                             fontWeight: FontWeight.bold,
 //                             color: AppTheme.summerAccent,
 //                           ),
@@ -272,7 +272,7 @@
 //                 label: Text(
 //                   "Xác nhận & Gửi",
 //                   style: textTheme.titleMedium?.copyWith(
-//                     fontFamily: "Fredoka",
+//                     fontFamily: "Quicksand",
 //                     fontWeight: FontWeight.bold,
 //                     color: Colors.white,
 //                   ),
@@ -396,7 +396,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                     Text(
                       widget.camp.name,
                       style: textTheme.titleLarge?.copyWith(
-                        fontFamily: "Fredoka",
+                        fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
                         color: AppTheme.summerAccent,
                       ),
@@ -412,7 +412,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         Text(
                           "${DateFormatter.formatFromString(widget.camp.startDate)} - ${DateFormatter.formatFromString(widget.camp.endDate)}",
                           style: textTheme.bodyMedium?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             color: Colors.grey[700],
                           ),
                         ),
@@ -426,7 +426,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         Text(
                           "Giá: ${PriceFormatter.format(widget.camp.price)} / Camper",
                           style: textTheme.bodyMedium?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                             color: Colors.green[700],
                           ),
@@ -443,7 +443,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
             Text(
               "Camper đã chọn",
               style: textTheme.titleMedium?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
               ),
@@ -483,7 +483,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         c.fullName,
                         textAlign: TextAlign.center,
                         style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
                           color: AppTheme.summerPrimary,
                         ),
@@ -501,7 +501,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
             Text(
               "Thông tin thanh toán",
               style: textTheme.titleMedium?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
               ),
@@ -524,7 +524,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         Text(
                           paymentMethod,
                           style: textTheme.bodyMedium?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                           ),
                         ),
                       ],
@@ -539,7 +539,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                           Text(
                             "Mã khuyến mãi: ${widget.promotionCode}",
                             style: textTheme.bodyMedium?.copyWith(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               color: Colors.deepOrange,
                             ),
                           ),
@@ -557,7 +557,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         Text(
                           "Tổng tiền: ${PriceFormatter.format(totalPrice)}",
                           style: textTheme.titleMedium?.copyWith(
-                            fontFamily: "Fredoka",
+                            fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                             color: AppTheme.summerAccent,
                           ),
@@ -599,7 +599,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                     : Text(
                         "Xác nhận & Thanh toán",
                         style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

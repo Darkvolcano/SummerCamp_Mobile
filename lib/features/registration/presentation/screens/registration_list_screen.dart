@@ -112,7 +112,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
         title: Text(
           "Danh sách đăng ký",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -144,7 +144,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
                     child: Text(
                       "Không có đơn đăng ký nào trong mục này",
                       style: textTheme.bodyMedium?.copyWith(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         color: Colors.grey[600],
                       ),
                     ),
@@ -185,7 +185,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
                   Text(
                     'Trang $_currentPage / $totalPages',
                     style: const TextStyle(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.w600,
                     ),
                   ),

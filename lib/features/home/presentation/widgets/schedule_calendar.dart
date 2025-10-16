@@ -91,7 +91,7 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
             ),
             weekendTextStyle: const TextStyle(color: Colors.red),
             defaultTextStyle: const TextStyle(
-              fontFamily: "Nunito",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -104,7 +104,7 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
             titleTextStyle: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               color: StaffTheme.staffPrimary,
             ),
             leftChevronIcon: Icon(
@@ -144,7 +144,7 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
               ? const Center(
                   child: Text(
                     'Không có bản ghi nào.',
-                    style: TextStyle(fontFamily: "Nunito"),
+                    style: TextStyle(fontFamily: "Quicksand"),
                   ),
                 )
               : ListView.builder(
@@ -168,13 +168,13 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
                           DateFormat('dd/MM/yyyy HH:mm').format(record.date),
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                           ),
                         ),
                         subtitle: Text(
                           record.isPresent ? 'Có mặt' : 'Vắng mặt',
                           style: TextStyle(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             color: record.isPresent ? Colors.green : Colors.red,
                           ),
                         ),

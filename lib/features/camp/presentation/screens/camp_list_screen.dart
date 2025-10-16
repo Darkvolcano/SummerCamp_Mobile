@@ -26,7 +26,7 @@ class CampListScreen extends StatelessWidget {
         title: Text(
           "Danh sách trại hè",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: colorScheme.onPrimary,
           ),
@@ -40,7 +40,7 @@ class CampListScreen extends StatelessWidget {
               child: Text(
                 "Không có trại hè trong mùa hè này",
                 style: textTheme.bodyMedium?.copyWith(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   color: Colors.grey[600],
                 ),
               ),

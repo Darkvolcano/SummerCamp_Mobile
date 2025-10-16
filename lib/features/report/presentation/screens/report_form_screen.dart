@@ -44,7 +44,10 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
       appBar: AppBar(
         title: const Text(
           "Tạo Báo Cáo",
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: StaffTheme.staffPrimary,
         foregroundColor: Colors.white,
@@ -59,7 +62,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 controller: _camperIdController,
                 decoration: const InputDecoration(
                   labelText: "Camper ID",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (val) =>
@@ -70,7 +73,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 controller: _noteController,
                 decoration: const InputDecoration(
                   labelText: "Ghi chú",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 maxLines: 3,
                 validator: (val) =>
@@ -81,7 +84,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 controller: _imageController,
                 decoration: const InputDecoration(
                   labelText: "Image URL",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
               ),
               const SizedBox(height: 12),
@@ -89,7 +92,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 controller: _activityIdController,
                 decoration: const InputDecoration(
                   labelText: "Activity ID",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -98,7 +101,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 initialValue: _level,
                 decoration: const InputDecoration(
                   labelText: "Level",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 items: ["Low", "Medium", "High"]
                     .map(
@@ -106,7 +109,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                         value: level,
                         child: Text(
                           level,
-                          style: const TextStyle(fontFamily: "Nunito"),
+                          style: const TextStyle(fontFamily: "Quicksand"),
                         ),
                       ),
                     )
@@ -118,7 +121,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 initialValue: _status,
                 decoration: const InputDecoration(
                   labelText: "Status",
-                  labelStyle: TextStyle(fontFamily: "Nunito"),
+                  labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 items: ["Pending", "Resolved"]
                     .map(
@@ -126,7 +129,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                         value: status,
                         child: Text(
                           status,
-                          style: const TextStyle(fontFamily: "Nunito"),
+                          style: const TextStyle(fontFamily: "Quicksand"),
                         ),
                       ),
                     )
@@ -140,7 +143,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                 label: Text(
                   "Lưu báo cáo",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                   ),
                 ),

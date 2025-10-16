@@ -70,7 +70,7 @@ class _ILSViewState extends State<ILSView> {
                         Text(
                           "Room ID: ${widget.room.id}",
                           style: textTheme.bodyMedium?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                             color: Colors.black87,
@@ -89,7 +89,7 @@ class _ILSViewState extends State<ILSView> {
                             Text(
                               "${participants.length} ${participants.length == 1 ? 'participant' : 'participants'}",
                               style: textTheme.bodySmall?.copyWith(
-                                fontFamily: "Nunito",
+                                fontFamily: "Quicksand",
                                 color: Colors.grey[700],
                                 fontSize: 13,
                               ),

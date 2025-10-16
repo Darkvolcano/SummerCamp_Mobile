@@ -80,7 +80,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
         title: Text(
           "Cập nhật Camper",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -153,7 +153,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                   Text(
                     "Dị ứng",
                     style: textTheme.bodyLarge?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                       color: AppTheme.summerPrimary,
                     ),
@@ -229,7 +229,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                 label: Text(
                   "Lưu thay đổi",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -255,7 +255,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(
-        fontFamily: "Nunito",
+        fontFamily: "Quicksand",
         fontWeight: FontWeight.w600,
         color: AppTheme.summerPrimary,
       ),

@@ -46,11 +46,11 @@
 //           title,
 //           style: const TextStyle(
 //             color: AppTheme.summerPrimary,
-//             fontFamily: "Fredoka",
+//             fontFamily: "Quicksand",
 //             fontWeight: FontWeight.bold,
 //           ),
 //         ),
-//         content: Text(message, style: const TextStyle(fontFamily: "Nunito")),
+//         content: Text(message, style: const TextStyle(fontFamily: "Quicksand")),
 //         actions: [
 //           TextButton(
 //             child: const Text(
@@ -85,7 +85,7 @@
 //         title: Text(
 //           "Trang cá nhân",
 //           style: textTheme.titleMedium?.copyWith(
-//             fontFamily: "Fredoka",
+//             fontFamily: "Quicksand",
 //             fontWeight: FontWeight.bold,
 //             color: Colors.white,
 //           ),
@@ -211,7 +211,7 @@
 //               icon: const Icon(Icons.logout),
 //               label: const Text(
 //                 "Đăng xuất",
-//                 style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+//                 style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
 //               ),
 //             ),
 
@@ -220,7 +220,7 @@
 //             Text(
 //               'Mọi thắc mắc vui lòng liên hệ CSKH:',
 //               style: TextStyle(
-//                 fontFamily: "Nunito",
+//                 fontFamily: "Quicksand",
 //                 fontSize: 14,
 //                 color: Colors.grey[700],
 //               ),
@@ -229,7 +229,7 @@
 //             Text(
 //               'Hotline: 0904918270',
 //               style: const TextStyle(
-//                 fontFamily: "Fredoka",
+//                 fontFamily: "Quicksand",
 //                 fontSize: 16,
 //                 fontWeight: FontWeight.bold,
 //                 color: AppTheme.summerAccent,
@@ -238,7 +238,7 @@
 //             Text(
 //               'Email: khangpccse183245@fpt.edu.vn',
 //               style: const TextStyle(
-//                 fontFamily: "Fredoka",
+//                 fontFamily: "Quicksand",
 //                 fontSize: 16,
 //                 fontWeight: FontWeight.bold,
 //                 color: AppTheme.summerAccent,
@@ -256,7 +256,7 @@
 //       child: Text(
 //         title,
 //         style: const TextStyle(
-//           fontFamily: "Fredoka",
+//           fontFamily: "Quicksand",
 //           fontSize: 18,
 //           fontWeight: FontWeight.bold,
 //           color: AppTheme.summerPrimary,
@@ -277,7 +277,7 @@
 //         labelText: label,
 //         prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
 //       ),
-//       style: const TextStyle(fontFamily: "Nunito"),
+//       style: const TextStyle(fontFamily: "Quicksand"),
 //     );
 //   }
 
@@ -294,7 +294,7 @@
 //         title: Text(
 //           title,
 //           style: const TextStyle(
-//             fontFamily: "Nunito",
+//             fontFamily: "Quicksand",
 //             fontSize: 16,
 //             fontWeight: FontWeight.w500,
 //           ),
@@ -354,11 +354,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title,
           style: const TextStyle(
             color: AppTheme.summerPrimary,
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
           ),
         ),
-        content: Text(message, style: const TextStyle(fontFamily: "Nunito")),
+        content: Text(message, style: const TextStyle(fontFamily: "Quicksand")),
         actions: [
           TextButton(
             child: const Text(
@@ -389,7 +389,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text(
           "Tài khoản",
           style: TextStyle(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -480,7 +480,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             _nameController.text,
             style: const TextStyle(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -490,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             _emailController.text,
             style: TextStyle(
-              fontFamily: "Nunito",
+              fontFamily: "Quicksand",
               fontSize: 16,
               color: Colors.white.withValues(alpha: 0.8),
             ),
@@ -512,7 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Text(
               "Thông tin cá nhân",
               style: TextStyle(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
@@ -551,7 +551,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const Text(
           "Tiện ích",
           style: TextStyle(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: AppTheme.summerPrimary,
@@ -597,7 +597,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return TextFormField(
       controller: controller,
       readOnly: isAlwaysReadOnly || !_isEditing,
-      style: const TextStyle(fontFamily: "Nunito", fontSize: 16),
+      style: const TextStyle(fontFamily: "Quicksand", fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.grey),
@@ -630,7 +630,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           title,
           style: const TextStyle(
-            fontFamily: "Nunito",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -658,7 +658,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       label: const Text(
         "Đăng xuất",
         style: TextStyle(
-          fontFamily: "Nunito",
+          fontFamily: "Quicksand",
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),

@@ -36,7 +36,7 @@
 //       appBar: AppBar(
 //         title: const Text(
 //           "Điểm danh",
-//           style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+//           style: TextStyle(fontFamily: "Quicksand", fontWeight: FontWeight.bold),
 //         ),
 //         backgroundColor: StaffTheme.staffPrimary,
 //         foregroundColor: Colors.white,
@@ -48,7 +48,7 @@
 //               child: Text(
 //                 "Không có camper nào",
 //                 style: TextStyle(
-//                   fontFamily: "Nunito",
+//                   fontFamily: "Quicksand",
 //                   fontSize: 16,
 //                   color: Colors.black54,
 //                 ),
@@ -80,7 +80,7 @@
 //                               child: Text(
 //                                 camper.fullName.substring(0, 1).toUpperCase(),
 //                                 style: const TextStyle(
-//                                   fontFamily: "Fredoka",
+//                                   fontFamily: "Quicksand",
 //                                   fontWeight: FontWeight.bold,
 //                                   color: Colors.white,
 //                                   fontSize: 18,
@@ -95,7 +95,7 @@
 //                                   Text(
 //                                     camper.fullName,
 //                                     style: const TextStyle(
-//                                       fontFamily: "Nunito",
+//                                       fontFamily: "Quicksand",
 //                                       fontWeight: FontWeight.bold,
 //                                       fontSize: 16,
 //                                     ),
@@ -103,7 +103,7 @@
 //                                   Text(
 //                                     "DOB: ${camper.dob}",
 //                                     style: const TextStyle(
-//                                       fontFamily: "Nunito",
+//                                       fontFamily: "Quicksand",
 //                                       fontSize: 13,
 //                                       color: Colors.black54,
 //                                     ),
@@ -111,7 +111,7 @@
 //                                   Text(
 //                                     "Giới tính:${camper.gender}",
 //                                     style: const TextStyle(
-//                                       fontFamily: "Nunito",
+//                                       fontFamily: "Quicksand",
 //                                       fontSize: 13,
 //                                       color: Colors.black54,
 //                                     ),
@@ -135,7 +135,7 @@
 //                                 color: currentStatus == AttendanceStatus.absent
 //                                     ? Colors.white
 //                                     : Colors.red.shade800,
-//                                 fontFamily: "Nunito",
+//                                 fontFamily: "Quicksand",
 //                                 fontWeight: FontWeight.bold,
 //                               ),
 //                               onSelected: (_) {
@@ -154,7 +154,7 @@
 //                                 color: currentStatus == AttendanceStatus.late
 //                                     ? Colors.white
 //                                     : Colors.orange.shade800,
-//                                 fontFamily: "Nunito",
+//                                 fontFamily: "Quicksand",
 //                                 fontWeight: FontWeight.bold,
 //                               ),
 //                               onSelected: (_) {
@@ -174,7 +174,7 @@
 //                                 color: currentStatus == AttendanceStatus.present
 //                                     ? Colors.white
 //                                     : Colors.green.shade800,
-//                                 fontFamily: "Nunito",
+//                                 fontFamily: "Quicksand",
 //                                 fontWeight: FontWeight.bold,
 //                               ),
 //                               onSelected: (_) {
@@ -212,14 +212,14 @@
 //               backgroundColor: StaffTheme.staffPrimary,
 //               content: Text(
 //                 "Lưu điểm danh: P=$presentCount, L=$lateCount, A=$absentCount / $total",
-//                 style: const TextStyle(fontFamily: "Nunito"),
+//                 style: const TextStyle(fontFamily: "Quicksand"),
 //               ),
 //               duration: const Duration(seconds: 2),
 //             ),
 //           );
 //         },
 //         icon: const Icon(Icons.save),
-//         label: const Text("Lưu", style: TextStyle(fontFamily: "Nunito")),
+//         label: const Text("Lưu", style: TextStyle(fontFamily: "Quicksand")),
 //       ),
 //     );
 //   }
@@ -290,7 +290,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       appBar: AppBar(
         title: const Text(
           "Điểm danh",
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: StaffTheme.staffPrimary,
         foregroundColor: Colors.white,
@@ -317,7 +320,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         fontSize: 16,
                       ),
                     ),
@@ -326,7 +329,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         fontSize: 16,
                       ),
                     ),
@@ -393,14 +396,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           Text(
                             camper.fullName,
                             style: const TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               fontSize: 16,
                             ),
                           ),
                           Text(
                             camper.gender,
                             style: const TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               fontSize: 16,
                             ),
                           ),
@@ -455,14 +458,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               backgroundColor: StaffTheme.staffPrimary,
               content: Text(
                 "Kết quả: P=$presentCount, L=$lateCount, A=$absentCount / $total",
-                style: const TextStyle(fontFamily: "Nunito"),
+                style: const TextStyle(fontFamily: "Quicksand"),
               ),
               duration: const Duration(seconds: 2),
             ),
           );
         },
         icon: const Icon(Icons.save),
-        label: const Text("Lưu", style: TextStyle(fontFamily: "Nunito")),
+        label: const Text("Lưu", style: TextStyle(fontFamily: "Quicksand")),
       ),
     );
   }

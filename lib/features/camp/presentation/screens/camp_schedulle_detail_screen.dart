@@ -96,7 +96,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
         title: Text(
           widget.camp.name,
           style: const TextStyle(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -129,7 +129,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
             Text(
               widget.camp.name,
               style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: StaffTheme.staffPrimary,
               ),
@@ -139,7 +139,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
               Text(
                 widget.camp.description,
                 style: const TextStyle(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   fontSize: 14,
                   color: Colors.black87,
                 ),
@@ -152,7 +152,10 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                 Expanded(
                   child: Text(
                     widget.camp.place,
-                    style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+                    style: const TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],
@@ -164,7 +167,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                 const SizedBox(width: 6),
                 Text(
                   "${DateFormatter.formatFromString(widget.camp.startDate)} - ${DateFormatter.formatFromString(widget.camp.endDate)}",
-                  style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+                  style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
                 ),
               ],
             ),
@@ -173,7 +176,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
             Text(
               "Hoạt động",
               style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: StaffTheme.staffPrimary,
               ),
@@ -186,7 +189,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
               const Center(
                 child: Text(
                   "Chưa có hoạt động nào cho trại này.",
-                  style: TextStyle(fontFamily: "Nunito"),
+                  style: TextStyle(fontFamily: "Quicksand"),
                 ),
               )
             else
@@ -213,7 +216,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                           Text(
                             "Ngày ${index + 1} - $dateStr",
                             style: const TextStyle(
-                              fontFamily: "Fredoka",
+                              fontFamily: "Quicksand",
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -222,7 +225,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                           if (activitiesOfDay.isEmpty)
                             const Text(
                               "Không có hoạt động",
-                              style: TextStyle(fontFamily: "Nunito"),
+                              style: TextStyle(fontFamily: "Quicksand"),
                             )
                           else
                             Column(
@@ -245,7 +248,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                                         child: Text(
                                           "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.name} @ ${act.location}",
                                           style: const TextStyle(
-                                            fontFamily: "Nunito",
+                                            fontFamily: "Quicksand",
                                             fontSize: 14,
                                           ),
                                         ),
@@ -286,7 +289,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     icon: const Icon(Icons.check_circle),
                     label: const Text(
                       "Điểm danh",
-                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                      style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
                     ),
                   ),
                 ),
@@ -311,7 +314,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     icon: const Icon(Icons.photo_camera),
                     label: const Text(
                       "Photo",
-                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                      style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
                     ),
                   ),
                 ),
@@ -347,7 +350,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     icon: const Icon(Icons.check_circle),
                     label: const Text(
                       "Livestream",
-                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                      style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
                     ),
                   ),
                 ),
@@ -374,7 +377,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     icon: const Icon(Icons.photo_camera),
                     label: const Text(
                       "Điểm danh khuôn mặt",
-                      style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                      style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
                     ),
                   ),
                 ),

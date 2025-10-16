@@ -60,7 +60,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
         title: Text(
           "Thêm Camper",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -131,7 +131,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                   Text(
                     "Dị ứng",
                     style: textTheme.bodyLarge?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                       color: AppTheme.summerPrimary,
                     ),
@@ -207,7 +207,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                 label: Text(
                   "Tạo Camper",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -233,7 +233,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(
-        fontFamily: "Nunito",
+        fontFamily: "Quicksand",
         fontWeight: FontWeight.w600,
         color: AppTheme.summerPrimary,
       ),

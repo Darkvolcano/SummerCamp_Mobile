@@ -70,7 +70,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                     Text(
                       "Đăng ký thành công!",
                       style: textTheme.headlineSmall?.copyWith(
-                        fontFamily: "Fredoka",
+                        fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
                         color: AppTheme.summerAccent,
                       ),
@@ -80,7 +80,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                     Text(
                       "Chúng tôi đã nhận được đăng ký của bạn. Hẹn gặp bạn tại trại hè nhé!",
                       style: textTheme.bodyMedium?.copyWith(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         color: Colors.grey[700],
                         height: 1.4,
                       ),
@@ -106,7 +106,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                 label: Text(
                   "Về Trang Chủ",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

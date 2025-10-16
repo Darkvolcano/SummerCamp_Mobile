@@ -57,7 +57,7 @@ class RegistrationCard extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontFamily: "Nunito",
+          fontFamily: "Quicksand",
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: textColor,
@@ -74,7 +74,7 @@ class RegistrationCard extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+            style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -116,7 +116,7 @@ class RegistrationCard extends StatelessWidget {
                               registration.campName ??
                                   'Tên trại không xác định',
                               style: const TextStyle(
-                                fontFamily: "Fredoka",
+                                fontFamily: "Quicksand",
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.summerPrimary,

@@ -67,7 +67,7 @@
 //         title: Text(
 //           "Upload Photo - ${widget.camp.name}",
 //           style: const TextStyle(
-//             fontFamily: "Fredoka",
+//             fontFamily: "Quicksand",
 //             fontWeight: FontWeight.bold,
 //           ),
 //         ),
@@ -314,7 +314,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             const SizedBox(width: 12),
             const Text(
               'Upload thành công',
-              style: TextStyle(fontFamily: "Fredoka"),
+              style: TextStyle(fontFamily: "Quicksand"),
             ),
           ],
         ),
@@ -324,14 +324,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
           children: [
             Text(
               'Đã upload ${urls.length} ảnh lên Firebase Storage',
-              style: const TextStyle(fontFamily: "Nunito"),
+              style: const TextStyle(fontFamily: "Quicksand"),
             ),
             const SizedBox(height: 12),
             if (urls.isNotEmpty) ...[
               const Text(
                 'URL ảnh đầu tiên:',
                 style: TextStyle(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
@@ -345,7 +345,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 ),
                 child: Text(
                   urls.first,
-                  style: const TextStyle(fontFamily: "Nunito", fontSize: 10),
+                  style: const TextStyle(fontFamily: "Quicksand", fontSize: 10),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -361,7 +361,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             ),
             child: const Text(
               'OK',
-              style: TextStyle(fontFamily: "Nunito", color: Colors.white),
+              style: TextStyle(fontFamily: "Quicksand", color: Colors.white),
             ),
           ),
         ],
@@ -378,7 +378,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             title: Text(
               "Upload Photo - ${widget.camp.name}",
               style: const TextStyle(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -411,7 +411,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                                 Text(
                                   'Chưa có ảnh nào được chọn',
                                   style: TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Quicksand",
                                     color: Colors.grey,
                                   ),
                                 ),
@@ -470,7 +470,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         icon: const Icon(Icons.photo_library),
                         label: const Text(
                           "Chọn ảnh",
-                          style: TextStyle(fontFamily: "Nunito"),
+                          style: TextStyle(fontFamily: "Quicksand"),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -487,7 +487,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         icon: const Icon(Icons.cloud_upload),
                         label: const Text(
                           "Upload",
-                          style: TextStyle(fontFamily: "Nunito"),
+                          style: TextStyle(fontFamily: "Quicksand"),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: StaffTheme.staffPrimary,
@@ -527,7 +527,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                     Text(
                       'Đang upload $_currentUploadIndex/${_picked.length} ảnh...',
                       style: const TextStyle(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -547,7 +547,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                     Text(
                       '${(_uploadProgress * 100).toStringAsFixed(0)}%',
                       style: TextStyle(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         fontSize: 14,
                         color: Colors.grey.shade700,
                       ),

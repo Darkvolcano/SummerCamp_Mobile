@@ -53,7 +53,7 @@ class CampCard extends StatelessWidget {
                   Text(
                     camp.name,
                     style: textTheme.titleMedium?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -70,7 +70,7 @@ class CampCard extends StatelessWidget {
                         child: Text(
                           camp.place,
                           style: textTheme.bodyMedium?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             color: Colors.grey[700],
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -90,7 +90,7 @@ class CampCard extends StatelessWidget {
                       Text(
                         "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                         style: textTheme.bodySmall?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           color: Colors.grey[600],
                         ),
                       ),
@@ -103,7 +103,7 @@ class CampCard extends StatelessWidget {
                       Text(
                         PriceFormatter.format(camp.price),
                         style: textTheme.bodyLarge?.copyWith(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
                           color: AppTheme.summerAccent,
                         ),
@@ -124,7 +124,7 @@ class CampCard extends StatelessWidget {
                               ? "Hoạt động"
                               : "Không hoạt động",
                           style: textTheme.bodySmall?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             color: camp.status == "Active"
                                 ? Colors.green.shade800
                                 : Colors.red.shade800,

@@ -87,7 +87,7 @@ class StaffBottomNavBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 fontSize: 12,
                 height: 1.0,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,

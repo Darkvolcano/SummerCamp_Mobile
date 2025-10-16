@@ -43,7 +43,10 @@ class _AIChatScreenState extends State<AIChatScreen> {
       appBar: AppBar(
         title: const Text(
           "AI Chat 🤖",
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         backgroundColor: AppTheme.summerPrimary,
@@ -79,11 +82,14 @@ class _AIChatScreenState extends State<AIChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    style: const TextStyle(fontFamily: "Nunito", fontSize: 15),
+                    style: const TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 15,
+                    ),
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
                       hintStyle: const TextStyle(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         color: Colors.black54,
                       ),
                       border: OutlineInputBorder(

@@ -17,7 +17,7 @@ class CamperDetailScreen extends StatelessWidget {
         title: Text(
           "Chi tiết Camper",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -98,7 +98,7 @@ class CamperDetailScreen extends StatelessWidget {
                 label: Text(
                   "Cập nhật",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -118,7 +118,7 @@ class CamperDetailScreen extends StatelessWidget {
           Text(
             "$label: ",
             style: textTheme.bodyMedium?.copyWith(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -126,7 +126,7 @@ class CamperDetailScreen extends StatelessWidget {
             child: Text(
               value,
               style: textTheme.bodyMedium?.copyWith(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 color: Colors.grey[700],
               ),
             ),

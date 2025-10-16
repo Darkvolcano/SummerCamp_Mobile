@@ -48,14 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Icon(Icons.error_outline, color: Colors.red, size: 32),
             SizedBox(width: 12),
-            Text('Lỗi', style: TextStyle(fontFamily: "Fredoka")),
+            Text('Lỗi', style: TextStyle(fontFamily: "Quicksand")),
           ],
         ),
-        content: Text(message, style: const TextStyle(fontFamily: "Nunito")),
+        content: Text(message, style: const TextStyle(fontFamily: "Quicksand")),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Đóng', style: TextStyle(fontFamily: "Nunito")),
+            child: const Text(
+              'Đóng',
+              style: TextStyle(fontFamily: "Quicksand"),
+            ),
           ),
         ],
       ),
@@ -143,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       "Chào mừng quay trở lại trại hè!",
                       style: textTheme.headlineSmall?.copyWith(
-                        fontFamily: "Fredoka",
+                        fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         shadows: const [
@@ -196,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           "Quên mật khẩu?",
                           style: TextStyle(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             fontStyle: FontStyle.italic,
                             color: Colors.white,
                           ),
@@ -230,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             : Text(
                                 "Đăng nhập",
                                 style: textTheme.titleMedium?.copyWith(
-                                  fontFamily: "Fredoka",
+                                  fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -247,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             "Hoặc",
                             style: TextStyle(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               color: Colors.white,
                             ),
                           ),
@@ -276,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       label: Text(
                         "Đăng nhập bằng Google",
                         style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
@@ -307,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           "Đăng ký tài khoản",
                           style: textTheme.titleMedium?.copyWith(
-                            fontFamily: "Fredoka",
+                            fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                             color: AppTheme.summerPrimary,
                           ),
@@ -341,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           labelText: label,
           labelStyle: const TextStyle(
-            fontFamily: "Nunito",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.w600,
             color: AppTheme.summerPrimary,
           ),

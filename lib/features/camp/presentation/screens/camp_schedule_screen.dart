@@ -27,7 +27,7 @@ class CampScheduleScreen extends StatelessWidget {
           ? Center(
               child: Text(
                 "Không có camp nào",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             )
           : ListView.builder(
@@ -80,7 +80,7 @@ class CampScheduleScreen extends StatelessWidget {
                               Text(
                                 camp.name,
                                 style: textTheme.titleMedium?.copyWith(
-                                  fontFamily: "Fredoka",
+                                  fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
                                   color: StaffTheme.staffPrimary,
                                 ),
@@ -92,7 +92,7 @@ class CampScheduleScreen extends StatelessWidget {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Quicksand",
                                     fontSize: 14,
                                     color: Colors.black54,
                                   ),
@@ -137,7 +137,7 @@ class CampScheduleScreen extends StatelessWidget {
                                   label: Text(
                                     camp.status,
                                     style: const TextStyle(
-                                      fontFamily: "Nunito",
+                                      fontFamily: "Quicksand",
                                       fontSize: 13,
                                     ),
                                   ),
@@ -168,7 +168,7 @@ class CampScheduleScreen extends StatelessWidget {
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: "Fredoka",
+          fontFamily: "Quicksand",
           fontWeight: FontWeight.bold,
         ),
       ),

@@ -65,7 +65,7 @@ class _RegistrationFailureScreenState extends State<RegistrationFailureScreen>
               Text(
                 "Đăng ký thất bại",
                 style: textTheme.headlineSmall?.copyWith(
-                  fontFamily: "Fredoka",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: Colors.red,
                 ),
@@ -76,7 +76,7 @@ class _RegistrationFailureScreenState extends State<RegistrationFailureScreen>
                 widget.errorMessage ??
                     "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.",
                 style: textTheme.bodyMedium?.copyWith(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   color: Colors.grey[700],
                   height: 1.4,
                 ),
@@ -99,7 +99,7 @@ class _RegistrationFailureScreenState extends State<RegistrationFailureScreen>
                 label: Text(
                   "Thử lại",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

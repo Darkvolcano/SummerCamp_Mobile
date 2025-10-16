@@ -38,7 +38,7 @@ class AIChatBubble extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              fontFamily: "Nunito",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.w500,
               color: isMe ? Colors.white : Colors.black87,
               fontSize: 15,

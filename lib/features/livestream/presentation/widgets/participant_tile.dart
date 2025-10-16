@@ -51,7 +51,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
                       child: Text(
                         initials,
                         style: const TextStyle(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -76,7 +76,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
                   Text(
                     widget.participant.displayName,
                     style: const TextStyle(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       color: Colors.white,
                       fontSize: 12,
                     ),

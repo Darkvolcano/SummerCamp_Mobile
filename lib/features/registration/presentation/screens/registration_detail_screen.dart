@@ -116,7 +116,7 @@
 //         title: const Text(
 //           "Chi tiết đăng ký",
 //           style: TextStyle(
-//             fontFamily: "Fredoka",
+//             fontFamily: "Quicksand",
 //             fontWeight: FontWeight.bold,
 //             color: Colors.white,
 //           ),
@@ -141,7 +141,7 @@
 //                     Text(
 //                       registration.campName!,
 //                       style: textTheme.titleLarge?.copyWith(
-//                         fontFamily: "Fredoka",
+//                         fontFamily: "Quicksand",
 //                         fontWeight: FontWeight.bold,
 //                         color: AppTheme.summerPrimary,
 //                       ),
@@ -150,7 +150,7 @@
 //                     Text(
 //                       registration.campDescription!,
 //                       style: const TextStyle(
-//                         fontFamily: "Nunito",
+//                         fontFamily: "Quicksand",
 //                         fontSize: 14,
 //                       ),
 //                     ),
@@ -167,7 +167,7 @@
 //                           child: Text(
 //                             registration.campPlace!,
 //                             style: const TextStyle(
-//                               fontFamily: "Nunito",
+//                               fontFamily: "Quicksand",
 //                               fontSize: 14,
 //                             ),
 //                           ),
@@ -186,7 +186,7 @@
 //                         Text(
 //                           "${DateFormatter.formatFromString(registration.campStartDate!)} - ${DateFormatter.formatFromString(registration.campEndDate!)}",
 //                           style: const TextStyle(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                             fontSize: 14,
 //                           ),
 //                         ),
@@ -212,7 +212,7 @@
 //                     Text(
 //                       "Thông tin đăng ký",
 //                       style: textTheme.titleMedium?.copyWith(
-//                         fontFamily: "Fredoka",
+//                         fontFamily: "Quicksand",
 //                         fontWeight: FontWeight.bold,
 //                       ),
 //                     ),
@@ -222,7 +222,7 @@
 //                       children: [
 //                         const Text(
 //                           "Trạng thái:",
-//                           style: TextStyle(fontFamily: "Nunito", fontSize: 14),
+//                           style: TextStyle(fontFamily: "Quicksand", fontSize: 14),
 //                         ),
 //                         Container(
 //                           padding: const EdgeInsets.symmetric(
@@ -238,7 +238,7 @@
 //                           child: Text(
 //                             registration.status,
 //                             style: TextStyle(
-//                               fontFamily: "Nunito",
+//                               fontFamily: "Quicksand",
 //                               fontSize: 13,
 //                               fontWeight: FontWeight.bold,
 //                               color: registration.status == "Approved"
@@ -255,7 +255,7 @@
 //                       children: [
 //                         const Text(
 //                           "Giá:",
-//                           style: TextStyle(fontFamily: "Nunito", fontSize: 14),
+//                           style: TextStyle(fontFamily: "Quicksand", fontSize: 14),
 //                         ),
 //                         Text(
 //                           registration.discount != null &&
@@ -263,7 +263,7 @@
 //                               ? PriceFormatter.format(discountedPrice)
 //                               : PriceFormatter.format(registration.price),
 //                           style: const TextStyle(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                             fontSize: 16,
 //                             fontWeight: FontWeight.bold,
 //                             color: Colors.green,
@@ -279,14 +279,14 @@
 //                           const Text(
 //                             "Giảm giá:",
 //                             style: TextStyle(
-//                               fontFamily: "Nunito",
+//                               fontFamily: "Quicksand",
 //                               fontSize: 14,
 //                             ),
 //                           ),
 //                           Text(
 //                             "-${PriceFormatter.format(registration.discount!)}",
 //                             style: const TextStyle(
-//                               fontFamily: "Nunito",
+//                               fontFamily: "Quicksand",
 //                               fontSize: 14,
 //                               color: Colors.red,
 //                             ),
@@ -299,14 +299,14 @@
 //                       children: [
 //                         const Text(
 //                           "Ngày đăng ký:",
-//                           style: TextStyle(fontFamily: "Nunito", fontSize: 14),
+//                           style: TextStyle(fontFamily: "Quicksand", fontSize: 14),
 //                         ),
 //                         Text(
 //                           DateFormatter.formatFull(
 //                             registration.registrationCreateAt,
 //                           ),
 //                           style: const TextStyle(
-//                             fontFamily: "Nunito",
+//                             fontFamily: "Quicksand",
 //                             fontSize: 13,
 //                           ),
 //                         ),
@@ -322,7 +322,7 @@
 //             Text(
 //               "Lịch trình hoạt động",
 //               style: textTheme.titleLarge?.copyWith(
-//                 fontFamily: "Fredoka",
+//                 fontFamily: "Quicksand",
 //                 fontWeight: FontWeight.bold,
 //                 color: AppTheme.summerPrimary,
 //               ),
@@ -360,7 +360,7 @@
 //                         Text(
 //                           "Ngày ${index + 1} - $dateStr",
 //                           style: const TextStyle(
-//                             fontFamily: "Fredoka",
+//                             fontFamily: "Quicksand",
 //                             fontWeight: FontWeight.bold,
 //                             fontSize: 16,
 //                             color: Colors.black87,
@@ -373,7 +373,7 @@
 //                             child: Text(
 //                               "Không có hoạt động",
 //                               style: TextStyle(
-//                                 fontFamily: "Nunito",
+//                                 fontFamily: "Quicksand",
 //                                 fontSize: 14,
 //                                 color: Colors.grey,
 //                               ),
@@ -418,7 +418,7 @@
 //                                             Text(
 //                                               "${act.startTime} - ${act.endTime}",
 //                                               style: const TextStyle(
-//                                                 fontFamily: "Nunito",
+//                                                 fontFamily: "Quicksand",
 //                                                 fontSize: 13,
 //                                                 fontWeight: FontWeight.w600,
 //                                               ),
@@ -454,7 +454,7 @@
 //                                                     const Text(
 //                                                       "LIVE",
 //                                                       style: TextStyle(
-//                                                         fontFamily: "Nunito",
+//                                                         fontFamily: "Quicksand",
 //                                                         fontSize: 10,
 //                                                         fontWeight:
 //                                                             FontWeight.bold,
@@ -471,7 +471,7 @@
 //                                         Text(
 //                                           act.name,
 //                                           style: const TextStyle(
-//                                             fontFamily: "Fredoka",
+//                                             fontFamily: "Quicksand",
 //                                             fontSize: 15,
 //                                             fontWeight: FontWeight.bold,
 //                                           ),
@@ -489,7 +489,7 @@
 //                                               child: Text(
 //                                                 act.location,
 //                                                 style: TextStyle(
-//                                                   fontFamily: "Nunito",
+//                                                   fontFamily: "Quicksand",
 //                                                   fontSize: 13,
 //                                                   color: Colors.grey.shade600,
 //                                                 ),
@@ -535,7 +535,7 @@
 //                                           isLive ? "Tham gia" : "Chưa bắt đầu",
 //                                           textAlign: TextAlign.center,
 //                                           style: const TextStyle(
-//                                             fontFamily: "Nunito",
+//                                             fontFamily: "Quicksand",
 //                                             fontSize: 11,
 //                                             fontWeight: FontWeight.bold,
 //                                             height: 1.2,
@@ -695,7 +695,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         title: const Text(
           "Chi tiết đăng ký",
           style: TextStyle(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -736,7 +736,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               label: const Text(
                 "Gửi Feedback",
                 style: TextStyle(
-                  fontFamily: "Fredoka",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -765,7 +765,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           Text(
             "Lịch trình hoạt động",
             style: textTheme.titleLarge?.copyWith(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
               color: AppTheme.summerPrimary,
             ),
@@ -777,14 +777,17 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             Center(
               child: Text(
                 "Lỗi: ${activityProvider.error}",
-                style: const TextStyle(fontFamily: "Nunito", color: Colors.red),
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  color: Colors.red,
+                ),
               ),
             )
           else if (activities.isEmpty)
             const Center(
               child: Text(
                 "Chưa có lịch trình hoạt động.",
-                style: TextStyle(fontFamily: "Nunito"),
+                style: TextStyle(fontFamily: "Quicksand"),
               ),
             )
           else
@@ -817,7 +820,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             Text(
               campName,
               style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
               ),
@@ -826,7 +829,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               const SizedBox(height: 8),
               Text(
                 campDescription,
-                style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+                style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
               ),
             ],
             const SizedBox(height: 12),
@@ -870,7 +873,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             Text(
               "Danh sách Camper tham gia",
               style: textTheme.titleMedium?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -878,7 +881,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             if (registration.campers.isEmpty)
               const Text(
                 "Không có thông tin camper.",
-                style: TextStyle(fontFamily: "Nunito", color: Colors.grey),
+                style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
               )
             else
               ...registration.campers.map(
@@ -895,7 +898,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                       Text(
                         camper.camperName,
                         style: const TextStyle(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           fontSize: 15,
                         ),
                       ),
@@ -933,7 +936,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 Text(
                   dateStr,
                   style: const TextStyle(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: AppTheme.summerPrimary,
@@ -962,7 +965,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               Text(
                 DateFormatter.formatTime(act.startTime),
                 style: TextStyle(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: AppTheme.summerAccent,
                 ),
@@ -971,7 +974,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               Text(
                 DateFormatter.formatTime(act.endTime),
                 style: const TextStyle(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   color: Colors.grey,
                 ),
               ),
@@ -985,7 +988,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 Text(
                   act.name,
                   style: const TextStyle(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                   ),
@@ -1020,7 +1023,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontFamily: "Nunito", fontSize: 14),
+            style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
           ),
         ),
       ],

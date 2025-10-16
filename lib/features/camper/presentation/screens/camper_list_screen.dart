@@ -34,7 +34,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
         title: Text(
           "Danh sách Camper",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -84,7 +84,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
                             camper.fullName,
                             textAlign: TextAlign.center,
                             style: textTheme.titleMedium?.copyWith(
-                              fontFamily: "Fredoka",
+                              fontFamily: "Quicksand",
                               fontWeight: FontWeight.bold,
                               color: AppTheme.summerAccent,
                             ),
@@ -93,7 +93,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
                           Text(
                             "DOB: ${DateFormatter.formatFromString(camper.dob)}",
                             style: textTheme.bodySmall?.copyWith(
-                              fontFamily: "Nunito",
+                              fontFamily: "Quicksand",
                               color: Colors.grey[700],
                             ),
                           ),

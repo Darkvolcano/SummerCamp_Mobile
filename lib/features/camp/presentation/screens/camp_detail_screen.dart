@@ -19,7 +19,7 @@ class CampDetailScreen extends StatelessWidget {
         title: Text(
           camp.name,
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: colorScheme.onPrimary,
           ),
@@ -51,7 +51,7 @@ class CampDetailScreen extends StatelessWidget {
                   Text(
                     camp.name,
                     style: textTheme.headlineSmall?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -59,7 +59,7 @@ class CampDetailScreen extends StatelessWidget {
                   Text(
                     camp.description,
                     style: textTheme.bodyMedium?.copyWith(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       color: Colors.grey[700],
                     ),
                   ),
@@ -72,7 +72,7 @@ class CampDetailScreen extends StatelessWidget {
                       Text(
                         camp.place,
                         style: textTheme.bodyLarge?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -90,7 +90,7 @@ class CampDetailScreen extends StatelessWidget {
                       Text(
                         "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                         style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           color: Colors.grey[700],
                         ),
                       ),
@@ -105,7 +105,7 @@ class CampDetailScreen extends StatelessWidget {
                       Text(
                         "Tối đa: ${camp.maxParticipants} người",
                         style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                           color: Colors.grey[700],
                         ),
                       ),
@@ -120,7 +120,7 @@ class CampDetailScreen extends StatelessWidget {
                       Text(
                         PriceFormatter.format(camp.price),
                         style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
                           color: AppTheme.summerAccent,
                         ),
@@ -151,7 +151,7 @@ class CampDetailScreen extends StatelessWidget {
                       label: Text(
                         "Đăng ký ngay",
                         style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

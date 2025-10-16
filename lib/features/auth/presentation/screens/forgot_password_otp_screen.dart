@@ -156,13 +156,18 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
       body: Stack(
         children: [
           const AnimatedGradientBackground(
-            gradientColors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
+            gradientColors: [
+              Color(0xFF0F172A), // slate-900
+              Color(0xFF1E293B), // slate-800
+              Color(0xFF334155), // slate-700
+            ],
             blobColors: [
-              Color.fromARGB(40, 255, 255, 255),
-              Color.fromARGB(30, 102, 166, 255),
-              Color.fromARGB(35, 137, 247, 254),
+              Color.fromARGB(40, 249, 115, 22),
+              Color.fromARGB(40, 251, 146, 60),
+              Color.fromARGB(40, 251, 191, 36),
             ],
           ),
+
           SafeArea(
             child: Align(
               alignment: Alignment.topLeft,
@@ -183,7 +188,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                   Text(
                     "Nhập mã OTP",
                     style: textTheme.headlineSmall?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -193,7 +198,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                     "Mã OTP đã được gửi đến email:\n$email",
                     textAlign: TextAlign.center,
                     style: textTheme.bodyMedium?.copyWith(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       color: Colors.white70,
                     ),
                   ),
@@ -217,7 +222,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                       child: const Text(
                         "Xác nhận",
                         style: TextStyle(
-                          fontFamily: "Fredoka",
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Colors.white,
@@ -233,7 +238,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                         "Không nhận được mã? ",
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
-                          fontFamily: "Nunito",
+                          fontFamily: "Quicksand",
                         ),
                       ),
                       TextButton(
@@ -262,6 +267,22 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                         ),
                       ),
                     ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  TextButton(
+                    onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      AppRoutes.login,
+                    ),
+                    child: const Text(
+                      "Đã có tài khoản? Đăng nhập",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -298,7 +319,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: AppTheme.summerPrimary,
-          fontFamily: "Fredoka",
+          fontFamily: "Quicksand",
         ),
         decoration: const InputDecoration(
           counterText: "",

@@ -28,7 +28,7 @@ class BlogCard extends StatelessWidget {
               Text(
                 blog.title,
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: "Fredoka",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: AppTheme.summerAccent,
                 ),
@@ -40,7 +40,7 @@ class BlogCard extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: textTheme.bodyMedium?.copyWith(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   color: Colors.black87,
                   height: 1.4,
                 ),
@@ -61,7 +61,7 @@ class BlogCard extends StatelessWidget {
                   //     Text(
                   //       blog.isActive ? "Đang hiển thị" : "Đã ẩn",
                   //       style: textTheme.bodySmall?.copyWith(
-                  //         fontFamily: "Nunito",
+                  //         fontFamily: "Quicksand",
                   //         color: blog.isActive ? Colors.green : Colors.red,
                   //         fontWeight: FontWeight.w600,
                   //       ),
@@ -71,7 +71,7 @@ class BlogCard extends StatelessWidget {
                   Text(
                     "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
                     style: textTheme.bodySmall?.copyWith(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       color: Colors.grey[600],
                     ),
                   ),

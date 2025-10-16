@@ -17,7 +17,7 @@ class BlogDetailScreen extends StatelessWidget {
         title: Text(
           blog.title,
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -32,7 +32,7 @@ class BlogDetailScreen extends StatelessWidget {
             Text(
               blog.title,
               style: textTheme.headlineSmall?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerAccent,
               ),
@@ -53,7 +53,7 @@ class BlogDetailScreen extends StatelessWidget {
                 //     Text(
                 //       blog.isActive ? "Đang hiển thị" : "Đã ẩn",
                 //       style: textTheme.bodyMedium?.copyWith(
-                //         fontFamily: "Nunito",
+                //         fontFamily: "Quicksand",
                 //         color: blog.isActive ? Colors.green : Colors.red,
                 //         fontWeight: FontWeight.w600,
                 //       ),
@@ -63,7 +63,7 @@ class BlogDetailScreen extends StatelessWidget {
                 Text(
                   "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
                   style: textTheme.bodySmall?.copyWith(
-                    fontFamily: "Nunito",
+                    fontFamily: "Quicksand",
                     color: Colors.grey[600],
                   ),
                 ),
@@ -74,7 +74,7 @@ class BlogDetailScreen extends StatelessWidget {
             Text(
               blog.content,
               style: textTheme.bodyLarge?.copyWith(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 color: Colors.black87,
                 height: 1.6,
               ),

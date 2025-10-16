@@ -32,7 +32,10 @@ class _ReportListScreenState extends State<ReportListScreen> {
       appBar: AppBar(
         title: const Text(
           "Danh Sách Báo Cáo",
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -45,7 +48,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
           ? const Center(
               child: Text(
                 "Chưa có báo cáo nào",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             )
           : ListView.builder(
@@ -97,7 +100,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                           style: textTheme.titleMedium
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: "Nunito",
+                                                fontFamily: "Quicksand",
                                               ),
                                         ),
                                         const Spacer(),
@@ -108,7 +111,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                               ? Colors.green.shade100
                                               : Colors.orange.shade100,
                                           labelStyle: TextStyle(
-                                            fontFamily: "Nunito",
+                                            fontFamily: "Quicksand",
                                             color: report.status == "Resolved"
                                                 ? Colors.green
                                                 : Colors.orange,
@@ -122,7 +125,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        fontFamily: "Nunito",
+                                        fontFamily: "Quicksand",
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -137,7 +140,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                         Text(
                                           "Level: ${report.level}",
                                           style: const TextStyle(
-                                            fontFamily: "Nunito",
+                                            fontFamily: "Quicksand",
                                           ),
                                         ),
                                         const Spacer(),
@@ -147,7 +150,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                           ),
                                           style: const TextStyle(
                                             fontSize: 12,
-                                            fontFamily: "Nunito",
+                                            fontFamily: "Quicksand",
                                             color: Colors.grey,
                                           ),
                                         ),
@@ -166,7 +169,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                           "Camp ID: ${report.activityId}",
                                           style: const TextStyle(
                                             fontSize: 13,
-                                            fontFamily: "Nunito",
+                                            fontFamily: "Quicksand",
                                             color: Colors.black54,
                                           ),
                                         ),

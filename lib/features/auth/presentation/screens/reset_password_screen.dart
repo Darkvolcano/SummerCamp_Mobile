@@ -88,11 +88,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: Stack(
         children: [
           const AnimatedGradientBackground(
-            gradientColors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
+            gradientColors: [
+              Color(0xFF0F172A), // slate-900
+              Color(0xFF1E293B), // slate-800
+              Color(0xFF334155), // slate-700
+            ],
             blobColors: [
-              Color.fromARGB(40, 255, 255, 255),
-              Color.fromARGB(30, 102, 166, 255),
-              Color.fromARGB(35, 137, 247, 254),
+              Color.fromARGB(40, 249, 115, 22),
+              Color.fromARGB(40, 251, 146, 60),
+              Color.fromARGB(40, 251, 191, 36),
             ],
           ),
           SafeArea(
@@ -117,7 +121,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     Text(
                       "Đặt lại mật khẩu",
                       style: textTheme.headlineSmall?.copyWith(
-                        fontFamily: "Fredoka",
+                        fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -126,7 +130,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     Text(
                       "Vui lòng nhập mật khẩu mới của bạn.",
                       style: textTheme.bodyMedium?.copyWith(
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                         color: Colors.white70,
                       ),
                     ),
@@ -181,7 +185,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             : const Text(
                                 "Xác nhận",
                                 style: TextStyle(
-                                  fontFamily: "Fredoka",
+                                  fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                   color: Colors.white,
@@ -209,7 +213,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
-      style: const TextStyle(fontFamily: "Nunito", color: Colors.black87),
+      style: const TextStyle(fontFamily: "Quicksand", color: Colors.black87),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(

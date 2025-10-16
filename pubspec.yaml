@@ -109,6 +109,18 @@ flutter:
           weight: 600
           style: italic
 
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand/Quicksand-Regular.ttf
+        - asset: assets/fonts/Quicksand/Quicksand-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Quicksand/Quicksand-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Quicksand/Quicksand-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Quicksand/Quicksand-Light.ttf
+          weight: 300
+
   assets:
     - assets/mock/camps.json
     - assets/mock/registrations.json
@@ -118,6 +130,7 @@ flutter:
     - assets/images/default_avatar.png
     - assets/images/default_avatar_2.png
     - assets/mock/tent_anim.json
+    - assets/mock/email_successfully_sent_anim.json
     - assets/images/google.png
 
   # To add assets to your application, add an assets section, like this:

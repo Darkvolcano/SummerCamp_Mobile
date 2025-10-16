@@ -39,7 +39,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
           title: const Text(
             "Chỉnh sửa thông tin",
             style: TextStyle(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
               color: StaffTheme.staffPrimary,
             ),
@@ -101,14 +101,14 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         title: Text(
           title,
           style: const TextStyle(
-            fontFamily: "Nunito",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
         ),
         subtitle: Text(
           value,
-          style: const TextStyle(fontFamily: "Nunito", fontSize: 15),
+          style: const TextStyle(fontFamily: "Quicksand", fontSize: 15),
         ),
       ),
     );
@@ -134,7 +134,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
             Text(
               label,
               style: const TextStyle(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -211,7 +211,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
             Text(
               staffName,
               style: const TextStyle(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -219,7 +219,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
             Text(
               staffPosition,
               style: const TextStyle(
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
                 fontSize: 14,
                 color: Colors.black54,
               ),
@@ -251,7 +251,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
               icon: const Icon(Icons.edit),
               label: const Text(
                 "Chỉnh sửa thông tin",
-                style: TextStyle(fontFamily: "Nunito"),
+                style: TextStyle(fontFamily: "Quicksand"),
               ),
             ),
 
@@ -265,7 +265,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                   const Text(
                     "Chức năng Staff",
                     style: TextStyle(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: StaffTheme.staffPrimary,
@@ -313,7 +313,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                 icon: const Icon(Icons.logout),
                 label: const Text(
                   "Đăng xuất",
-                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                  style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
                 ),
               ),
             ),

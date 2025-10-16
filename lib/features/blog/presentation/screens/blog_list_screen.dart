@@ -35,7 +35,7 @@ class _BlogListScreenState extends State<BlogListScreen> {
         title: Text(
           "Blog Trại Hè",
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -50,7 +50,7 @@ class _BlogListScreenState extends State<BlogListScreen> {
               child: Text(
                 "Chưa có bài viết nào",
                 style: textTheme.bodyMedium?.copyWith(
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                   color: Colors.grey[600],
                 ),
               ),

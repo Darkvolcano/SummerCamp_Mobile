@@ -76,7 +76,7 @@ class StaffHomeContent extends StatelessWidget {
                   child: Text(
                     "Chào mừng bạn trở lại!\nHãy quản lý trại hiệu quả nào 🚀",
                     style: textTheme.titleMedium?.copyWith(
-                      fontFamily: "Fredoka",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -90,7 +90,7 @@ class StaffHomeContent extends StatelessWidget {
           // Text(
           //   "Chức năng nhanh",
           //   style: textTheme.titleMedium?.copyWith(
-          //     fontFamily: "Fredoka",
+          //     fontFamily: "Quicksand",
           //     fontWeight: FontWeight.bold,
           //     color: StaffTheme.staffPrimary,
           //   ),
@@ -146,7 +146,7 @@ class StaffHomeContent extends StatelessWidget {
           Text(
             "Camps sắp diễn ra",
             style: textTheme.titleMedium?.copyWith(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
               color: StaffTheme.staffPrimary,
             ),
@@ -189,7 +189,7 @@ class StaffHomeContent extends StatelessWidget {
           Text(
             "Lịch làm việc",
             style: textTheme.titleMedium?.copyWith(
-              fontFamily: "Fredoka",
+              fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
               color: StaffTheme.staffPrimary,
             ),
@@ -239,7 +239,7 @@ class StaffHomeContent extends StatelessWidget {
   //           Text(
   //             label,
   //             style: const TextStyle(
-  //               fontFamily: "Nunito",
+  //               fontFamily: "Quicksand",
   //               fontWeight: FontWeight.w600,
   //               fontSize: 14,
   //             ),

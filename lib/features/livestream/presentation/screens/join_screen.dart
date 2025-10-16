@@ -51,7 +51,10 @@ class JoinScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Livestream",
-          style: TextStyle(fontFamily: "Fredoka", fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: true,
@@ -64,7 +67,7 @@ class JoinScreen extends StatelessWidget {
             Text(
               "Tham gia Livestream",
               style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: StaffTheme.staffPrimary,
               ),
@@ -75,13 +78,13 @@ class JoinScreen extends StatelessWidget {
               controller: _livestreamIdController,
               style: const TextStyle(
                 color: Colors.black87,
-                fontFamily: "Nunito",
+                fontFamily: "Quicksand",
               ),
               decoration: InputDecoration(
                 hintText: 'Nhập Livestream ID',
                 hintStyle: const TextStyle(
                   color: Colors.grey,
-                  fontFamily: "Nunito",
+                  fontFamily: "Quicksand",
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -99,7 +102,7 @@ class JoinScreen extends StatelessWidget {
               icon: const Icon(Icons.add_circle),
               label: const Text(
                 "Tạo Livestream",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             ),
             const SizedBox(height: 16),
@@ -112,7 +115,7 @@ class JoinScreen extends StatelessWidget {
               icon: const Icon(Icons.videocam),
               label: const Text(
                 "Tham gia với vai trò Host",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             ),
             const SizedBox(height: 12),
@@ -125,7 +128,7 @@ class JoinScreen extends StatelessWidget {
               icon: const Icon(Icons.visibility),
               label: const Text(
                 "Tham gia với vai trò Audience",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             ),
           ],

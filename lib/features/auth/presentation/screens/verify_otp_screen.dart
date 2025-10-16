@@ -214,11 +214,15 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       body: Stack(
         children: [
           const AnimatedGradientBackground(
-            gradientColors: [Color(0xFF89F7FE), Color(0xFF66A6FF)],
+            gradientColors: [
+              Color(0xFF581C87), // purple-900
+              Color(0xFF7C2D12), // orange-900
+              Color(0xFF92400E), // amber-900
+            ],
             blobColors: [
-              Color.fromARGB(40, 255, 255, 255),
-              Color.fromARGB(30, 102, 166, 255),
-              Color.fromARGB(35, 137, 247, 254),
+              Color.fromARGB(40, 249, 115, 22),
+              Color.fromARGB(40, 251, 146, 60),
+              Color.fromARGB(40, 251, 191, 36),
             ],
           ),
 
@@ -247,7 +251,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     Text(
                       "Xác thực OTP",
                       style: textTheme.headlineSmall?.copyWith(
-                        fontFamily: "Fredoka",
+                        fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -259,7 +263,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       "Mã OTP đã được gửi đến",
                       style: textTheme.bodyLarge?.copyWith(
                         color: Colors.white.withValues(alpha: 0.9),
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                       ),
                     ),
 
@@ -270,7 +274,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       style: textTheme.bodyLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontFamily: "Nunito",
+                        fontFamily: "Quicksand",
                       ),
                     ),
 
@@ -312,7 +316,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             : Text(
                                 "Xác thực",
                                 style: textTheme.titleMedium?.copyWith(
-                                  fontFamily: "Fredoka",
+                                  fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -328,7 +332,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                           "Không nhận được mã? ",
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                           ),
                         ),
                         TextButton(
@@ -360,7 +364,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                 Text(
                                   " (${_formatDuration(_countdownSeconds)})",
                                   style: TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Quicksand",
                                     fontWeight: FontWeight.bold,
                                     color: Colors.yellow[200],
                                   ),
@@ -422,7 +426,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           fontSize: 24,
           fontWeight: FontWeight.bold,
           color: AppTheme.summerPrimary,
-          fontFamily: "Fredoka",
+          fontFamily: "Quicksand",
         ),
         decoration: const InputDecoration(
           counterText: "",

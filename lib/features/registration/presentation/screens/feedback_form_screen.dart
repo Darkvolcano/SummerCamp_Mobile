@@ -25,7 +25,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
         title: const Text(
           "Gửi Feedback",
           style: TextStyle(
-            fontFamily: "Fredoka",
+            fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -41,7 +41,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
             Text(
               "Đánh giá trải nghiệm trại hè",
               style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Fredoka",
+                fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -71,7 +71,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
               maxLines: 5,
               decoration: InputDecoration(
                 hintText: "Hãy chia sẻ cảm nhận của bạn...",
-                hintStyle: const TextStyle(fontFamily: "Nunito"),
+                hintStyle: const TextStyle(fontFamily: "Quicksand"),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: const BorderSide(color: Colors.grey),
@@ -79,7 +79,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
                 filled: true,
                 fillColor: Colors.grey.shade100,
               ),
-              style: const TextStyle(fontFamily: "Nunito"),
+              style: const TextStyle(fontFamily: "Quicksand"),
             ),
 
             const SizedBox(height: 30),
@@ -116,7 +116,7 @@ class _FeedbackFormScreenState extends State<FeedbackFormScreen> {
                 label: const Text(
                   "Gửi Feedback",
                   style: TextStyle(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

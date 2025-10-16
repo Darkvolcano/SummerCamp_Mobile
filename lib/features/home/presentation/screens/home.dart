@@ -71,7 +71,7 @@ class HomeContent extends StatelessWidget {
                   child: Text(
                     "Xin chào, Phụ huynh 👋\nHãy cùng khám phá trại hè hôm nay!",
                     style: textTheme.bodyMedium?.copyWith(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
                     ),
@@ -139,7 +139,7 @@ class HomeContent extends StatelessWidget {
                 Text(
                   "Trại hè nổi bật",
                   style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Fredoka",
+                    fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -153,7 +153,7 @@ class HomeContent extends StatelessWidget {
                   child: Text(
                     "Xem tất cả",
                     style: textTheme.bodyMedium?.copyWith(
-                      fontFamily: "Nunito",
+                      fontFamily: "Quicksand",
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -203,7 +203,7 @@ class HomeContent extends StatelessWidget {
                         child: Text(
                           "Camp Adventure #$idx",
                           style: textTheme.bodyLarge?.copyWith(
-                            fontFamily: "Fredoka",
+                            fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -213,7 +213,7 @@ class HomeContent extends StatelessWidget {
                         child: Text(
                           "Khám phá – Học hỏi – Vui chơi",
                           style: textTheme.bodySmall?.copyWith(
-                            fontFamily: "Nunito",
+                            fontFamily: "Quicksand",
                             color: Colors.grey[600],
                           ),
                         ),
@@ -244,7 +244,7 @@ class HomeContent extends StatelessWidget {
               label: Text(
                 "Đăng ký ngay cho bé",
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: "Fredoka",
+                  fontFamily: "Quicksand",
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -285,7 +285,7 @@ class HomeContent extends StatelessWidget {
   //             label,
   //             textAlign: TextAlign.center,
   //             style: textTheme.bodyMedium?.copyWith(
-  //               fontFamily: "Nunito",
+  //               fontFamily: "Quicksand",
   //               fontWeight: FontWeight.w600,
   //             ),
   //           ),
