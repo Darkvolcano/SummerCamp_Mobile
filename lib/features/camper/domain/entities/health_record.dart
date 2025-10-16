@@ -1,17 +1,19 @@
 class HealthRecord {
-  final int healthRecordId;
-  final String condition;
-  final String allergies;
-  final String note;
-  final DateTime createAt;
-  final int camperId;
+  final int? healthRecordId;
+  final String? condition;
+  final String? allergies;
+  final String? note;
+  final DateTime? createAt;
+  final int? camperId;
+  final bool? isAllergy;
 
   const HealthRecord({
-    required this.healthRecordId,
-    required this.condition,
-    required this.allergies,
-    required this.note,
-    required this.createAt,
-    required this.camperId,
+    this.healthRecordId,
+    this.condition,
+    this.allergies,
+    this.note,
+    this.createAt,
+    this.camperId,
+    this.isAllergy,
   });
 }

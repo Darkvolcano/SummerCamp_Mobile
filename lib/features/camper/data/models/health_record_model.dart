@@ -2,31 +2,33 @@ import 'package:summercamp/features/camper/domain/entities/health_record.dart';
 
 class HealthRecordModel extends HealthRecord {
   const HealthRecordModel({
-    required super.healthRecordId,
-    required super.condition,
-    required super.allergies,
-    required super.note,
-    required super.createAt,
-    required super.camperId,
+    super.healthRecordId,
+    super.condition,
+    super.allergies,
+    super.note,
+    super.createAt,
+    super.camperId,
+    super.isAllergy,
   });
 
   factory HealthRecordModel.fromJson(Map<String, dynamic> json) {
     return HealthRecordModel(
       healthRecordId: json['healthRecordId'],
+      camperId: json['camperId'],
       condition: json['condition'],
       allergies: json['allergies'],
       note: json['note'],
-      createAt: DateTime.parse(json['createAt']),
-      camperId: json['camperId'],
+      createAt: json['createAt'] != null
+          ? DateTime.parse(json['createAt'])
+          : null,
+      isAllergy: json['isAllergy'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'healthRecordId': healthRecordId,
     'condition': condition,
     'allergies': allergies,
     'note': note,
-    'createAt': createAt.toIso8601String(),
-    'camperId': camperId,
+    'isAllergy': isAllergy,
   };
 }

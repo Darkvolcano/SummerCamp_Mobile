@@ -4,4 +4,5 @@ abstract class CamperRepository {
   Future<List<Camper>> getCampers();
   Future<void> createCamper(Camper camper);
   Future<void> updateCamper(int camperId, Camper camper);
+  Future<Camper> getCamperById(int camperId);
 }

@@ -19,6 +19,7 @@ import 'package:summercamp/features/camper/data/repositories/camper_repository_i
 import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
@@ -93,6 +94,7 @@ Future<void> main() async {
   final getCampersUseCase = GetCampers(camperRepo);
   final createCamperUseCase = CreateCamper(camperRepo);
   final updateCamperUseCase = UpdateCamper(camperRepo);
+  final getCamperByIdUseCase = GetCamperById(camperRepo);
 
   // Report
   final reportApi = ReportApiService(apiClient);
@@ -141,12 +143,13 @@ Future<void> main() async {
         // BlogProvider need 1 usecases (GetBlogs)
         ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-        // CamperProvider need 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
+        // CamperProvider need 4 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById)
         ChangeNotifierProvider(
           create: (_) => CamperProvider(
             createCamperUseCase,
             getCampersUseCase,
             updateCamperUseCase,
+            getCamperByIdUseCase,
           ),
         ),
 

@@ -59,7 +59,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
                     Navigator.pushNamed(
                       context,
                       AppRoutes.camperDetail,
-                      arguments: camper,
+                      arguments: camper.camperId,
                     );
                   },
                   child: Card(
@@ -74,7 +74,10 @@ class _CamperListScreenState extends State<CamperListScreen> {
                           CircleAvatar(
                             radius: 35,
                             backgroundImage:
-                                NetworkImage(camper.avatar) as ImageProvider,
+                                camper.avatar != null &&
+                                    camper.avatar!.isNotEmpty
+                                ? NetworkImage(camper.avatar!)
+                                : null,
                             backgroundColor: AppTheme.summerPrimary.withValues(
                               alpha: 0.2,
                             ),
@@ -106,8 +109,15 @@ class _CamperListScreenState extends State<CamperListScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppTheme.summerAccent,
-        onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.createCamper);
+        onPressed: () async {
+          final provider = context.read<CamperProvider>();
+          final navigator = Navigator.of(context);
+
+          final result = await navigator.pushNamed(AppRoutes.createCamper);
+
+          if (result == true && mounted) {
+            provider.loadCampers();
+          }
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),

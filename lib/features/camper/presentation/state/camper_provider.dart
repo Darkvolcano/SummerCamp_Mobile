@@ -1,57 +1,113 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 
 class CamperProvider with ChangeNotifier {
   final CreateCamper createCamperUseCase;
   final GetCampers getCampersUseCase;
   final UpdateCamper updateCamperUseCase;
+  final GetCamperById getCamperByIdUseCase;
 
   CamperProvider(
     this.createCamperUseCase,
     this.getCampersUseCase,
     this.updateCamperUseCase,
+    this.getCamperByIdUseCase,
   );
 
   List<Camper> _campers = [];
   List<Camper> get campers => _campers;
 
+  Camper? _selectedCamper;
+  Camper? get selectedCamper => _selectedCamper;
+
   bool _loading = false;
   bool get loading => _loading;
+  String? _error;
+  String? get error => _error;
 
   Future<void> loadCampers() async {
     _loading = true;
     notifyListeners();
 
-    final jsonString = await rootBundle.loadString('assets/mock/campers.json');
-
-    final List<dynamic> jsonList = json.decode(jsonString);
-
-    _campers = jsonList.map((e) => CamperModel.fromJson(e)).toList();
-
-    // _campers = await getCampersUseCase();
+    _campers = await getCampersUseCase();
 
     _loading = false;
     notifyListeners();
   }
 
   Future<void> createCamper(Camper camper) async {
-    await createCamperUseCase(camper);
-    _campers.add(camper);
+    _loading = true;
+    _error = null;
     notifyListeners();
+
+    try {
+      await createCamperUseCase(camper);
+    } catch (e) {
+      _error = "Lỗi khi tạo camper: $e";
+      print(_error);
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchCamperById(int camperId) async {
+    _loading = true;
+    _selectedCamper = null;
+    notifyListeners();
+
+    try {
+      _selectedCamper = await getCamperByIdUseCase(camperId);
+      _error = null;
+    } catch (e) {
+      _error = "Lỗi khi tải chi tiết camper: $e";
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> updateCamper(int camperId, Camper camper) async {
-    await updateCamperUseCase(camperId, camper);
+    _loading = true;
+    _error = null;
+    notifyListeners();
 
-    final index = _campers.indexWhere((c) => c.camperId == camperId);
-    if (index != -1) {
-      _campers[index] = camper;
+    try {
+      await updateCamperUseCase(camperId, camper);
+
+      final index = _campers.indexWhere((c) => c.camperId == camperId);
+      if (index != -1) {
+        final oldCamper = _campers[index];
+
+        final updatedModel = CamperModel(
+          camperId: camper.camperId,
+          fullName: camper.fullName,
+          dob: camper.dob,
+          gender: camper.gender,
+          healthRecord: camper.healthRecord,
+          groupId: camper.groupId,
+          avatar: oldCamper.avatar,
+          createAt: oldCamper.createAt,
+        );
+
+        _campers[index] = updatedModel;
+      }
+
+      if (_selectedCamper?.camperId == camperId) {
+        _selectedCamper = camper;
+      }
+    } catch (e) {
+      _error = "Lỗi khi cập nhật camper: $e";
+      rethrow;
+    } finally {
+      _loading = false;
       notifyListeners();
     }
   }

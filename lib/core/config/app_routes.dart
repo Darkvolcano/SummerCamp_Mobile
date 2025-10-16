@@ -181,9 +181,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => UploadPhotoScreen(camp: camp));
 
       case camperDetail:
-        final camper = settings.arguments as Camper;
+        final camperId = settings.arguments as int;
         return MaterialPageRoute(
-          builder: (_) => CamperDetailScreen(camper: camper),
+          builder: (_) => CamperDetailScreen(camperId: camperId),
         );
 
       case createCamper:

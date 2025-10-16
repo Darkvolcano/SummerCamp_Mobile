@@ -1,3 +1,4 @@
+import 'package:summercamp/features/camper/data/models/health_record_model.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class CamperModel extends Camper {
@@ -6,45 +7,36 @@ class CamperModel extends Camper {
     required super.fullName,
     required super.dob,
     required super.gender,
-    required super.healthRecordId,
-    required super.createAt,
-    required super.parentId,
-    required super.avatar,
-    super.condition,
-    super.allergies,
-    super.isAllergy,
-    super.note,
+    super.healthRecord,
+    super.createAt,
+    super.groupId,
+    super.avatar,
   });
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
+    // Xử lý object healthRecord lồng nhau
+    final healthRecordData = json['healthRecord'];
+    final HealthRecordModel? healthRecord = healthRecordData != null
+        ? HealthRecordModel.fromJson(healthRecordData)
+        : null;
+
     return CamperModel(
       camperId: json['camperId'],
-      fullName: json['fullName'],
+      fullName: json['camperName'],
       dob: json['dob'],
       gender: json['gender'],
-      healthRecordId: json['healthRecordId'],
-      createAt: DateTime.parse(json['createAt']),
-      parentId: json['parentId'],
-      avatar: json['avatar'],
-      condition: json['condition'],
-      allergies: json['allergies'],
-      isAllergy: json['isAllergy'],
-      note: json['note'],
+      healthRecord: healthRecord,
+      groupId: json['groupId'],
+      createAt: null,
+      avatar: null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'camperId': camperId,
-    'fullName': fullName,
+    'camperName': fullName,
     'dob': dob,
     'gender': gender,
-    'healthRecordId': healthRecordId,
-    'createAt': createAt.toIso8601String(),
-    'parentId': parentId,
-    'avatar': avatar,
-    'condition': condition,
-    'allergies': allergies,
-    'isAllergy': isAllergy,
-    'note': note,
+    'groupId': groupId,
+    'healthRecords': (healthRecord as HealthRecordModel?)?.toJson(),
   };
 }

@@ -1,4 +1,5 @@
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
+import 'package:summercamp/features/camper/data/models/health_record_model.dart';
 import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/repositories/camper_repository.dart';
@@ -16,21 +17,58 @@ class CamperRepositoryImpl implements CamperRepository {
 
   @override
   Future<void> createCamper(Camper camper) async {
-    final model = CamperModel(
+    HealthRecordModel? healthRecordModel;
+    if (camper.healthRecord != null) {
+      healthRecordModel = HealthRecordModel(
+        condition: camper.healthRecord!.condition,
+        allergies: camper.healthRecord!.allergies,
+        isAllergy: camper.healthRecord!.isAllergy,
+        note: camper.healthRecord!.note,
+      );
+    }
+
+    final camperModel = CamperModel(
       camperId: camper.camperId,
       fullName: camper.fullName,
       dob: camper.dob,
       gender: camper.gender,
-      healthRecordId: camper.healthRecordId,
-      createAt: camper.createAt,
-      parentId: camper.parentId,
-      avatar: camper.avatar,
+      healthRecord: healthRecordModel,
+      groupId: camper.groupId,
     );
-    await service.createCamper(model.toJson());
+
+    final data = camperModel.toJson();
+    await service.createCamper(data: data);
   }
 
   @override
-  Future<void> updateCamper(int id, Camper camper) {
-    throw UnimplementedError();
+  Future<void> updateCamper(int camperId, Camper camper) async {
+    HealthRecordModel? healthRecordModel;
+    if (camper.healthRecord != null) {
+      healthRecordModel = HealthRecordModel(
+        condition: camper.healthRecord!.condition,
+        allergies: camper.healthRecord!.allergies,
+        isAllergy: camper.healthRecord!.isAllergy,
+        note: camper.healthRecord!.note,
+      );
+    }
+
+    final camperModel = CamperModel(
+      camperId: camper.camperId,
+      fullName: camper.fullName,
+      dob: camper.dob,
+      gender: camper.gender,
+      healthRecord: healthRecordModel,
+      groupId: camper.groupId,
+    );
+
+    final data = camperModel.toJson();
+
+    await service.updateCamper(camperId, data);
+  }
+
+  @override
+  Future<Camper> getCamperById(int camperId) async {
+    final data = await service.fetchCamperById(camperId);
+    return CamperModel.fromJson(data);
   }
 }
