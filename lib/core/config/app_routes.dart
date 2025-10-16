@@ -13,6 +13,7 @@ import 'package:summercamp/features/camp/presentation/screens/attendance_screen.
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
+import 'package:summercamp/features/camp/presentation/screens/camp_search_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/face_recognition_attendance_screen.dart';
 import 'package:summercamp/features/album/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
@@ -42,6 +43,7 @@ class AppRoutes {
   static const String forgotPasswordOTP = 'FORGOT-PASSWORD-OTP';
   static const String resetPassword = 'RESET-PASSWORD';
   static const String verifyOTP = 'VERIFY-OTP';
+  static const String campSearch = 'CAMP-SEARCH';
   static const String chat = 'CHAT'; // hiện tại chưa có
   static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
   static const String chatAI = 'CHAT-AI';
@@ -100,6 +102,9 @@ class AppRoutes {
       case verifyOTP:
         final email = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => VerifyOtpScreen(email: email));
+
+      case campSearch:
+        return MaterialPageRoute(builder: (_) => const CampSearchScreen());
 
       case home:
         return MaterialPageRoute(builder: (_) => const Home());

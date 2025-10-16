@@ -13,6 +13,9 @@ class CampProvider with ChangeNotifier {
   List<Camp> _camps = [];
   List<Camp> get camps => _camps;
 
+  List<Camp> _filteredCamps = [];
+  List<Camp> get filteredCamps => _filteredCamps;
+
   List<CampType> _campTypes = [];
   List<CampType> get campTypes => _campTypes;
 
@@ -46,6 +49,24 @@ class CampProvider with ChangeNotifier {
     }
 
     _loading = false;
+    notifyListeners();
+  }
+
+  void searchLocalCamps(String query) {
+    if (query.isEmpty) {
+      _filteredCamps = [];
+    } else {
+      _filteredCamps = _camps
+          .where(
+            (camp) => camp.name.toLowerCase().contains(query.toLowerCase()),
+          )
+          .toList();
+    }
+    notifyListeners();
+  }
+
+  void clearSearch() {
+    _filteredCamps = [];
     notifyListeners();
   }
 }

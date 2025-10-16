@@ -26,6 +26,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isSuccess = false;
 
+  bool _obscurePassword = true;
+
   @override
   void dispose() {
     firstNameController.dispose();
@@ -219,6 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     bool obscure = false,
     String? Function(String?)? validator,
     TextInputType? keyboardType,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -226,10 +229,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         controller: controller,
         obscureText: obscure,
         keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.black87),
-        decoration: _inputDecoration(
-          label,
-        ).copyWith(prefixIcon: Icon(icon, color: AppTheme.summerPrimary)),
+        style: const TextStyle(
+          color: AppTheme.summerPrimary,
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.w600,
+        ),
+        decoration: _inputDecoration(label).copyWith(
+          prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
+          suffixIcon: suffixIcon,
+        ),
         validator: validator,
       ),
     );
@@ -369,8 +377,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             passwordController,
             "Mật khẩu",
             Icons.lock,
-            obscure: true,
+            obscure: _obscurePassword,
             validator: _validatePassword,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: AppTheme.summerPrimary,
+              ),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
+            ),
           ),
 
           const SizedBox(height: 24),

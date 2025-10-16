@@ -1,4 +1,4 @@
-import 'package:summercamp/core/enum/status.dart';
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/entities/registration_camper.dart';
 
@@ -22,27 +22,27 @@ class RegistrationModel extends Registration {
     required super.campers,
   });
 
-  static Status _statusFromString(String statusStr) {
+  static CampStatus _statusFromString(String statusStr) {
     switch (statusStr) {
       case 'Active':
       case 'Approved':
       case 'Inprogress':
-        return Status.InProgress;
+        return CampStatus.InProgress;
       case 'Pending':
       case 'PendingPayment':
       case 'PendingApproval':
-        return Status.PendingApproval;
+        return CampStatus.PendingApproval;
       case 'Completed':
-        return Status.Completed;
+        return CampStatus.Completed;
       case 'Canceled':
       case 'Rejected':
-        return Status.Canceled;
+        return CampStatus.Canceled;
       case 'OpenForRegistration':
-        return Status.OpenForRegistration;
+        return CampStatus.OpenForRegistration;
       // Thêm các trường hợp khác nếu cần
       default:
         // Mặc định là một trạng thái an toàn
-        return Status.PendingApproval;
+        return CampStatus.PendingApproval;
     }
   }
 

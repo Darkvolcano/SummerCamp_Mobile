@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool _obscurePassword = true;
+
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Vui lòng nhập email';
@@ -183,8 +185,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       passwordController,
                       "Mật khẩu",
                       Icons.lock,
-                      obscure: true,
+                      obscure: _obscurePassword,
                       validator: _validatePassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: AppTheme.summerPrimary,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
 
                     Align(
@@ -333,15 +348,21 @@ class _LoginScreenState extends State<LoginScreen> {
     IconData icon, {
     bool obscure = false,
     String? Function(String?)? validator,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
-        style: const TextStyle(color: Colors.black87),
+        style: const TextStyle(
+          color: AppTheme.summerPrimary,
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
+          suffixIcon: suffixIcon,
           labelText: label,
           labelStyle: const TextStyle(
             fontFamily: "Quicksand",

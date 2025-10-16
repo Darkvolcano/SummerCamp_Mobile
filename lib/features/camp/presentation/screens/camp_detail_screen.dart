@@ -12,45 +12,83 @@ class CampDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          camp.name,
-          style: textTheme.titleMedium?.copyWith(
-            fontFamily: "Quicksand",
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onPrimary,
-          ),
-        ),
-        backgroundColor: AppTheme.summerPrimary,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(16),
-              ),
-              child: Image.network(
-                camp.image,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
+      bottomNavigationBar: _buildBottomActionBar(context),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250.0,
+            pinned: true,
+            backgroundColor: AppTheme.summerPrimary,
+            iconTheme: const IconThemeData(color: Colors.white),
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(camp.image, fit: BoxFit.cover),
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black54, Colors.transparent],
+                        begin: Alignment.topCenter,
+                        end: Alignment.center,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+          ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     camp.name,
-                    style: textTheme.headlineSmall?.copyWith(
+                    style: textTheme.headlineMedium?.copyWith(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.summerPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          _buildDetailRow(
+                            Icons.place_outlined,
+                            "Địa điểm",
+                            camp.place,
+                          ),
+                          const Divider(height: 24),
+                          _buildDetailRow(
+                            Icons.calendar_month_outlined,
+                            "Thời gian",
+                            "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                          ),
+                          const Divider(height: 24),
+                          _buildDetailRow(
+                            Icons.groups_outlined,
+                            "Số lượng",
+                            "Từ ${camp.minParticipants} đến ${camp.maxParticipants} trẻ",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  Text(
+                    "Mô tả chi tiết",
+                    style: textTheme.titleLarge?.copyWith(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                     ),
@@ -58,113 +96,115 @@ class CampDetailScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     camp.description,
-                    style: textTheme.bodyMedium?.copyWith(
+                    style: textTheme.bodyLarge?.copyWith(
                       fontFamily: "Quicksand",
-                      color: Colors.grey[700],
+                      color: Colors.black54,
+                      height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.place, color: Colors.redAccent),
-                      const SizedBox(width: 8),
-                      Text(
-                        camp.place,
-                        style: textTheme.bodyLarge?.copyWith(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_month,
-                        color: Colors.blueAccent,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Quicksand",
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.people, color: Colors.orangeAccent),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Tối đa: ${camp.maxParticipants} người",
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Quicksand",
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.attach_money, color: Colors.green),
-                      const SizedBox(width: 8),
-                      Text(
-                        PriceFormatter.format(camp.price),
-                        style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.summerAccent,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.summerAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.registrationForm,
-                          arguments: camp,
-                        );
-                      },
-                      icon: const Icon(Icons.assignment),
-                      label: Text(
-                        "Đăng ký ngay",
-                        style: textTheme.titleMedium?.copyWith(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 80),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildBottomActionBar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Giá",
+                style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
+              ),
+              Text(
+                PriceFormatter.format(camp.price),
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: AppTheme.summerAccent,
+                ),
+              ),
+            ],
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                AppRoutes.registrationForm,
+                arguments: camp,
+              );
+            },
+            child: const Text(
+              "Đăng ký ngay",
+              style: TextStyle(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String title, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(width: 8),
+        Icon(icon, color: AppTheme.summerPrimary, size: 24),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  color: Colors.grey,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ class AppTheme {
   static const Color summerAccent = Color(0xFFFF7043); // orange bold
   static const Color summerBackground = Color(0xFFFFF8E7); // yellow light
   static const Color summerBlue = Color(0xFF4FC3F7); // blue light
+  static const Color summerYellow = Color(0xFFFFEB3B); // vibrant yellow
 
   // Light theme
   static final ThemeData lightTheme = ThemeData(

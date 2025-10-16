@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_theme.dart';
-import 'package:summercamp/core/enum/status.dart';
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 
@@ -10,34 +10,34 @@ class RegistrationCard extends StatelessWidget {
 
   const RegistrationCard({super.key, required this.registration, this.onTap});
 
-  Widget _buildStatusChip(Status status) {
+  Widget _buildStatusChip(CampStatus status) {
     Color backgroundColor;
     Color textColor;
     String text;
 
     switch (status) {
-      case Status.InProgress:
+      case CampStatus.InProgress:
         backgroundColor = Colors.green.shade100;
         textColor = Colors.green.shade800;
         text = "Đang diễn ra";
         break;
-      case Status.PendingApproval:
+      case CampStatus.PendingApproval:
         backgroundColor = Colors.orange.shade100;
         textColor = Colors.orange.shade800;
         text = "Chờ xử lý";
         break;
-      case Status.Completed:
+      case CampStatus.Completed:
         backgroundColor = Colors.blue.shade100;
         textColor = Colors.blue.shade800;
         text = "Hoàn thành";
         break;
-      case Status.Canceled:
-      case Status.Rejected:
+      case CampStatus.Canceled:
+      case CampStatus.Rejected:
         backgroundColor = Colors.red.shade100;
         textColor = Colors.red.shade800;
         text = "Đã hủy";
         break;
-      case Status.OpenForRegistration:
+      case CampStatus.OpenForRegistration:
         backgroundColor = Colors.cyan.shade100;
         textColor = Colors.cyan.shade800;
         text = "Mở đăng ký";
