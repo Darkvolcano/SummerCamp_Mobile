@@ -281,7 +281,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     const SizedBox(height: 40),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(
                         6,
                         (index) => _buildOtpBox(index),
@@ -306,8 +306,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                             : () => _verifyOtp(currentEmail),
                         child: _isLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: 16,
+                                width: 16,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -402,8 +402,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   Widget _buildOtpBox(int index) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.9),

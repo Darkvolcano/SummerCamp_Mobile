@@ -35,4 +35,9 @@ class CamperApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<List<dynamic>> fetchCamperGroups() async {
+    final res = await client.get('campergroup');
+    return res.data as List;
+  }
 }

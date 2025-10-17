@@ -165,7 +165,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.summerPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -175,8 +175,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             : () => _handleSubmit(email, otp),
                         child: _isLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: 16,
+                                width: 16,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -191,6 +191,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   color: Colors.white,
                                 ),
                               ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    TextButton(
+                      onPressed: () => Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.login,
+                      ),
+                      child: const Text(
+                        "Đã có tài khoản? Đăng nhập",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
                   ],
@@ -215,6 +231,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       obscureText: obscureText,
       style: const TextStyle(fontFamily: "Quicksand", color: Colors.black87),
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
         labelText: label,
         prefixIcon: const Icon(
           Icons.lock_outline,

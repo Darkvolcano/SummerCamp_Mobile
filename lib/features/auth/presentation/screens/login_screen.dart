@@ -139,7 +139,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 24,
+                bottom: 24,
+              ),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -162,10 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: 12),
-
                     SizedBox(
-                      height: 180,
+                      width: 500,
+                      height: 160,
                       child: Lottie.asset(
                         "assets/mock/tent_anim.json",
                         repeat: true,
@@ -173,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 12),
 
                     _buildInputField(
                       emailController,
@@ -222,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
 
                     SizedBox(
                       width: double.infinity,
@@ -230,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.summerPrimary,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -238,8 +242,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: provider.isLoading ? null : _handleLogin,
                         child: provider.isLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: 14,
+                                width: 14,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -301,14 +305,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
 
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.white.withValues(alpha: 0.9),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -351,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Widget? suffixIcon,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
@@ -361,6 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
           fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           suffixIcon: suffixIcon,
           labelText: label,

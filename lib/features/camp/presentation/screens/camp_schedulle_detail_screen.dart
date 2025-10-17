@@ -45,6 +45,105 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     );
   }
 
+  void _showAttendanceOptions(BuildContext context) {
+    final camperProvider = context.read<CamperProvider>();
+    final campers = camperProvider.campers;
+    final navigator = Navigator.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Chọn phương thức điểm danh",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(
+                  Icons.list_alt_rounded,
+                  color: StaffTheme.staffPrimary,
+                ),
+                title: const Text(
+                  "Điểm danh thủ công",
+                  style: TextStyle(fontFamily: "Quicksand"),
+                ),
+                onTap: () {
+                  navigator.pop();
+                  navigator.pushNamed(
+                    AppRoutes.attendance,
+                    arguments: {"camp": widget.camp, "campers": campers},
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.face_retouching_natural,
+                  color: StaffTheme.staffPrimary,
+                ),
+                title: const Text(
+                  "Điểm danh bằng khuôn mặt",
+                  style: TextStyle(fontFamily: "Quicksand"),
+                ),
+                onTap: () {
+                  navigator.pop();
+                  navigator.pushNamed(
+                    AppRoutes.faceRecognitionAttendance,
+                    arguments: campers,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shadowColor: Colors.grey.withValues(alpha: 0.1),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: StaffTheme.staffPrimary, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: "Quicksand",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
     final Map<String, List<Activity>> grouped = {};
     for (var act in activities) {
@@ -61,7 +160,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     final activityProvider = context.watch<ActivityProvider>();
     final camperProvider = context.watch<CamperProvider>();
     final activities = activityProvider.activities;
-    final campers = camperProvider.campers;
+    // final campers = camperProvider.campers;
     final groupedActivities = groupActivitiesByDate(activities);
 
     final startDate = DateTime.parse(widget.camp.startDate);
@@ -258,137 +357,189 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
 
                   const SizedBox(height: 16),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: StaffTheme.staffAccent,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.attendance,
-                              arguments: {
-                                "camp": widget.camp,
-                                "campers": campers,
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.check_circle),
-                          label: const Text(
-                            "Điểm danh",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.uploadPhoto,
-                              arguments: widget.camp,
-                            );
-                          },
-                          icon: const Icon(Icons.photo_camera),
-                          label: const Text(
-                            "Photo",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Tác vụ nhanh",
+                    style: textTheme.titleLarge?.copyWith(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: StaffTheme.staffPrimary,
+                    ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  Row(
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.2,
                     children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: StaffTheme.staffAccent,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          // onPressed: () {
-                          //   Navigator.pushNamed(context, AppRoutes.joinLivestream);
-                          // },
-                          // onPressed: () => onCreateButtonPressed(context),
-                          onPressed: () {
-                            onJoinLivestreamPressed(
-                              context,
-                              // camp.roomId,
-                              'ic99-z3ap-2yns',
-                              Mode.SEND_AND_RECV,
-                            );
-                          },
-                          icon: const Icon(Icons.check_circle),
-                          label: const Text(
-                            "Livestream",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
+                      _buildActionButton(
+                        label: "Điểm danh",
+                        icon: Icons.check_circle_outline_rounded,
+                        onTap: () => _showAttendanceOptions(context),
                       ),
-
-                      const SizedBox(width: 12),
-
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.faceRecognitionAttendance,
-                              arguments: campers,
-                            );
-                          },
-                          icon: const Icon(Icons.photo_camera),
-                          label: const Text(
-                            "Điểm danh khuôn mặt",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
+                      _buildActionButton(
+                        label: "Tải ảnh lên",
+                        icon: Icons.photo_camera_outlined,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.uploadPhoto,
+                            arguments: widget.camp,
+                          );
+                        },
+                      ),
+                      _buildActionButton(
+                        label: "Livestream",
+                        icon: Icons.live_tv_rounded,
+                        onTap: () {
+                          onJoinLivestreamPressed(
+                            context,
+                            'ic99-z3ap-2yns',
+                            Mode.SEND_AND_RECV,
+                          );
+                        },
+                      ),
+                      _buildActionButton(
+                        label: "Báo cáo",
+                        icon: Icons.report_problem_outlined,
+                        onTap: () {},
                       ),
                     ],
                   ),
+
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: ElevatedButton.icon(
+                  //         style: ElevatedButton.styleFrom(
+                  //           backgroundColor: StaffTheme.staffAccent,
+                  //           foregroundColor: Colors.white,
+                  //           padding: const EdgeInsets.symmetric(vertical: 14),
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(12),
+                  //           ),
+                  //         ),
+                  //         onPressed: () {
+                  //           Navigator.pushNamed(
+                  //             context,
+                  //             AppRoutes.attendance,
+                  //             arguments: {
+                  //               "camp": widget.camp,
+                  //               "campers": campers,
+                  //             },
+                  //           );
+                  //         },
+                  //         icon: const Icon(Icons.check_circle),
+                  //         label: const Text(
+                  //           "Điểm danh",
+                  //           style: TextStyle(
+                  //             fontFamily: "Quicksand",
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 12),
+                  //     Expanded(
+                  //       child: ElevatedButton.icon(
+                  //         style: ElevatedButton.styleFrom(
+                  //           backgroundColor: Colors.blue,
+                  //           foregroundColor: Colors.white,
+                  //           padding: const EdgeInsets.symmetric(vertical: 14),
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(12),
+                  //           ),
+                  //         ),
+                  //         onPressed: () {
+                  //           Navigator.pushNamed(
+                  //             context,
+                  //             AppRoutes.uploadPhoto,
+                  //             arguments: widget.camp,
+                  //           );
+                  //         },
+                  //         icon: const Icon(Icons.photo_camera),
+                  //         label: const Text(
+                  //           "Photo",
+                  //           style: TextStyle(
+                  //             fontFamily: "Quicksand",
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+
+                  // const SizedBox(height: 16),
+
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: ElevatedButton.icon(
+                  //         style: ElevatedButton.styleFrom(
+                  //           backgroundColor: StaffTheme.staffAccent,
+                  //           foregroundColor: Colors.white,
+                  //           padding: const EdgeInsets.symmetric(vertical: 14),
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(12),
+                  //           ),
+                  //         ),
+                  //         // onPressed: () {
+                  //         //   Navigator.pushNamed(context, AppRoutes.joinLivestream);
+                  //         // },
+                  //         // onPressed: () => onCreateButtonPressed(context),
+                  //         onPressed: () {
+                  //           onJoinLivestreamPressed(
+                  //             context,
+                  //             // camp.roomId,
+                  //             'ic99-z3ap-2yns',
+                  //             Mode.SEND_AND_RECV,
+                  //           );
+                  //         },
+                  //         icon: const Icon(Icons.check_circle),
+                  //         label: const Text(
+                  //           "Livestream",
+                  //           style: TextStyle(
+                  //             fontFamily: "Quicksand",
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+
+                  //     const SizedBox(width: 12),
+
+                  //     Expanded(
+                  //       child: ElevatedButton.icon(
+                  //         style: ElevatedButton.styleFrom(
+                  //           backgroundColor: Colors.blue,
+                  //           foregroundColor: Colors.white,
+                  //           padding: const EdgeInsets.symmetric(vertical: 14),
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(12),
+                  //           ),
+                  //         ),
+                  //         onPressed: () {
+                  //           Navigator.pushNamed(
+                  //             context,
+                  //             AppRoutes.faceRecognitionAttendance,
+                  //             arguments: campers,
+                  //           );
+                  //         },
+                  //         icon: const Icon(Icons.photo_camera),
+                  //         label: const Text(
+                  //           "Điểm danh khuôn mặt",
+                  //           style: TextStyle(
+                  //             fontFamily: "Quicksand",
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),

@@ -214,6 +214,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
               color: Colors.black87,
             ),
             decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
               labelText: "Email",
               prefixIcon: const Icon(
                 Icons.email_outlined,
@@ -243,7 +244,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.summerPrimary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -251,8 +252,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
               onPressed: provider.isLoading ? null : _handleSubmit,
               child: provider.isLoading
                   ? const SizedBox(
-                      height: 20,
-                      width: 20,
+                      height: 16,
+                      width: 16,
                       child: CircularProgressIndicator(
                         color: Colors.white,
                         strokeWidth: 2,

@@ -235,6 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           fontWeight: FontWeight.w600,
         ),
         decoration: _inputDecoration(label).copyWith(
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           suffixIcon: suffixIcon,
         ),

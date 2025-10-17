@@ -204,7 +204,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                   ),
                   const SizedBox(height: 40),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(6, (index) => _buildOtpBox(index)),
                   ),
                   const SizedBox(height: 32),
@@ -213,7 +213,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.summerPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -269,7 +269,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
 
                   TextButton(
                     onPressed: () => Navigator.pushReplacementNamed(
@@ -295,8 +295,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
 
   Widget _buildOtpBox(int index) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.9),

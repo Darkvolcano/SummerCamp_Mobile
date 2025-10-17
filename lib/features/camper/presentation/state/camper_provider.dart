@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 
 class CamperProvider with ChangeNotifier {
@@ -11,12 +13,14 @@ class CamperProvider with ChangeNotifier {
   final GetCampers getCampersUseCase;
   final UpdateCamper updateCamperUseCase;
   final GetCamperById getCamperByIdUseCase;
+  final GetCamperGroups getCamperGroupsUseCase;
 
   CamperProvider(
     this.createCamperUseCase,
     this.getCampersUseCase,
     this.updateCamperUseCase,
     this.getCamperByIdUseCase,
+    this.getCamperGroupsUseCase,
   );
 
   List<Camper> _campers = [];
@@ -24,6 +28,9 @@ class CamperProvider with ChangeNotifier {
 
   Camper? _selectedCamper;
   Camper? get selectedCamper => _selectedCamper;
+
+  List<CamperGroup> _camperGroups = [];
+  List<CamperGroup> get camperGroups => _camperGroups;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -110,5 +117,15 @@ class CamperProvider with ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> loadCamperGroups() async {
+    _loading = true;
+    notifyListeners();
+
+    _camperGroups = await getCamperGroupsUseCase();
+
+    _loading = false;
+    notifyListeners();
   }
 }

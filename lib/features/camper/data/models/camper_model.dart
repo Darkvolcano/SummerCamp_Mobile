@@ -14,7 +14,6 @@ class CamperModel extends Camper {
   });
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
-    // Xử lý object healthRecord lồng nhau
     final healthRecordData = json['healthRecord'];
     final HealthRecordModel? healthRecord = healthRecordData != null
         ? HealthRecordModel.fromJson(healthRecordData)

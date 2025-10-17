@@ -33,9 +33,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         final nameController = TextEditingController(text: staffName);
         final emailController = TextEditingController(text: staffEmail);
         final phoneController = TextEditingController(text: staffPhone);
-        final positionController = TextEditingController(text: staffPosition);
 
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text(
             "Chỉnh sửa thông tin",
             style: TextStyle(
@@ -46,22 +48,23 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
           ),
           content: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: "Họ và tên"),
+                const SizedBox(height: 8),
+                _buildEditTextField(
+                  nameController,
+                  "Họ và tên",
+                  Icons.person_outline,
                 ),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: "Email"),
+                _buildEditTextField(
+                  emailController,
+                  "Email",
+                  Icons.email_outlined,
                 ),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(labelText: "Số điện thoại"),
-                ),
-                TextField(
-                  controller: positionController,
-                  decoration: const InputDecoration(labelText: "Chức vụ"),
+                _buildEditTextField(
+                  phoneController,
+                  "Số điện thoại",
+                  Icons.phone_outlined,
                 ),
               ],
             ),
@@ -69,26 +72,77 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Hủy"),
+              child: const Text(
+                "Hủy",
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: StaffTheme.staffPrimary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               onPressed: () {
                 setState(() {
                   staffName = nameController.text;
                   staffEmail = emailController.text;
                   staffPhone = phoneController.text;
-                  staffPosition = positionController.text;
                 });
                 Navigator.pop(context);
               },
-              child: const Text("Lưu"),
+              child: const Text(
+                "Lưu",
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
+              ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildEditTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextFormField(
+        controller: controller,
+        style: const TextStyle(fontFamily: "Quicksand"),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(fontFamily: "Quicksand"),
+          prefixIcon: Icon(
+            icon,
+            color: StaffTheme.staffPrimary.withValues(alpha: 0.7),
+          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: StaffTheme.staffAccent,
+              width: 2,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
