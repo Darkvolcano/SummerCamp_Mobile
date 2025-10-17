@@ -13,7 +13,6 @@ class CampListScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Auto load screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (provider.camps.isEmpty && !provider.loading) {
         provider.loadCamps();

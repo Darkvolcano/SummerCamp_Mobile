@@ -137,7 +137,7 @@ class CampDetailScreen extends StatelessWidget {
                 style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
               ),
               Text(
-                PriceFormatter.format(camp.price),
+                "${PriceFormatter.format(camp.price)}/người",
                 style: const TextStyle(
                   fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
@@ -149,7 +149,7 @@ class CampDetailScreen extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
             onPressed: () {
               Navigator.pushNamed(

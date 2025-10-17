@@ -5,6 +5,7 @@ class UserModel extends User {
     required super.userId,
     required super.firstName,
     required super.lastName,
+    super.name,
     required super.email,
     required super.phoneNumber,
     required super.role,
@@ -24,6 +25,9 @@ class UserModel extends User {
 
       firstName: json['firstName'] as String? ?? firstName,
       lastName: json['lastName'] as String? ?? lastName,
+
+      name: json['name'] as String? ?? '',
+
       phoneNumber: json['phoneNumber'] as String? ?? '',
       avatar: json['avatar'] as String? ?? '',
       dob: json['dob'] as String? ?? '',
@@ -38,6 +42,7 @@ class UserModel extends User {
       'userId': userId,
       'firstName': firstName,
       'lastName': lastName,
+      'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
       'role': role,

@@ -265,7 +265,13 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           groupValue: _selectedPaymentId,
                           onChanged: (val) =>
                               setState(() => _selectedPaymentId = val!),
-                          child: const Text("Chuyển khoản ngân hàng"),
+                          child: const Text(
+                            "Chuyển khoản ngân hàng",
+                            style: TextStyle(
+                              fontFamily: 'Quicksand',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -275,8 +281,17 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
                   TextField(
                     controller: _promotionCodeController,
+                    style: TextStyle(
+                      color: AppTheme.summerPrimary,
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.w600,
+                    ),
                     decoration: InputDecoration(
-                      labelText: "Mã khuyến mãi (nếu có)",
+                      labelText: "Mã khuyến mãi",
+                      labelStyle: TextStyle(
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold,
+                      ),
                       prefixIcon: const Icon(Icons.discount),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
