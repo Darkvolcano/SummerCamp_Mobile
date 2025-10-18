@@ -422,8 +422,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
+        textAlignVertical: TextAlignVertical.center,
         style: const TextStyle(
-          fontSize: 24,
+          fontSize: 30,
           fontWeight: FontWeight.bold,
           color: AppTheme.summerPrimary,
           fontFamily: "Quicksand",
@@ -431,6 +432,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         decoration: const InputDecoration(
           counterText: "",
           border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+          isCollapsed: true,
         ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (value) => _onOtpChanged(index, value),

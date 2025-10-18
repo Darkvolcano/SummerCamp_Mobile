@@ -315,8 +315,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
+        textAlignVertical: TextAlignVertical.center,
         style: const TextStyle(
-          fontSize: 24,
+          fontSize: 30,
           fontWeight: FontWeight.bold,
           color: AppTheme.summerPrimary,
           fontFamily: "Quicksand",
@@ -324,6 +325,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
         decoration: const InputDecoration(
           counterText: "",
           border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+          isCollapsed: true,
         ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (value) => _onOtpChanged(index, value),
