@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
@@ -156,7 +157,10 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           return _buildContent(context, registration);
         },
       ),
-      floatingActionButton: registration != null
+      floatingActionButton:
+          registration != null &&
+              (registration.status == RegistrationStatus.Confirmed ||
+                  registration.status == RegistrationStatus.Completed)
           ? FloatingActionButton.extended(
               onPressed: () {
                 Navigator.push(
@@ -253,14 +257,25 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              campName,
-              style: textTheme.titleLarge?.copyWith(
-                fontFamily: "Quicksand",
-                fontWeight: FontWeight.bold,
-                color: AppTheme.summerPrimary,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    campName,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.summerPrimary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _buildStatusChip(registration.status),
+              ],
             ),
+
             if (campDescription != null && campDescription.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
@@ -268,25 +283,25 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
               ),
             ],
-            const SizedBox(height: 12),
+
+            const SizedBox(height: 8),
+            _buildDetailRow(
+              Icons.payment,
+              "Mã đăng ký: #${registration.registrationId}",
+            ),
+
+            const SizedBox(height: 6),
+
             if (campPlace != null)
               _buildDetailRow(Icons.location_on, campPlace),
+
             const SizedBox(height: 6),
+
             if (startDate != null && endDate != null)
               _buildDetailRow(
                 Icons.calendar_month,
                 "${DateFormatter.formatFromString(startDate)} - ${DateFormatter.formatFromString(endDate)}",
               ),
-            const SizedBox(height: 8),
-            _buildDetailRow(
-              Icons.payment,
-              "Mã thanh toán: #${registration.paymentId}",
-            ),
-            const SizedBox(height: 8),
-            _buildDetailRow(
-              Icons.info_outline,
-              "Trạng thái: ${registration.status.name}",
-            ),
           ],
         ),
       ),
@@ -307,7 +322,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Danh sách Camper tham gia",
+              "Danh sách camper tham gia",
               style: textTheme.titleMedium?.copyWith(
                 fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
@@ -463,6 +478,62 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildStatusChip(RegistrationStatus status) {
+    Color backgroundColor;
+    Color textColor;
+    String text;
+
+    switch (status) {
+      case RegistrationStatus.PendingApproval:
+        backgroundColor = Colors.orange.shade100;
+        textColor = Colors.orange.shade800;
+        text = "Chờ duyệt";
+        break;
+      case RegistrationStatus.Approved:
+        backgroundColor = Colors.lightBlue.shade100;
+        textColor = Colors.lightBlue.shade800;
+        text = "Đã duyệt";
+        break;
+      case RegistrationStatus.PendingPayment:
+        backgroundColor = Colors.yellow.shade100;
+        textColor = Colors.yellow.shade900;
+        text = "Chờ thanh toán";
+        break;
+      case RegistrationStatus.Confirmed:
+        backgroundColor = Colors.teal.shade100;
+        textColor = Colors.teal.shade800;
+        text = "Đã xác nhận";
+        break;
+      case RegistrationStatus.Completed:
+        backgroundColor = Colors.blue.shade100;
+        textColor = Colors.blue.shade800;
+        text = "Hoàn thành";
+        break;
+      case RegistrationStatus.Canceled:
+        backgroundColor = Colors.red.shade100;
+        textColor = Colors.red.shade800;
+        text = "Đã hủy";
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: "Quicksand",
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+      ),
     );
   }
 }

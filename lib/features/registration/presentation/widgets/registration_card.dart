@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_theme.dart';
-import 'package:summercamp/core/enum/camp_status.enum.dart';
+import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 
@@ -10,42 +10,42 @@ class RegistrationCard extends StatelessWidget {
 
   const RegistrationCard({super.key, required this.registration, this.onTap});
 
-  Widget _buildStatusChip(CampStatus status) {
+  Widget _buildStatusChip(RegistrationStatus status) {
     Color backgroundColor;
     Color textColor;
     String text;
 
     switch (status) {
-      case CampStatus.InProgress:
-        backgroundColor = Colors.green.shade100;
-        textColor = Colors.green.shade800;
-        text = "Đang diễn ra";
-        break;
-      case CampStatus.PendingApproval:
+      case RegistrationStatus.PendingApproval:
         backgroundColor = Colors.orange.shade100;
         textColor = Colors.orange.shade800;
-        text = "Chờ xử lý";
+        text = "Chờ duyệt";
         break;
-      case CampStatus.Completed:
+      case RegistrationStatus.Approved:
+        backgroundColor = Colors.lightBlue.shade100;
+        textColor = Colors.lightBlue.shade800;
+        text = "Đã duyệt";
+        break;
+      case RegistrationStatus.PendingPayment:
+        backgroundColor = Colors.yellow.shade100;
+        textColor = Colors.yellow.shade900;
+        text = "Chờ thanh toán";
+        break;
+      case RegistrationStatus.Confirmed:
+        backgroundColor = Colors.teal.shade100;
+        textColor = Colors.teal.shade800;
+        text = "Đã xác nhận";
+        break;
+      case RegistrationStatus.Completed:
         backgroundColor = Colors.blue.shade100;
         textColor = Colors.blue.shade800;
         text = "Hoàn thành";
         break;
-      case CampStatus.Canceled:
-      case CampStatus.Rejected:
+      case RegistrationStatus.Canceled:
         backgroundColor = Colors.red.shade100;
         textColor = Colors.red.shade800;
         text = "Đã hủy";
         break;
-      case CampStatus.OpenForRegistration:
-        backgroundColor = Colors.cyan.shade100;
-        textColor = Colors.cyan.shade800;
-        text = "Mở đăng ký";
-        break;
-      default:
-        backgroundColor = Colors.grey.shade200;
-        textColor = Colors.grey.shade800;
-        text = "Không xác định";
     }
 
     return Container(

@@ -30,6 +30,11 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
+  Future<String> registerPaymentLink(int registrationId) async {
+    return await service.createRegisterPaymentLink(registrationId);
+  }
+
+  @override
   Future<void> cancelRegistration(int registrationId) async {
     await service.cancelRegistration(registrationId);
   }

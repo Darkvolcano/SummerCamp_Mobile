@@ -21,6 +21,7 @@ import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
@@ -207,6 +208,9 @@ void main() {
     final createRegisterUseCase = CreateRegister(registrationRepo);
     final cancelRegistrationUseCase = CancelRegistration(registrationRepo);
     final getRegistrationByIdUseCase = GetRegistrationById(registrationRepo);
+    final createRegisterPaymentLinkUseCase = CreateRegisterPaymentLink(
+      registrationRepo,
+    );
 
     await tester.pumpWidget(
       MultiProvider(
@@ -226,7 +230,7 @@ void main() {
             ),
           ),
 
-          // CampProvider cần 2 usecases (GetCamps, CreateCamp)
+          // CampProvider need 2 usecases (GetCamps, GetCampTypes)
           ChangeNotifierProvider(
             create: (_) => CampProvider(getCampsUseCase, getCampTypesUseCase),
           ),
@@ -236,13 +240,14 @@ void main() {
             create: (_) => ActivityProvider(getActivitiesUseCase),
           ),
 
-          // RegistrationProvider cần 3 usecases (GetRegistrations, RegisterCamper, CancelRegistration)
+          // RegistrationProvider need 5 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
               createRegisterUseCase,
               cancelRegistrationUseCase,
               getRegistrationByIdUseCase,
+              createRegisterPaymentLinkUseCase,
             ),
           ),
         ],

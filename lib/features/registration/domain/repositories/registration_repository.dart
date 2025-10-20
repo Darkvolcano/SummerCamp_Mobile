@@ -8,6 +8,7 @@ abstract class RegistrationRepository {
     String? appliedPromotionId,
     String? note,
   });
+  Future<String> registerPaymentLink(int registrationid);
   Future<void> cancelRegistration(int registrationId);
   Future<Registration> getRegistrationById(int registrationId);
 }

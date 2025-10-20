@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
@@ -11,12 +12,14 @@ class RegistrationProvider with ChangeNotifier {
   final CancelRegistration cancelUseCase;
   final GetRegistrations getRegistrationsUseCase;
   final GetRegistrationById getRegistrationByIdUseCase;
+  final CreateRegisterPaymentLink createRegisterPaymentLinkUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
     this.createRegisterUseCase,
     this.cancelUseCase,
     this.getRegistrationByIdUseCase,
+    this.createRegisterPaymentLinkUseCase,
   );
 
   List<Registration> _registrations = [];
@@ -66,6 +69,24 @@ class RegistrationProvider with ChangeNotifier {
         appliedPromotionId: appliedPromotionId,
         note: note,
       );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<String> createRegistrationPaymentLink(int registrationId) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final paymentUrl = await createRegisterPaymentLinkUseCase(registrationId);
+
+      return paymentUrl;
     } catch (e) {
       _error = e.toString();
       rethrow;

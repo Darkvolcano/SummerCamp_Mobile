@@ -1,3 +1,4 @@
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
 class CampModel extends Camp {
@@ -16,12 +17,32 @@ class CampModel extends Camp {
     required super.campTypeId,
   });
 
-  factory CampModel.fromJson(Map<String, dynamic> json) {
-    String safeString(dynamic value) {
-      if (value == null) return '';
-      return value.toString();
+  static CampStatus _statusFromString(String statusString) {
+    switch (statusString) {
+      case 'PendingApproval':
+        return CampStatus.PendingApproval;
+      case 'Rejected':
+        return CampStatus.Rejected;
+      case 'Published':
+        return CampStatus.Published;
+      case 'OpenForRegistration':
+        return CampStatus.OpenForRegistration;
+      case 'RegistrationClosed':
+        return CampStatus.RegistrationClosed;
+      case 'InProgress':
+        return CampStatus.InProgress;
+      case 'Completed':
+        return CampStatus.Completed;
+      case 'Canceled':
+        return CampStatus.Canceled;
+      default:
+        print("Warning: Unknown CampStatus string '$statusString'");
+        return CampStatus.PendingApproval;
     }
+  }
 
+  factory CampModel.fromJson(Map<String, dynamic> json) {
+    String safeString(dynamic value) => value?.toString() ?? '';
     int safeInt(dynamic value) {
       if (value is int) return value;
       if (value is double) return value.round();
@@ -29,27 +50,20 @@ class CampModel extends Camp {
       return 0;
     }
 
-    int safePrice(dynamic value) {
-      if (value is int) return value;
-      if (value is double) return value.round();
-      return 0;
-    }
+    int safePrice(dynamic value) => (value is num) ? value.toInt() : 0;
 
     return CampModel(
       campId: safeInt(json['campId']),
       name: safeString(json['name']),
       description: safeString(json['description']),
       place: safeString(json['place']),
-
       startDate: safeString(json['startDate']),
       endDate: safeString(json['endDate']),
-
       image: safeString(json['image']),
       minParticipants: safeInt(json['minParticipants']),
       maxParticipants: safeInt(json['maxParticipants']),
-
       price: safePrice(json['price']),
-      status: safeString(json['status']),
+      status: _statusFromString(json['status']),
       campTypeId: safeInt(json['campTypeId']),
     );
   }

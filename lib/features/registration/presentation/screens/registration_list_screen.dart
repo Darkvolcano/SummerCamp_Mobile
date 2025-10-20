@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
-import 'package:summercamp/core/enum/camp_status.enum.dart';
+import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/registration/presentation/widgets/registration_card.dart';
 
 class _TabInfo {
   final String text;
-  final List<CampStatus> statuses;
+  final List<RegistrationStatus> statuses;
   const _TabInfo(this.text, this.statuses);
 }
 
@@ -30,10 +30,12 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
 
   final List<_TabInfo> _tabs = const [
     _TabInfo('Tất cả', []),
-    _TabInfo('Chờ xử lý', [CampStatus.PendingApproval]),
-    _TabInfo('Đang diễn ra', [CampStatus.InProgress]),
-    _TabInfo('Hoàn thành', [CampStatus.Completed]),
-    _TabInfo('Đã hủy', [CampStatus.Canceled, CampStatus.Rejected]),
+    _TabInfo('Chờ duyệt', [RegistrationStatus.PendingApproval]),
+    _TabInfo('Đã duyệt', [RegistrationStatus.Approved]),
+    _TabInfo('Chờ thanh toán', [RegistrationStatus.PendingPayment]),
+    _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
+    _TabInfo('Hoàn thành', [RegistrationStatus.Completed]),
+    _TabInfo('Đã hủy', [RegistrationStatus.Canceled]),
   ];
 
   @override

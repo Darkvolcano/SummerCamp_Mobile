@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
@@ -156,28 +157,68 @@ class CampCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    final bool isActive = status == "Active";
+  Widget _buildStatusBadge(CampStatus status) {
+    Color backgroundColor;
+    Color textColor;
+    String text;
+
+    switch (status) {
+      case CampStatus.PendingApproval:
+        backgroundColor = Colors.orange.shade100;
+        textColor = Colors.orange.shade800;
+        text = "Chờ duyệt";
+        break;
+      case CampStatus.Rejected:
+      case CampStatus.Canceled:
+        backgroundColor = Colors.red.shade100;
+        textColor = Colors.red.shade800;
+        text = "Đã hủy/Từ chối";
+        break;
+      case CampStatus.Published:
+        backgroundColor = Colors.grey.shade200;
+        textColor = Colors.grey.shade800;
+        text = "Đã công bố";
+        break;
+      case CampStatus.OpenForRegistration:
+        backgroundColor = Colors.cyan.shade100;
+        textColor = Colors.cyan.shade800;
+        text = "Mở đăng ký";
+        break;
+      case CampStatus.RegistrationClosed:
+        backgroundColor = Colors.blueGrey.shade100;
+        textColor = Colors.blueGrey.shade800;
+        text = "Đóng đăng ký";
+        break;
+      case CampStatus.InProgress:
+        backgroundColor = Colors.green.shade100;
+        textColor = Colors.green.shade800;
+        text = "Đang diễn ra";
+        break;
+      case CampStatus.Completed:
+        backgroundColor = Colors.blue.shade100;
+        textColor = Colors.blue.shade800;
+        text = "Hoàn thành";
+        break;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: isActive
-            ? Colors.green.withValues(alpha: 0.8)
-            : Colors.red.withValues(alpha: 0.8),
+        color: backgroundColor.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Text(
-        isActive ? "Đang Mở" : "Đã Đóng",
-        style: const TextStyle(
+        text,
+        style: TextStyle(
           fontFamily: "Quicksand",
-          color: Colors.white,
+          color: textColor,
           fontWeight: FontWeight.bold,
           fontSize: 12,
         ),

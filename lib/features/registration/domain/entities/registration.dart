@@ -1,4 +1,4 @@
-import 'package:summercamp/core/enum/camp_status.enum.dart';
+import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/features/registration/domain/entities/registration_camper.dart';
 
 class Registration {
@@ -7,7 +7,7 @@ class Registration {
   final int? campId;
   final int? paymentId;
   final DateTime registrationCreateAt;
-  final CampStatus status;
+  final RegistrationStatus status;
   final int? price;
   final String campName;
   final String? campDescription;

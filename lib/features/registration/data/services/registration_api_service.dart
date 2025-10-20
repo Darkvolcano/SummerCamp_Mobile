@@ -39,6 +39,17 @@ class RegistrationApiService {
     }
   }
 
+  Future<String> createRegisterPaymentLink(int registrationId) async {
+    final res = await client.post('registration/$registrationId/payment-link');
+    final data = res.data as Map<String, dynamic>;
+
+    if (data.containsKey('paymentUrl')) {
+      return data['paymentUrl'] as String;
+    } else {
+      throw Exception('Payment URL not found in API response');
+    }
+  }
+
   Future<void> cancelRegistration(int registrationId) async {
     await client.delete('registration/$registrationId');
   }

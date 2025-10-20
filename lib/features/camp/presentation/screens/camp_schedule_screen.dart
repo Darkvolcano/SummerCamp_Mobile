@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
@@ -53,25 +54,34 @@ class CampScheduleScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (camp.image.isNotEmpty)
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16),
-                            ),
-                            child: Image.network(
-                              camp.image,
-                              height: 160,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                height: 160,
-                                color: Colors.grey.shade300,
-                                child: const Center(
-                                  child: Icon(Icons.image_not_supported),
+                        Stack(
+                          children: [
+                            if (camp.image.isNotEmpty)
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(16),
+                                ),
+                                child: Image.network(
+                                  camp.image,
+                                  height: 160,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    height: 160,
+                                    color: Colors.grey.shade300,
+                                    child: const Center(
+                                      child: Icon(Icons.image_not_supported),
+                                    ),
+                                  ),
                                 ),
                               ),
+                            Positioned(
+                              top: 12,
+                              left: 12,
+                              child: _buildStatusChip(camp.status),
                             ),
-                          ),
+                          ],
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(14),
                           child: Column(
@@ -130,27 +140,6 @@ class CampScheduleScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Chip(
-                                  label: Text(
-                                    camp.status,
-                                    style: const TextStyle(
-                                      fontFamily: "Quicksand",
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  backgroundColor: camp.status == "Active"
-                                      ? Colors.green.shade100
-                                      : Colors.red.shade100,
-                                  labelStyle: TextStyle(
-                                    color: camp.status == "Active"
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -177,6 +166,68 @@ class CampScheduleScreen extends StatelessWidget {
       elevation: 4,
       backgroundColor: StaffTheme.staffPrimary,
       foregroundColor: Colors.white,
+    );
+  }
+
+  Widget _buildStatusChip(CampStatus status) {
+    Color backgroundColor;
+    Color textColor;
+    String text;
+
+    switch (status) {
+      case CampStatus.PendingApproval:
+        backgroundColor = Colors.orange.shade100;
+        textColor = Colors.orange.shade800;
+        text = "Chờ duyệt";
+        break;
+      case CampStatus.Rejected:
+      case CampStatus.Canceled:
+        backgroundColor = Colors.red.shade100;
+        textColor = Colors.red.shade800;
+        text = "Đã hủy/Từ chối";
+        break;
+      case CampStatus.Published:
+        backgroundColor = Colors.grey.shade200;
+        textColor = Colors.grey.shade800;
+        text = "Đã công bố";
+        break;
+      case CampStatus.OpenForRegistration:
+        backgroundColor = Colors.cyan.shade100;
+        textColor = Colors.cyan.shade800;
+        text = "Mở đăng ký";
+        break;
+      case CampStatus.RegistrationClosed:
+        backgroundColor = Colors.blueGrey.shade100;
+        textColor = Colors.blueGrey.shade800;
+        text = "Đóng đăng ký";
+        break;
+      case CampStatus.InProgress:
+        backgroundColor = Colors.green.shade100;
+        textColor = Colors.green.shade800;
+        text = "Đang diễn ra";
+        break;
+      case CampStatus.Completed:
+        backgroundColor = Colors.blue.shade100;
+        textColor = Colors.blue.shade800;
+        text = "Hoàn thành";
+        break;
+    }
+
+    return Chip(
+      label: Text(
+        text,
+        style: TextStyle(
+          fontFamily: "Quicksand",
+          fontSize: 13,
+          color: textColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      backgroundColor: backgroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      labelPadding: EdgeInsets.zero,
+      visualDensity: VisualDensity.compact,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:summercamp/core/enum/camp_status.enum.dart';
+
 class Camp {
   final int campId;
   final String name;
@@ -9,7 +11,7 @@ class Camp {
   final int maxParticipants;
   final int minParticipants;
   final int price;
-  final String status;
+  final CampStatus status;
   final int campTypeId;
 
   const Camp({
