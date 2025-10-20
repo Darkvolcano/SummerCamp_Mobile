@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
@@ -12,6 +15,7 @@ import 'package:summercamp/features/livestream/presentation/screens/ils_screen.d
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:videosdk/videosdk.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationDetailScreen extends StatefulWidget {
   final int registrationId;
@@ -25,6 +29,7 @@ class RegistrationDetailScreen extends StatefulWidget {
 
 class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   Camp? _campDetails;
+  bool _isLoadingPayment = false;
 
   @override
   void initState() {
@@ -123,6 +128,60 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     );
   }
 
+  Future<void> _handlePayment(BuildContext context, int registrationId) async {
+    setState(() => _isLoadingPayment = true);
+
+    final provider = context.read<RegistrationProvider>();
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final paymentUrl = await provider.createRegistrationPaymentLink(
+        registrationId,
+      );
+      final uri = Uri.tryParse(paymentUrl);
+
+      if (uri == null || !(await canLaunchUrl(uri))) {
+        throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
+      }
+
+      if (!mounted) return;
+      await _showCountdownDialog();
+
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      if (mounted) {
+        navigator.pushNamedAndRemoveUntil(
+          AppRoutes.registrationList,
+          (route) => route.isFirst,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('Đã xảy ra lỗi: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingPayment = false);
+      }
+    }
+  }
+
+  Future<void> _showCountdownDialog() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return const _CountdownDialog();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final registrationProvider = context.watch<RegistrationProvider>();
@@ -157,35 +216,68 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           return _buildContent(context, registration);
         },
       ),
-      floatingActionButton:
-          registration != null &&
-              (registration.status == RegistrationStatus.Confirmed ||
-                  registration.status == RegistrationStatus.Completed)
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FeedbackFormScreen(
-                      registrationId: registration.registrationId,
-                    ),
-                  ),
-                );
-              },
-              backgroundColor: AppTheme.summerAccent,
-              icon: const Icon(Icons.feedback_outlined, color: Colors.white),
-              label: const Text(
-                "Gửi Feedback",
-                style: TextStyle(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            )
-          : null,
+      floatingActionButton: _buildFab(context, registration),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  Widget? _buildFab(BuildContext context, Registration? registration) {
+    if (registration == null) return null;
+
+    if (registration.status == RegistrationStatus.Approved) {
+      return FloatingActionButton.extended(
+        onPressed: _isLoadingPayment
+            ? null
+            : () => _handlePayment(context, registration.registrationId),
+        backgroundColor: Colors.green,
+        icon: _isLoadingPayment
+            ? Container(
+                width: 24,
+                height: 24,
+                padding: const EdgeInsets.all(2.0),
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
+              )
+            : const Icon(Icons.payment, color: Colors.white),
+        label: Text(
+          _isLoadingPayment ? "Đang xử lý..." : "Thanh toán ngay",
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+
+    if (registration.status == RegistrationStatus.Confirmed ||
+        registration.status == RegistrationStatus.Completed) {
+      return FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FeedbackFormScreen(
+                registrationId: registration.registrationId,
+              ),
+            ),
+          );
+        },
+        backgroundColor: AppTheme.summerAccent,
+        icon: const Icon(Icons.feedback_outlined, color: Colors.white),
+        label: const Text(
+          "Gửi Feedback",
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+    return null;
   }
 
   Widget _buildContent(BuildContext context, Registration registration) {
@@ -533,6 +625,69 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           fontWeight: FontWeight.bold,
           color: textColor,
         ),
+      ),
+    );
+  }
+}
+
+class _CountdownDialog extends StatefulWidget {
+  const _CountdownDialog();
+
+  @override
+  State<_CountdownDialog> createState() => _CountdownDialogState();
+}
+
+class _CountdownDialogState extends State<_CountdownDialog> {
+  int _seconds = 5;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_seconds <= 1) {
+        timer.cancel();
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      } else {
+        if (mounted) {
+          setState(() => _seconds--);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(color: AppTheme.summerAccent),
+          const SizedBox(height: 24),
+          Text(
+            "Đang chuyển đến trang thanh toán sau...",
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontFamily: "Quicksand", fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "$_seconds",
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.bold,
+              color: AppTheme.summerAccent,
+            ),
+          ),
+        ],
       ),
     );
   }
