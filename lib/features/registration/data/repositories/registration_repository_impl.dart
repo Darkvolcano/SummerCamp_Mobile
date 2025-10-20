@@ -15,15 +15,17 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
-  Future<String> register({
+  Future<void> register({
     required int campId,
     required List<int> camperIds,
     String? appliedPromotionId,
+    String? note,
   }) async {
-    return await service.registerCamp(
+    await service.registerCamp(
       camperIds: camperIds,
       campId: campId,
       appliedPromotionId: appliedPromotionId,
+      note: note,
     );
   }
 

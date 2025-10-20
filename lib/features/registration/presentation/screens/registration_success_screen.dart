@@ -14,6 +14,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
@@ -21,12 +22,19 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..forward();
+    );
 
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.elasticOut,
     );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+    );
+
+    _controller.forward();
   }
 
   @override
@@ -43,7 +51,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
       backgroundColor: Colors.white,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -54,17 +62,16 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                   backgroundColor: AppTheme.summerPrimary.withValues(
                     alpha: 0.1,
                   ),
-                  child: Icon(
-                    Icons.check_circle,
-                    size: 100,
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    size: 80,
                     color: AppTheme.summerAccent,
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 800),
-                opacity: _controller.isCompleted ? 1 : 0,
+              const SizedBox(height: 32),
+              FadeTransition(
+                opacity: _fadeAnimation,
                 child: Column(
                   children: [
                     Text(
@@ -76,44 +83,71 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
                       ),
                       textAlign: TextAlign.center,
                     ),
+
                     const SizedBox(height: 12),
+
                     Text(
-                      "Chúng tôi đã nhận được đăng ký của bạn. Hẹn gặp bạn tại trại hè nhé!",
-                      style: textTheme.bodyMedium?.copyWith(
+                      "Vui lòng quay về trang lịch sử đăng ký để chờ được duyệt đơn đăng ký trong vài phút.",
+                      style: textTheme.bodyLarge?.copyWith(
                         fontFamily: "Quicksand",
                         color: Colors.grey[700],
-                        height: 1.4,
+                        height: 1.5,
                       ),
                       textAlign: TextAlign.center,
                     ),
+
+                    const SizedBox(height: 48),
+
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.summerAccent,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 50),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 24,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      icon: const Icon(Icons.history_rounded),
+                      label: Text(
+                        "Xem lịch sử đăng ký",
+                        style: textTheme.titleMedium?.copyWith(
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.registrationList,
+                          (route) => route.isFirst,
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.home,
+                          (route) => route.isFirst,
+                        );
+                      },
+                      child: Text(
+                        "Về Trang Chủ",
+                        style: textTheme.bodyLarge?.copyWith(
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.summerAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 24,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.home),
-                label: Text(
-                  "Về Trang Chủ",
-                  style: textTheme.titleMedium?.copyWith(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.home);
-                },
               ),
             ],
           ),

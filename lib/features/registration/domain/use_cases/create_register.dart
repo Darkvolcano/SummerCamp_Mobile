@@ -4,15 +4,17 @@ class CreateRegister {
   final RegistrationRepository repository;
   CreateRegister(this.repository);
 
-  Future<String> call({
+  Future<void> call({
     required int campId,
     required List<int> camperIds,
     String? appliedPromotionId,
-  }) {
-    return repository.register(
+    String? note,
+  }) async {
+    await repository.register(
       campId: campId,
       camperIds: camperIds,
       appliedPromotionId: appliedPromotionId,
+      note: note,
     );
   }
 }

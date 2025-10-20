@@ -5,11 +5,11 @@ class Registration {
   final int registrationId;
   final int? camperId;
   final int? campId;
-  final int paymentId;
+  final int? paymentId;
   final DateTime registrationCreateAt;
   final CampStatus status;
   final int? price;
-  final String? campName;
+  final String campName;
   final String? campDescription;
   final String? campPlace;
   final String? campStartDate;
@@ -23,11 +23,11 @@ class Registration {
     required this.registrationId,
     this.camperId,
     this.campId,
-    required this.paymentId,
+    this.paymentId,
     required this.registrationCreateAt,
     required this.status,
     this.price,
-    this.campName,
+    required this.campName,
     this.campDescription,
     this.campPlace,
     this.campStartDate,

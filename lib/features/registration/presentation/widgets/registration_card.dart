@@ -113,8 +113,7 @@ class RegistrationCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              registration.campName ??
-                                  'Tên trại không xác định',
+                              registration.campName,
                               style: const TextStyle(
                                 fontFamily: "Quicksand",
                                 fontSize: 18,

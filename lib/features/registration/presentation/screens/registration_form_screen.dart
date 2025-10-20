@@ -21,6 +21,7 @@ class RegistrationFormScreen extends StatefulWidget {
 class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   final _promotionCodeController = TextEditingController();
   int _selectedPaymentId = 1;
+  final _noteController = TextEditingController();
   final List<Camper> _selectedCampers = [];
 
   @override
@@ -299,6 +300,40 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                     ),
                   ),
 
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _noteController,
+                    style: const TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Ghi chú (Tùy chọn)",
+                      labelStyle: const TextStyle(
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold,
+                      ),
+                      prefixIcon: const Icon(Icons.note_alt_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppTheme.summerAccent,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    maxLines: 3,
+                  ),
+
                   const SizedBox(height: 24),
 
                   SizedBox(
@@ -370,6 +405,9 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                   _promotionCodeController.text.isEmpty
                                   ? null
                                   : _promotionCodeController.text,
+                              note: _noteController.text.isEmpty
+                                  ? null
+                                  : _noteController.text,
                             ),
                           ),
                         );

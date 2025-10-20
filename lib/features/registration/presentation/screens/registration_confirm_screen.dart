@@ -293,14 +293,15 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/registration/presentation/screens/registration_success_screen.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RegistrationConfirmScreen extends StatefulWidget {
   final Camp camp;
   final List<Camper> campers;
   final int paymentId;
   final String? promotionCode;
+  final String? note;
 
   const RegistrationConfirmScreen({
     super.key,
@@ -308,6 +309,7 @@ class RegistrationConfirmScreen extends StatefulWidget {
     required this.campers,
     required this.paymentId,
     this.promotionCode,
+    this.note,
   });
 
   @override
@@ -316,7 +318,7 @@ class RegistrationConfirmScreen extends StatefulWidget {
 }
 
 class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
-  bool _isLoading = false; // <-- Thêm trạng thái loading
+  bool _isLoading = false;
 
   Future<void> _handleRegistration() async {
     setState(() {
@@ -324,27 +326,40 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
     });
 
     final provider = context.read<RegistrationProvider>();
+    final navigator = Navigator.of(context);
 
     try {
-      final paymentUrl = await provider.createRegistration(
+      await provider.createRegistration(
         campId: widget.camp.campId,
         campers: widget.campers,
         appliedPromotionId: widget.promotionCode,
+        note: widget.note,
       );
 
-      print("URL nhận được tại UI: $paymentUrl");
-
-      final uri = Uri.tryParse(paymentUrl);
-
-      if (uri != null && await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-        // Sau khi mở url, bạn có thể điều hướng người dùng về trang chủ hoặc trang lịch sử đăng ký
-        if (mounted) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      } else {
-        throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
+      if (mounted) {
+        navigator.pushReplacement(
+          MaterialPageRoute(builder: (_) => const RegistrationSuccessScreen()),
+        );
       }
+      // final paymentUrl = await provider.createRegistration(
+      //   campId: widget.camp.campId,
+      //   campers: widget.campers,
+      //   appliedPromotionId: widget.promotionCode,
+      //   note: widget.note,
+      // );
+
+      // print("URL nhận được tại UI: $paymentUrl");
+
+      // final uri = Uri.tryParse(paymentUrl);
+
+      // if (uri != null && await canLaunchUrl(uri)) {
+      //   await launchUrl(uri, mode: LaunchMode.externalApplication);
+      //   if (mounted) {
+      //     Navigator.of(context).popUntil((route) => route.isFirst);
+      //   }
+      // } else {
+      //   throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
+      // }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -376,7 +391,15 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // ... AppBar code không đổi
+        title: Text(
+          "Xác nhận đăng ký",
+          style: textTheme.titleLarge?.copyWith(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: AppTheme.summerPrimary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -529,6 +552,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         ),
                       ],
                     ),
+
                     if (widget.promotionCode != null &&
                         widget.promotionCode!.isNotEmpty) ...[
                       const SizedBox(height: 12),
@@ -546,7 +570,32 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         ],
                       ),
                     ],
+
+                    if (widget.note != null && widget.note!.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.note_alt_outlined,
+                            color: Colors.blueGrey,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Ghi chú: ${widget.note}",
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontFamily: "Quicksand",
+                                color: Colors.blueGrey[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
                     const SizedBox(height: 12),
+
                     Row(
                       children: [
                         const Icon(

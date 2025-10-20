@@ -239,8 +239,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     TextTheme textTheme,
     Registration registration,
   ) {
-    final campName =
-        _campDetails?.name ?? registration.campName ?? 'Chưa có tên trại';
+    final campName = _campDetails?.name ?? registration.campName;
     final campDescription = _campDetails?.description;
     final campPlace = _campDetails?.place;
     final startDate = _campDetails?.startDate;

@@ -119,6 +119,14 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
         ),
         backgroundColor: AppTheme.summerPrimary,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil(AppRoutes.profile, (route) => false);
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -200,6 +208,11 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
               ),
             ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppTheme.summerAccent,
+        onPressed: () => provider.loadRegistrations(),
+        child: const Icon(Icons.refresh, color: Colors.white),
       ),
     );
   }
