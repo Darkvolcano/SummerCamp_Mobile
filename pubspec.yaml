@@ -128,6 +128,7 @@ flutter:
     - assets/mock/tent_anim.json
     - assets/mock/email_successfully_sent_anim.json
     - assets/mock/register_successfully_anim.json
+    - assets/mock/register_failed_anim.json
     - assets/images/google.png
 
   # To add assets to your application, add an assets section, like this:

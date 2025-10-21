@@ -5,6 +5,7 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/registration/presentation/screens/registration_failure_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_success_screen.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 
@@ -72,12 +73,28 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
       // } else {
       //   throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
       // }
+      // } catch (e) {
+      //   if (mounted) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       SnackBar(
+      //         content: Text('Đã xảy ra lỗi: ${e.toString()}'),
+      //         backgroundColor: Colors.red,
+      //       ),
+      //     );
+      //   }
+      // } finally {
+      //   if (mounted) {
+      //     setState(() {
+      //       _isLoading = false;
+      //     });
+      //   }
+      // }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Đã xảy ra lỗi: ${e.toString()}'),
-            backgroundColor: Colors.red,
+        navigator.pushReplacement(
+          MaterialPageRoute(
+            builder: (_) =>
+                RegistrationFailedScreen(errorMessage: e.toString()),
           ),
         );
       }

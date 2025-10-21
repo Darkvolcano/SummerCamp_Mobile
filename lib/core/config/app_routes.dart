@@ -205,7 +205,7 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => RegistrationSuccessScreen());
 
       case registrationFailure:
-        return MaterialPageRoute(builder: (_) => RegistrationFailureScreen());
+        return MaterialPageRoute(builder: (_) => RegistrationFailedScreen());
 
       case faceRecognitionAttendance:
         final campers = settings.arguments as List<Camper>;

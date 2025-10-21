@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 
@@ -13,7 +14,6 @@ class RegistrationSuccessScreen extends StatefulWidget {
 class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
 
   @override
@@ -22,11 +22,6 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
     );
 
     _fadeAnimation = CurvedAnimation(
@@ -55,21 +50,16 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: AppTheme.summerPrimary.withValues(
-                    alpha: 0.1,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    size: 80,
-                    color: AppTheme.summerAccent,
-                  ),
+              SizedBox(
+                height: 200,
+                child: Lottie.asset(
+                  "assets/mock/register_successfully_anim.json",
+                  fit: BoxFit.contain,
                 ),
               ),
+
               const SizedBox(height: 32),
+
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Column(
