@@ -1,4 +1,3 @@
-import 'package:summercamp/features/album/domain/entities/album_photo.dart';
 import 'package:summercamp/features/album/domain/repositories/album_repository.dart';
 
 class UploadPhotoAlbum {
@@ -6,7 +5,7 @@ class UploadPhotoAlbum {
 
   UploadPhotoAlbum(this.repository);
 
-  Future<void> call(AlbumPhoto album) async {
-    return await repository.uploadAlbumPhoto(album);
+  Future<void> call(int campId, {required List<String> images}) async {
+    await repository.uploadAlbumPhoto(campId, images: images);
   }
 }

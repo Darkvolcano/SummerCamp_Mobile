@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:summercamp/features/album/data/models/album_model.dart';
 import 'package:summercamp/features/album/domain/entities/album.dart';
 import 'package:summercamp/features/album/domain/entities/album_photo.dart';
 import 'package:summercamp/features/album/domain/use_cases/get_albums.dart';
@@ -27,13 +24,7 @@ class AlbumProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final jsonString = await rootBundle.loadString("assets/mock/camps.json");
-      final List<dynamic> jsonList = json.decode(jsonString);
-
-      _albums = jsonList.map((e) => AlbumModel.fromJson(e)).toList();
-
-      // Uncomment if use this line to call API
-      // _albums = await getAlbumsUseCase();
+      _albums = await getAlbumsUseCase();
     } catch (e) {
       print("Lỗi load albums: $e");
       _albums = [];
@@ -43,10 +34,11 @@ class AlbumProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadPhotoAlbum(AlbumPhoto albumPhoto) async {
-    // await uploadPhotoAlbumUseCase(albumPhoto);
-
-    _albumPhotos.add(albumPhoto);
+  Future<void> uploadPhotoAlbum(
+    int campId, {
+    required List<String> images,
+  }) async {
+    await uploadPhotoAlbumUseCase(campId, images: images);
     notifyListeners();
   }
 }

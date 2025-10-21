@@ -1,8 +1,6 @@
 import 'package:summercamp/features/album/data/models/album_model.dart';
-import 'package:summercamp/features/album/data/models/album_photo_model.dart';
 import 'package:summercamp/features/album/data/services/album_api_service.dart';
 import 'package:summercamp/features/album/domain/entities/album.dart';
-import 'package:summercamp/features/album/domain/entities/album_photo.dart';
 import 'package:summercamp/features/album/domain/repositories/album_repository.dart';
 
 class AlbumRepositoryImpl implements AlbumRepository {
@@ -16,7 +14,10 @@ class AlbumRepositoryImpl implements AlbumRepository {
   }
 
   @override
-  Future<void> uploadAlbumPhoto(AlbumPhoto albumPhoto) async {
-    await service.uploadPhotoAlbum((albumPhoto as AlbumPhotoModel).toJson());
+  Future<void> uploadAlbumPhoto(
+    int campId, {
+    required List<String> images,
+  }) async {
+    return await service.uploadPhotoAlbum(campId, images: images);
   }
 }
