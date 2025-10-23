@@ -1,5 +1,6 @@
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/features/registration/domain/entities/registration_camper.dart';
+import 'package:summercamp/features/registration/domain/entities/registration_optional_choice.dart';
 
 class Registration {
   final int registrationId;
@@ -18,6 +19,7 @@ class Registration {
   final String? promotionCode;
   final int? discount;
   final List<RegistrationCamper> campers;
+  final List<RegistrationOptionalChoice>? optionalChoices;
 
   const Registration({
     required this.registrationId,
@@ -36,5 +38,6 @@ class Registration {
     this.promotionCode,
     this.discount,
     required this.campers,
+    this.optionalChoices,
   });
 }

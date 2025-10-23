@@ -51,7 +51,15 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
       text: widget.camper.healthRecord?.note ?? "",
     );
 
-    gender = widget.camper.gender;
+    // gender = widget.camper.gender;
+    String apiGender = widget.camper.gender.toLowerCase();
+    if (apiGender == 'male' || apiGender == 'nam') {
+      gender = "Nam";
+    } else if (apiGender == 'female' || apiGender == 'nữ') {
+      gender = "Nữ";
+    } else {
+      gender = null;
+    }
     hasAllergy = widget.camper.healthRecord?.isAllergy;
   }
 

@@ -7,4 +7,6 @@ enum RegistrationStatus {
   Confirmed,
   Completed,
   Canceled,
+  PendingCompletion,
+  PendingAssignGroup,
 }

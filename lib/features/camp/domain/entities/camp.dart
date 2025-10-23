@@ -1,4 +1,6 @@
 import 'package:summercamp/core/enum/camp_status.enum.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_camp_type.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_promtion.dart';
 
 class Camp {
   final int campId;
@@ -12,7 +14,10 @@ class Camp {
   final int minParticipants;
   final int price;
   final CampStatus status;
-  final int campTypeId;
+  final DateTime registrationStartDate;
+  final DateTime registrationEndDate;
+  final CampCampType? campType;
+  final CampPromotion? promotion;
 
   const Camp({
     required this.campId,
@@ -26,6 +31,9 @@ class Camp {
     this.minParticipants = 0,
     required this.price,
     required this.status,
-    required this.campTypeId,
+    required this.registrationStartDate,
+    required this.registrationEndDate,
+    this.campType,
+    this.promotion,
   });
 }

@@ -47,7 +47,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
               padding: const EdgeInsets.all(16),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.75,
+                childAspectRatio: 0.9,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
@@ -82,7 +82,9 @@ class _CamperListScreenState extends State<CamperListScreen> {
                               alpha: 0.2,
                             ),
                           ),
+
                           const SizedBox(height: 12),
+
                           Text(
                             camper.fullName,
                             textAlign: TextAlign.center,
@@ -92,7 +94,9 @@ class _CamperListScreenState extends State<CamperListScreen> {
                               color: AppTheme.summerAccent,
                             ),
                           ),
+
                           const SizedBox(height: 6),
+
                           Text(
                             "DOB: ${DateFormatter.formatFromString(camper.dob)}",
                             style: textTheme.bodySmall?.copyWith(

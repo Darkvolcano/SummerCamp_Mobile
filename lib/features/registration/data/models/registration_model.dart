@@ -1,6 +1,7 @@
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/entities/registration_camper.dart';
+import 'package:summercamp/features/registration/domain/entities/registration_optional_choice.dart';
 
 class RegistrationModel extends Registration {
   const RegistrationModel({
@@ -20,6 +21,7 @@ class RegistrationModel extends Registration {
     super.promotionCode,
     super.discount,
     required super.campers,
+    super.optionalChoices,
   });
 
   static RegistrationStatus _statusFromString(String status) {
@@ -36,6 +38,10 @@ class RegistrationModel extends Registration {
         return RegistrationStatus.Completed;
       case 'Canceled':
         return RegistrationStatus.Canceled;
+      case 'PendingCompletion':
+        return RegistrationStatus.PendingCompletion;
+      case 'PendingAssignGroup':
+        return RegistrationStatus.PendingAssignGroup;
       default:
         throw Exception('Unknown registration status: $status');
     }
@@ -46,6 +52,16 @@ class RegistrationModel extends Registration {
     if (json['campers'] != null && json['campers'] is List) {
       camperList = (json['campers'] as List)
           .map((camperJson) => RegistrationCamper.fromJson(camperJson))
+          .toList();
+    }
+
+    var optionalChoices = <RegistrationOptionalChoice>[];
+    if (json['optionalChoices'] != null && json['optionalChoices'] is List) {
+      optionalChoices = (json['optionalChoices'] as List)
+          .map(
+            (optionalChoicesJson) =>
+                RegistrationOptionalChoice.fromJson(optionalChoicesJson),
+          )
           .toList();
     }
 
@@ -66,6 +82,7 @@ class RegistrationModel extends Registration {
       promotionCode: json['promotionCode'],
       discount: json['discount'],
       campers: camperList,
+      optionalChoices: optionalChoices,
     );
   }
 

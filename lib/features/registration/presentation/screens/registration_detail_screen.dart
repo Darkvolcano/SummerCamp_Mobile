@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
@@ -655,6 +654,16 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         backgroundColor = Colors.yellow.shade100;
         textColor = Colors.yellow.shade900;
         text = "Chờ thanh toán";
+        break;
+      case RegistrationStatus.PendingCompletion:
+        backgroundColor = Colors.purple.shade100;
+        textColor = Colors.purple.shade800;
+        text = "Chờ hoàn thành";
+        break;
+      case RegistrationStatus.PendingAssignGroup:
+        backgroundColor = Colors.indigo.shade100;
+        textColor = Colors.indigo.shade800;
+        text = "Chờ phân nhóm";
         break;
       case RegistrationStatus.Confirmed:
         backgroundColor = Colors.teal.shade100;

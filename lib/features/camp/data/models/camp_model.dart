@@ -1,5 +1,7 @@
 import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_camp_type.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_promtion.dart';
 
 class CampModel extends Camp {
   const CampModel({
@@ -14,7 +16,10 @@ class CampModel extends Camp {
     super.minParticipants,
     required super.price,
     required super.status,
-    required super.campTypeId,
+    required super.registrationStartDate,
+    required super.registrationEndDate,
+    super.campType,
+    super.promotion,
   });
 
   static CampStatus _statusFromString(String statusString) {
@@ -52,6 +57,20 @@ class CampModel extends Camp {
 
     int safePrice(dynamic value) => (value is num) ? value.toInt() : 0;
 
+    DateTime safeDateTime(dynamic value) {
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (e) {
+          return DateTime.fromMillisecondsSinceEpoch(0);
+        }
+      }
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+
+    final campTypeData = json['campType'];
+    final promotionData = json['promotion'];
+
     return CampModel(
       campId: safeInt(json['campId']),
       name: safeString(json['name']),
@@ -64,7 +83,14 @@ class CampModel extends Camp {
       maxParticipants: safeInt(json['maxParticipants']),
       price: safePrice(json['price']),
       status: _statusFromString(json['status']),
-      campTypeId: safeInt(json['campTypeId']),
+      registrationStartDate: safeDateTime(json['registrationStartDate']),
+      registrationEndDate: safeDateTime(json['registrationEndDate']),
+      campType: campTypeData != null
+          ? CampCampType.fromJson(campTypeData)
+          : null,
+      promotion: promotionData != null
+          ? CampPromotion.fromJson(promotionData)
+          : null,
     );
   }
 
@@ -80,6 +106,9 @@ class CampModel extends Camp {
     'minParticipants': minParticipants,
     'price': price,
     'status': status,
-    'campTypeId': campTypeId,
+    'registrationStartDate': registrationStartDate.toIso8601String(),
+    'registrationEndDate': registrationEndDate.toIso8601String(),
+    'campType': campType?.toJson(),
+    'promotion': promotion?.toJson(),
   };
 }
