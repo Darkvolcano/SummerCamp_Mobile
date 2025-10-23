@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class StaffProfileScreen extends StatefulWidget {
   const StaffProfileScreen({super.key});
@@ -110,6 +113,25 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         );
       },
     );
+  }
+
+  Future<void> _handleLogout() async {
+    final provider = context.read<AuthProvider>();
+    final navigator = Navigator.of(context);
+
+    try {
+      await provider.logout();
+
+      if (mounted) {
+        navigator.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đăng xuất thất bại: ${e.toString()}")),
+        );
+      }
+    }
   }
 
   Widget _buildEditTextField(
@@ -363,7 +385,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: _handleLogout,
                 icon: const Icon(Icons.logout),
                 label: const Text(
                   "Đăng xuất",

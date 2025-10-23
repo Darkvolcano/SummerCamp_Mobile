@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:async';
+
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
@@ -171,8 +174,73 @@ Future<void> main() async {
   );
 }
 
-class SummerCampApp extends StatelessWidget {
+// class SummerCampApp extends StatelessWidget {
+//   const SummerCampApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Summer Camp',
+//       theme: AppTheme.lightTheme,
+//       darkTheme: AppTheme.darkTheme,
+//       debugShowCheckedModeBanner: false,
+//       initialRoute: AppRoutes.login,
+//       onGenerateRoute: AppRoutes.generateRoute,
+
+//       localizationsDelegates: const [
+//         GlobalMaterialLocalizations.delegate,
+//         GlobalWidgetsLocalizations.delegate,
+//         GlobalCupertinoLocalizations.delegate,
+//       ],
+//       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
+//     );
+//   }
+// }
+class SummerCampApp extends StatefulWidget {
   const SummerCampApp({super.key});
+
+  @override
+  State<SummerCampApp> createState() => _SummerCampAppState();
+}
+
+class _SummerCampAppState extends State<SummerCampApp> {
+  bool _isOffline = false;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInitialConnection();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
+      _updateConnectionStatus,
+    );
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkInitialConnection() async {
+    final List<ConnectivityResult> results = await Connectivity()
+        .checkConnectivity();
+    _updateConnectionStatus(results);
+  }
+
+  void _updateConnectionStatus(List<ConnectivityResult> results) {
+    final bool isOnline = results.any(
+      (result) => result != ConnectivityResult.none,
+    );
+
+    final newStatus = !isOnline;
+
+    if (newStatus != _isOffline && mounted) {
+      setState(() {
+        _isOffline = newStatus;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,13 +251,65 @@ class SummerCampApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
-
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
+
+      builder: (context, child) {
+        return Stack(
+          children: [child!, if (_isOffline) const _OfflineDialog()],
+        );
+      },
+    );
+  }
+}
+
+class _OfflineDialog extends StatelessWidget {
+  const _OfflineDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.black.withValues(alpha: 0.7),
+        body: Center(
+          child: Card(
+            margin: const EdgeInsets.all(24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(color: AppTheme.summerAccent),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Lỗi kết nối mạng",
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Vui lòng kết nối mạng để sử dụng app.",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(fontFamily: "Quicksand"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -21,7 +21,20 @@ class CampScheduleScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: _buildStaffAppBar("Camps Quản Lý"),
+      appBar: AppBar(
+        title: Text(
+          "Camps Quản Lý",
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        elevation: 4,
+        backgroundColor: StaffTheme.staffPrimary,
+        foregroundColor: Colors.white,
+      ),
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : provider.camps.isEmpty
@@ -149,23 +162,6 @@ class CampScheduleScreen extends StatelessWidget {
                 );
               },
             ),
-    );
-  }
-
-  PreferredSizeWidget _buildStaffAppBar(String title) {
-    return AppBar(
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontFamily: "Quicksand",
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      automaticallyImplyLeading: false,
-      centerTitle: true,
-      elevation: 4,
-      backgroundColor: StaffTheme.staffPrimary,
-      foregroundColor: Colors.white,
     );
   }
 

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -72,6 +74,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _handleLogout() async {
+    final provider = context.read<AuthProvider>();
+    final navigator = Navigator.of(context);
+
+    try {
+      await provider.logout();
+
+      if (mounted) {
+        navigator.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đăng xuất thất bại: ${e.toString()}")),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,182 +122,205 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.all(0),
         children: [
-          _buildProfileHeader(),
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+            decoration: const BoxDecoration(
+              color: AppTheme.summerPrimary,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.white,
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : null,
+                      child: _profileImage == null
+                          ? const Icon(
+                              Icons.person,
+                              size: 70,
+                              color: AppTheme.summerPrimary,
+                            )
+                          : null,
+                    ),
+                    if (_isEditing)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: const CircleAvatar(
+                            backgroundColor: AppTheme.summerAccent,
+                            radius: 20,
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  _nameController.text,
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  _emailController.text,
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 16,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoCard(),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Thông tin cá nhân",
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.summerPrimary,
+                          ),
+                        ),
+                        const Divider(height: 20),
+                        _buildProfileField(
+                          "Họ và tên",
+                          _nameController,
+                          Icons.person_outline,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildProfileField(
+                          "Email",
+                          _emailController,
+                          Icons.email_outlined,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildProfileField(
+                          "Số điện thoại",
+                          _phoneController,
+                          Icons.phone_outlined,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildProfileField(
+                          "Địa chỉ",
+                          _addressController,
+                          Icons.location_on_outlined,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 20),
-                _buildMenuSection(),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Tiện ích",
+                      style: TextStyle(
+                        fontFamily: "Quicksand",
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.summerPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildProfileMenuItem(
+                      "Lịch sử đăng ký",
+                      Icons.assignment_outlined,
+                      () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.registrationList,
+                      ),
+                    ),
+                    _buildProfileMenuItem(
+                      "Hồ sơ của trẻ",
+                      Icons.assignment_ind_outlined,
+                      () => Navigator.pushNamed(context, AppRoutes.camperList),
+                    ),
+                    _buildProfileMenuItem(
+                      "Thay đổi mật khẩu",
+                      Icons.lock_outline,
+                      () => _showMessageBox(
+                        "Chức năng",
+                        "Chức năng này chưa được triển khai.",
+                      ),
+                    ),
+                    _buildProfileMenuItem(
+                      "Vé ứng dụng",
+                      Icons.confirmation_number_outlined,
+                      () => _showMessageBox(
+                        "Chức năng",
+                        "Chức năng này chưa được triển khai.",
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 20),
-                _buildLogoutButton(),
+
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade50,
+                    foregroundColor: Colors.red.shade700,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: _handleLogout,
+                  icon: const Icon(Icons.logout),
+                  label: const Text(
+                    "Đăng xuất",
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 30),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildProfileHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-      decoration: const BoxDecoration(
-        color: AppTheme.summerPrimary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white,
-                backgroundImage: _profileImage != null
-                    ? FileImage(_profileImage!)
-                    : null,
-                child: _profileImage == null
-                    ? const Icon(
-                        Icons.person,
-                        size: 70,
-                        color: AppTheme.summerPrimary,
-                      )
-                    : null,
-              ),
-              if (_isEditing)
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: const CircleAvatar(
-                      backgroundColor: AppTheme.summerAccent,
-                      radius: 20,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Text(
-            _nameController.text,
-            style: const TextStyle(
-              fontFamily: "Quicksand",
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            _emailController.text,
-            style: TextStyle(
-              fontFamily: "Quicksand",
-              fontSize: 16,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Thông tin cá nhân",
-              style: TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.summerPrimary,
-              ),
-            ),
-            const Divider(height: 20),
-            _buildProfileField(
-              "Họ và tên",
-              _nameController,
-              Icons.person_outline,
-            ),
-            const SizedBox(height: 15),
-            _buildProfileField("Email", _emailController, Icons.email_outlined),
-            const SizedBox(height: 15),
-            _buildProfileField(
-              "Số điện thoại",
-              _phoneController,
-              Icons.phone_outlined,
-            ),
-            const SizedBox(height: 15),
-            _buildProfileField(
-              "Địa chỉ",
-              _addressController,
-              Icons.location_on_outlined,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Tiện ích",
-          style: TextStyle(
-            fontFamily: "Quicksand",
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.summerPrimary,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _buildProfileMenuItem(
-          "Đăng ký trại hè",
-          Icons.assignment_outlined,
-          () => Navigator.pushNamed(context, AppRoutes.registrationList),
-        ),
-        _buildProfileMenuItem(
-          "Hồ sơ của trẻ",
-          Icons.assignment_ind_outlined,
-          () => Navigator.pushNamed(context, AppRoutes.camperList),
-        ),
-        _buildProfileMenuItem(
-          "Thay đổi mật khẩu",
-          Icons.lock_outline,
-          () => _showMessageBox(
-            "Chức năng",
-            "Chức năng này chưa được triển khai.",
-          ),
-        ),
-        _buildProfileMenuItem(
-          "Vé ứng dụng",
-          Icons.confirmation_number_outlined,
-          () => _showMessageBox(
-            "Chức năng",
-            "Chức năng này chưa được triển khai.",
-          ),
-        ),
-      ],
     );
   }
 
@@ -330,29 +374,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Icons.arrow_forward_ios,
           size: 16,
           color: Colors.grey,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red.shade50,
-        foregroundColor: Colors.red.shade700,
-        minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 0,
-      ),
-      onPressed: () =>
-          _showMessageBox("Đăng xuất", "Bạn đã đăng xuất thành công."),
-      icon: const Icon(Icons.logout),
-      label: const Text(
-        "Đăng xuất",
-        style: TextStyle(
-          fontFamily: "Quicksand",
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -60,16 +60,97 @@ class _CampSearchScreenState extends State<CampSearchScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildSearchField(),
+            child: TextFormField(
+              controller: _searchController,
+              autofocus: true,
+              style: const TextStyle(
+                fontFamily: "Quicksand",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              decoration: InputDecoration(
+                hintText: "Tìm kiếm theo tên trại...",
+                hintStyle: TextStyle(
+                  fontFamily: "Quicksand",
+                  color: Colors.grey[500],
+                ),
+                filled: true,
+                fillColor: Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: AppTheme.summerPrimary,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: () {
+                          _searchController.clear();
+                          context.read<CampProvider>().clearSearch();
+                        },
+                      )
+                    : null,
+              ),
+            ),
           ),
           Expanded(
             child: Consumer<CampProvider>(
               builder: (context, provider, child) {
                 if (_searchController.text.isEmpty) {
-                  return _buildInitialView();
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search, size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Nhập tên trại bạn muốn tìm",
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 if (provider.filteredCamps.isEmpty) {
-                  return _buildEmptyView();
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 80,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Không tìm thấy kết quả nào",
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -80,89 +161,6 @@ class _CampSearchScreenState extends State<CampSearchScreen> {
                   },
                 );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchField() {
-    return TextFormField(
-      controller: _searchController,
-      autofocus: true,
-      style: const TextStyle(
-        fontFamily: "Quicksand",
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: Colors.black87,
-      ),
-      decoration: InputDecoration(
-        hintText: "Tìm kiếm theo tên trại...",
-        hintStyle: TextStyle(fontFamily: "Quicksand", color: Colors.grey[500]),
-        filled: true,
-        fillColor: Colors.grey[300],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
-        ),
-
-        prefixIcon: const Icon(Icons.search, color: AppTheme.summerPrimary),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15),
-        suffixIcon: _searchController.text.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear, color: Colors.grey),
-                onPressed: () {
-                  _searchController.clear();
-                  context.read<CampProvider>().clearSearch();
-                },
-              )
-            : null,
-      ),
-    );
-  }
-
-  Widget _buildInitialView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          const Text(
-            "Nhập tên trại bạn muốn tìm",
-            style: TextStyle(
-              fontFamily: "Quicksand",
-              fontSize: 18,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          const Text(
-            "Không tìm thấy kết quả nào",
-            style: TextStyle(
-              fontFamily: "Quicksand",
-              fontSize: 18,
-              color: Colors.grey,
             ),
           ),
         ],

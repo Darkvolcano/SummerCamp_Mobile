@@ -127,159 +127,161 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
                 child: _isSuccess
-                    ? _buildSuccessView(textTheme)
-                    : _buildFormView(textTheme, provider),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                    ? Column(
+                        key: const ValueKey('success'),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 250,
+                            child: Lottie.asset(
+                              "assets/mock/email_successfully_sent_anim.json",
+                            ),
+                          ),
 
-  Widget _buildSuccessView(TextTheme textTheme) {
-    return Column(
-      key: const ValueKey('success'),
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          height: 250,
-          child: Lottie.asset("assets/mock/email_successfully_sent_anim.json"),
-        ),
+                          const SizedBox(height: 24),
 
-        const SizedBox(height: 24),
+                          Text(
+                            "Đã gửi thành công!",
+                            style: textTheme.headlineSmall?.copyWith(
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
 
-        Text(
-          "Đã gửi thành công!",
-          style: textTheme.headlineSmall?.copyWith(
-            fontFamily: "Quicksand",
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+                          const SizedBox(height: 12),
 
-        const SizedBox(height: 12),
+                          Text(
+                            "Vui lòng kiểm tra hộp thư email của bạn để lấy mã OTP đặt lại mật khẩu.",
+                            textAlign: TextAlign.center,
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontFamily: "Quicksand",
+                              color: Colors.white70,
+                            ),
+                          ),
 
-        Text(
-          "Vui lòng kiểm tra hộp thư email của bạn để lấy mã OTP đặt lại mật khẩu.",
-          textAlign: TextAlign.center,
-          style: textTheme.bodyMedium?.copyWith(
-            fontFamily: "Quicksand",
-            color: Colors.white70,
-          ),
-        ),
+                          const SizedBox(height: 32),
 
-        const SizedBox(height: 32),
+                          const CircularProgressIndicator(color: Colors.white),
+                        ],
+                      )
+                    : Form(
+                        key: _formKey,
+                        child: Column(
+                          key: const ValueKey('form'),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Quên mật khẩu?",
+                              style: textTheme.headlineSmall?.copyWith(
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
 
-        const CircularProgressIndicator(color: Colors.white),
-      ],
-    );
-  }
+                            const SizedBox(height: 12),
 
-  Widget _buildFormView(TextTheme textTheme, AuthProvider provider) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        key: const ValueKey('form'),
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Quên mật khẩu?",
-            style: textTheme.headlineSmall?.copyWith(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+                            Text(
+                              "Đừng lo! Nhập email của bạn và chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.",
+                              textAlign: TextAlign.center,
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontFamily: "Quicksand",
+                                color: Colors.white70,
+                              ),
+                            ),
 
-          const SizedBox(height: 12),
+                            const SizedBox(height: 40),
 
-          Text(
-            "Đừng lo! Nhập email của bạn và chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.",
-            textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(
-              fontFamily: "Quicksand",
-              color: Colors.white70,
-            ),
-          ),
+                            TextFormField(
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: _validateEmail,
+                              style: const TextStyle(
+                                fontFamily: "Quicksand",
+                                color: Colors.black87,
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12.0,
+                                ),
+                                labelText: "Email",
+                                prefixIcon: const Icon(
+                                  Icons.email_outlined,
+                                  color: AppTheme.summerPrimary,
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.9),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(
+                                    color: AppTheme.summerAccent,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
 
-          const SizedBox(height: 40),
+                            const SizedBox(height: 24),
 
-          TextFormField(
-            controller: emailController,
-            keyboardType: TextInputType.emailAddress,
-            validator: _validateEmail,
-            style: const TextStyle(
-              fontFamily: "Quicksand",
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-              labelText: "Email",
-              prefixIcon: const Icon(
-                Icons.email_outlined,
-                color: AppTheme.summerPrimary,
-              ),
-              filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.9),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: AppTheme.summerAccent,
-                  width: 2,
-                ),
-              ),
-            ),
-          ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.summerPrimary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: provider.isLoading
+                                    ? null
+                                    : _handleSubmit,
+                                child: provider.isLoading
+                                    ? const SizedBox(
+                                        height: 16,
+                                        width: 16,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text(
+                                        "Gửi mã OTP",
+                                        style: TextStyle(
+                                          fontFamily: "Quicksand",
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                              ),
+                            ),
 
-          const SizedBox(height: 24),
+                            const SizedBox(height: 16),
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.summerPrimary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: provider.isLoading ? null : _handleSubmit,
-              child: provider.isLoading
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+                            TextButton(
+                              onPressed: () => Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              ),
+                              child: const Text(
+                                "Đã có tài khoản? Đăng nhập",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
-                  : const Text(
-                      "Gửi mã OTP",
-                      style: TextStyle(
-                        fontFamily: "Quicksand",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          TextButton(
-            onPressed: () =>
-                Navigator.pushReplacementNamed(context, AppRoutes.login),
-            child: const Text(
-              "Đã có tài khoản? Đăng nhập",
-              style: TextStyle(
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
               ),
             ),
           ),

@@ -185,6 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Icons.email,
                       validator: _validateEmail,
                     ),
+
                     _buildInputField(
                       passwordController,
                       "Mật khẩu",

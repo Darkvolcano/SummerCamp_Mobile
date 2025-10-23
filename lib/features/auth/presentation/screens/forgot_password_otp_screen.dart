@@ -205,7 +205,49 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                   const SizedBox(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(6, (index) => _buildOtpBox(index)),
+                    children: List.generate(
+                      6,
+                      (index) => Container(
+                        width: 45,
+                        height: 45,
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: _controllers[index],
+                          focusNode: _focusNodes[index],
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          maxLength: 1,
+                          textAlignVertical: TextAlignVertical.center,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.summerPrimary,
+                            fontFamily: "Quicksand",
+                          ),
+                          decoration: const InputDecoration(
+                            counterText: "",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            isCollapsed: true,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          onChanged: (value) => _onOtpChanged(index, value),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
@@ -289,47 +331,6 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildOtpBox(int index) {
-    return Container(
-      width: 45,
-      height: 45,
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _controllers[index],
-        focusNode: _focusNodes[index],
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        maxLength: 1,
-        textAlignVertical: TextAlignVertical.center,
-        style: const TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-          color: AppTheme.summerPrimary,
-          fontFamily: "Quicksand",
-        ),
-        decoration: const InputDecoration(
-          counterText: "",
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-          isCollapsed: true,
-        ),
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onChanged: (value) => _onOtpChanged(index, value),
       ),
     );
   }

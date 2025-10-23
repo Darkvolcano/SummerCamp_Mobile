@@ -4,20 +4,30 @@ import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/camp/presentation/widgets/camp_card.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 
-class CampListScreen extends StatelessWidget {
+class CampListScreen extends StatefulWidget {
   const CampListScreen({super.key});
+
+  @override
+  State<CampListScreen> createState() => _CampListScreenState();
+}
+
+class _CampListScreenState extends State<CampListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<CampProvider>();
+      if (provider.camps.isEmpty) {
+        provider.loadCamps();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CampProvider>();
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (provider.camps.isEmpty && !provider.loading) {
-        provider.loadCamps();
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(

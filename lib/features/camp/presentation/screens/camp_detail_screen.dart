@@ -14,7 +14,66 @@ class CampDetailScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      bottomNavigationBar: _buildBottomActionBar(context),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Giá",
+                  style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
+                ),
+                Text(
+                  "${PriceFormatter.format(camp.price)}/người",
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    color: AppTheme.summerAccent,
+                  ),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.registrationForm,
+                  arguments: camp,
+                );
+              },
+              child: const Text(
+                "Đăng ký ngay",
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -104,66 +163,6 @@ class CampDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 80),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomActionBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Giá",
-                style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
-              ),
-              Text(
-                "${PriceFormatter.format(camp.price)}/người",
-                style: const TextStyle(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                  color: AppTheme.summerAccent,
-                ),
-              ),
-            ],
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                AppRoutes.registrationForm,
-                arguments: camp,
-              );
-            },
-            child: const Text(
-              "Đăng ký ngay",
-              style: TextStyle(
-                fontFamily: "Quicksand",
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
               ),
             ),
           ),

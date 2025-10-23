@@ -55,6 +55,7 @@ dependencies:
   http: ^1.5.0 # Request API
   flutter_vlc_player: ^7.4.4 # Video player
   firebase_storage: ^13.0.2
+  connectivity_plus: ^6.0.3 # Check connect internet
 
 dev_dependencies:
   flutter_test:
