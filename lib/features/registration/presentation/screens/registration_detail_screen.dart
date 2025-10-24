@@ -136,7 +136,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
     try {
       final paymentUrl = await provider.createRegistrationPaymentLink(
-        registrationId,
+        registrationId: registrationId,
       );
       final uri = Uri.tryParse(paymentUrl);
 

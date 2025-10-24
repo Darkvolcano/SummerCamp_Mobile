@@ -1,5 +1,6 @@
 import 'package:summercamp/features/registration/data/models/registration_model.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
+import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
 
@@ -30,8 +31,17 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
-  Future<String> registerPaymentLink(int registrationId) async {
-    return await service.createRegisterPaymentLink(registrationId);
+  Future<String> registerPaymentLink({
+    required int registrationId,
+    List<OptionalChoice>? optionalChoices,
+  }) async {
+    final List<Map<String, dynamic>> choicesJson =
+        optionalChoices?.map((choice) => choice.toJson()).toList() ?? [];
+
+    final Map<String, dynamic> requestBody = {'optionalChoices': choicesJson};
+
+    // 3. Gọi service
+    return await service.createRegisterPaymentLink(registrationId, requestBody);
   }
 
   @override
@@ -43,5 +53,16 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   Future<Registration> getRegistrationById(int registrationId) async {
     final data = await service.fetchRegistrationById(registrationId);
     return RegistrationModel.fromJson(data);
+  }
+
+  @override
+  Future<void> registerOptionalActivity({
+    required int camperId,
+    required int activityId,
+  }) async {
+    await service.registerOptionalCamperActivity(
+      camperId: camperId,
+      activityId: activityId,
+    );
   }
 }

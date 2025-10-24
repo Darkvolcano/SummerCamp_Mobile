@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
@@ -13,6 +15,8 @@ class RegistrationProvider with ChangeNotifier {
   final GetRegistrations getRegistrationsUseCase;
   final GetRegistrationById getRegistrationByIdUseCase;
   final CreateRegisterPaymentLink createRegisterPaymentLinkUseCase;
+  final CreateRegisterOptionalCamperActivity
+  createRegisterOptionalCamperActivityUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
@@ -20,6 +24,7 @@ class RegistrationProvider with ChangeNotifier {
     this.cancelUseCase,
     this.getRegistrationByIdUseCase,
     this.createRegisterPaymentLinkUseCase,
+    this.createRegisterOptionalCamperActivityUseCase,
   );
 
   List<Registration> _registrations = [];
@@ -78,14 +83,19 @@ class RegistrationProvider with ChangeNotifier {
     }
   }
 
-  Future<String> createRegistrationPaymentLink(int registrationId) async {
+  Future<String> createRegistrationPaymentLink({
+    required int registrationId,
+    List<OptionalChoice>? optionalChoices,
+  }) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final paymentUrl = await createRegisterPaymentLinkUseCase(registrationId);
-
+      final paymentUrl = await createRegisterPaymentLinkUseCase(
+        registrationId: registrationId,
+        optionalChoices: optionalChoices,
+      );
       return paymentUrl;
     } catch (e) {
       _error = e.toString();
@@ -113,6 +123,28 @@ class RegistrationProvider with ChangeNotifier {
     } catch (e) {
       _error = e.toString();
       print('Lỗi khi tải chi tiết đăng ký: $e');
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> createRegisterOptionalCamperActivity({
+    required int camperId,
+    required int activityId,
+  }) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await createRegisterOptionalCamperActivityUseCase(
+        camperId: camperId,
+        activityId: activityId,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
     } finally {
       _loading = false;
       notifyListeners();

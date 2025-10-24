@@ -21,6 +21,7 @@ import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
@@ -211,6 +212,8 @@ void main() {
     final createRegisterPaymentLinkUseCase = CreateRegisterPaymentLink(
       registrationRepo,
     );
+    final createRegisterOptionalCamperActivityUseCase =
+        CreateRegisterOptionalCamperActivity(registrationRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -240,7 +243,7 @@ void main() {
             create: (_) => ActivityProvider(getActivitiesUseCase),
           ),
 
-          // RegistrationProvider need 5 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink)
+          // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -248,6 +251,7 @@ void main() {
               cancelRegistrationUseCase,
               getRegistrationByIdUseCase,
               createRegisterPaymentLinkUseCase,
+              createRegisterOptionalCamperActivityUseCase,
             ),
           ),
         ],

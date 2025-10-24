@@ -7,7 +7,7 @@ class RegistrationApiService {
   RegistrationApiService(this.client);
 
   Future<List<dynamic>> fetchRegistrations() async {
-    final res = await client.get('registration');
+    final res = await client.get('registration/history');
     return res.data as List;
   }
 
@@ -39,12 +39,18 @@ class RegistrationApiService {
     }
   }
 
-  Future<String> createRegisterPaymentLink(int registrationId) async {
-    final res = await client.post('registration/$registrationId/payment-link');
-    final data = res.data as Map<String, dynamic>;
+  Future<String> createRegisterPaymentLink(
+    int registrationId,
+    Map<String, dynamic>? requestData,
+  ) async {
+    final res = await client.post(
+      'registration/$registrationId/payment-link',
+      data: requestData,
+    );
+    final responseData = res.data as Map<String, dynamic>;
 
-    if (data.containsKey('paymentUrl')) {
-      return data['paymentUrl'] as String;
+    if (responseData.containsKey('paymentUrl')) {
+      return responseData['paymentUrl'] as String;
     } else {
       throw Exception('Payment URL not found in API response');
     }
@@ -52,5 +58,21 @@ class RegistrationApiService {
 
   Future<void> cancelRegistration(int registrationId) async {
     await client.delete('registration/$registrationId');
+  }
+
+  Future<void> registerOptionalCamperActivity({
+    required int camperId,
+    required int activityId,
+  }) async {
+    try {
+      await client.post(
+        'CamperActivity/register-optional',
+        data: {'camperId': camperId, 'activityId': activityId},
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

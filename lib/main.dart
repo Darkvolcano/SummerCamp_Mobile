@@ -26,6 +26,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dar
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
+import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
@@ -90,6 +91,8 @@ Future<void> main() async {
   final createRegisterPaymentLinkUseCase = CreateRegisterPaymentLink(
     registrationRepo,
   );
+  final createRegisterOptionalCamperActivityUseCase =
+      CreateRegisterOptionalCamperActivity(registrationRepo);
 
   // Blog
   final blogApi = BlogApiService(apiClient);
@@ -139,7 +142,7 @@ Future<void> main() async {
           create: (_) => ActivityProvider(getActivitiesUseCase),
         ),
 
-        // RegistrationProvider need 5 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink)
+        // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,
@@ -147,6 +150,7 @@ Future<void> main() async {
             cancelRegistrationUseCase,
             getRegistrationByIdUseCase,
             createRegisterPaymentLinkUseCase,
+            createRegisterOptionalCamperActivityUseCase,
           ),
         ),
 
