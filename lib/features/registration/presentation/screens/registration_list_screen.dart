@@ -122,15 +122,6 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
           ),
         ),
         backgroundColor: AppTheme.summerPrimary,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil(AppRoutes.profile, (route) => false);
-          },
-        ),
       ),
       body: Column(
         children: [

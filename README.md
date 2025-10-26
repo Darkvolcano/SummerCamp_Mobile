@@ -417,6 +417,7 @@ dependencies:
   permission_handler: ^12.0.0 # Device permissions
   device_info_plus: ^11.3.0 # Device information
   cupertino_icons: ^1.0.8 # iOS icons
+  connectivity_plus: ^6.0.3 # Check connect internet
 ```
 
 ---
@@ -432,6 +433,7 @@ Primary: #FFA726 (Orange Sun)
 Accent: #FF7043 (Orange Bold)
 Background: #FFF8E7 (Light Yellow)
 Secondary: #4FC3F7 (Light Blue)
+Yellow: #FFEB3B (Vibrant Yellow)
 Surface: White
 ```
 

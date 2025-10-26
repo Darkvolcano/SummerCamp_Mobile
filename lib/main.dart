@@ -253,7 +253,7 @@ class _SummerCampAppState extends State<SummerCampApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.home,
       onGenerateRoute: AppRoutes.generateRoute,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

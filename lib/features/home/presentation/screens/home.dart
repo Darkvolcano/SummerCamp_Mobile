@@ -47,13 +47,107 @@ class _HomeState extends State<Home> {
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildHomeHeader(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final userName = authProvider.user?.name;
-    final greeting = userName != null && userName.isNotEmpty
-        ? 'Xin chào, $userName 👋'
-        : 'Xin chào, Phụ huynh 👋';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundImage: authProvider.user != null
+                ? const NetworkImage("https://joesch.moe/api/v1/male/random")
+                : null,
+            backgroundColor: Colors.grey.shade200,
+            child: authProvider.user == null
+                ? Icon(
+                    Icons.person_outline,
+                    size: 30,
+                    color: Colors.grey.shade400,
+                  )
+                : null,
+          ),
+
+          const SizedBox(width: 16),
+
+          authProvider.user != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName != null && userName.isNotEmpty
+                          ? 'Xin chào, $userName 👋'
+                          : 'Xin chào, Phụ huynh 👋',
+                      style: TextStyle(
+                        fontFamily: "Quicksand",
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const Text(
+                      "Khám phá mùa hè!",
+                      style: TextStyle(
+                        fontFamily: "Quicksand",
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                )
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.summerAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.login,
+                      (route) => false,
+                    );
+                  },
+                  child: const Text(
+                    "Đăng nhập ngay",
+                    softWrap: false,
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+
+          const Spacer(),
+
+          IconButton(
+            icon: Icon(
+              Icons.notifications_none,
+              color: Colors.grey[700],
+              size: 28,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final authProvider = context.watch<AuthProvider>();
+    // final userName = authProvider.user?.name;
+    // final greeting = userName != null && userName.isNotEmpty
+    //     ? 'Xin chào, $userName 👋'
+    //     : 'Xin chào, Phụ huynh 👋';
 
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = screenWidth * 0.5;
@@ -97,50 +191,51 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 28,
-                  backgroundImage: NetworkImage(
-                    "https://joesch.moe/api/v1/male/random",
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      greeting,
-                      style: TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const Text(
-                      "Khám phá mùa hè!",
-                      style: TextStyle(
-                        fontFamily: "Quicksand",
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: Icon(
-                    Icons.notifications_none,
-                    color: Colors.grey[700],
-                    size: 28,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          //   child: Row(
+          //     children: [
+          //       const CircleAvatar(
+          //         radius: 28,
+          //         backgroundImage: NetworkImage(
+          //           "https://joesch.moe/api/v1/male/random",
+          //         ),
+          //       ),
+          //       const SizedBox(width: 16),
+          //       Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Text(
+          //             greeting,
+          //             style: TextStyle(
+          //               fontFamily: "Quicksand",
+          //               color: Colors.grey[600],
+          //             ),
+          //           ),
+          //           const Text(
+          //             "Khám phá mùa hè!",
+          //             style: TextStyle(
+          //               fontFamily: "Quicksand",
+          //               fontSize: 20,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.black87,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //       const Spacer(),
+          //       IconButton(
+          //         icon: Icon(
+          //           Icons.notifications_none,
+          //           color: Colors.grey[700],
+          //           size: 28,
+          //         ),
+          //         onPressed: () {},
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          _buildHomeHeader(context),
 
           const SizedBox(height: 24),
 

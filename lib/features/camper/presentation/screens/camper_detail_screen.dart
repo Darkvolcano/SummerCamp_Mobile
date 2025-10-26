@@ -121,9 +121,10 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
                         );
 
                         if (result == true && context.mounted) {
-                          context.read<CamperProvider>().fetchCamperById(
-                            widget.camperId,
-                          );
+                          // context.read<CamperProvider>().fetchCamperById(
+                          //   widget.camperId,
+                          // );
+                          context.read<CamperProvider>().loadCampers();
                         }
                       },
                       icon: const Icon(Icons.edit),
