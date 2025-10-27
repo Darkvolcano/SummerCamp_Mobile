@@ -42,7 +42,7 @@ class CampDetailScreen extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
-                    fontSize: 22,
+                    fontSize: 18,
                     color: AppTheme.summerAccent,
                   ),
                 ),
@@ -67,7 +67,7 @@ class CampDetailScreen extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -113,6 +113,7 @@ class CampDetailScreen extends StatelessWidget {
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
                       color: AppTheme.summerPrimary,
+                      fontSize: 24,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -145,14 +146,18 @@ class CampDetailScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 24),
+
                   Text(
                     "Mô tả chi tiết",
                     style: textTheme.titleLarge?.copyWith(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
+                      fontSize: 19,
                     ),
                   ),
+
                   const SizedBox(height: 8),
+
                   Text(
                     camp.description,
                     style: textTheme.bodyLarge?.copyWith(

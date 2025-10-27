@@ -5,10 +5,9 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
-import 'package:summercamp/features/activity/domain/entities/activity.dart';
-import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
+import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
@@ -53,10 +52,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   Future<void> _fetchCampData(Registration registration) async {
     final campProvider = context.read<CampProvider>();
-    final activityProvider = context.read<ActivityProvider>();
     final registrationProvider = context.read<RegistrationProvider>();
-
-    activityProvider.setLoading();
 
     if (campProvider.camps.isEmpty) {
       await campProvider.loadCamps();
@@ -73,12 +69,12 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         setState(() => _campDetails = foundCamp);
       }
     } catch (e) {
-      activityProvider.setError("Không tìm thấy thông tin trại.");
+      // activityProvider.setError("Không tìm thấy thông tin trại.");
       return;
     }
 
     await Future.wait([
-      activityProvider.loadActivities(campId),
+      registrationProvider.loadActivitySchedulesCoreByCampId(campId),
       registrationProvider.loadActivitySchedulesOptionalByCampId(campId),
     ]);
   }
@@ -149,8 +145,10 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     );
   }
 
-  Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
-    final Map<String, List<Activity>> grouped = {};
+  Map<String, List<ActivitySchedule>> groupActivitiesByDate(
+    List<ActivitySchedule> activities,
+  ) {
+    final Map<String, List<ActivitySchedule>> grouped = {};
     for (var act in activities) {
       String dateKey = DateFormatter.formatDate(act.startTime);
       grouped.putIfAbsent(dateKey, () => []);
@@ -159,12 +157,12 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     return grouped;
   }
 
-  bool isActivityLive(Activity activity) {
+  bool isActivityLive(ActivitySchedule activity) {
     final now = DateTime.now();
     return now.isAfter(activity.startTime) && now.isBefore(activity.endTime);
   }
 
-  void joinLivestream(BuildContext context, Activity activity) {
+  void joinLivestream(BuildContext context, ActivitySchedule activity) {
     if (activity.roomId == null) return;
     Navigator.push(
       context,
@@ -279,11 +277,9 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   Widget _buildContent(BuildContext context, Registration registration) {
     final textTheme = Theme.of(context).textTheme;
-    final activityProvider = context.watch<ActivityProvider>();
     final registrationProvider = context.watch<RegistrationProvider>();
-
-    final activities = activityProvider.activities;
-    final groupedActivities = groupActivitiesByDate(activities);
+    final coreActivities = registrationProvider.activitySchedules;
+    final groupedActivities = groupActivitiesByDate(coreActivities);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -316,19 +312,19 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               ),
             ),
           const SizedBox(height: 12),
-          if (activityProvider.loading && activities.isEmpty)
+          if (registrationProvider.loading && coreActivities.isEmpty)
             const Center(child: CircularProgressIndicator())
-          else if (activityProvider.error != null)
+          else if (registrationProvider.error != null)
             Center(
               child: Text(
-                "Lỗi: ${activityProvider.error}",
+                "Lỗi: ${registrationProvider.error}",
                 style: const TextStyle(
                   fontFamily: "Quicksand",
                   color: Colors.red,
                 ),
               ),
             )
-          else if (activities.isEmpty)
+          else if (coreActivities.isEmpty)
             const Center(
               child: Text(
                 "Chưa có lịch trình hoạt động chính.",
@@ -406,8 +402,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                           ),
                         ),
                         subtitle: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start, // Căn lề trái
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               "Ngày: ${DateFormatter.formatDate(activity.startTime)}",
@@ -577,7 +572,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   Widget _buildSchedule(
     BuildContext context,
-    Map<String, List<Activity>> groupedActivities,
+    Map<String, List<ActivitySchedule>> groupedActivities,
   ) {
     return Column(
       children: groupedActivities.entries.map((entry) {
@@ -617,7 +612,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     );
   }
 
-  Widget _buildActivityTile(BuildContext context, Activity act) {
+  Widget _buildActivityTile(BuildContext context, ActivitySchedule act) {
     final isLive = act.isLivestream && isActivityLive(act);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -649,15 +644,15 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  act.name,
+                  act.activity!.name,
                   style: const TextStyle(
                     fontFamily: "Quicksand",
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                   ),
                 ),
-                const SizedBox(height: 4),
-                _buildDetailRow(Icons.place_outlined, act.location, size: 14),
+                // const SizedBox(height: 4),
+                // _buildDetailRow(Icons.place_outlined, act.location, size: 14),
               ],
             ),
           ),
