@@ -1,20 +1,20 @@
 class Activity {
   final int activityId;
   final String name;
-  final String description;
+  final String? description;
   final String location;
   final DateTime startTime;
   final DateTime endTime;
   final int campId;
   final bool isLivestream;
-  final int? roomId; // thay bằng String
+  final String? roomId;
   final int? staffId;
   final String activityType;
 
   const Activity({
     required this.activityId,
     required this.name,
-    required this.description,
+    this.description,
     required this.location,
     required this.startTime,
     required this.endTime,

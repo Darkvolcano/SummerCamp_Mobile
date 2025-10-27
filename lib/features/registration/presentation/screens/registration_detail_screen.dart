@@ -13,6 +13,7 @@ import 'package:summercamp/features/registration/domain/entities/registration.da
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
+import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,6 +30,7 @@ class RegistrationDetailScreen extends StatefulWidget {
 class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   Camp? _campDetails;
   bool _isLoadingPayment = false;
+  final Map<int, Set<int>> _selectedOptionalChoices = {};
 
   @override
   void initState() {
@@ -46,12 +48,13 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
     if (!mounted || registrationProvider.selectedRegistration == null) return;
 
-    _fetchActivities(registrationProvider.selectedRegistration!);
+    _fetchCampData(registrationProvider.selectedRegistration!);
   }
 
-  Future<void> _fetchActivities(Registration registration) async {
+  Future<void> _fetchCampData(Registration registration) async {
     final campProvider = context.read<CampProvider>();
     final activityProvider = context.read<ActivityProvider>();
+    final registrationProvider = context.read<RegistrationProvider>();
 
     activityProvider.setLoading();
 
@@ -73,61 +76,14 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       activityProvider.setError("Không tìm thấy thông tin trại.");
       return;
     }
-    await activityProvider.loadActivities(campId);
+
+    await Future.wait([
+      activityProvider.loadActivities(campId),
+      registrationProvider.loadActivitySchedulesOptionalByCampId(campId),
+    ]);
   }
 
-  Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
-    final Map<String, List<Activity>> grouped = {};
-    for (var act in activities) {
-      String dateKey = DateFormatter.formatDate(act.startTime);
-      grouped.putIfAbsent(dateKey, () => []);
-      grouped[dateKey]!.add(act);
-    }
-    return grouped;
-  }
-
-  bool isActivityLive(Activity activity) {
-    final now = DateTime.now();
-    return now.isAfter(activity.startTime) && now.isBefore(activity.endTime);
-  }
-  //   bool isActivityLive(Activity activity) {
-  //     final now = DateTime.now();
-  //     final activityDate = DateTime.parse(activity.date);
-  //     final startTimeParts = activity.startTime.split(':');
-  //     final endTimeParts = activity.endTime.split(':');
-  //     final startTime = DateTime(
-  //       activityDate.year,
-  //       activityDate.month,
-  //       activityDate.day,
-  //       int.parse(startTimeParts[0]),
-  //       int.parse(startTimeParts[1]),
-  //     );
-  //     final endTime = DateTime(
-  //       activityDate.year,
-  //       activityDate.month,
-  //       activityDate.day,
-  //       int.parse(endTimeParts[0]),
-  //       int.parse(endTimeParts[1]),
-  //     );
-  //     return now.isAfter(startTime) && now.isBefore(endTime);
-  //   }
-
-  void joinLivestream(BuildContext context, Activity activity) {
-    if (activity.roomId == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ILSScreen(
-          liveStreamId: activity.roomId!.toString(),
-          token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
-          mode: Mode.RECV_ONLY,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _handlePayment(BuildContext context, int registrationId) async {
+  Future<void> _handlePayment(int registrationId) async {
     setState(() => _isLoadingPayment = true);
 
     final provider = context.read<RegistrationProvider>();
@@ -135,9 +91,20 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     final messenger = ScaffoldMessenger.of(context);
 
     try {
+      final List<OptionalChoice> choicesList = [];
+      _selectedOptionalChoices.forEach((camperId, activityIds) {
+        for (var activityId in activityIds) {
+          choicesList.add(
+            OptionalChoice(camperId: camperId, activityScheduleId: activityId),
+          );
+        }
+      });
+
       final paymentUrl = await provider.createRegistrationPaymentLink(
         registrationId: registrationId,
+        optionalChoices: choicesList,
       );
+
       final uri = Uri.tryParse(paymentUrl);
 
       if (uri == null || !(await canLaunchUrl(uri))) {
@@ -147,6 +114,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       if (!mounted) return;
       await _showCountdownDialog();
 
+      if (!mounted) return;
       await launchUrl(uri, mode: LaunchMode.externalApplication);
 
       if (mounted) {
@@ -181,21 +149,40 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     );
   }
 
+  Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
+    final Map<String, List<Activity>> grouped = {};
+    for (var act in activities) {
+      String dateKey = DateFormatter.formatDate(act.startTime);
+      grouped.putIfAbsent(dateKey, () => []);
+      grouped[dateKey]!.add(act);
+    }
+    return grouped;
+  }
+
+  bool isActivityLive(Activity activity) {
+    final now = DateTime.now();
+    return now.isAfter(activity.startTime) && now.isBefore(activity.endTime);
+  }
+
+  void joinLivestream(BuildContext context, Activity activity) {
+    if (activity.roomId == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ILSScreen(
+          liveStreamId: activity.roomId!.toString(),
+          token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
+          mode: Mode.RECV_ONLY,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final registrationProvider = context.watch<RegistrationProvider>();
     final registration = registrationProvider.selectedRegistration;
-
-    final textTheme = Theme.of(context).textTheme;
-    final activityProvider = context.watch<ActivityProvider>();
-    final activities = activityProvider.activities;
-    final groupedActivities = groupActivitiesByDate(activities);
-
-    final campName = _campDetails?.name ?? registration?.campName;
-    final campDescription = _campDetails?.description;
-    final campPlace = _campDetails?.place;
-    final startDate = _campDetails?.startDate;
-    final endDate = _campDetails?.endDate;
 
     return Scaffold(
       appBar: AppBar(
@@ -215,7 +202,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           if (registrationProvider.loading && registration == null) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (registrationProvider.error != null) {
+          if (registrationProvider.error != null && registration == null) {
             return Center(child: Text("Lỗi: ${registrationProvider.error}"));
           }
           if (registration == null) {
@@ -223,205 +210,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               child: Text("Không tìm thấy thông tin đăng ký."),
             );
           }
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                campName!,
-                                style: textTheme.titleLarge?.copyWith(
-                                  fontFamily: "Quicksand",
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.summerPrimary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            _buildStatusChip(registration.status),
-                          ],
-                        ),
-
-                        if (campDescription != null &&
-                            campDescription.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            campDescription,
-                            style: const TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-
-                        const SizedBox(height: 8),
-                        _buildDetailRow(
-                          Icons.payment,
-                          "Mã đăng ký: #${registration.registrationId}",
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        if (campPlace != null)
-                          _buildDetailRow(Icons.location_on, campPlace),
-
-                        const SizedBox(height: 6),
-
-                        if (startDate != null && endDate != null)
-                          _buildDetailRow(
-                            Icons.calendar_month,
-                            "${DateFormatter.formatFromString(startDate)} - ${DateFormatter.formatFromString(endDate)}",
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Danh sách camper tham gia",
-                          style: textTheme.titleMedium?.copyWith(
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Divider(height: 20),
-                        if (registration.campers.isEmpty)
-                          const Text(
-                            "Không có thông tin camper.",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              color: Colors.grey,
-                            ),
-                          )
-                        else
-                          ...registration.campers.map(
-                            (camper) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.person,
-                                    color: AppTheme.summerAccent,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    camper.camperName,
-                                    style: const TextStyle(
-                                      fontFamily: "Quicksand",
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                Text(
-                  "Lịch trình hoạt động",
-                  style: textTheme.titleLarge?.copyWith(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.summerPrimary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                if (activityProvider.loading)
-                  const Center(child: CircularProgressIndicator())
-                else if (activityProvider.error != null)
-                  Center(
-                    child: Text(
-                      "Lỗi: ${activityProvider.error}",
-                      style: const TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.red,
-                      ),
-                    ),
-                  )
-                else if (activities.isEmpty)
-                  const Center(
-                    child: Text(
-                      "Chưa có lịch trình hoạt động.",
-                      style: TextStyle(fontFamily: "Quicksand"),
-                    ),
-                  )
-                else
-                  Column(
-                    children: groupedActivities.entries.map((entry) {
-                      final dateStr = entry.key;
-                      final activitiesOfDay = entry.value;
-                      activitiesOfDay.sort(
-                        (a, b) => a.startTime.compareTo(b.startTime),
-                      );
-
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dateStr,
-                                style: const TextStyle(
-                                  fontFamily: "Quicksand",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: AppTheme.summerPrimary,
-                                ),
-                              ),
-                              const Divider(),
-                              ...activitiesOfDay.map(
-                                (act) => _buildActivityTile(context, act),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-              ],
-            ),
-          );
+          return _buildContent(context, registration);
         },
       ),
       floatingActionButton: _buildFab(context, registration),
@@ -436,7 +225,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       return FloatingActionButton.extended(
         onPressed: _isLoadingPayment
             ? null
-            : () => _handlePayment(context, registration.registrationId),
+            : () => _handlePayment(registration.registrationId),
         backgroundColor: Colors.green,
         icon: _isLoadingPayment
             ? Container(
@@ -488,75 +277,345 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     return null;
   }
 
-  // Widget _buildCampInfoCard(
-  //   BuildContext context,
-  //   TextTheme textTheme,
-  //   Registration registration,
-  // ) {
-  //   final campName = _campDetails?.name ?? registration.campName;
-  //   final campDescription = _campDetails?.description;
-  //   final campPlace = _campDetails?.place;
-  //   final startDate = _campDetails?.startDate;
-  //   final endDate = _campDetails?.endDate;
+  Widget _buildContent(BuildContext context, Registration registration) {
+    final textTheme = Theme.of(context).textTheme;
+    final activityProvider = context.watch<ActivityProvider>();
+    final registrationProvider = context.watch<RegistrationProvider>();
 
-  //   return Card(
-  //     elevation: 2,
-  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Expanded(
-  //                 child: Text(
-  //                   campName,
-  //                   style: textTheme.titleLarge?.copyWith(
-  //                     fontFamily: "Quicksand",
-  //                     fontWeight: FontWeight.bold,
-  //                     color: AppTheme.summerPrimary,
-  //                   ),
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 8),
-  //               _buildStatusChip(registration.status),
-  //             ],
-  //           ),
+    final activities = activityProvider.activities;
+    final groupedActivities = groupActivitiesByDate(activities);
 
-  //           if (campDescription != null && campDescription.isNotEmpty) ...[
-  //             const SizedBox(height: 8),
-  //             Text(
-  //               campDescription,
-  //               style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
-  //             ),
-  //           ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCampInfoCard(context, textTheme, registration),
+          const SizedBox(height: 16),
+          _buildCamperListCard(context, textTheme, registration),
 
-  //           const SizedBox(height: 8),
-  //           _buildDetailRow(
-  //             Icons.payment,
-  //             "Mã đăng ký: #${registration.registrationId}",
-  //           ),
+          if (registration.status == RegistrationStatus.Approved)
+            _buildOptionalActivitiesSection(
+              context,
+              textTheme,
+              registration,
+              registrationProvider,
+            ),
 
-  //           const SizedBox(height: 6),
+          const SizedBox(height: 24),
 
-  //           if (campPlace != null)
-  //             _buildDetailRow(Icons.location_on, campPlace),
+          if (registration.status == RegistrationStatus.Completed ||
+              registration.status == RegistrationStatus.PendingCompletion ||
+              registration.status == RegistrationStatus.PendingAssignGroup)
+            Text(
+              "Lịch trình hoạt động (Chính)",
+              style: textTheme.titleLarge?.copyWith(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+                color: AppTheme.summerPrimary,
+              ),
+            ),
+          const SizedBox(height: 12),
+          if (activityProvider.loading && activities.isEmpty)
+            const Center(child: CircularProgressIndicator())
+          else if (activityProvider.error != null)
+            Center(
+              child: Text(
+                "Lỗi: ${activityProvider.error}",
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  color: Colors.red,
+                ),
+              ),
+            )
+          else if (activities.isEmpty)
+            const Center(
+              child: Text(
+                "Chưa có lịch trình hoạt động chính.",
+                style: TextStyle(fontFamily: "Quicksand"),
+              ),
+            )
+          else
+            _buildSchedule(context, groupedActivities),
+        ],
+      ),
+    );
+  }
 
-  //           const SizedBox(height: 6),
+  Widget _buildOptionalActivitiesSection(
+    BuildContext context,
+    TextTheme textTheme,
+    Registration registration,
+    RegistrationProvider provider,
+  ) {
+    final optionalActivities = provider.activitySchedules;
 
-  //           if (startDate != null && endDate != null)
-  //             _buildDetailRow(
-  //               Icons.calendar_month,
-  //               "${DateFormatter.formatFromString(startDate)} - ${DateFormatter.formatFromString(endDate)}",
-  //             ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+    if (!provider.loading && optionalActivities.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          "Hoạt động tự chọn",
+          style: textTheme.titleLarge?.copyWith(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: AppTheme.summerPrimary,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (provider.loading)
+          const Center(child: CircularProgressIndicator())
+        else
+          ...registration.campers.map((camper) {
+            return Card(
+              elevation: 1,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.only(bottom: 16),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      camper.camperName,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Divider(),
+                    ...optionalActivities.map((activity) {
+                      final bool isSelected =
+                          _selectedOptionalChoices[camper.camperId]?.contains(
+                            activity.activityScheduleId,
+                          ) ??
+                          false;
+
+                      return CheckboxListTile(
+                        title: Text(
+                          activity.activity?.name ?? 'Hoạt động không tên',
+                          style: const TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // Căn lề trái
+                          children: [
+                            Text(
+                              "Ngày: ${DateFormatter.formatDate(activity.startTime)}",
+                              style: const TextStyle(
+                                fontFamily: "Quicksand",
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              "Thời gian: ${DateFormatter.formatTime(activity.startTime)} - ${DateFormatter.formatTime(activity.endTime)}",
+                              style: const TextStyle(
+                                fontFamily: "Quicksand",
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: isSelected,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _selectedOptionalChoices.putIfAbsent(
+                              camper.camperId,
+                              () => {},
+                            );
+
+                            if (value == true) {
+                              _selectedOptionalChoices[camper.camperId]!.add(
+                                activity.activityScheduleId,
+                              );
+                            } else {
+                              _selectedOptionalChoices[camper.camperId]!.remove(
+                                activity.activityScheduleId,
+                              );
+                            }
+                          });
+                        },
+                        activeColor: AppTheme.summerAccent,
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            );
+          }),
+      ],
+    );
+  }
+
+  Widget _buildCampInfoCard(
+    BuildContext context,
+    TextTheme textTheme,
+    Registration registration,
+  ) {
+    final campName = _campDetails?.name ?? registration.campName;
+    final campDescription = _campDetails?.description;
+    final campPlace = _campDetails?.place;
+    final startDate = _campDetails?.startDate ?? registration.campStartDate;
+    final endDate = _campDetails?.endDate ?? registration.campEndDate;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    campName,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.summerPrimary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _buildStatusChip(registration.status),
+              ],
+            ),
+            if (campDescription != null && campDescription.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                campDescription,
+                style: const TextStyle(fontFamily: "Quicksand", fontSize: 14),
+              ),
+            ],
+            const SizedBox(height: 8),
+            _buildDetailRow(
+              Icons.payment,
+              "Mã đăng ký: #${registration.registrationId}",
+            ),
+            const SizedBox(height: 6),
+            if (campPlace != null)
+              _buildDetailRow(Icons.location_on, campPlace),
+            const SizedBox(height: 6),
+            if (startDate != null && endDate != null)
+              _buildDetailRow(
+                Icons.calendar_month,
+                "${DateFormatter.formatFromString(startDate)} - ${DateFormatter.formatFromString(endDate)}",
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCamperListCard(
+    BuildContext context,
+    TextTheme textTheme,
+    Registration registration,
+  ) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Danh sách camper tham gia",
+              style: textTheme.titleMedium?.copyWith(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(height: 20),
+            if (registration.campers.isEmpty)
+              const Text(
+                "Không có thông tin camper.",
+                style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
+              )
+            else
+              ...registration.campers.map(
+                (camper) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.person,
+                        color: AppTheme.summerAccent,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        camper.camperName,
+                        style: const TextStyle(
+                          fontFamily: "Quicksand",
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSchedule(
+    BuildContext context,
+    Map<String, List<Activity>> groupedActivities,
+  ) {
+    return Column(
+      children: groupedActivities.entries.map((entry) {
+        final dateStr = entry.key;
+        final activitiesOfDay = entry.value;
+        activitiesOfDay.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dateStr,
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppTheme.summerPrimary,
+                  ),
+                ),
+                const Divider(),
+                ...activitiesOfDay.map(
+                  (act) => _buildActivityTile(context, act),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
 
   Widget _buildActivityTile(BuildContext context, Activity act) {
     final isLive = act.isLivestream && isActivityLive(act);

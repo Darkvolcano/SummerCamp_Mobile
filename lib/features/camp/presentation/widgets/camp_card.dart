@@ -45,6 +45,7 @@ class CampCard extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 180,
+                      width: double.infinity,
                       color: Colors.grey[200],
                       child: const Icon(
                         Icons.image_not_supported,

@@ -23,6 +23,8 @@ import 'package:summercamp/features/registration/data/services/registration_api_
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
@@ -214,6 +216,10 @@ void main() {
     );
     final createRegisterOptionalCamperActivityUseCase =
         CreateRegisterOptionalCamperActivity(registrationRepo);
+    final getActivitySchedulesOptionalByCampIdUseCase =
+        GetActivitySchedulesOptionalByCampId(registrationRepo);
+    final getActivitySchedulesCoreByCampIdUseCase =
+        GetActivitySchedulesCoreByCampId(registrationRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -243,7 +249,7 @@ void main() {
             create: (_) => ActivityProvider(getActivitiesUseCase),
           ),
 
-          // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
+          // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -252,6 +258,8 @@ void main() {
               getRegistrationByIdUseCase,
               createRegisterPaymentLinkUseCase,
               createRegisterOptionalCamperActivityUseCase,
+              getActivitySchedulesOptionalByCampIdUseCase,
+              getActivitySchedulesCoreByCampIdUseCase,
             ),
           ),
         ],

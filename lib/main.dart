@@ -28,6 +28,8 @@ import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
 import 'package:summercamp/features/report/data/services/report_api_service.dart';
@@ -93,6 +95,10 @@ Future<void> main() async {
   );
   final createRegisterOptionalCamperActivityUseCase =
       CreateRegisterOptionalCamperActivity(registrationRepo);
+  final getActivitySchedulesOptionalByCampIdUseCase =
+      GetActivitySchedulesOptionalByCampId(registrationRepo);
+  final getActivitySchedulesCoreByCampIdUseCase =
+      GetActivitySchedulesCoreByCampId(registrationRepo);
 
   // Blog
   final blogApi = BlogApiService(apiClient);
@@ -142,7 +148,7 @@ Future<void> main() async {
           create: (_) => ActivityProvider(getActivitiesUseCase),
         ),
 
-        // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
+        // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId)
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,
@@ -151,6 +157,8 @@ Future<void> main() async {
             getRegistrationByIdUseCase,
             createRegisterPaymentLinkUseCase,
             createRegisterOptionalCamperActivityUseCase,
+            getActivitySchedulesOptionalByCampIdUseCase,
+            getActivitySchedulesCoreByCampIdUseCase,
           ),
         ),
 
