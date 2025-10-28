@@ -157,14 +157,14 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
         children: [
           const AnimatedGradientBackground(
             gradientColors: [
-              Color(0xFF0F172A), // slate-900
-              Color(0xFF1E293B), // slate-800
-              Color(0xFF334155), // slate-700
+              Color(0xFF854D0E),
+              Color(0xFFB45309),
+              Color(0xFFF59E0B),
             ],
             blobColors: [
-              Color.fromARGB(40, 249, 115, 22),
-              Color.fromARGB(40, 251, 146, 60),
-              Color.fromARGB(40, 251, 191, 36),
+              Color.fromARGB(45, 253, 186, 116),
+              Color.fromARGB(45, 251, 146, 60),
+              Color.fromARGB(45, 251, 191, 36),
             ],
           ),
 

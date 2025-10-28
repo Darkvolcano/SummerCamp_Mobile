@@ -185,9 +185,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           const AnimatedGradientBackground(
             gradientColors: [
-              Color(0xFF581C87), // purple-900
-              Color(0xFF7C2D12), // orange-900
-              Color(0xFF92400E), // amber-900
+              Color(0xFF7F1D1D),
+              Color(0xFFC2410C),
+              Color(0xFFEA580C),
             ],
             blobColors: [
               Color.fromARGB(40, 249, 115, 22),
