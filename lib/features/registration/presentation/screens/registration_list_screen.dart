@@ -32,10 +32,10 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
     _TabInfo('Tất cả', []),
     _TabInfo('Chờ duyệt', [RegistrationStatus.PendingApproval]),
     _TabInfo('Đã duyệt', [RegistrationStatus.Approved]),
-    _TabInfo('Chờ hoàn thành', [RegistrationStatus.PendingCompletion]),
-    _TabInfo('Chờ phân nhóm', [RegistrationStatus.PendingAssignGroup]),
+    // _TabInfo('Chờ hoàn thành', [RegistrationStatus.PendingCompletion]),
+    // _TabInfo('Chờ phân nhóm', [RegistrationStatus.PendingAssignGroup]),
     _TabInfo('Chờ thanh toán', [RegistrationStatus.PendingPayment]),
-    _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
+    // _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
     _TabInfo('Hoàn thành', [RegistrationStatus.Completed]),
     _TabInfo('Đã hủy', [RegistrationStatus.Canceled]),
   ];

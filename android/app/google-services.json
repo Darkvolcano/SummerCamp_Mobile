@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "936404473683",
+    "project_id": "chat-reactjs-99a6d",
+    "storage_bucket": "chat-reactjs-99a6d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936404473683:android:cb4587bd44513d57f1b3a6",
+        "android_client_info": {
+          "package_name": "com.example.summercamp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936404473683-e4al0jtbdkv3j8fa2c5s4k4pj3k0lvsr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCqI0iVZOxY3mOEVeJzivunkhXD38p_YE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936404473683-e4al0jtbdkv3j8fa2c5s4k4pj3k0lvsr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

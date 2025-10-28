@@ -4,9 +4,9 @@ enum RegistrationStatus {
   PendingApproval,
   Approved,
   PendingPayment,
-  Confirmed,
+  // Confirmed,
   Completed,
   Canceled,
-  PendingCompletion,
-  PendingAssignGroup,
+  // PendingCompletion,
+  // PendingAssignGroup,
 }

@@ -36,6 +36,7 @@ class CamperRepositoryImpl implements CamperRepository {
       gender: camper.gender,
       healthRecord: healthRecordModel,
       groupId: camper.groupId,
+      avatar: camper.avatar,
     );
 
     final data = camperModel.toJson();
@@ -61,6 +62,7 @@ class CamperRepositoryImpl implements CamperRepository {
       gender: camper.gender,
       healthRecord: healthRecordModel,
       groupId: camper.groupId,
+      avatar: camper.avatar,
     );
 
     final data = camperModel.toJson();

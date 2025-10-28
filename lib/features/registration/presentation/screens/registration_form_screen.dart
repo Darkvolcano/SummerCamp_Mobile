@@ -256,16 +256,18 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
                   RadioGroup<int>(
                     groupValue: _selectedPaymentId,
-                    onChanged: (val) {
-                      if (val != null) setState(() => _selectedPaymentId = val);
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedPaymentId = value);
+                      }
                     },
                     child: Column(
                       children: [
                         RadioMenuButton<int>(
                           value: 1,
                           groupValue: _selectedPaymentId,
-                          onChanged: (val) =>
-                              setState(() => _selectedPaymentId = val!),
+                          onChanged: (value) =>
+                              setState(() => _selectedPaymentId = value!),
                           child: const Text(
                             "Chuyển khoản ngân hàng",
                             style: TextStyle(

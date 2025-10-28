@@ -247,8 +247,9 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       );
     }
 
-    if (registration.status == RegistrationStatus.Confirmed ||
-        registration.status == RegistrationStatus.Completed) {
+    // if (registration.status == RegistrationStatus.Confirmed ||
+    //     registration.status == RegistrationStatus.Completed) {
+    if (registration.status == RegistrationStatus.Completed) {
       return FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -278,7 +279,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   Widget _buildContent(BuildContext context, Registration registration) {
     final textTheme = Theme.of(context).textTheme;
     final registrationProvider = context.watch<RegistrationProvider>();
-    final coreActivities = registrationProvider.activitySchedules;
+    final coreActivities = registrationProvider.coreActivitySchedules;
     final groupedActivities = groupActivitiesByDate(coreActivities);
 
     return SingleChildScrollView(
@@ -300,9 +301,10 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
           const SizedBox(height: 24),
 
-          if (registration.status == RegistrationStatus.Completed ||
-              registration.status == RegistrationStatus.PendingCompletion ||
-              registration.status == RegistrationStatus.PendingAssignGroup)
+          if (registration.status == RegistrationStatus.Completed
+          // ||    registration.status == RegistrationStatus.PendingCompletion ||
+          //     registration.status == RegistrationStatus.PendingAssignGroup
+          )
             Text(
               "Lịch trình hoạt động (Chính)",
               style: textTheme.titleLarge?.copyWith(
@@ -344,7 +346,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     Registration registration,
     RegistrationProvider provider,
   ) {
-    final optionalActivities = provider.activitySchedules;
+    final optionalActivities = provider.optionalActivitySchedules;
 
     if (!provider.loading && optionalActivities.isEmpty) {
       return const SizedBox.shrink();
@@ -709,21 +711,21 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         textColor = Colors.yellow.shade900;
         text = "Chờ thanh toán";
         break;
-      case RegistrationStatus.PendingCompletion:
-        backgroundColor = Colors.purple.shade100;
-        textColor = Colors.purple.shade800;
-        text = "Chờ hoàn thành";
-        break;
-      case RegistrationStatus.PendingAssignGroup:
-        backgroundColor = Colors.indigo.shade100;
-        textColor = Colors.indigo.shade800;
-        text = "Chờ phân nhóm";
-        break;
-      case RegistrationStatus.Confirmed:
-        backgroundColor = Colors.teal.shade100;
-        textColor = Colors.teal.shade800;
-        text = "Đã xác nhận";
-        break;
+      // case RegistrationStatus.PendingCompletion:
+      //   backgroundColor = Colors.purple.shade100;
+      //   textColor = Colors.purple.shade800;
+      //   text = "Chờ hoàn thành";
+      //   break;
+      // case RegistrationStatus.PendingAssignGroup:
+      //   backgroundColor = Colors.indigo.shade100;
+      //   textColor = Colors.indigo.shade800;
+      //   text = "Chờ phân nhóm";
+      //   break;
+      // case RegistrationStatus.Confirmed:
+      //   backgroundColor = Colors.teal.shade100;
+      //   textColor = Colors.teal.shade800;
+      //   text = "Đã xác nhận";
+      //   break;
       case RegistrationStatus.Completed:
         backgroundColor = Colors.blue.shade100;
         textColor = Colors.blue.shade800;

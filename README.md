@@ -404,6 +404,7 @@ dependencies:
   firebase_core: ^2.24.0
   firebase_messaging: ^14.7.6 # Push notifications
   firebase_storage: ^13.0.2 # Cloud storage
+  firebase_app_check: ^0.4.1+1 # App Check
 
   # UI Components
   table_calendar: ^3.0.8 # Calendar widget
@@ -418,6 +419,7 @@ dependencies:
   device_info_plus: ^11.3.0 # Device information
   cupertino_icons: ^1.0.8 # iOS icons
   connectivity_plus: ^6.0.3 # Check connect internet
+  path: ^1.9.0 # File path processing
 ```
 
 ---

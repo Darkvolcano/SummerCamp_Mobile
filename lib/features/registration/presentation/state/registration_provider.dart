@@ -42,11 +42,12 @@ class RegistrationProvider with ChangeNotifier {
   Registration? _selectedRegistration;
   Registration? get selectedRegistration => _selectedRegistration;
 
-  List<ActivitySchedule> _activitySchedules = [];
-  List<ActivitySchedule> get activitySchedules => _activitySchedules;
+  List<ActivitySchedule> _coreActivitySchedules = [];
+  List<ActivitySchedule> get coreActivitySchedules => _coreActivitySchedules;
 
-  ActivitySchedule? _selectedActivitySchedule;
-  ActivitySchedule? get selectedActivitySchedule => _selectedActivitySchedule;
+  List<ActivitySchedule> _optionalActivitySchedules = [];
+  List<ActivitySchedule> get optionalActivitySchedules =>
+      _optionalActivitySchedules;
 
   bool _loading = false;
   String? _error;
@@ -169,16 +170,14 @@ class RegistrationProvider with ChangeNotifier {
   Future<void> loadActivitySchedulesOptionalByCampId(int campId) async {
     _loading = true;
     _error = null;
-    _selectedActivitySchedule = null;
     notifyListeners();
 
     try {
-      _activitySchedules = await getActivitySchedulesOptionalByCampIdUseCase(
-        campId,
-      );
+      _optionalActivitySchedules =
+          await getActivitySchedulesOptionalByCampIdUseCase(campId);
     } catch (e) {
       _error = e.toString();
-      _activitySchedules = [];
+      _optionalActivitySchedules = [];
       print('Lỗi khi tải danh sách hoạt động tự chọn: $e');
     } finally {
       _loading = false;
@@ -189,16 +188,15 @@ class RegistrationProvider with ChangeNotifier {
   Future<void> loadActivitySchedulesCoreByCampId(int campId) async {
     _loading = true;
     _error = null;
-    _selectedActivitySchedule = null;
     notifyListeners();
 
     try {
-      _activitySchedules = await getActivitySchedulesCoreByCampIdUseCase(
+      _coreActivitySchedules = await getActivitySchedulesCoreByCampIdUseCase(
         campId,
       );
     } catch (e) {
       _error = e.toString();
-      _activitySchedules = [];
+      _coreActivitySchedules = [];
       print('Lỗi khi tải danh sách hoạt động bắt buộc: $e');
     } finally {
       _loading = false;

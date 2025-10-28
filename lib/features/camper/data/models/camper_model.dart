@@ -27,7 +27,7 @@ class CamperModel extends Camper {
       healthRecord: healthRecord,
       groupId: json['groupId'],
       createAt: null,
-      avatar: null,
+      avatar: json['avatar'],
     );
   }
 
@@ -36,6 +36,7 @@ class CamperModel extends Camper {
     'dob': dob,
     'gender': gender,
     'groupId': groupId,
-    'healthRecords': (healthRecord as HealthRecordModel?)?.toJson(),
+    'avatar': avatar,
+    'healthRecord': (healthRecord as HealthRecordModel?)?.toJson(),
   };
 }

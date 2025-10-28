@@ -32,16 +32,16 @@ class RegistrationModel extends Registration {
         return RegistrationStatus.Approved;
       case 'PendingPayment':
         return RegistrationStatus.PendingPayment;
-      case 'Confirmed':
-        return RegistrationStatus.Confirmed;
+      // case 'Confirmed':
+      //   return RegistrationStatus.Confirmed;
       case 'Completed':
         return RegistrationStatus.Completed;
       case 'Canceled':
         return RegistrationStatus.Canceled;
-      case 'PendingCompletion':
-        return RegistrationStatus.PendingCompletion;
-      case 'PendingAssignGroup':
-        return RegistrationStatus.PendingAssignGroup;
+      // case 'PendingCompletion':
+      //   return RegistrationStatus.PendingCompletion;
+      // case 'PendingAssignGroup':
+      //   return RegistrationStatus.PendingAssignGroup;
       default:
         throw Exception('Unknown registration status: $status');
     }

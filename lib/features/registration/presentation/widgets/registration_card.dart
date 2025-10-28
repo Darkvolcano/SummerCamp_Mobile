@@ -31,21 +31,21 @@ class RegistrationCard extends StatelessWidget {
         textColor = Colors.yellow.shade900;
         text = "Chờ thanh toán";
         break;
-      case RegistrationStatus.PendingCompletion:
-        backgroundColor = Colors.purple.shade100;
-        textColor = Colors.purple.shade800;
-        text = "Chờ hoàn thành";
-        break;
-      case RegistrationStatus.PendingAssignGroup:
-        backgroundColor = Colors.indigo.shade100;
-        textColor = Colors.indigo.shade800;
-        text = "Chờ phân nhóm";
-        break;
-      case RegistrationStatus.Confirmed:
-        backgroundColor = Colors.teal.shade100;
-        textColor = Colors.teal.shade800;
-        text = "Đã xác nhận";
-        break;
+      // case RegistrationStatus.PendingCompletion:
+      //   backgroundColor = Colors.purple.shade100;
+      //   textColor = Colors.purple.shade800;
+      //   text = "Chờ hoàn thành";
+      //   break;
+      // case RegistrationStatus.PendingAssignGroup:
+      //   backgroundColor = Colors.indigo.shade100;
+      //   textColor = Colors.indigo.shade800;
+      //   text = "Chờ phân nhóm";
+      //   break;
+      // case RegistrationStatus.Confirmed:
+      //   backgroundColor = Colors.teal.shade100;
+      //   textColor = Colors.teal.shade800;
+      //   text = "Đã xác nhận";
+      //   break;
       case RegistrationStatus.Completed:
         backgroundColor = Colors.blue.shade100;
         textColor = Colors.blue.shade800;

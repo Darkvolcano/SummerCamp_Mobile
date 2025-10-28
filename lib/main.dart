@@ -1,8 +1,11 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'dart:async';
 
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
@@ -67,6 +70,12 @@ Future<void> main() async {
 
   await initializeDateFormatting('vi_VN');
   final apiClient = ApiClient();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseAppCheck.instance.activate(
+    providerAndroid: const AndroidDebugProvider(),
+  );
 
   // Auth
   final authService = AuthApiService(apiClient);

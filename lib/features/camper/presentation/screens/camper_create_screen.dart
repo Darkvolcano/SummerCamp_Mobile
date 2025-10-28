@@ -8,6 +8,9 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/health_record.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as p;
+
 class CamperCreateScreen extends StatefulWidget {
   const CamperCreateScreen({super.key});
 
@@ -29,6 +32,9 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
   XFile? _avatar;
   final ImagePicker _picker = ImagePicker();
 
+  bool _isUploading = false;
+  String? _avatarUrl;
+
   @override
   void dispose() {
     nameController.dispose();
@@ -40,9 +46,49 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
   }
 
   Future<void> _pickAvatar() async {
+    // Không cho phép chọn ảnh mới khi đang upload
+    if (_isUploading) return;
+
     final picked = await _picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      setState(() => _avatar = picked);
+      setState(() {
+        _avatar = picked; // Hiển thị ảnh local đã chọn
+        _isUploading = true; // Bắt đầu hiển thị vòng xoay
+      });
+      // Bắt đầu tải ảnh lên
+      await _uploadFile(picked);
+    }
+  }
+
+  Future<void> _uploadFile(XFile file) async {
+    try {
+      final fileExtension = p.extension(file.path);
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}$fileExtension';
+      final ref = FirebaseStorage.instance
+          .ref('camper_avatars')
+          .child(fileName);
+
+      await ref.putFile(File(file.path));
+
+      final downloadUrl = await ref.getDownloadURL();
+
+      setState(() {
+        _avatarUrl = downloadUrl;
+        _isUploading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isUploading = false;
+        _avatar = null;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Upload ảnh thất bại: ${e.toString()}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -83,6 +129,12 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
       );
       return;
     }
+    if (_isUploading) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đang tải ảnh lên, vui lòng chờ...")),
+      );
+      return;
+    }
 
     final healthRecord = HealthRecord(
       condition: conditionController.text,
@@ -98,7 +150,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
       gender: gender!,
       healthRecord: healthRecord,
       groupId: null,
-      avatar: _avatar?.path,
+      avatar: _avatarUrl ?? "",
     );
 
     final provider = context.read<CamperProvider>();
@@ -154,19 +206,28 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
             children: [
               GestureDetector(
                 onTap: _pickAvatar,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.grey.shade300,
-                  backgroundImage: _avatar != null
-                      ? FileImage(File(_avatar!.path))
-                      : null,
-                  child: _avatar == null
-                      ? const Icon(
-                          Icons.camera_alt,
-                          size: 40,
-                          color: Colors.white70,
-                        )
-                      : null,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey.shade300,
+                      backgroundImage: _avatar != null
+                          ? FileImage(File(_avatar!.path))
+                          : null,
+                      child: (_avatar == null && !_isUploading)
+                          ? const Icon(
+                              Icons.camera_alt,
+                              size: 40,
+                              color: Colors.white70,
+                            )
+                          : null,
+                    ),
+                    if (_isUploading)
+                      const CircularProgressIndicator(
+                        color: AppTheme.summerAccent,
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),
@@ -197,10 +258,10 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                   decoration: _inputDecoration("Giới tính"),
                   initialValue: gender,
                   items: const [
-                    DropdownMenuItem(value: "Nam", child: Text("Nam")),
-                    DropdownMenuItem(value: "Nữ", child: Text("Nữ")),
+                    DropdownMenuItem(value: "Male", child: Text("Nam")),
+                    DropdownMenuItem(value: "Female", child: Text("Nữ")),
                   ],
-                  onChanged: (val) => setState(() => gender = val),
+                  onChanged: (value) => setState(() => gender = value),
                   validator: (value) =>
                       (value == null) ? 'Vui lòng chọn giới tính' : null,
                 ),

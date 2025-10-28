@@ -65,8 +65,8 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                   labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 keyboardType: TextInputType.number,
-                validator: (val) =>
-                    val == null || val.isEmpty ? "Nhập Camper ID" : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Nhập Camper ID" : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -76,8 +76,8 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                   labelStyle: TextStyle(fontFamily: "Quicksand"),
                 ),
                 maxLines: 3,
-                validator: (val) =>
-                    val == null || val.isEmpty ? "Nhập ghi chú" : null,
+                validator: (value) =>
+                    value == null || value.isEmpty ? "Nhập ghi chú" : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
