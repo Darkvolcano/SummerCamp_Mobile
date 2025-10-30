@@ -12,7 +12,6 @@ abstract class UserRepository {
     required String dob,
   });
   Future<User> verifyOTP({required String email, required String otp});
-  Future<User> getUserProfile(String userId);
   Future<User> getUserProfiles();
   Future<void> logout();
   Future<List<User>> getUsers();

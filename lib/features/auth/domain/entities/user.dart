@@ -6,8 +6,8 @@ class User {
   final String email;
   final String phoneNumber;
   final String role;
-  final String avatar;
-  final String dob;
+  final String? avatar;
+  final String dateOfBirth;
 
   const User({
     required this.userId,
@@ -17,7 +17,7 @@ class User {
     required this.email,
     required this.phoneNumber,
     required this.role,
-    required this.avatar,
-    required this.dob,
+    this.avatar,
+    required this.dateOfBirth,
   });
 }

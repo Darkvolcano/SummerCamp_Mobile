@@ -49,7 +49,6 @@ import 'features/auth/data/services/auth_api_service.dart';
 import 'features/auth/data/repositories/user_repository_impl.dart';
 import 'features/auth/domain/use_cases/login_user.dart';
 import 'features/auth/domain/use_cases/register_user.dart';
-import 'features/auth/domain/use_cases/get_user_profile.dart';
 import 'features/auth/domain/use_cases/get_user_profiles.dart';
 import 'features/auth/domain/use_cases/get_users.dart';
 
@@ -137,7 +136,6 @@ Future<void> main() async {
             loginUser: LoginUser(userRepo),
             registerUser: RegisterUser(userRepo),
             verifyOTP: VerifyOtp(userRepo),
-            getUserProfile: GetUserProfile(userRepo),
             getUserProfiles: GetUserProfiles(userRepo),
             getUsersUseCase: GetUsers(userRepo),
             resendOTP: ResendOtp(userRepo),

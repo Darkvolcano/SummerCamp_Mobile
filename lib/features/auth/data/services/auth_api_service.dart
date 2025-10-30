@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -120,18 +119,9 @@ class AuthApiService {
     }
   }
 
-  Future<Map<String, dynamic>> getUserProfile(String userId) async {
-    try {
-      final res = await client.get('users/$userId');
-      return res.data as Map<String, dynamic>;
-    } on DioException catch (e) {
-      throw mapDioError(e);
-    }
-  }
-
   Future<Map<String, dynamic>> getUserProfiles() async {
     try {
-      final res = await client.get('users');
+      final res = await client.get('user/user');
       return res.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);

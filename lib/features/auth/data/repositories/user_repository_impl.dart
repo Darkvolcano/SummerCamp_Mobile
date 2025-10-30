@@ -81,12 +81,6 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> getUserProfile(String userId) async {
-    final data = await service.getUserProfile(userId);
-    return _parseUser(data);
-  }
-
-  @override
   Future<User> getUserProfiles() async {
     final data = await service.getUserProfiles();
     return _parseUser(data);
