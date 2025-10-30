@@ -30,7 +30,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final provider = context.read<AuthProvider>();
 
     try {
-      final message = await provider.resetPassword(
+      final message = await provider.resetPasswordUseCase(
         email,
         otp,
         newPasswordController.text,

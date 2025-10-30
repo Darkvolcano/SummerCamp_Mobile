@@ -1,11 +1,11 @@
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 
-class GetUserProfiles {
+class GetUserProfile {
   final UserRepository repository;
-  GetUserProfiles(this.repository);
+  GetUserProfile(this.repository);
 
   Future<User> call() {
-    return repository.getUserProfiles();
+    return repository.getUserProfile();
   }
 }

@@ -81,9 +81,26 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> getUserProfiles() async {
-    final data = await service.getUserProfiles();
+  Future<User> getUserProfile() async {
+    final data = await service.getUserProfile();
     return _parseUser(data);
+  }
+
+  @override
+  Future<void> updateUserProfile(int userId, User user) async {
+    final userModel = UserModel(
+      userId: user.userId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      avatar: user.avatar,
+      dateOfBirth: user.dateOfBirth,
+    );
+
+    final data = userModel.toJson();
+
+    await service.updateUserProfile(userId, data);
   }
 
   @override

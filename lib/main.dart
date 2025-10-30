@@ -5,6 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'firebase_options.dart';
 import 'dart:async';
 
@@ -49,7 +50,7 @@ import 'features/auth/data/services/auth_api_service.dart';
 import 'features/auth/data/repositories/user_repository_impl.dart';
 import 'features/auth/domain/use_cases/login_user.dart';
 import 'features/auth/domain/use_cases/register_user.dart';
-import 'features/auth/domain/use_cases/get_user_profiles.dart';
+import 'features/auth/domain/use_cases/get_user_profile.dart';
 import 'features/auth/domain/use_cases/get_users.dart';
 
 import 'features/camp/data/services/camp_api_service.dart';
@@ -79,6 +80,15 @@ Future<void> main() async {
   // Auth
   final authService = AuthApiService(apiClient);
   final userRepo = UserRepositoryImpl(authService);
+  final loginUserUseCase = LoginUser(userRepo);
+  final registerUserUseCase = RegisterUser(userRepo);
+  final verifyOTPUseCase = VerifyOtp(userRepo);
+  final getUserProfileUseCase = GetUserProfile(userRepo);
+  final updateUserProfileUseCase = UpdateUserProfile(userRepo);
+  final getUsersUseCase = GetUsers(userRepo);
+  final resendOTPUseCase = ResendOtp(userRepo);
+  final forgotPasswordUseCase = ForgotPassword(userRepo);
+  final resetPasswordUseCase = ResetPassword(userRepo);
 
   // Camp
   final campApiService = CampApiService(apiClient);
@@ -133,15 +143,16 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => AuthProvider(
-            loginUser: LoginUser(userRepo),
-            registerUser: RegisterUser(userRepo),
-            verifyOTP: VerifyOtp(userRepo),
-            getUserProfiles: GetUserProfiles(userRepo),
-            getUsersUseCase: GetUsers(userRepo),
-            resendOTP: ResendOtp(userRepo),
-            forgotPassword: ForgotPassword(userRepo),
-            resetPassword: ResetPassword(userRepo),
-            repository: userRepo,
+            loginUserUseCase,
+            registerUserUseCase,
+            verifyOTPUseCase,
+            getUserProfileUseCase,
+            updateUserProfileUseCase,
+            userRepo,
+            getUsersUseCase,
+            resendOTPUseCase,
+            forgotPasswordUseCase,
+            resetPasswordUseCase,
           ),
         ),
 

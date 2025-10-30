@@ -401,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: TextStyle(
               fontFamily: "Quicksand",
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -524,7 +524,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderSide: BorderSide(color: AppTheme.summerPrimary),
         ),
         filled: !_isEditing,
-        fillColor: Colors.grey.shade100.withOpacity(0.5),
+        fillColor: Colors.grey.shade100.withValues(alpha: 0.5),
       ),
     );
   }

@@ -1,41 +1,48 @@
 import 'package:flutter/foundation.dart';
+import 'package:summercamp/features/auth/data/models/user_model.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
-import 'package:summercamp/features/auth/domain/use_cases/get_user_profiles.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 
 class AuthProvider with ChangeNotifier {
-  final LoginUser loginUser;
-  final RegisterUser registerUser;
-  final VerifyOtp verifyOTP;
-  final GetUserProfiles getUserProfiles;
-  final UserRepository repository;
+  final LoginUser loginUserUseCase;
+  final RegisterUser registerUserUseCase;
+  final VerifyOtp verifyOTPUseCase;
+  final GetUserProfile getUserProfileUseCase;
+  final UpdateUserProfile updateUserProfileUseCase;
+  final UserRepository repositoryUseCase;
   final GetUsers getUsersUseCase;
-  final ResendOtp resendOTP;
-  final ForgotPassword forgotPassword;
-  final ResetPassword resetPassword;
+  final ResendOtp resendOTPUseCase;
+  final ForgotPassword forgotPasswordUseCase;
+  final ResetPassword resetPasswordUseCase;
 
-  AuthProvider({
-    required this.loginUser,
-    required this.registerUser,
-    required this.verifyOTP,
-    required this.getUserProfiles,
-    required this.repository,
-    required this.getUsersUseCase,
-    required this.resendOTP,
-    required this.forgotPassword,
-    required this.resetPassword,
-  });
+  AuthProvider(
+    this.loginUserUseCase,
+    this.registerUserUseCase,
+    this.verifyOTPUseCase,
+    this.getUserProfileUseCase,
+    this.updateUserProfileUseCase,
+    this.repositoryUseCase,
+    this.getUsersUseCase,
+    this.resendOTPUseCase,
+    this.forgotPasswordUseCase,
+    this.resetPasswordUseCase,
+  );
 
   List<User> _users = [];
   List<User> get users => _users;
+
+  User? _selectedUser;
+  User? get selectedUser => _selectedUser;
 
   User? _currentUser;
   String? _token;
@@ -54,8 +61,8 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String email, String password) async {
     _setLoading(true);
     try {
-      _currentUser = await loginUser(email, password);
-      _token = await repository.getToken();
+      _currentUser = await loginUserUseCase(email, password);
+      _token = await repositoryUseCase.getToken();
 
       _userRole = _currentUser?.role;
 
@@ -78,7 +85,7 @@ class AuthProvider with ChangeNotifier {
   }) async {
     _setLoading(true);
     try {
-      _registerResponse = await registerUser(
+      _registerResponse = await registerUserUseCase(
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -98,7 +105,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> verifyOtp({required String email, required String otp}) async {
     _setLoading(true);
     try {
-      _currentUser = await verifyOTP(email: email, otp: otp);
+      _currentUser = await verifyOTPUseCase(email: email, otp: otp);
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -111,13 +118,50 @@ class AuthProvider with ChangeNotifier {
   Future<void> fetchProfileUser() async {
     _setLoading(true);
     try {
-      _currentUser = await getUserProfiles();
+      _currentUser = await getUserProfileUseCase();
       _error = null;
     } catch (e) {
       _error = e.toString();
       rethrow;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> updateUserProfile(int userId, User user) async {
+    _setLoading(true);
+    _error = null;
+    notifyListeners();
+
+    try {
+      await updateUserProfileUseCase(userId, user);
+
+      final index = _users.indexWhere((c) => c.userId == userId);
+      if (index != -1) {
+        final oldUser = _users[index];
+
+        final updatedModel = UserModel(
+          userId: user.userId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          avatar: oldUser.avatar,
+          dateOfBirth: user.dateOfBirth,
+        );
+
+        _users[index] = updatedModel;
+      }
+
+      if (_selectedUser?.userId == userId) {
+        _selectedUser = user;
+      }
+    } catch (e) {
+      _error = "Lỗi khi cập nhật profile: $e";
+      rethrow;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
     }
   }
 
@@ -131,7 +175,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await repository.logout();
+    await repositoryUseCase.logout();
     _currentUser = null;
     _token = null;
     notifyListeners();
@@ -139,7 +183,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> resendOtp({required String email}) async {
     try {
-      await resendOTP(email: email);
+      await resendOTPUseCase(email: email);
     } catch (e) {
       _error = e.toString();
       notifyListeners();
@@ -150,7 +194,7 @@ class AuthProvider with ChangeNotifier {
   Future<String> forgotPasswords(String email) async {
     _setLoading(true);
     try {
-      final message = await forgotPassword(email);
+      final message = await forgotPasswordUseCase(email);
       _error = null;
       return message;
     } catch (e) {
@@ -168,7 +212,7 @@ class AuthProvider with ChangeNotifier {
   ) async {
     _setLoading(true);
     try {
-      final message = await resetPassword(email, otp, newPassword);
+      final message = await resetPasswordUseCase(email, otp, newPassword);
       _error = null;
       return message;
     } catch (e) {

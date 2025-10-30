@@ -635,7 +635,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 DateFormatter.formatTime(act.endTime),
                 style: const TextStyle(
                   fontFamily: "Quicksand",
-                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.summerAccent,
                 ),
               ),
             ],

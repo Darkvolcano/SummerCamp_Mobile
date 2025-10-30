@@ -119,13 +119,18 @@ class AuthApiService {
     }
   }
 
-  Future<Map<String, dynamic>> getUserProfiles() async {
+  Future<Map<String, dynamic>> getUserProfile() async {
     try {
       final res = await client.get('user/user');
       return res.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);
     }
+  }
+
+  Future<void> updateUserProfile(int userId, Map<String, dynamic> data) async {
+    final res = await client.put('user/user/$userId', data: data);
+    return res.data;
   }
 
   Future<List<dynamic>> fetchUsers() async {

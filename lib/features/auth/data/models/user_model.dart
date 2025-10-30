@@ -8,7 +8,7 @@ class UserModel extends User {
     super.name,
     required super.email,
     required super.phoneNumber,
-    required super.role,
+    super.role,
     super.avatar,
     required super.dateOfBirth,
   });
