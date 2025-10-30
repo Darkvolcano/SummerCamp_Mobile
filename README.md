@@ -203,6 +203,7 @@ lib/
     ├── camper/              # Camper profiles
     ├── chat/                # Parent-Staff messaging
     ├── home/                # Home screens
+    ├── license/             # Driver license
     ├── livestream/          # Live streaming (VideoSDK)
     ├── notification/        # Push notifications
     ├── payment/             # Payment handling
