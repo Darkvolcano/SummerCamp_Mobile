@@ -58,7 +58,7 @@ dependencies:
   firebase_core: ^4.2.0 # Firebase core
   connectivity_plus: ^6.0.3 # Check connect internet
   path: ^1.9.0 # Xử lý đường dẫn file
-  firebase_app_check: ^0.4.1+1
+  firebase_app_check: ^0.4.1+1 # App Check
 
 dev_dependencies:
   flutter_test:
