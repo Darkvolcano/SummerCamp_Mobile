@@ -276,9 +276,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               child: TextFormField(
                                 controller: dobController,
                                 readOnly: true,
-                                style: const TextStyle(color: Colors.black87),
+                                style: const TextStyle(
+                                  color: AppTheme.summerPrimary,
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.w600,
+                                ),
                                 decoration: _inputDecoration("Ngày sinh")
                                     .copyWith(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                          ),
                                       prefixIcon: const Icon(
                                         Icons.calendar_today,
                                         color: AppTheme.summerPrimary,

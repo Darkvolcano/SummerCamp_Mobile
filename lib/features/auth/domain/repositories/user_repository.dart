@@ -13,7 +13,7 @@ abstract class UserRepository {
   });
   Future<User> verifyOTP({required String email, required String otp});
   Future<User> getUserProfile();
-  Future<void> updateUserProfile(int userId, User user);
+  Future<void> updateUserProfile(User user);
   Future<void> logout();
   Future<List<User>> getUsers();
   Future<String?> getToken();

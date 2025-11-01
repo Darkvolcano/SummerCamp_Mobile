@@ -128,34 +128,26 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateUserProfile(int userId, User user) async {
+  Future<void> updateUserProfile(User user) async {
     _setLoading(true);
     _error = null;
     notifyListeners();
 
     try {
-      await updateUserProfileUseCase(userId, user);
+      await updateUserProfileUseCase(user);
 
-      final index = _users.indexWhere((c) => c.userId == userId);
-      if (index != -1) {
-        final oldUser = _users[index];
+      final updatedModel = UserModel(
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        avatar: user.avatar,
+        dob: user.dateOfBirth,
+      );
 
-        final updatedModel = UserModel(
-          userId: user.userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          avatar: oldUser.avatar,
-          dateOfBirth: user.dateOfBirth,
-        );
-
-        _users[index] = updatedModel;
-      }
-
-      if (_selectedUser?.userId == userId) {
-        _selectedUser = user;
-      }
+      _currentUser = updatedModel;
+      notifyListeners();
     } catch (e) {
       _error = "Lỗi khi cập nhật profile: $e";
       rethrow;

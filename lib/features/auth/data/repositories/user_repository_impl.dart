@@ -87,7 +87,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> updateUserProfile(int userId, User user) async {
+  Future<void> updateUserProfile(User user) async {
     final userModel = UserModel(
       userId: user.userId,
       firstName: user.firstName,
@@ -95,12 +95,12 @@ class UserRepositoryImpl implements UserRepository {
       email: user.email,
       phoneNumber: user.phoneNumber,
       avatar: user.avatar,
-      dateOfBirth: user.dateOfBirth,
+      dob: user.dob,
     );
 
     final data = userModel.toJson();
 
-    await service.updateUserProfile(userId, data);
+    await service.updateUserProfile(data);
   }
 
   @override

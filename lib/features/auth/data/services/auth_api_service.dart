@@ -128,8 +128,8 @@ class AuthApiService {
     }
   }
 
-  Future<void> updateUserProfile(int userId, Map<String, dynamic> data) async {
-    final res = await client.put('user/user/$userId', data: data);
+  Future<void> updateUserProfile(Map<String, dynamic> data) async {
+    final res = await client.put('user/user', data: data);
     return res.data;
   }
 

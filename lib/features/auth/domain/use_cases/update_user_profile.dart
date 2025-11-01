@@ -5,7 +5,7 @@ class UpdateUserProfile {
   final UserRepository repository;
   UpdateUserProfile(this.repository);
 
-  Future<void> call(int userId, User user) async {
-    await repository.updateUserProfile(userId, user);
+  Future<void> call(User user) async {
+    await repository.updateUserProfile(user);
   }
 }
