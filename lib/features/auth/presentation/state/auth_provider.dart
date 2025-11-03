@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:summercamp/features/auth/data/models/user_model.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
@@ -136,17 +135,7 @@ class AuthProvider with ChangeNotifier {
     try {
       await updateUserProfileUseCase(user);
 
-      final updatedModel = UserModel(
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        avatar: user.avatar,
-        dob: user.dateOfBirth,
-      );
-
-      _currentUser = updatedModel;
+      _currentUser = user;
       notifyListeners();
     } catch (e) {
       _error = "Lỗi khi cập nhật profile: $e";

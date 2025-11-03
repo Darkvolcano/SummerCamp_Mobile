@@ -98,7 +98,7 @@ class ChatProvider with ChangeNotifier {
     final tempChat = Chat(
       chatId: tempId,
       chatRoomId: null,
-      senderId: auth.user!.userId,
+      senderId: auth.user!.userId!,
       receiverId: receiverId,
       content: content,
       createAt: DateTime.now(),

@@ -1,9 +1,9 @@
 class User {
-  final int userId;
+  final int? userId;
   final String firstName;
   final String lastName;
   final String? name;
-  final String email;
+  final String? email;
   final String phoneNumber;
   final String? role;
   final String? avatar;
@@ -11,11 +11,11 @@ class User {
   final String? dob;
 
   const User({
-    required this.userId,
+    this.userId,
     required this.firstName,
     required this.lastName,
     this.name,
-    required this.email,
+    this.email,
     required this.phoneNumber,
     this.role,
     this.avatar,

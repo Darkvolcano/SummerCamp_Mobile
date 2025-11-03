@@ -1,11 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:intl/intl.dart';
+import 'package:summercamp/features/profile/presentation/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,12 +15,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-
-  bool _isEditing = false;
-  File? _profileImage;
   bool _isFetching = false;
 
   @override
@@ -40,11 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       try {
         await authProvider.fetchProfileUser();
       } catch (e) {
-        if (mounted) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text("Lỗi tải thông tin: ${e.toString()}")),
-          // );
-        }
+        if (mounted) {}
       } finally {
         if (mounted) {
           setState(() {
@@ -55,24 +45,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _toggleEditing() {
-    setState(() {
-      _isEditing = !_isEditing;
-      if (_isEditing) {
-        final user = context.read<AuthProvider>().user;
-        if (user != null) {
-          _nameController.text = '${user.firstName} ${user.lastName}'.trim();
-          _emailController.text = user.email;
-          _phoneController.text = user.phoneNumber;
-        }
-      }
-    });
-  }
+  Future<void> _navigateToEditProfile() async {
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.user == null) return;
 
-  void _saveProfile() {
-    // Gọi API cập nhật profile ở đây
-    _showMessageBox('Thành công', 'Thông tin cá nhân đã được cập nhật.');
-    _toggleEditing();
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfileScreen(user: authProvider.user!),
+      ),
+    );
+
+    if (result == true) {
+      _fetchUserData();
+    }
   }
 
   void _showMessageBox(String title, String message) {
@@ -100,14 +86,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() => _profileImage = File(pickedFile.path));
-    }
   }
 
   Future<void> _handleLogout() async {
@@ -149,11 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           if (authProvider.user != null && !authProvider.isLoading)
             IconButton(
-              icon: Icon(
-                _isEditing ? Icons.save_rounded : Icons.edit_rounded,
-                color: Colors.white,
-              ),
-              onPressed: _isEditing ? _saveProfile : _toggleEditing,
+              icon: const Icon(Icons.edit_rounded, color: Colors.white),
+              onPressed: _navigateToEditProfile,
             ),
         ],
         elevation: 0,
@@ -163,52 +138,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildBody(AuthProvider authProvider) {
-    if (_isFetching || authProvider.isLoading) {
+    if (_isFetching || (authProvider.isLoading && authProvider.user == null)) {
       return const Center(
         child: CircularProgressIndicator(color: AppTheme.summerPrimary),
       );
     }
 
-    // if (authProvider.error != null && authProvider.user == null) {
-    //   return Center(
-    //     child: Padding(
-    //       padding: const EdgeInsets.all(20.0),
-    //       child: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           const Icon(Icons.error_outline, color: Colors.red, size: 50),
-    //           const SizedBox(height: 10),
-    //           Text(
-    //             'Lỗi tải thông tin người dùng',
-    //             textAlign: TextAlign.center,
-    //             style: Theme.of(
-    //               context,
-    //             ).textTheme.titleMedium?.copyWith(fontFamily: "Quicksand"),
-    //           ),
-    //           const SizedBox(height: 10),
-    //           Text(
-    //             authProvider.error!,
-    //             textAlign: TextAlign.center,
-    //             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-    //               fontFamily: "Quicksand",
-    //               color: Colors.grey,
-    //             ),
-    //           ),
-    //           const SizedBox(height: 20),
-    //           ElevatedButton.icon(
-    //             icon: const Icon(Icons.refresh),
-    //             label: const Text('Thử lại'),
-    //             onPressed: _fetchUserData,
-    //             style: ElevatedButton.styleFrom(
-    //               backgroundColor: AppTheme.summerAccent,
-    //               foregroundColor: Colors.white,
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
+    if (authProvider.error != null && authProvider.user == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 50),
+              const SizedBox(height: 10),
+              Text(
+                'Lỗi tải thông tin người dùng',
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontFamily: "Quicksand"),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                authProvider.error!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontFamily: "Quicksand",
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.refresh),
+                label: const Text('Thử lại'),
+                onPressed: _fetchUserData,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.summerAccent,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     if (authProvider.user != null) {
       return _buildLoggedInView(authProvider.user!);
@@ -300,12 +275,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLoggedInView(User user) {
-    if (!_isEditing) {
-      _nameController.text = '${user.firstName} ${user.lastName}'.trim();
-      _emailController.text = user.email;
-      _phoneController.text = user.phoneNumber;
-    }
-
     return ListView(
       padding: const EdgeInsets.all(0),
       children: [
@@ -329,10 +298,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileHeader(User user) {
-    String displayName = _isEditing
-        ? _nameController.text
-        : '${user.firstName} ${user.lastName}'.trim();
-    String displayEmail = _isEditing ? _emailController.text : user.email;
+    String displayName = '${user.firstName} ${user.lastName}'.trim();
+    String? displayEmail = user.email;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
@@ -346,19 +313,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Stack(
+            alignment: Alignment.center,
             children: [
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.white,
-                backgroundImage: _profileImage != null
-                    ? FileImage(_profileImage!)
-                    : (user.avatar != null && user.avatar!.isNotEmpty
-                              ? NetworkImage(user.avatar!)
-                              : null)
-                          as ImageProvider?,
-                child:
-                    (_profileImage == null &&
-                        (user.avatar == null || user.avatar!.isEmpty))
+                backgroundImage:
+                    (user.avatar != null && user.avatar!.isNotEmpty)
+                    ? NetworkImage(user.avatar!)
+                    : null,
+                child: (user.avatar == null || user.avatar!.isEmpty)
                     ? const Icon(
                         Icons.person,
                         size: 70,
@@ -366,23 +330,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       )
                     : null,
               ),
-              if (_isEditing)
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: const CircleAvatar(
-                      backgroundColor: AppTheme.summerAccent,
-                      radius: 20,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
           const SizedBox(height: 15),
@@ -397,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 5),
           Text(
-            displayEmail,
+            displayEmail!,
             style: TextStyle(
               fontFamily: "Quicksand",
               fontSize: 16,
@@ -409,42 +356,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildInfoRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: AppTheme.summerAccent, size: 22),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value.isEmpty ? "Chưa cập nhật" : value,
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 16,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInfoCard(User user) {
+    String dobFormatted = "Chưa cập nhật";
+    if (user.dateOfBirth != null && user.dateOfBirth != "0001-01-01") {
+      try {
+        dobFormatted = DateFormat(
+          'dd/MM/yyyy',
+        ).format(DateFormat('yyyy-MM-dd').parse(user.dateOfBirth!));
+      } catch (e) {
+        dobFormatted = user.dateOfBirth!;
+      }
+    }
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Thông tin cá nhân",
-              style: TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.summerPrimary,
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.0),
+              child: Text(
+                "Thông tin cá nhân",
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.summerPrimary,
+                ),
               ),
             ),
-            const Divider(height: 20),
-            _buildProfileField(
+            const Divider(height: 1),
+            _buildInfoRow(
               "Họ và tên",
-              _nameController,
+              '${user.firstName} ${user.lastName}'.trim(),
               Icons.person_outline,
             ),
-            const SizedBox(height: 15),
-            _buildProfileField(
-              "Email",
-              _emailController,
-              Icons.email_outlined,
-              isAlwaysReadOnly: true,
-            ),
-            const SizedBox(height: 15),
-            _buildProfileField(
+            _buildInfoRow("Email", user.email!, Icons.email_outlined),
+            _buildInfoRow(
               "Số điện thoại",
-              _phoneController,
+              user.phoneNumber,
               Icons.phone_outlined,
+            ),
+            _buildInfoRow(
+              "Ngày sinh",
+              dobFormatted,
+              Icons.calendar_today_outlined,
             ),
           ],
         ),
@@ -493,39 +490,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildProfileField(
-    String label,
-    TextEditingController controller,
-    IconData icon, {
-    bool isAlwaysReadOnly = false,
-  }) {
-    return TextFormField(
-      controller: controller,
-      readOnly: isAlwaysReadOnly || !_isEditing,
-      style: const TextStyle(
-        fontFamily: "Quicksand",
-        fontSize: 16,
-        color: Colors.black87,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          color: Colors.grey,
-          fontFamily: "Quicksand",
-        ),
-        prefixIcon: Icon(icon, color: AppTheme.summerAccent),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.summerPrimary),
-        ),
-        filled: !_isEditing,
-        fillColor: Colors.grey.shade100.withValues(alpha: 0.5),
-      ),
     );
   }
 

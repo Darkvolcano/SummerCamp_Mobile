@@ -143,7 +143,7 @@ class ChatDetailScreen extends StatelessWidget {
                 Expanded(
                   child: InputMessage(
                     onSend: (text) =>
-                        chatProv.sendMessage(selected.userId, text),
+                        chatProv.sendMessage(selected.userId!, text),
                   ),
                 ),
               ],

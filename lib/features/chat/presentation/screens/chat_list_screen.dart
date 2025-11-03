@@ -35,7 +35,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 final a = userList[idx];
 
                 final lastMessage = chatProv.getLastMessage(
-                  a.userId,
+                  a.userId!,
                   authProv.user?.userId ?? 0,
                 );
 
