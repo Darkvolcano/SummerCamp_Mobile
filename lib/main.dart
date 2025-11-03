@@ -5,7 +5,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'firebase_options.dart';
 import 'dart:async';
 
@@ -17,6 +16,7 @@ import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
 import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';

@@ -27,6 +27,8 @@ import 'package:summercamp/features/profile/presentation/screens/profile_screen.
 import 'package:summercamp/features/auth/presentation/screens/register_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_list_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home.dart';
+import 'package:summercamp/features/registration/presentation/screens/payment_failure_screen.dart';
+import 'package:summercamp/features/registration/presentation/screens/payment_success_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_detail_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_failure_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_form_screen.dart';
@@ -37,48 +39,70 @@ import 'package:summercamp/features/report/presentation/screens/report_list_scre
 
 class AppRoutes {
   // Define route
-  static const String login = 'LOGIN';
-  static const String register = 'REGISTER';
-  static const String forgotPasswordEmail = 'FORGOT-PASSWORD-EMAIL';
-  static const String forgotPasswordOTP = 'FORGOT-PASSWORD-OTP';
-  static const String resetPassword = 'RESET-PASSWORD';
-  static const String verifyOTP = 'VERIFY-OTP';
-  static const String campSearch = 'CAMP-SEARCH';
-  static const String chat = 'CHAT'; // hiện tại chưa có
-  static const String chatDetail = 'CHAT-DETAIL'; // hiện tại chưa có
-  static const String chatAI = 'CHAT-AI';
-  static const String joinLivestream = 'JOIN-LIVESTREAM';
-  static const String report = 'REPORT'; // hiện tại chưa có
-  static const String createReport = 'CREATE-REPORT';
-  static const String registrationDetail = 'REGISTRATION-DETAIL';
-  static const String registrationForm = 'REGISTRATION-FORM';
-  static const String home = 'HOME';
-  static const String staffHome = 'STAFF-HOME';
-  static const String campSchedule = 'CAMP-SCHEDULE';
-  static const String campScheduleDetail = 'CAMP-SCHEDULE-DETAIL';
-  static const String attendance = 'ATTENDANCE';
-  static const String campDetail = 'CAMP-DETAIL';
-  static const String camperList = 'CAMPER-LIST';
-  static const String camperDetail = 'CAMPER-DETAIL';
-  static const String createCamper = 'CREATE-CAMPER';
-  static const String updateCamper = 'UPDATE-CAMPER';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String forgotPasswordEmail = '/forgot-password-email';
+  static const String forgotPasswordOTP = '/forgot-password-otp';
+  static const String resetPassword = '/reset-password';
+  static const String verifyOTP = '/verify-otp';
+  static const String campSearch = '/camp-search';
+  static const String chat = '/chat'; // hiện tại chưa có
+  static const String chatDetail = '/chat-detail'; // hiện tại chưa có
+  static const String chatAI = '/chat-ai';
+  static const String joinLivestream = '/join-livestream';
+  static const String report = '/report'; // hiện tại chưa có
+  static const String createReport = '/create-report';
+  static const String registrationDetail = '/registration-detail';
+  static const String registrationForm = '/registration-form';
+  static const String home = '/home';
+  static const String staffHome = '/staff-home';
+  static const String campSchedule = '/camp-schedule';
+  static const String campScheduleDetail = '/camp-schedule-detail';
+  static const String attendance = '/attendance';
+  static const String campDetail = '/camp-detail';
+  static const String camperList = '/camper-list';
+  static const String camperDetail = '/camper-detail';
+  static const String createCamper = '/create-camper';
+  static const String updateCamper = '/update-camper';
   static const String registrationCancel =
-      'REGISTRATION-CANCEL'; // hiện tại chưa có
-  static const String blogList = 'BLOG-LIST';
-  static const String blogDetail = 'BLOG-DETAIL';
-  static const String profile = 'PROFILE';
-  static const String campList = 'CAMP-LIST';
-  static const String registrationList = 'REGISTRATION-LIST';
-  static const String uploadPhoto = 'UPLOAD-PHOTO';
-  static const String registrationSuccess = 'REGISTRATION-SUCCESS';
-  static const String registrationFailure = 'REGISTRATION-FAILURE';
-  static const String album = 'ALBUM'; // hiện tại chưa có
-  static const String feedbackForm = 'FEEDBACK-FORM';
-  static const String faceRecognitionAttendance = 'FACE-RECOGNITION-ATTENDANCE';
+      '/registration-cancel'; // hiện tại chưa có
+  static const String blogList = '/blog-list';
+  static const String blogDetail = '/blog-detail';
+  static const String profile = '/profile';
+  static const String campList = '/camp-list';
+  static const String registrationList = '/registration-list';
+  static const String uploadPhoto = '/upload-photo';
+  static const String registrationSuccess = '/registration-success';
+  static const String registrationFailure = '/registration-failure';
+  static const String paymentSuccess = '/payment/success';
+  static const String paymentFailure = '/payment/failure';
+  static const String album = '/album'; // hiện tại chưa có
+  static const String feedbackForm = '/feedback-form';
+  static const String faceRecognitionAttendance =
+      '/face-recognition-attendance';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // final role = settings.arguments;
+
+    final Uri uri = Uri.parse(settings.name ?? '');
+
+    if (uri.path.startsWith('/payment/')) {
+      final orderCode = uri.queryParameters['orderCode'] ?? 'N/A';
+
+      if (uri.path == paymentSuccess) {
+        return MaterialPageRoute(
+          builder: (_) => PaymentSuccessScreen(orderCode: orderCode),
+          settings: settings, // Chuyển tiếp settings
+        );
+      }
+      if (uri.path == paymentFailure) {
+        return MaterialPageRoute(
+          builder: (_) => PaymentFailedScreen(orderCode: orderCode),
+          settings: settings, // Chuyển tiếp settings
+        );
+      }
+    }
 
     switch (settings.name) {
       case login:

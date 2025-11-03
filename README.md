@@ -15,6 +15,8 @@ Primary user managing their children's camp participation and monitoring activit
 
 Camp staff responsible for activity management, camper supervision, and parent communication
 
+### Driver (Tài xế)
+
 ---
 
 ## 📱 Parent Features
@@ -176,6 +178,10 @@ Receive alerts for:
 - Parent messages
 - Urgent incidents
 - System updates
+
+---
+
+## 📱 Driver Features
 
 ---
 
@@ -565,7 +571,6 @@ flutter build ios --release
 
 - [ ] Offline mode with local sync
 - [ ] Multi-language (VI/EN)
-- [ ] QR code attendance
 - [ ] Video call feature
 - [ ] Dark mode
 - [ ] Tablet optimization
