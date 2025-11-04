@@ -7,6 +7,10 @@ import 'package:summercamp/features/activity/data/repositories/activity_reposito
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
+import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
+import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
+import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
@@ -14,11 +18,23 @@ import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
+import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
+import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
+import 'package:summercamp/features/blog/domain/use_cases/get_blogs.dart';
+import 'package:summercamp/features/blog/presentation/state/blog_provider.dart';
 import 'package:summercamp/features/camp/data/repositories/camp_repository_impl.dart';
 import 'package:summercamp/features/camp/data/services/camp_api_service.dart';
 import 'package:summercamp/features/camp/domain/use_cases/get_camp_types.dart';
 import 'package:summercamp/features/camp/domain/use_cases/get_camps.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
+import 'package:summercamp/features/camper/data/repositories/camper_repository_impl.dart';
+import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
+import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
+import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
+import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
@@ -30,6 +46,11 @@ import 'package:summercamp/features/registration/domain/use_cases/get_registraio
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
+import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
+import 'package:summercamp/features/report/data/services/report_api_service.dart';
+import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
+import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
+import 'package:summercamp/features/report/presentation/state/report_provider.dart';
 import 'package:summercamp/main.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
@@ -230,6 +251,31 @@ void main() {
     final getActivitySchedulesCoreByCampIdUseCase =
         GetActivitySchedulesCoreByCampId(registrationRepo);
 
+    // Blog
+    final blogApi = BlogApiService(apiClient);
+    final blogRepo = BlogRepositoryImpl(blogApi);
+    final getBlogsUseCase = GetBlogs(blogRepo);
+
+    // Camper
+    final camperApi = CamperApiService(apiClient);
+    final camperRepo = CamperRepositoryImpl(camperApi);
+    final getCampersUseCase = GetCampers(camperRepo);
+    final createCamperUseCase = CreateCamper(camperRepo);
+    final updateCamperUseCase = UpdateCamper(camperRepo);
+    final getCamperByIdUseCase = GetCamperById(camperRepo);
+    final getCamperGroupsUseCase = GetCamperGroups(camperRepo);
+
+    // Report
+    final reportApi = ReportApiService(apiClient);
+    final reportRepo = ReportRepositoryImpl(reportApi);
+    final getReportsUseCase = GetReports(reportRepo);
+    final createReportUseCase = CreateReport(reportRepo);
+
+    // AI Chat
+    final aiChatApi = AIChatApiService(apiClient);
+    final aiChatRepo = AIChatRepositoryImpl(aiChatApi);
+    final sendChatMessageUseCase = SendChatMessage(aiChatRepo);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -270,6 +316,31 @@ void main() {
               getActivitySchedulesOptionalByCampIdUseCase,
               getActivitySchedulesCoreByCampIdUseCase,
             ),
+          ),
+
+          // BlogProvider need 1 usecases (GetBlogs)
+          ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
+
+          // CamperProvider need 5 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups)
+          ChangeNotifierProvider(
+            create: (_) => CamperProvider(
+              createCamperUseCase,
+              getCampersUseCase,
+              updateCamperUseCase,
+              getCamperByIdUseCase,
+              getCamperGroupsUseCase,
+            ),
+          ),
+
+          // ReportProvider need 2 usecases (GetReports, CreateReport)
+          ChangeNotifierProvider(
+            create: (_) =>
+                ReportProvider(getReportsUseCase, createReportUseCase),
+          ),
+
+          // AIChatProvider need 1 usecases (SendChatMessage)
+          ChangeNotifierProvider(
+            create: (_) => AIChatProvider(sendChatMessageUseCase),
           ),
         ],
         child: const SummerCampApp(),

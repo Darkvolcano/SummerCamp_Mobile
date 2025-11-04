@@ -144,47 +144,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    if (authProvider.error != null && authProvider.user == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 50),
-              const SizedBox(height: 10),
-              Text(
-                'Lỗi tải thông tin người dùng',
-                textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontFamily: "Quicksand"),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                authProvider.error!,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontFamily: "Quicksand",
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.refresh),
-                label: const Text('Thử lại'),
-                onPressed: _fetchUserData,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.summerAccent,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     if (authProvider.user != null) {
       return _buildLoggedInView(authProvider.user!);
     } else {

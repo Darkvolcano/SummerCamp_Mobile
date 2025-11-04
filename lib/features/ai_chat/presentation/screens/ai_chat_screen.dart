@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_ai_chat_bubble.dart';
+import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -11,34 +13,46 @@ class AIChatScreen extends StatefulWidget {
 
 class _AIChatScreenState extends State<AIChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [];
+  final ScrollController _scrollController = ScrollController();
 
-  final List<String> aiReplies = [
-    "Xin chào 👋, tôi là trợ lý AI của bạn!",
-    "Bạn có muốn xem các trại hè nổi bật không?",
-    "Hãy thử đăng ký một trại hè nhé 🚀",
-    "Tôi có thể giúp gì cho bạn hôm nay?",
-  ];
-
-  void _sendMessage() {
+  void _sendMessage(AIChatProvider provider) {
     if (_controller.text.trim().isEmpty) return;
 
     final userMsg = _controller.text.trim();
-    setState(() {
-      _messages.add({"text": userMsg, "isMe": true});
-    });
     _controller.clear();
 
-    Future.delayed(const Duration(seconds: 1), () {
-      final aiMsg = (aiReplies..shuffle()).first;
-      setState(() {
-        _messages.add({"text": aiMsg, "isMe": false});
-      });
+    provider.sendMessage(userMsg);
+
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AIChatProvider>();
+
+    if (provider.messages.isNotEmpty) {
+      _scrollToBottom();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -57,10 +71,16 @@ class _AIChatScreenState extends State<AIChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(12),
-              itemCount: _messages.length,
+              itemCount:
+                  provider.messages.length + (provider.isLoading ? 1 : 0),
               itemBuilder: (_, idx) {
-                final msg = _messages[idx];
+                if (idx == provider.messages.length && provider.isLoading) {
+                  return const AIChatBubble(text: "...", isMe: false);
+                }
+
+                final msg = provider.messages[idx];
                 return AIChatBubble(text: msg["text"], isMe: msg["isMe"]);
               },
             ),
@@ -86,6 +106,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                       fontFamily: "Quicksand",
                       fontSize: 15,
                     ),
+                    onSubmitted: (value) => _sendMessage(provider),
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
                       hintStyle: const TextStyle(
@@ -101,7 +122,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: AppTheme.summerPrimary,
                           width: 2,
                         ),
@@ -119,7 +140,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                   radius: 24,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: _sendMessage,
+                    onPressed: () => _sendMessage(provider),
                   ),
                 ),
               ],

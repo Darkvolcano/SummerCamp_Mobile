@@ -5,6 +5,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
+import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
+import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'firebase_options.dart';
 import 'dart:async';
 
@@ -138,6 +142,11 @@ Future<void> main() async {
   final getReportsUseCase = GetReports(reportRepo);
   final createReportUseCase = CreateReport(reportRepo);
 
+  // AI Chat
+  final aiChatApi = AIChatApiService(apiClient);
+  final aiChatRepo = AIChatRepositoryImpl(aiChatApi);
+  final sendChatMessageUseCase = SendChatMessage(aiChatRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -197,6 +206,11 @@ Future<void> main() async {
         // ReportProvider need 2 usecases (GetReports, CreateReport)
         ChangeNotifierProvider(
           create: (_) => ReportProvider(getReportsUseCase, createReportUseCase),
+        ),
+
+        // AIChatProvider need 1 usecases (SendChatMessage)
+        ChangeNotifierProvider(
+          create: (_) => AIChatProvider(sendChatMessageUseCase),
         ),
       ],
       child: const SummerCampApp(),
