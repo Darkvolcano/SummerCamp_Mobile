@@ -9,6 +9,8 @@ import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
 import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
@@ -275,6 +277,8 @@ void main() {
     final aiChatApi = AIChatApiService(apiClient);
     final aiChatRepo = AIChatRepositoryImpl(aiChatApi);
     final sendChatMessageUseCase = SendChatMessage(aiChatRepo);
+    final getChatHistoryUseCase = GetChatHistory(aiChatRepo);
+    final getConversationUseCase = GetConversation(aiChatRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -340,7 +344,11 @@ void main() {
 
           // AIChatProvider need 1 usecases (SendChatMessage)
           ChangeNotifierProvider(
-            create: (_) => AIChatProvider(sendChatMessageUseCase),
+            create: (_) => AIChatProvider(
+              sendChatMessageUseCase: sendChatMessageUseCase,
+              getChatHistoryUseCase: getChatHistoryUseCase,
+              getConversationUseCase: getConversationUseCase,
+            ),
           ),
         ],
         child: const SummerCampApp(),

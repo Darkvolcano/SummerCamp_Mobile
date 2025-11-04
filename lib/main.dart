@@ -7,6 +7,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
 import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.dart';
+import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'firebase_options.dart';
@@ -146,6 +148,8 @@ Future<void> main() async {
   final aiChatApi = AIChatApiService(apiClient);
   final aiChatRepo = AIChatRepositoryImpl(aiChatApi);
   final sendChatMessageUseCase = SendChatMessage(aiChatRepo);
+  final getChatHistoryUseCase = GetChatHistory(aiChatRepo);
+  final getConversationUseCase = GetConversation(aiChatRepo);
 
   runApp(
     MultiProvider(
@@ -208,9 +212,13 @@ Future<void> main() async {
           create: (_) => ReportProvider(getReportsUseCase, createReportUseCase),
         ),
 
-        // AIChatProvider need 1 usecases (SendChatMessage)
+        // AIChatProvider need 3 usecases (SendChatMessage, GetChatHistory, GetConversation)
         ChangeNotifierProvider(
-          create: (_) => AIChatProvider(sendChatMessageUseCase),
+          create: (_) => AIChatProvider(
+            sendChatMessageUseCase: sendChatMessageUseCase,
+            getChatHistoryUseCase: getChatHistoryUseCase,
+            getConversationUseCase: getConversationUseCase,
+          ),
         ),
       ],
       child: const SummerCampApp(),

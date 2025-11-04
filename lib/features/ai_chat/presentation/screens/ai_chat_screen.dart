@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/custom_ai_chat_bubble.dart';
+import 'package:summercamp/core/widgets/custom_typing_indicator.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 
 class AIChatScreen extends StatefulWidget {
@@ -14,6 +15,14 @@ class AIChatScreen extends StatefulWidget {
 class _AIChatScreenState extends State<AIChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AIChatProvider>().loadHistory();
+    });
+  }
 
   void _sendMessage(AIChatProvider provider) {
     if (_controller.text.trim().isEmpty) return;
@@ -76,8 +85,31 @@ class _AIChatScreenState extends State<AIChatScreen> {
               itemCount:
                   provider.messages.length + (provider.isLoading ? 1 : 0),
               itemBuilder: (_, idx) {
-                if (idx == provider.messages.length && provider.isLoading) {
-                  return const AIChatBubble(text: "...", isMe: false);
+                if (idx == provider.messages.length) {
+                  if (provider.isLoading && provider.messages.isNotEmpty) {
+                    // return const AIChatBubble(text: "...", isMe: false);
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                            bottomLeft: Radius.circular(4),
+                          ),
+                        ),
+                        child: const CustomTypingIndicator(),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
                 }
 
                 final msg = provider.messages[idx];
@@ -98,6 +130,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
               ],
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
                   child: TextField(
@@ -106,7 +139,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
                       fontFamily: "Quicksand",
                       fontSize: 15,
                     ),
-                    onSubmitted: (value) => _sendMessage(provider),
+
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
                       hintStyle: const TextStyle(
@@ -127,9 +162,10 @@ class _AIChatScreenState extends State<AIChatScreen> {
                           width: 2,
                         ),
                       ),
+
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 0,
+                        vertical: 12,
                       ),
                     ),
                   ),
@@ -140,7 +176,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
                   radius: 24,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () => _sendMessage(provider),
+                    onPressed: provider.isLoading
+                        ? null
+                        : () => _sendMessage(provider),
                   ),
                 ),
               ],
