@@ -441,7 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         _buildProfileMenuItem(
-          "Vé ứng dụng",
+          "Về ứng dụng",
           Icons.confirmation_number_outlined,
           () => _showMessageBox(
             "Chức năng",

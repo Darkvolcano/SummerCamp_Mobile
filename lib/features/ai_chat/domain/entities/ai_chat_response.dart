@@ -6,8 +6,8 @@ class AiChatResponse {
 
   factory AiChatResponse.fromJson(Map<String, dynamic> json) {
     return AiChatResponse(
-      textResponse: json['textResponse'] as String,
-      conversationId: json['conversationId'] as int,
+      textResponse: json['textResponse'],
+      conversationId: json['conversationId'],
     );
   }
 }

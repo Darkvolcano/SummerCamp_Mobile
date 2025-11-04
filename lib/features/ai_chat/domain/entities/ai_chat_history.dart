@@ -6,8 +6,8 @@ class AiChatHistory {
 
   factory AiChatHistory.fromJson(Map<String, dynamic> json) {
     return AiChatHistory(
-      conversationId: json['conversationId'] as int,
-      title: json['title'] as String,
+      conversationId: json['conversationId'],
+      title: json['title'],
     );
   }
 }
