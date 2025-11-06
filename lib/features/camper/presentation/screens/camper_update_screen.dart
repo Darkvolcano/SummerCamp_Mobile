@@ -40,7 +40,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.camper.fullName);
+    nameController = TextEditingController(text: widget.camper.camperName);
 
     _selectedDate = DateFormat('yyyy-MM-dd').parse(widget.camper.dob);
     dobController = TextEditingController(
@@ -155,7 +155,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
 
     final updatedCamper = Camper(
       camperId: widget.camper.camperId,
-      fullName: nameController.text,
+      camperName: nameController.text,
       dob: DateFormat('yyyy-MM-dd').format(_selectedDate!),
       gender: gender!,
       healthRecord: healthRecord,

@@ -77,7 +77,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
 
     final result = {
       'camperId': matchedCamper.camperId,
-      'name': matchedCamper.fullName,
+      'name': matchedCamper.camperName,
       'avatar': matchedCamper.avatar,
       'confidence': unmarkedCampers.length % 5,
       'status': 'Có mặt',

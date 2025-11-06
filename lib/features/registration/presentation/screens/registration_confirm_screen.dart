@@ -232,7 +232,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        c.fullName,
+                        c.camperName,
                         textAlign: TextAlign.center,
                         style: textTheme.bodyMedium?.copyWith(
                           fontFamily: "Quicksand",

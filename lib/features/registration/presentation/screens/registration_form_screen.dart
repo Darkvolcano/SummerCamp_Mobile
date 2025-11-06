@@ -212,7 +212,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                  camper.fullName,
+                                  camper.camperName,
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(

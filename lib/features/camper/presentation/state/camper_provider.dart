@@ -95,7 +95,7 @@ class CamperProvider with ChangeNotifier {
 
         final updatedModel = CamperModel(
           camperId: camper.camperId,
-          fullName: camper.fullName,
+          camperName: camper.camperName,
           dob: camper.dob,
           gender: camper.gender,
           healthRecord: camper.healthRecord,

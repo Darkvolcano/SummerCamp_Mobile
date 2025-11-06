@@ -86,7 +86,7 @@ class _CamperListScreenState extends State<CamperListScreen> {
                           const SizedBox(height: 12),
 
                           Text(
-                            camper.fullName,
+                            camper.camperName,
                             textAlign: TextAlign.center,
                             style: textTheme.titleMedium?.copyWith(
                               fontFamily: "Quicksand",

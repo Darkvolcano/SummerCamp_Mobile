@@ -4,9 +4,10 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 class CamperModel extends Camper {
   const CamperModel({
     required super.camperId,
-    required super.fullName,
+    required super.camperName,
     required super.dob,
     required super.gender,
+    super.age,
     super.healthRecord,
     super.createAt,
     super.groupId,
@@ -21,9 +22,10 @@ class CamperModel extends Camper {
 
     return CamperModel(
       camperId: json['camperId'],
-      fullName: json['camperName'],
+      camperName: json['camperName'],
       dob: json['dob'],
       gender: json['gender'],
+      age: json['age'],
       healthRecord: healthRecord,
       groupId: json['groupId'],
       createAt: null,
@@ -32,9 +34,10 @@ class CamperModel extends Camper {
   }
 
   Map<String, dynamic> toJson() => {
-    'camperName': fullName,
+    'camperName': camperName,
     'dob': dob,
     'gender': gender,
+    'age': age,
     'groupId': groupId,
     'avatar': avatar,
     'healthRecord': (healthRecord as HealthRecordModel?)?.toJson(),

@@ -145,7 +145,7 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
 
     final newCamper = Camper(
       camperId: 0,
-      fullName: nameController.text,
+      camperName: nameController.text,
       dob: DateFormat('yyyy-MM-dd').format(_selectedDate!),
       gender: gender!,
       healthRecord: healthRecord,

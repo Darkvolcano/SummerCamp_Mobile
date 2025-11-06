@@ -73,7 +73,7 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _infoRow("Tên", camper.fullName, textTheme),
+                          _infoRow("Tên", camper.camperName, textTheme),
                           _infoRow(
                             "Ngày sinh",
                             DateFormatter.formatFromString(camper.dob),

@@ -31,9 +31,10 @@ class CamperRepositoryImpl implements CamperRepository {
 
     final camperModel = CamperModel(
       camperId: camper.camperId,
-      fullName: camper.fullName,
+      camperName: camper.camperName,
       dob: camper.dob,
       gender: camper.gender,
+      age: camper.age,
       healthRecord: healthRecordModel,
       groupId: camper.groupId,
       avatar: camper.avatar,
@@ -57,9 +58,10 @@ class CamperRepositoryImpl implements CamperRepository {
 
     final camperModel = CamperModel(
       camperId: camper.camperId,
-      fullName: camper.fullName,
+      camperName: camper.camperName,
       dob: camper.dob,
       gender: camper.gender,
+      age: camper.age,
       healthRecord: healthRecordModel,
       groupId: camper.groupId,
       avatar: camper.avatar,

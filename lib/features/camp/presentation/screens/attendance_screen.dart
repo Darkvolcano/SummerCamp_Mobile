@@ -168,7 +168,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       TableRow(
                         children: [
                           Text(
-                            camper.fullName,
+                            camper.camperName,
                             style: const TextStyle(
                               fontFamily: "Quicksand",
                               fontSize: 16,
