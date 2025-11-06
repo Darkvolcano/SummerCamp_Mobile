@@ -8,7 +8,7 @@ class AIChatApiService {
 
   Future<List<dynamic>> getChatHistory() async {
     try {
-      final res = await client.get('chat/history');
+      final res = await client.get('Chat/history');
       return res.data as List<dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);
@@ -17,7 +17,7 @@ class AIChatApiService {
 
   Future<List<dynamic>> getConversation(int conversationId) async {
     try {
-      final res = await client.get('chat/conversation/$conversationId');
+      final res = await client.get('Chat/conversation/$conversationId');
       return res.data as List<dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);
@@ -28,7 +28,7 @@ class AIChatApiService {
     required Map<String, dynamic> data,
   }) async {
     try {
-      final res = await client.post('chat', data: data);
+      final res = await client.post('Chat', data: data);
       return res.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);

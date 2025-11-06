@@ -65,6 +65,8 @@ class AIChatProvider with ChangeNotifier {
       for (var msg in messageList) {
         _messages.add({"text": msg.content, "isMe": msg.role.trim() == "user"});
       }
+
+      notifyListeners();
     } catch (e) {
       _error = e.toString();
       _messages.add({
