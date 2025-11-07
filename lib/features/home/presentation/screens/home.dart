@@ -49,7 +49,11 @@ class HomeContent extends StatelessWidget {
 
   Widget _buildHomeHeader(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final userName = authProvider.user?.name;
+    final user = authProvider.user;
+    final userName = user?.name;
+
+    final avatarUrl = user?.avatar;
+    final bool hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -57,11 +61,9 @@ class HomeContent extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundImage: authProvider.user != null
-                ? const NetworkImage("https://joesch.moe/api/v1/male/random")
-                : null,
+            backgroundImage: hasAvatar ? NetworkImage(avatarUrl) : null,
             backgroundColor: Colors.grey.shade200,
-            child: authProvider.user == null
+            child: !hasAvatar
                 ? Icon(
                     Icons.person_outline,
                     size: 30,

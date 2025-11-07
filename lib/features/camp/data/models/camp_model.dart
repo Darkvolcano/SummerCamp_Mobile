@@ -1,7 +1,7 @@
 import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/domain/entities/camp_camp_type.dart';
-import 'package:summercamp/features/camp/domain/entities/camp_promtion.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_promotion.dart';
 
 class CampModel extends Camp {
   const CampModel({
@@ -14,6 +14,8 @@ class CampModel extends Camp {
     super.image,
     super.maxParticipants,
     super.minParticipants,
+    required super.minAge,
+    required super.maxAge,
     required super.price,
     required super.status,
     required super.registrationStartDate,
@@ -55,7 +57,7 @@ class CampModel extends Camp {
       return 0;
     }
 
-    int safePrice(dynamic value) => (value is num) ? value.toInt() : 0;
+    double safePrice(dynamic value) => (value is num) ? value.toDouble() : 0;
 
     DateTime safeDateTime(dynamic value) {
       if (value is String) {
@@ -81,6 +83,8 @@ class CampModel extends Camp {
       image: safeString(json['image']),
       minParticipants: safeInt(json['minParticipants']),
       maxParticipants: safeInt(json['maxParticipants']),
+      minAge: safeInt(json['minAge']),
+      maxAge: safeInt(json['maxAge']),
       price: safePrice(json['price']),
       status: _statusFromString(json['status']),
       registrationStartDate: safeDateTime(json['registrationStartDate']),
@@ -104,6 +108,8 @@ class CampModel extends Camp {
     'image': image,
     'maxParticipants': maxParticipants,
     'minParticipants': minParticipants,
+    'minAge': minAge,
+    'maxAge': maxAge,
     'price': price,
     'status': status,
     'registrationStartDate': registrationStartDate.toIso8601String(),

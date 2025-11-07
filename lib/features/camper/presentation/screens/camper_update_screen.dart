@@ -60,9 +60,9 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
     // gender = widget.camper.gender;
     String apiGender = widget.camper.gender.toLowerCase();
     if (apiGender == 'male' || apiGender == 'nam') {
-      gender = "Nam";
+      gender = "Male";
     } else if (apiGender == 'female' || apiGender == 'nữ') {
-      gender = "Nữ";
+      gender = "Female";
     } else {
       gender = null;
     }

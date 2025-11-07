@@ -1,4 +1,4 @@
-import 'package:summercamp/features/registration/data/models/activity_schedule.dart';
+import 'package:summercamp/features/registration/data/models/activity_schedule_model.dart';
 import 'package:summercamp/features/registration/data/models/registration_model.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';

@@ -33,10 +33,10 @@ class ActivityScheduleModel extends ActivitySchedule {
       status: json['status'],
       isLivestream: json['isLivestream'],
       roomId: json['roomId'],
-      maxCapacity: json['maxCapacity'],
+      maxCapacity: json['maxCapacity'] as int,
       isOptional: json['isOptional'],
       locationId: json['locationId'],
-      currentCapacity: json['currentCapacity'],
+      currentCapacity: json['currentCapacity'] as int,
     );
   }
 

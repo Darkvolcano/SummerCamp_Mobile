@@ -116,7 +116,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
       _ => "Khác",
     };
 
-    final int totalPrice = widget.camp.price * widget.campers.length;
+    final double totalPrice = widget.camp.price * widget.campers.length;
 
     return Scaffold(
       appBar: AppBar(

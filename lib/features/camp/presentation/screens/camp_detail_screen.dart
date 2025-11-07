@@ -140,6 +140,12 @@ class CampDetailScreen extends StatelessWidget {
                             "Số lượng",
                             "Từ ${camp.minParticipants} đến ${camp.maxParticipants} trẻ",
                           ),
+                          const Divider(height: 24),
+                          _buildDetailRow(
+                            Icons.child_care_outlined,
+                            "Độ tuổi",
+                            "${camp.minAge ?? '?'} - ${camp.maxAge ?? '?'} tuổi",
+                          ),
                         ],
                       ),
                     ),

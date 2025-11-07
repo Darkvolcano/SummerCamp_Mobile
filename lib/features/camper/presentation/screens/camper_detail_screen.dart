@@ -79,7 +79,15 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
                             DateFormatter.formatFromString(camper.dob),
                             textTheme,
                           ),
-                          _infoRow("Giới tính", camper.gender, textTheme),
+                          _infoRow(
+                            "Giới tính",
+                            camper.gender.toLowerCase() == 'male'
+                                ? "Nam"
+                                : camper.gender.toLowerCase() == 'female'
+                                ? "Nữ"
+                                : camper.gender,
+                            textTheme,
+                          ),
                           _infoRow(
                             "Tình trạng sức khỏe",
                             camper.healthRecord?.condition ??

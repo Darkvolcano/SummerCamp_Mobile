@@ -104,6 +104,13 @@ class CampCard extends StatelessWidget {
                     text:
                         "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
                   ),
+                  const SizedBox(height: 6),
+                  _buildInfoRow(
+                    context,
+                    icon: Icons.child_care_outlined,
+                    text:
+                        "Độ tuổi: ${camp.minAge ?? '?'} - ${camp.maxAge ?? '?'} tuổi",
+                  ),
                   const Divider(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

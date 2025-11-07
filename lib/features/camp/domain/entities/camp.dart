@@ -1,6 +1,6 @@
 import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/features/camp/domain/entities/camp_camp_type.dart';
-import 'package:summercamp/features/camp/domain/entities/camp_promtion.dart';
+import 'package:summercamp/features/camp/domain/entities/camp_promotion.dart';
 
 class Camp {
   final int campId;
@@ -12,7 +12,9 @@ class Camp {
   final String image;
   final int maxParticipants;
   final int minParticipants;
-  final int price;
+  final int? minAge;
+  final int? maxAge;
+  final double price;
   final CampStatus status;
   final DateTime registrationStartDate;
   final DateTime registrationEndDate;
@@ -29,6 +31,8 @@ class Camp {
     this.image = "",
     this.maxParticipants = 0,
     this.minParticipants = 0,
+    this.minAge,
+    this.maxAge,
     required this.price,
     required this.status,
     required this.registrationStartDate,
