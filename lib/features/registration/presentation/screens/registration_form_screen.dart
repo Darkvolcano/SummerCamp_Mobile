@@ -40,6 +40,9 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     final camp = widget.camp;
     final textTheme = Theme.of(context).textTheme;
 
+    final double finalPrice = camp.discountedPrice;
+    final bool hasPromotion = camp.promotion != null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -111,14 +114,43 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                 color: Colors.green,
                               ),
                               const SizedBox(width: 8),
-                              Text(
-                                PriceFormatter.format(camp.price),
-                                style: textTheme.titleMedium?.copyWith(
-                                  fontFamily: "Quicksand",
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.summerAccent,
+                              if (hasPromotion)
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      PriceFormatter.format(camp.price),
+                                      style: textTheme.bodySmall?.copyWith(
+                                        fontFamily: "Quicksand",
+                                        color: Colors.grey[600],
+                                        fontSize: 16,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.grey[600],
+                                      ),
+                                    ),
+
+                                    const SizedBox(width: 20),
+
+                                    Text(
+                                      PriceFormatter.format(finalPrice),
+                                      style: textTheme.titleMedium?.copyWith(
+                                        fontFamily: "Quicksand",
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.summerAccent,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Text(
+                                  PriceFormatter.format(camp.price),
+                                  style: textTheme.titleMedium?.copyWith(
+                                    fontFamily: "Quicksand",
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.summerAccent,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ],

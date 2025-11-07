@@ -14,6 +14,28 @@ class CampCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    if (camp.promotion == null) {
+      return Text(
+        "${PriceFormatter.format(camp.price)}/người",
+        style: textTheme.titleLarge?.copyWith(
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.bold,
+          color: AppTheme.summerAccent,
+          fontSize: 16,
+        ),
+      );
+    }
+
+    final double price = camp.price;
+    final double percent = camp.promotion!.percent.toDouble();
+    final double maxDiscount = camp.promotion!.maxDiscountAmount.toDouble();
+
+    double discount = price * (percent / 100);
+    if (discount > maxDiscount) {
+      discount = maxDiscount;
+    }
+    final double newPrice = price - discount;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 20),
@@ -116,20 +138,34 @@ class CampCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Chỉ từ",
+                        "Giá",
                         style: textTheme.bodyMedium?.copyWith(
                           fontFamily: "Quicksand",
                           color: Colors.grey[600],
                         ),
                       ),
-                      Text(
-                        "${PriceFormatter.format(camp.price)}/người",
-                        style: textTheme.titleLarge?.copyWith(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.summerAccent,
-                          fontSize: 16,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${PriceFormatter.format(newPrice)}/người",
+                            style: textTheme.titleLarge?.copyWith(
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.summerAccent,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            "${PriceFormatter.format(price)}/người",
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontFamily: "Quicksand",
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -171,6 +207,7 @@ class CampCard extends StatelessWidget {
     String text;
 
     switch (status) {
+      case CampStatus.Draft:
       case CampStatus.PendingApproval:
         backgroundColor = Colors.orange.shade100;
         textColor = Colors.orange.shade800;

@@ -4,17 +4,17 @@ import 'package:summercamp/features/registration/domain/entities/activity_schedu
 class ActivityScheduleModel extends ActivitySchedule {
   const ActivityScheduleModel({
     required super.activityScheduleId,
-    required super.activity,
+    super.activity,
     required super.staffId,
     required super.startTime,
     required super.endTime,
     required super.status,
     required super.isLivestream,
-    required super.roomId,
-    required super.maxCapacity,
+    super.roomId,
+    super.maxCapacity,
     required super.isOptional,
-    required super.locationId,
-    required super.currentCapacity,
+    super.locationId,
+    super.currentCapacity,
   });
 
   factory ActivityScheduleModel.fromJson(Map<String, dynamic> json) {
@@ -33,10 +33,10 @@ class ActivityScheduleModel extends ActivitySchedule {
       status: json['status'],
       isLivestream: json['isLivestream'],
       roomId: json['roomId'],
-      maxCapacity: json['maxCapacity'] as int,
+      maxCapacity: json['maxCapacity'] as int?,
       isOptional: json['isOptional'],
-      locationId: json['locationId'],
-      currentCapacity: json['currentCapacity'] as int,
+      locationId: json['locationId'] as int?,
+      currentCapacity: json['currentCapacity'] as int?,
     );
   }
 

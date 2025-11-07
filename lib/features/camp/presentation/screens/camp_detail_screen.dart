@@ -13,6 +13,38 @@ class CampDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    if (camp.promotion == null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Giá",
+            style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
+          ),
+          Text(
+            "${PriceFormatter.format(camp.price)}/người",
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: AppTheme.summerAccent,
+            ),
+          ),
+        ],
+      );
+    }
+
+    final double price = camp.price;
+    final double percent = camp.promotion!.percent.toDouble();
+    final double maxDiscount = camp.promotion!.maxDiscountAmount.toDouble();
+
+    double discount = price * (percent / 100);
+    if (discount > maxDiscount) {
+      discount = maxDiscount;
+    }
+    final double newPrice = price - discount;
+
     return Scaffold(
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -37,14 +69,29 @@ class CampDetailScreen extends StatelessWidget {
                   "Giá",
                   style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
                 ),
-                Text(
-                  "${PriceFormatter.format(camp.price)}/người",
-                  style: const TextStyle(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: AppTheme.summerAccent,
-                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${PriceFormatter.format(price)}/người",
+                      style: const TextStyle(
+                        fontFamily: "Quicksand",
+                        color: Colors.grey,
+                        fontSize: 14,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                    Text(
+                      "${PriceFormatter.format(newPrice)}/người",
+                      style: const TextStyle(
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: AppTheme.summerAccent,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

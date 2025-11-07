@@ -50,7 +50,11 @@ class HomeContent extends StatelessWidget {
   Widget _buildHomeHeader(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
-    final userName = user?.name;
+
+    String? userName;
+    if (user != null) {
+      userName = '${user.firstName} ${user.lastName}'.trim();
+    }
 
     final avatarUrl = user?.avatar;
     final bool hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;

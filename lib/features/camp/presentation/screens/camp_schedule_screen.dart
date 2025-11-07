@@ -171,6 +171,7 @@ class CampScheduleScreen extends StatelessWidget {
     String text;
 
     switch (status) {
+      case CampStatus.Draft:
       case CampStatus.PendingApproval:
         backgroundColor = Colors.orange.shade100;
         textColor = Colors.orange.shade800;

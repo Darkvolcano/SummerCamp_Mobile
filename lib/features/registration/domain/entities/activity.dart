@@ -1,17 +1,14 @@
 class Activity {
-  final int activityId;
   final String name;
+  final String activityType;
 
-  const Activity({required this.activityId, required this.name});
+  const Activity({required this.name, required this.activityType});
 
   factory Activity.fromJson(Map<String, dynamic> json) {
-    return Activity(
-      activityId: json['activityId'] as int,
-      name: json['name'] as String,
-    );
+    return Activity(name: json['name'], activityType: json['activityType']);
   }
 
   Map<String, dynamic> toJson() {
-    return {'activityId': activityId, 'name': name};
+    return {'name': name, 'activityType': activityType};
   }
 }

@@ -40,4 +40,18 @@ class Camp {
     this.campType,
     this.promotion,
   });
+
+  double get discountedPrice {
+    if (promotion == null) {
+      return price;
+    }
+    final double percent = (promotion!.percent as num).toDouble();
+    final double maxDiscount = (promotion!.maxDiscountAmount as num).toDouble();
+
+    double discount = price * (percent / 100);
+    if (discount > maxDiscount) {
+      discount = maxDiscount;
+    }
+    return price - discount;
+  }
 }

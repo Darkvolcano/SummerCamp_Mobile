@@ -333,7 +333,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 style: TextStyle(fontFamily: "Quicksand"),
               ),
             )
-          else
+          else if (registration.status == RegistrationStatus.Completed)
             _buildSchedule(context, groupedActivities),
         ],
       ),
@@ -387,7 +387,9 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+
                     const Divider(),
+
                     ...optionalActivities.map((activity) {
                       final bool isSelected =
                           _selectedOptionalChoices[camper.camperId]?.contains(
@@ -531,13 +533,15 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Danh sách camper tham gia",
+              "Danh sách camper đăng ký tham gia",
               style: textTheme.titleMedium?.copyWith(
                 fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const Divider(height: 20),
+
             if (registration.campers.isEmpty)
               const Text(
                 "Không có thông tin camper.",

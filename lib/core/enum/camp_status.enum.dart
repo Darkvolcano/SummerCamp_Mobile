@@ -9,4 +9,5 @@ enum CampStatus {
   InProgress,
   Completed,
   Canceled,
+  Draft,
 }

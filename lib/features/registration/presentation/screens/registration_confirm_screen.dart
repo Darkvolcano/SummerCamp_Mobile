@@ -116,7 +116,9 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
       _ => "Khác",
     };
 
-    final double totalPrice = widget.camp.price * widget.campers.length;
+    final double finalPricePerCamper = widget.camp.discountedPrice;
+    final bool hasPromotion = widget.camp.promotion != null;
+    final double totalPrice = finalPricePerCamper * widget.campers.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -176,13 +178,27 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         const Icon(Icons.attach_money, color: Colors.green),
                         const SizedBox(width: 8),
                         Text(
-                          "Giá: ${PriceFormatter.format(widget.camp.price)} / Camper",
+                          "Giá: ${PriceFormatter.format(finalPricePerCamper)} / Camper",
                           style: textTheme.bodyMedium?.copyWith(
                             fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                             color: Colors.green[700],
                           ),
                         ),
+                        if (hasPromotion)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              "(${PriceFormatter.format(widget.camp.price)})",
+                              style: textTheme.bodySmall?.copyWith(
+                                fontFamily: "Quicksand",
+                                color: Colors.grey,
+                                fontSize: 15,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: Colors.grey,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ],
