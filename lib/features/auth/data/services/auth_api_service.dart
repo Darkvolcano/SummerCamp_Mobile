@@ -65,8 +65,8 @@ class AuthApiService {
       }
 
       return token;
-    } on DioException catch (e) {
-      throw mapDioError(e);
+    } on DioException {
+      rethrow;
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:summercamp/features/registration/domain/entities/registration.da
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
@@ -20,6 +21,7 @@ class RegistrationProvider with ChangeNotifier {
   final CreateRegisterPaymentLink createRegisterPaymentLinkUseCase;
   final CreateRegisterOptionalCamperActivity
   createRegisterOptionalCamperActivityUseCase;
+  final GetActivitySchedulesByCampId getActivitySchedulesByCampIdUseCase;
   final GetActivitySchedulesOptionalByCampId
   getActivitySchedulesOptionalByCampIdUseCase;
   final GetActivitySchedulesCoreByCampId
@@ -34,6 +36,7 @@ class RegistrationProvider with ChangeNotifier {
     this.createRegisterOptionalCamperActivityUseCase,
     this.getActivitySchedulesOptionalByCampIdUseCase,
     this.getActivitySchedulesCoreByCampIdUseCase,
+    this.getActivitySchedulesByCampIdUseCase,
   );
 
   List<Registration> _registrations = [];
@@ -41,6 +44,9 @@ class RegistrationProvider with ChangeNotifier {
 
   Registration? _selectedRegistration;
   Registration? get selectedRegistration => _selectedRegistration;
+
+  List<ActivitySchedule> _activitySchedules = [];
+  List<ActivitySchedule> get activitySchedules => _activitySchedules;
 
   List<ActivitySchedule> _coreActivitySchedules = [];
   List<ActivitySchedule> get coreActivitySchedules => _coreActivitySchedules;
@@ -161,6 +167,23 @@ class RegistrationProvider with ChangeNotifier {
     } catch (e) {
       _error = e.toString();
       rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadActivitySchedulesByCampId(int campId) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _activitySchedules = await getActivitySchedulesByCampIdUseCase(campId);
+    } catch (e) {
+      _error = e.toString();
+      _activitySchedules = [];
+      print('Lỗi khi tải danh sách hoạt động: $e');
     } finally {
       _loading = false;
       notifyListeners();

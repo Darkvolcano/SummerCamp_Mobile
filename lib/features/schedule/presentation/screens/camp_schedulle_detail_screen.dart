@@ -3,17 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
-import 'package:summercamp/features/activity/domain/entities/activity.dart';
-import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
-import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
+import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
+import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:videosdk/videosdk.dart';
 
 class CampScheduleDetailScreen extends StatefulWidget {
-  final Camp camp;
-  const CampScheduleDetailScreen({super.key, required this.camp});
+  final Schedule schedule;
+  const CampScheduleDetailScreen({super.key, required this.schedule});
 
   @override
   State<CampScheduleDetailScreen> createState() =>
@@ -26,7 +26,10 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<ActivityProvider>().loadActivities(widget.camp.campId);
+        final registrationProvider = context.read<RegistrationProvider>();
+        registrationProvider.loadActivitySchedulesByCampId(
+          widget.schedule.campId,
+        );
         context.read<CamperProvider>().loadCampers();
       }
     });
@@ -82,7 +85,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                   navigator.pop();
                   navigator.pushNamed(
                     AppRoutes.attendance,
-                    arguments: {"camp": widget.camp, "campers": campers},
+                    arguments: {"camp": widget.schedule, "campers": campers},
                   );
                 },
               ),
@@ -144,8 +147,10 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     );
   }
 
-  Map<String, List<Activity>> groupActivitiesByDate(List<Activity> activities) {
-    final Map<String, List<Activity>> grouped = {};
+  Map<String, List<ActivitySchedule>> groupActivitiesByDate(
+    List<ActivitySchedule> activities,
+  ) {
+    final Map<String, List<ActivitySchedule>> grouped = {};
     for (var act in activities) {
       String dateKey = DateFormatter.formatDate(act.startTime);
       grouped.putIfAbsent(dateKey, () => []);
@@ -157,22 +162,21 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final activityProvider = context.watch<ActivityProvider>();
+    final registrationProvider = context.watch<RegistrationProvider>();
     final camperProvider = context.watch<CamperProvider>();
-    final activities = activityProvider.activities;
-    // final campers = camperProvider.campers;
+    final activities = registrationProvider.activitySchedules;
     final groupedActivities = groupActivitiesByDate(activities);
 
-    final startDate = DateTime.parse(widget.camp.startDate);
-    final endDate = DateTime.parse(widget.camp.endDate);
+    final startDate = DateTime.parse(widget.schedule.startDate);
+    final endDate = DateTime.parse(widget.schedule.endDate);
     final totalDays = endDate.difference(startDate).inDays + 1;
 
-    final isLoading = activityProvider.loading || camperProvider.loading;
+    final isLoading = registrationProvider.loading || camperProvider.loading;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.camp.name,
+          widget.schedule.name,
           style: const TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
@@ -189,11 +193,11 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.camp.image.isNotEmpty)
+                  if (widget.schedule.image.isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.network(
-                        widget.camp.image,
+                        widget.schedule.image,
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -209,7 +213,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                   const SizedBox(height: 16),
 
                   Text(
-                    widget.camp.name,
+                    widget.schedule.name,
                     style: textTheme.titleLarge?.copyWith(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
@@ -217,9 +221,9 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  if (widget.camp.description.isNotEmpty)
+                  if (widget.schedule.description.isNotEmpty)
                     Text(
-                      widget.camp.description,
+                      widget.schedule.description,
                       style: const TextStyle(
                         fontFamily: "Quicksand",
                         fontSize: 14,
@@ -233,7 +237,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          widget.camp.place,
+                          widget.schedule.place,
                           style: const TextStyle(
                             fontFamily: "Quicksand",
                             fontSize: 14,
@@ -252,7 +256,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        "${DateFormatter.formatFromString(widget.camp.startDate)} - ${DateFormatter.formatFromString(widget.camp.endDate)}",
+                        "${DateFormatter.formatFromString(widget.schedule.startDate)} - ${DateFormatter.formatFromString(widget.schedule.endDate)}",
                         style: const TextStyle(
                           fontFamily: "Quicksand",
                           fontSize: 14,
@@ -272,7 +276,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  if (activityProvider.loading)
+                  if (registrationProvider.loading)
                     const Center(child: CircularProgressIndicator())
                   else if (activities.isEmpty)
                     const Center(
@@ -304,7 +308,8 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Ngày ${index + 1} - $dateStr",
+                                  // "Ngày ${index + 1} - $dateStr",
+                                  dateStr,
                                   style: const TextStyle(
                                     fontFamily: "Quicksand",
                                     fontWeight: FontWeight.bold,
@@ -336,7 +341,8 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                                             const SizedBox(width: 6),
                                             Expanded(
                                               child: Text(
-                                                "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.name} @ ${act.location}",
+                                                // "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.name} @ ${act.location}",
+                                                "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.activity?.name}",
                                                 style: const TextStyle(
                                                   fontFamily: "Quicksand",
                                                   fontSize: 14,
@@ -386,7 +392,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                           Navigator.pushNamed(
                             context,
                             AppRoutes.uploadPhoto,
-                            arguments: widget.camp,
+                            arguments: widget.schedule,
                           );
                         },
                       ),

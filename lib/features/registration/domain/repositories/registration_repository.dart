@@ -15,6 +15,7 @@ abstract class RegistrationRepository {
     List<OptionalChoice>? optionalChoices,
   });
   Future<void> cancelRegistration(int registrationId);
+  Future<List<ActivitySchedule>> getActivitySchedulesByCampId(int campId);
   Future<List<ActivitySchedule>> getActivitySchedulesOptionalByCampId(
     int campId,
   );

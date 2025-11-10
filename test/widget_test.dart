@@ -42,6 +42,7 @@ import 'package:summercamp/features/registration/data/services/registration_api_
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
@@ -53,6 +54,10 @@ import 'package:summercamp/features/report/data/services/report_api_service.dart
 import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
 import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
+import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
+import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 import 'package:summercamp/main.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
@@ -248,6 +253,9 @@ void main() {
     );
     final createRegisterOptionalCamperActivityUseCase =
         CreateRegisterOptionalCamperActivity(registrationRepo);
+    final getActivitySchedulesByCampIdUseCase = GetActivitySchedulesByCampId(
+      registrationRepo,
+    );
     final getActivitySchedulesOptionalByCampIdUseCase =
         GetActivitySchedulesOptionalByCampId(registrationRepo);
     final getActivitySchedulesCoreByCampIdUseCase =
@@ -280,6 +288,11 @@ void main() {
     final getChatHistoryUseCase = GetChatHistory(aiChatRepo);
     final getConversationUseCase = GetConversation(aiChatRepo);
 
+    // Schedule
+    final scheduleApi = ScheduleApiService(apiClient);
+    final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
+    final getSchedulesUseCase = GetSchedules(scheduleRepo);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -308,7 +321,7 @@ void main() {
             create: (_) => ActivityProvider(getActivitiesUseCase),
           ),
 
-          // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId)
+          // RegistrationProvider need 9 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId, GetActivitySchedulesByCampId)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -319,6 +332,7 @@ void main() {
               createRegisterOptionalCamperActivityUseCase,
               getActivitySchedulesOptionalByCampIdUseCase,
               getActivitySchedulesCoreByCampIdUseCase,
+              getActivitySchedulesByCampIdUseCase,
             ),
           ),
 
@@ -349,6 +363,11 @@ void main() {
               getChatHistoryUseCase: getChatHistoryUseCase,
               getConversationUseCase: getConversationUseCase,
             ),
+          ),
+
+          // ScheduleProvider need 1 usecases (GetSchedules)
+          ChangeNotifierProvider(
+            create: (_) => ScheduleProvider(getSchedulesUseCase),
           ),
         ],
         child: const SummerCampApp(),

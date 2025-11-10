@@ -74,46 +74,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final provider = context.read<AuthProvider>();
 
-    try {
-      await provider.login(
-        emailController.text.trim(),
-        passwordController.text,
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      String errorMessage = 'Đăng nhập thất bại. Vui lòng thử lại.';
-
-      final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('invalid') || errorStr.contains('credentials')) {
-        errorMessage = 'Email hoặc mật khẩu không đúng';
-      } else if (errorStr.contains('network') ||
-          errorStr.contains('connection')) {
-        errorMessage = 'Lỗi kết nối mạng. Vui lòng thử lại sau.';
-      } else if (errorStr.contains('timeout')) {
-        errorMessage = 'Kết nối quá chậm. Vui lòng thử lại.';
-      } else {
-        debugPrint('Lỗi đăng nhập không xác định: $e');
-      }
-
-      _showErrorDialog(errorMessage);
-      return;
-    }
+    await provider.login(emailController.text.trim(), passwordController.text);
 
     if (!mounted) return;
 
-    if (provider.error == null) {
-      final userRole = provider.userRole ?? '';
-
-      if (userRole == 'Staff') {
-        Navigator.pushReplacementNamed(context, AppRoutes.staffHome);
-      } else if (userRole == 'User' || userRole == 'Parent') {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-      } else {
-        _showErrorDialog('Role không hợp lệ: $userRole');
-      }
-    } else {
+    if (provider.error != null) {
       _showErrorDialog(provider.error!);
+      return;
+    }
+
+    final userRole = provider.userRole ?? '';
+
+    if (userRole == 'Staff') {
+      Navigator.pushReplacementNamed(context, AppRoutes.staffHome);
+    } else if (userRole == 'User' || userRole == 'Parent') {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
+      _showErrorDialog('Role không hợp lệ: $userRole');
     }
   }
 

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
-import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
+import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 
 class CampScheduleScreen extends StatelessWidget {
@@ -12,11 +12,11 @@ class CampScheduleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final provider = context.watch<CampProvider>();
+    final provider = context.watch<ScheduleProvider>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (provider.camps.isEmpty && !provider.loading) {
-        provider.loadCamps();
+      if (provider.schedules.isEmpty && !provider.loading) {
+        provider.loadSchedules();
       }
     });
 
@@ -37,7 +37,7 @@ class CampScheduleScreen extends StatelessWidget {
       ),
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
-          : provider.camps.isEmpty
+          : provider.schedules.isEmpty
           ? Center(
               child: Text(
                 "Không có camp nào",
@@ -46,9 +46,9 @@ class CampScheduleScreen extends StatelessWidget {
             )
           : ListView.builder(
               padding: const EdgeInsets.all(12),
-              itemCount: provider.camps.length,
+              itemCount: provider.schedules.length,
               itemBuilder: (context, index) {
-                final camp = provider.camps[index];
+                final schedule = provider.schedules[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   shape: RoundedRectangleBorder(
@@ -61,7 +61,7 @@ class CampScheduleScreen extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.campScheduleDetail,
-                        arguments: camp,
+                        arguments: schedule,
                       );
                     },
                     child: Column(
@@ -69,13 +69,13 @@ class CampScheduleScreen extends StatelessWidget {
                       children: [
                         Stack(
                           children: [
-                            if (camp.image.isNotEmpty)
+                            if (schedule.image.isNotEmpty)
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(16),
                                 ),
                                 child: Image.network(
-                                  camp.image,
+                                  schedule.image,
                                   height: 160,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -91,7 +91,7 @@ class CampScheduleScreen extends StatelessWidget {
                             Positioned(
                               top: 12,
                               left: 12,
-                              child: _buildStatusChip(camp.status),
+                              child: _buildStatusChip(schedule.status),
                             ),
                           ],
                         ),
@@ -101,7 +101,7 @@ class CampScheduleScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                camp.name,
+                                schedule.name,
                                 style: textTheme.titleMedium?.copyWith(
                                   fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
@@ -109,9 +109,9 @@ class CampScheduleScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              if (camp.description.isNotEmpty)
+                              if (schedule.description.isNotEmpty)
                                 Text(
-                                  camp.description,
+                                  schedule.description,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -131,7 +131,7 @@ class CampScheduleScreen extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      camp.place,
+                                      schedule.place,
                                       style: const TextStyle(fontSize: 13),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -148,7 +148,7 @@ class CampScheduleScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                                    "${DateFormatter.formatFromString(schedule.startDate)} - ${DateFormatter.formatFromString(schedule.endDate)}",
                                     style: const TextStyle(fontSize: 13),
                                   ),
                                 ],

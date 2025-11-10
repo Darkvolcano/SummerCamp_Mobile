@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:summercamp/features/profile/presentation/screens/edit_profile_screen.dart';
 
 class StaffProfileScreen extends StatefulWidget {
   const StaffProfileScreen({super.key});
@@ -14,105 +14,54 @@ class StaffProfileScreen extends StatefulWidget {
 }
 
 class _StaffProfileScreenState extends State<StaffProfileScreen> {
-  File? _profileImage;
+  bool _isFetching = false;
 
-  String staffName = "Nguyễn Văn B";
-  String staffEmail = "staff@example.com";
-  String staffPhone = "0987654321";
-  String staffPosition = "Trưởng nhóm hướng dẫn";
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchUserData();
+    });
+  }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() => _profileImage = File(picked.path));
+  Future<void> _fetchUserData() async {
+    final authProvider = context.read<AuthProvider>();
+    if (!_isFetching) {
+      setState(() {
+        _isFetching = true;
+      });
+      try {
+        await authProvider.fetchProfileUser();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Lỗi tải thông tin: ${e.toString()}")),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isFetching = false;
+          });
+        }
+      }
     }
   }
 
-  void _editProfile() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final nameController = TextEditingController(text: staffName);
-        final emailController = TextEditingController(text: staffEmail);
-        final phoneController = TextEditingController(text: staffPhone);
+  Future<void> _navigateToEditProfile() async {
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.user == null) return;
 
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text(
-            "Chỉnh sửa thông tin",
-            style: TextStyle(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.bold,
-              color: StaffTheme.staffPrimary,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 8),
-                _buildEditTextField(
-                  nameController,
-                  "Họ và tên",
-                  Icons.person_outline,
-                ),
-                _buildEditTextField(
-                  emailController,
-                  "Email",
-                  Icons.email_outlined,
-                ),
-                _buildEditTextField(
-                  phoneController,
-                  "Số điện thoại",
-                  Icons.phone_outlined,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "Hủy",
-                style: TextStyle(
-                  fontFamily: "Quicksand",
-                  color: Colors.grey,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: StaffTheme.staffPrimary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
-              onPressed: () {
-                setState(() {
-                  staffName = nameController.text;
-                  staffEmail = emailController.text;
-                  staffPhone = phoneController.text;
-                });
-                Navigator.pop(context);
-              },
-              child: const Text(
-                "Lưu",
-                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
-              ),
-            ),
-          ],
-        );
-      },
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfileScreen(user: authProvider.user!),
+      ),
     );
+
+    if (result == true) {
+      _fetchUserData();
+    }
   }
 
   Future<void> _handleLogout() async {
@@ -134,40 +83,6 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
     }
   }
 
-  Widget _buildEditTextField(
-    TextEditingController controller,
-    String label,
-    IconData icon,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: TextFormField(
-        controller: controller,
-        style: const TextStyle(fontFamily: "Quicksand"),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(fontFamily: "Quicksand"),
-          prefixIcon: Icon(
-            icon,
-            color: StaffTheme.staffPrimary.withValues(alpha: 0.7),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: StaffTheme.staffAccent,
-              width: 2,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildInfoCard(String title, String value, IconData icon) {
     return Card(
       elevation: 2,
@@ -183,7 +98,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
           ),
         ),
         subtitle: Text(
-          value,
+          value.isEmpty ? "Chưa cập nhật" : value,
           style: const TextStyle(fontFamily: "Quicksand", fontSize: 15),
         ),
       ),
@@ -209,9 +124,10 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
             const SizedBox(height: 6),
             Text(
               label,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: "Quicksand",
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -223,180 +139,181 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: StaffTheme.staffBackground,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: StaffTheme.staffPrimary,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: StaffTheme.staffPrimary,
+        elevation: 0,
+      ),
+      body: _buildBody(authProvider),
+    );
+  }
+
+  Widget _buildBody(AuthProvider authProvider) {
+    final user = authProvider.user!;
+    final String staffName = '${user.firstName} ${user.lastName}'.trim();
+    final String? staffEmail = user.email;
+    final String staffPhone = user.phoneNumber;
+    String dobFormatted = "Chưa cập nhật";
+    if (user.dateOfBirth != null && user.dateOfBirth != "0001-01-01") {
+      try {
+        dobFormatted = DateFormat(
+          'dd/MM/yyyy',
+        ).format(DateFormat('yyyy-MM-dd').parse(user.dateOfBirth!));
+      } catch (e) {
+        dobFormatted = user.dateOfBirth!;
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: StaffTheme.staffPrimary,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
                 ),
-                Positioned(
-                  bottom: -50,
-                  left: MediaQuery.of(context).size.width / 2 - 60,
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.white,
-                        backgroundImage: _profileImage != null
-                            ? FileImage(_profileImage!)
-                            : null,
-                        child: _profileImage == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 60,
-                                color: StaffTheme.staffAccent,
-                              )
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: _pickImage,
-                          child: const CircleAvatar(
-                            backgroundColor: StaffTheme.staffAccent,
-                            radius: 20,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+              Positioned(
+                bottom: -50,
+                left: MediaQuery.of(context).size.width / 2 - 60,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          (user.avatar != null && user.avatar!.isNotEmpty)
+                          ? NetworkImage(user.avatar!)
+                          : null,
+                      child: (user.avatar == null || user.avatar!.isEmpty)
+                          ? const Icon(
+                              Icons.person,
+                              size: 70,
+                              color: StaffTheme.staffPrimary,
+                            )
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 70),
+          Text(
+            staffName.isEmpty ? "Staff" : staffName,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _buildInfoCard("Email", staffEmail!, Icons.email),
+                _buildInfoCard("Số điện thoại", staffPhone, Icons.phone),
+                _buildInfoCard(
+                  "Ngày sinh",
+                  dobFormatted,
+                  Icons.calendar_today_outlined,
                 ),
               ],
             ),
-
-            const SizedBox(height: 70),
-
-            Text(
-              staffName,
-              style: const TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+          ),
+          const SizedBox(height: 15),
+          ElevatedButton.icon(
+            onPressed: _navigateToEditProfile,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: StaffTheme.staffPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            Text(
-              staffPosition,
-              style: const TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 14,
-                color: Colors.black54,
-              ),
+            icon: const Icon(Icons.edit, size: 20),
+            label: const Text(
+              "Chỉnh sửa thông tin",
+              style: TextStyle(fontFamily: "Quicksand"),
             ),
-
-            const SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  _buildInfoCard("Email", staffEmail, Icons.email),
-                  _buildInfoCard("Số điện thoại", staffPhone, Icons.phone),
-                ],
-              ),
+          ),
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Chức năng Staff",
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: StaffTheme.staffPrimary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 1,
+                  children: [
+                    _buildStaffMenu("Quản lý trại hè", Icons.campaign, () {
+                      Navigator.pushNamed(context, AppRoutes.campList);
+                    }),
+                    _buildStaffMenu("Điểm danh", Icons.check_circle, () {}),
+                    _buildStaffMenu(
+                      "Báo cáo sự cố",
+                      Icons.report_problem,
+                      () {},
+                    ),
+                    _buildStaffMenu("Quản lý camper", Icons.group, () {
+                      Navigator.pushNamed(context, AppRoutes.camperList);
+                    }),
+                    _buildStaffMenu("Thống kê", Icons.bar_chart, () {}),
+                    _buildStaffMenu("Tin nhắn", Icons.message, () {}),
+                  ],
+                ),
+              ],
             ),
-
-            const SizedBox(height: 15),
-
-            ElevatedButton.icon(
-              onPressed: _editProfile,
+          ),
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: StaffTheme.staffPrimary,
+                backgroundColor: Colors.redAccent,
                 foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              icon: const Icon(Icons.edit),
+              onPressed: _handleLogout,
+              icon: const Icon(Icons.logout),
               label: const Text(
-                "Chỉnh sửa thông tin",
-                style: TextStyle(fontFamily: "Quicksand"),
+                "Đăng xuất",
+                style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Chức năng Staff",
-                    style: TextStyle(
-                      fontFamily: "Quicksand",
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: StaffTheme.staffPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1,
-                    children: [
-                      _buildStaffMenu("Quản lý trại hè", Icons.campaign, () {}),
-                      _buildStaffMenu("Điểm danh", Icons.check_circle, () {}),
-                      _buildStaffMenu(
-                        "Báo cáo sự cố",
-                        Icons.report_problem,
-                        () {},
-                      ),
-                      _buildStaffMenu("Quản lý camper", Icons.group, () {}),
-                      _buildStaffMenu("Thống kê", Icons.bar_chart, () {}),
-                      _buildStaffMenu("Tin nhắn", Icons.message, () {}),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: _handleLogout,
-                icon: const Icon(Icons.logout),
-                label: const Text(
-                  "Đăng xuất",
-                  style: TextStyle(fontFamily: "Quicksand", fontSize: 16),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 40),
-          ],
-        ),
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }

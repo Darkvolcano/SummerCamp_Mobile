@@ -5,14 +5,20 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_by_camp_id.dart';
+import 'firebase_options.dart';
+import 'dart:async';
+
 import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
 import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
-import 'firebase_options.dart';
-import 'dart:async';
+import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
+import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
@@ -119,6 +125,9 @@ Future<void> main() async {
   );
   final createRegisterOptionalCamperActivityUseCase =
       CreateRegisterOptionalCamperActivity(registrationRepo);
+  final getActivitySchedulesByCampIdUseCase = GetActivitySchedulesByCampId(
+    registrationRepo,
+  );
   final getActivitySchedulesOptionalByCampIdUseCase =
       GetActivitySchedulesOptionalByCampId(registrationRepo);
   final getActivitySchedulesCoreByCampIdUseCase =
@@ -151,6 +160,11 @@ Future<void> main() async {
   final getChatHistoryUseCase = GetChatHistory(aiChatRepo);
   final getConversationUseCase = GetConversation(aiChatRepo);
 
+  // Schedule
+  final scheduleApi = ScheduleApiService(apiClient);
+  final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
+  final getSchedulesUseCase = GetSchedules(scheduleRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -179,7 +193,7 @@ Future<void> main() async {
           create: (_) => ActivityProvider(getActivitiesUseCase),
         ),
 
-        // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId)
+        // RegistrationProvider need 9 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId, GetActivitySchedulesByCampId)
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,
@@ -190,6 +204,7 @@ Future<void> main() async {
             createRegisterOptionalCamperActivityUseCase,
             getActivitySchedulesOptionalByCampIdUseCase,
             getActivitySchedulesCoreByCampIdUseCase,
+            getActivitySchedulesByCampIdUseCase,
           ),
         ),
 
@@ -219,6 +234,11 @@ Future<void> main() async {
             getChatHistoryUseCase: getChatHistoryUseCase,
             getConversationUseCase: getConversationUseCase,
           ),
+        ),
+
+        // ScheduleProvider need 1 usecases (GetSchedules)
+        ChangeNotifierProvider(
+          create: (_) => ScheduleProvider(getSchedulesUseCase),
         ),
       ],
       child: const SummerCampApp(),

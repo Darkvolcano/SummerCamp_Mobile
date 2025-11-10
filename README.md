@@ -217,6 +217,7 @@ lib/
     ├── promotion/           # Promotions & discounts
     ├── registration/        # Camp registration
     └── report/              # Staff incident reports
+    └── schedule/            # Staff schedule
 ```
 
 Feature Structure

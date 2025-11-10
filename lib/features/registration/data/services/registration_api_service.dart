@@ -76,6 +76,11 @@ class RegistrationApiService {
     }
   }
 
+  Future<List<dynamic>> fetchActivitySchedulesByCampId(int campId) async {
+    final res = await client.get('ActivitySchedule/camps/$campId');
+    return res.data as List;
+  }
+
   Future<List<dynamic>> fetchActivitySchedulesOptionalByCampId(
     int campId,
   ) async {

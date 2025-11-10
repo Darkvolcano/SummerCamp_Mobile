@@ -9,12 +9,13 @@ import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
-import 'package:summercamp/features/camp/presentation/screens/attendance_screen.dart';
+import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
+import 'package:summercamp/features/schedule/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
-import 'package:summercamp/features/camp/presentation/screens/camp_schedule_screen.dart';
-import 'package:summercamp/features/camp/presentation/screens/camp_schedulle_detail_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/camp_schedule_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/camp_schedulle_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_search_screen.dart';
-import 'package:summercamp/features/camp/presentation/screens/face_recognition_attendance_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/face_recognition_attendance_screen.dart';
 import 'package:summercamp/features/album/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
@@ -143,9 +144,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const CampScheduleScreen());
 
       case campScheduleDetail:
-        final camp = settings.arguments as Camp;
+        final schedule = settings.arguments as Schedule;
         return MaterialPageRoute(
-          builder: (_) => CampScheduleDetailScreen(camp: camp),
+          builder: (_) => CampScheduleDetailScreen(schedule: schedule),
         );
 
       case attendance:

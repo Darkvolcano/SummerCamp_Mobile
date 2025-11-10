@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
@@ -59,16 +60,19 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     _setLoading(true);
+    _error = null;
+
     try {
       _currentUser = await loginUserUseCase(email, password);
       _token = await repositoryUseCase.getToken();
 
       _userRole = _currentUser?.role;
-
-      _error = null;
     } catch (e) {
-      _error = e.toString();
-      rethrow;
+      if (e is DioException && e.response?.data is Map<String, dynamic>) {
+        _error = e.response!.data['message'] ?? "Lỗi không xác định";
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _setLoading(false);
     }

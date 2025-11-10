@@ -68,6 +68,14 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   }
 
   @override
+  Future<List<ActivitySchedule>> getActivitySchedulesByCampId(
+    int campId,
+  ) async {
+    final list = await service.fetchActivitySchedulesByCampId(campId);
+    return list.map((e) => ActivityScheduleModel.fromJson(e)).toList();
+  }
+
+  @override
   Future<List<ActivitySchedule>> getActivitySchedulesOptionalByCampId(
     int campId,
   ) async {
