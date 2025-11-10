@@ -1,5 +1,5 @@
-import 'package:summercamp/features/registration/domain/entities/activity.dart';
-import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/activity/domain/entities/activity.dart';
+import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 
 class ActivityScheduleModel extends ActivitySchedule {
   const ActivityScheduleModel({

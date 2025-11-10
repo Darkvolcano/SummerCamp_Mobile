@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
-import 'package:summercamp/features/activity/domain/use_cases/get_activities_by_camp.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
 import 'package:summercamp/features/ai_chat/data/services/ai_chat_api_service.dart';
@@ -42,9 +41,9 @@ import 'package:summercamp/features/registration/data/services/registration_api_
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
-import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_by_camp_id.dart';
-import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
-import 'package:summercamp/features/registration/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
+import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
+import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_core_by_camp_id.dart';
+import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_optional_by_camp_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
@@ -239,7 +238,13 @@ void main() {
     // Activity
     final activityApiService = ActivityApiService(apiClient);
     final activityRepo = ActivityRepositoryImpl(activityApiService);
-    final getActivitiesUseCase = GetActivitiesByCampId(activityRepo);
+    final getActivitySchedulesByCampIdUseCase = GetActivitySchedulesByCampId(
+      activityRepo,
+    );
+    final getActivitySchedulesOptionalByCampIdUseCase =
+        GetActivitySchedulesOptionalByCampId(activityRepo);
+    final getActivitySchedulesCoreByCampIdUseCase =
+        GetActivitySchedulesCoreByCampId(activityRepo);
 
     // Registration
     final registrationApi = RegistrationApiService(apiClient);
@@ -253,14 +258,6 @@ void main() {
     );
     final createRegisterOptionalCamperActivityUseCase =
         CreateRegisterOptionalCamperActivity(registrationRepo);
-    final getActivitySchedulesByCampIdUseCase = GetActivitySchedulesByCampId(
-      registrationRepo,
-    );
-    final getActivitySchedulesOptionalByCampIdUseCase =
-        GetActivitySchedulesOptionalByCampId(registrationRepo);
-    final getActivitySchedulesCoreByCampIdUseCase =
-        GetActivitySchedulesCoreByCampId(registrationRepo);
-
     // Blog
     final blogApi = BlogApiService(apiClient);
     final blogRepo = BlogRepositoryImpl(blogApi);
@@ -316,12 +313,16 @@ void main() {
             create: (_) => CampProvider(getCampsUseCase, getCampTypesUseCase),
           ),
 
-          // ActivityProvider need 1 usecases (GetActivitiess)
+          // ActivityProvider need 1 usecases (GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId, GetActivitySchedulesByCampId)
           ChangeNotifierProvider(
-            create: (_) => ActivityProvider(getActivitiesUseCase),
+            create: (_) => ActivityProvider(
+              getActivitySchedulesOptionalByCampIdUseCase,
+              getActivitySchedulesCoreByCampIdUseCase,
+              getActivitySchedulesByCampIdUseCase,
+            ),
           ),
 
-          // RegistrationProvider need 9 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetActivitySchedulesOptionalByCampId, GetActivitySchedulesCoreByCampId, GetActivitySchedulesByCampId)
+          // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -330,9 +331,6 @@ void main() {
               getRegistrationByIdUseCase,
               createRegisterPaymentLinkUseCase,
               createRegisterOptionalCamperActivityUseCase,
-              getActivitySchedulesOptionalByCampIdUseCase,
-              getActivitySchedulesCoreByCampIdUseCase,
-              getActivitySchedulesByCampIdUseCase,
             ),
           ),
 

@@ -3,10 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
-import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:videosdk/videosdk.dart';
@@ -26,10 +27,8 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        final registrationProvider = context.read<RegistrationProvider>();
-        registrationProvider.loadActivitySchedulesByCampId(
-          widget.schedule.campId,
-        );
+        final activityProvider = context.read<ActivityProvider>();
+        activityProvider.loadActivitySchedulesByCampId(widget.schedule.campId);
         context.read<CamperProvider>().loadCampers();
       }
     });
@@ -163,8 +162,9 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final registrationProvider = context.watch<RegistrationProvider>();
+    final activityProvider = context.watch<ActivityProvider>();
     final camperProvider = context.watch<CamperProvider>();
-    final activities = registrationProvider.activitySchedules;
+    final activities = activityProvider.activitySchedules;
     final groupedActivities = groupActivitiesByDate(activities);
 
     final startDate = DateTime.parse(widget.schedule.startDate);

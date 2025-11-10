@@ -5,9 +5,10 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
-import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/registration/presentation/screens/feedback_form_screen.dart';
@@ -52,7 +53,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
   Future<void> _fetchCampData(Registration registration) async {
     final campProvider = context.read<CampProvider>();
-    final registrationProvider = context.read<RegistrationProvider>();
+    final activityProvider = context.read<ActivityProvider>();
 
     if (campProvider.camps.isEmpty) {
       await campProvider.loadCamps();
@@ -74,8 +75,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     }
 
     await Future.wait([
-      registrationProvider.loadActivitySchedulesCoreByCampId(campId),
-      registrationProvider.loadActivitySchedulesOptionalByCampId(campId),
+      activityProvider.loadActivitySchedulesCoreByCampId(campId),
+      activityProvider.loadActivitySchedulesOptionalByCampId(campId),
     ]);
   }
 
@@ -279,7 +280,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   Widget _buildContent(BuildContext context, Registration registration) {
     final textTheme = Theme.of(context).textTheme;
     final registrationProvider = context.watch<RegistrationProvider>();
-    final coreActivities = registrationProvider.coreActivitySchedules;
+    final activityProvider = context.watch<ActivityProvider>();
+    final coreActivities = activityProvider.coreActivitySchedules;
     final groupedActivities = groupActivitiesByDate(coreActivities);
 
     return SingleChildScrollView(
@@ -296,7 +298,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
               context,
               textTheme,
               registration,
-              registrationProvider,
+              activityProvider,
             ),
 
           const SizedBox(height: 24),
@@ -344,7 +346,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     BuildContext context,
     TextTheme textTheme,
     Registration registration,
-    RegistrationProvider provider,
+    ActivityProvider provider,
   ) {
     final optionalActivities = provider.optionalActivitySchedules;
 

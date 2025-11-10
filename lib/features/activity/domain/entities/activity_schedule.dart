@@ -1,4 +1,4 @@
-import 'package:summercamp/features/registration/domain/entities/activity.dart';
+import 'package:summercamp/features/activity/domain/entities/activity.dart';
 
 class ActivitySchedule {
   final int activityScheduleId;

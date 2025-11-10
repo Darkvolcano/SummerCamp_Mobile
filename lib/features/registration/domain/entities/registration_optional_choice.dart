@@ -1,11 +1,11 @@
 class RegistrationOptionalChoice {
   final int camperId;
-  final String activityName;
+  final String? activityName;
   final String status;
 
   const RegistrationOptionalChoice({
     required this.camperId,
-    required this.activityName,
+    this.activityName,
     required this.status,
   });
 

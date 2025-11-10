@@ -1,7 +1,5 @@
-import 'package:summercamp/features/registration/data/models/activity_schedule_model.dart';
 import 'package:summercamp/features/registration/data/models/registration_model.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
-import 'package:summercamp/features/registration/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
@@ -65,29 +63,5 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
       camperId: camperId,
       activityId: activityId,
     );
-  }
-
-  @override
-  Future<List<ActivitySchedule>> getActivitySchedulesByCampId(
-    int campId,
-  ) async {
-    final list = await service.fetchActivitySchedulesByCampId(campId);
-    return list.map((e) => ActivityScheduleModel.fromJson(e)).toList();
-  }
-
-  @override
-  Future<List<ActivitySchedule>> getActivitySchedulesOptionalByCampId(
-    int campId,
-  ) async {
-    final list = await service.fetchActivitySchedulesOptionalByCampId(campId);
-    return list.map((e) => ActivityScheduleModel.fromJson(e)).toList();
-  }
-
-  @override
-  Future<List<ActivitySchedule>> getActivitySchedulesCoreByCampId(
-    int campId,
-  ) async {
-    final list = await service.fetchActivitySchedulesCoreByCampId(campId);
-    return list.map((e) => ActivityScheduleModel.fromJson(e)).toList();
   }
 }
