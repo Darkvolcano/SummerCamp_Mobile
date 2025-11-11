@@ -44,7 +44,7 @@ class RegistrationApiService {
     Map<String, dynamic>? requestData,
   ) async {
     final res = await client.post(
-      'registration/$registrationId/payment-link',
+      'registration/$registrationId/payment-link?isMobile=true',
       data: requestData,
     );
     final responseData = res.data as Map<String, dynamic>;
