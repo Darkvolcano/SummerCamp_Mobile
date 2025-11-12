@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'firebase_options.dart';
 import 'dart:async';
 
@@ -144,6 +146,12 @@ Future<void> main() async {
   final updateCamperUseCase = UpdateCamper(camperRepo);
   final getCamperByIdUseCase = GetCamperById(camperRepo);
   final getCamperGroupsUseCase = GetCamperGroups(camperRepo);
+  final getCampersByCoreActivityUseCase = GetCampersByCoreActivityId(
+    camperRepo,
+  );
+  final getCampersByOptionalActivityUseCase = GetCampersByOptionalActivityId(
+    camperRepo,
+  );
 
   // Report
   final reportApi = ReportApiService(apiClient);
@@ -210,7 +218,7 @@ Future<void> main() async {
         // BlogProvider need 1 usecases (GetBlogs)
         ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-        // CamperProvider need 5 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups)
+        // CamperProvider need 7 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId)
         ChangeNotifierProvider(
           create: (_) => CamperProvider(
             createCamperUseCase,
@@ -218,6 +226,8 @@ Future<void> main() async {
             updateCamperUseCase,
             getCamperByIdUseCase,
             getCamperGroupsUseCase,
+            getCampersByCoreActivityUseCase,
+            getCampersByOptionalActivityUseCase,
           ),
         ),
 

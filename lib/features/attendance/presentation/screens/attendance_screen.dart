@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
-import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 
-enum AttendanceStatus { absent, late, present }
+enum AttendanceStatus { absent, present }
 
 class AttendanceScreen extends StatefulWidget {
   final List<Camper> campers;
-  final Camp camp;
+  final Schedule schedule;
 
   const AttendanceScreen({
     super.key,
     required this.campers,
-    required this.camp,
+    required this.schedule,
   });
 
   @override
@@ -41,15 +41,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         });
       },
       child: Container(
-        width: 22,
-        height: 22,
+        width: 24,
+        height: 24,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isSelected ? color : Colors.transparent,
           border: Border.all(color: color, width: 2),
         ),
         child: isSelected
-            ? const Icon(Icons.circle, size: 10, color: Colors.white)
+            ? const Icon(Icons.circle, size: 12, color: Colors.white)
             : null,
       ),
     );
@@ -117,16 +117,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: Text(
-                        "L",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
+                    // Center(
+                    //   child: Text(
+                    //     "L",
+                    //     style: TextStyle(
+                    //       color: Colors.white,
+                    //       fontWeight: FontWeight.bold,
+                    //       fontSize: 16,
+                    //     ),
+                    //   ),
+                    // ),
                     Center(
                       child: Text(
                         "P",
@@ -151,7 +151,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 return Container(
                   color: index.isEven
                       ? Colors.grey.shade100
-                      : Colors.transparent, // zebra row
+                      : Colors.transparent,
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 12,
@@ -162,7 +162,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       1: FixedColumnWidth(genderColWidth),
                       2: FixedColumnWidth(statusColWidth),
                       3: FixedColumnWidth(statusColWidth),
-                      4: FixedColumnWidth(statusColWidth),
+                      // 4: FixedColumnWidth(statusColWidth),
                     },
                     children: [
                       TableRow(
@@ -175,7 +175,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             ),
                           ),
                           Text(
-                            camper.gender,
+                            camper.gender == 'Female' ? 'Nữ' : 'Nam',
                             style: const TextStyle(
                               fontFamily: "Quicksand",
                               fontSize: 16,
@@ -188,13 +188,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               Colors.red,
                             ),
                           ),
-                          Center(
-                            child: _buildStatusCell(
-                              camper.camperId,
-                              AttendanceStatus.late,
-                              Colors.orange,
-                            ),
-                          ),
+                          // Center(
+                          //   child: _buildStatusCell(
+                          //     camper.camperId,
+                          //     AttendanceStatus.late,
+                          //     Colors.orange,
+                          //   ),
+                          // ),
                           Center(
                             child: _buildStatusCell(
                               camper.camperId,
@@ -220,9 +220,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           final presentCount = attendance.values
               .where((s) => s == AttendanceStatus.present)
               .length;
-          final lateCount = attendance.values
-              .where((s) => s == AttendanceStatus.late)
-              .length;
+          // final lateCount = attendance.values
+          //     .where((s) => s == AttendanceStatus.late)
+          //     .length;
           final absentCount = attendance.values
               .where((s) => s == AttendanceStatus.absent)
               .length;
@@ -231,7 +231,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             SnackBar(
               backgroundColor: StaffTheme.staffPrimary,
               content: Text(
-                "Kết quả: P=$presentCount, L=$lateCount, A=$absentCount / $total",
+                "Kết quả: P=$presentCount, A=$absentCount / $total",
                 style: const TextStyle(fontFamily: "Quicksand"),
               ),
               duration: const Duration(seconds: 2),

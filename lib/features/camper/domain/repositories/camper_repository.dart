@@ -7,4 +7,6 @@ abstract class CamperRepository {
   Future<void> updateCamper(int camperId, Camper camper);
   Future<Camper> getCamperById(int camperId);
   Future<List<CamperGroup>> getCamperGroups();
+  Future<List<Camper>> getCampersByCoreActivityId(int coreActivityId);
+  Future<List<Camper>> getCampersByOptionalActivityId(int optionalActivityId);
 }

@@ -83,4 +83,24 @@ class CamperRepositoryImpl implements CamperRepository {
     final list = await service.fetchCamperGroups();
     return list.map((e) => CamperGroupModel.fromJson(e)).toList();
   }
+
+  @override
+  Future<List<Camper>> getCampersByCoreActivityId(int coreActivityId) async {
+    final list = await service.fetchCampersByCoreActivity(coreActivityId);
+    return list
+        .map((data) => CamperModel.fromJson(data as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<Camper>> getCampersByOptionalActivityId(
+    int optionalActivityId,
+  ) async {
+    final list = await service.fetchCampersByOptionalActivity(
+      optionalActivityId,
+    );
+    return list
+        .map((data) => CamperModel.fromJson(data as Map<String, dynamic>))
+        .toList();
+  }
 }

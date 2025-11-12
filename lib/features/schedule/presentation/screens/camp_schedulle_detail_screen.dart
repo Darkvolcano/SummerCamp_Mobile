@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
-import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
-import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
-import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:videosdk/videosdk.dart';
+import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class CampScheduleDetailScreen extends StatefulWidget {
   final Schedule schedule;
@@ -22,6 +22,8 @@ class CampScheduleDetailScreen extends StatefulWidget {
 }
 
 class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
+  int? _fetchingActivityId;
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +31,6 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
       if (mounted) {
         final activityProvider = context.read<ActivityProvider>();
         activityProvider.loadActivitySchedulesByCampId(widget.schedule.campId);
-        context.read<CamperProvider>().loadCampers();
       }
     });
   }
@@ -40,77 +41,119 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
       MaterialPageRoute(
         builder: (context) => ILSScreen(
           liveStreamId: roomId,
-          token: token,
+          token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
           mode: Mode.SEND_AND_RECV,
         ),
       ),
     );
   }
 
-  void _showAttendanceOptions(BuildContext context) {
+  void _showAttendanceOptions(
+    BuildContext context,
+    ActivitySchedule activity,
+  ) async {
     final camperProvider = context.read<CamperProvider>();
-    final campers = camperProvider.campers;
     final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
 
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Chọn phương thức điểm danh",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(
-                  Icons.list_alt_rounded,
-                  color: StaffTheme.staffPrimary,
-                ),
-                title: const Text(
-                  "Điểm danh thủ công",
-                  style: TextStyle(fontFamily: "Quicksand"),
-                ),
-                onTap: () {
-                  navigator.pop();
-                  navigator.pushNamed(
-                    AppRoutes.attendance,
-                    arguments: {"camp": widget.schedule, "campers": campers},
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.face_retouching_natural,
-                  color: StaffTheme.staffPrimary,
-                ),
-                title: const Text(
-                  "Điểm danh bằng khuôn mặt",
-                  style: TextStyle(fontFamily: "Quicksand"),
-                ),
-                onTap: () {
-                  navigator.pop();
-                  navigator.pushNamed(
-                    AppRoutes.faceRecognitionAttendance,
-                    arguments: campers,
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
+    setState(() => _fetchingActivityId = activity.activityScheduleId);
+
+    try {
+      List<Camper> campersToShow = [];
+
+      if (activity.activity?.activityType == "Core") {
+        await camperProvider.loadCampersByCoreActivityId(
+          activity.activityScheduleId,
         );
-      },
-    );
+        campersToShow = camperProvider.campersCoreActivity;
+      } else if (activity.activity?.activityType == "Optional") {
+        await camperProvider.loadCampersByOptionalActivityId(
+          activity.activityScheduleId,
+        );
+        campersToShow = camperProvider.campersOptionalActivity;
+      } else {
+        throw Exception(
+          "Loại hoạt động không xác định: ${activity.activity?.activityType}",
+        );
+      }
+
+      if (!mounted) return;
+
+      showModalBottomSheet(
+        context: this.context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Chọn phương thức điểm danh",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: const Icon(
+                    Icons.list_alt_rounded,
+                    color: StaffTheme.staffPrimary,
+                  ),
+                  title: const Text(
+                    "Điểm danh thủ công",
+                    style: TextStyle(fontFamily: "Quicksand"),
+                  ),
+                  onTap: () {
+                    navigator.pop();
+                    navigator.pushNamed(
+                      AppRoutes.attendance,
+                      arguments: {
+                        "schedule": widget.schedule,
+                        "campers": campersToShow,
+                      },
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.face_retouching_natural,
+                    color: StaffTheme.staffPrimary,
+                  ),
+                  title: const Text(
+                    "Điểm danh bằng khuôn mặt",
+                    style: TextStyle(fontFamily: "Quicksand"),
+                  ),
+                  onTap: () {
+                    navigator.pop();
+                    navigator.pushNamed(
+                      AppRoutes.faceRecognitionAttendance,
+                      arguments: campersToShow,
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text("Lỗi tải danh sách camper: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _fetchingActivityId = null);
+      }
+    }
   }
 
   Widget _buildActionButton({
@@ -161,9 +204,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final registrationProvider = context.watch<RegistrationProvider>();
     final activityProvider = context.watch<ActivityProvider>();
-    final camperProvider = context.watch<CamperProvider>();
     final activities = activityProvider.activitySchedules;
     final groupedActivities = groupActivitiesByDate(activities);
 
@@ -171,7 +212,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
     final endDate = DateTime.parse(widget.schedule.endDate);
     final totalDays = endDate.difference(startDate).inDays + 1;
 
-    final isLoading = registrationProvider.loading || camperProvider.loading;
+    final isLoading = activityProvider.loading;
 
     return Scaffold(
       appBar: AppBar(
@@ -186,8 +227,10 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: isLoading && activities.isEmpty
+          ? const Center(
+              child: CircularProgressIndicator(color: StaffTheme.staffPrimary),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -211,7 +254,6 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                       ),
                     ),
                   const SizedBox(height: 16),
-
                   Text(
                     widget.schedule.name,
                     style: textTheme.titleLarge?.copyWith(
@@ -264,7 +306,6 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
                   Text(
                     "Hoạt động",
@@ -275,8 +316,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-
-                  if (registrationProvider.loading)
+                  if (activityProvider.loading && activities.isEmpty)
                     const Center(child: CircularProgressIndicator())
                   else if (activities.isEmpty)
                     const Center(
@@ -308,7 +348,6 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  // "Ngày ${index + 1} - $dateStr",
                                   dateStr,
                                   style: const TextStyle(
                                     fontFamily: "Quicksand",
@@ -325,33 +364,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                                 else
                                   Column(
                                     children: activitiesOfDay.map((act) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 6,
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Icon(
-                                              Icons.access_time,
-                                              size: 18,
-                                              color: StaffTheme.staffAccent,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Expanded(
-                                              child: Text(
-                                                // "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.name} @ ${act.location}",
-                                                "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)} • ${act.activity?.name}",
-                                                style: const TextStyle(
-                                                  fontFamily: "Quicksand",
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                      return _buildActivityTile(context, act);
                                     }).toList(),
                                   ),
                               ],
@@ -360,9 +373,7 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                         );
                       },
                     ),
-
                   const SizedBox(height: 16),
-
                   Text(
                     "Tác vụ nhanh",
                     style: textTheme.titleLarge?.copyWith(
@@ -375,16 +386,11 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
+                    crossAxisCount: 3,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 1.2,
+                    childAspectRatio: 1,
                     children: [
-                      _buildActionButton(
-                        label: "Điểm danh",
-                        icon: Icons.check_circle_outline_rounded,
-                        onTap: () => _showAttendanceOptions(context),
-                      ),
                       _buildActionButton(
                         label: "Tải ảnh lên",
                         icon: Icons.photo_camera_outlined,
@@ -392,7 +398,17 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                           Navigator.pushNamed(
                             context,
                             AppRoutes.uploadPhoto,
-                            arguments: widget.schedule,
+                            arguments: Schedule(
+                              campId: widget.schedule.campId,
+                              name: widget.schedule.name,
+                              description: widget.schedule.description,
+                              place: widget.schedule.place,
+                              startDate: widget.schedule.startDate,
+                              endDate: widget.schedule.endDate,
+                              image: widget.schedule.image,
+                              price: 0,
+                              status: CampStatus.InProgress,
+                            ),
                           );
                         },
                       ),
@@ -414,141 +430,96 @@ class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
                       ),
                     ],
                   ),
-
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: ElevatedButton.icon(
-                  //         style: ElevatedButton.styleFrom(
-                  //           backgroundColor: StaffTheme.staffAccent,
-                  //           foregroundColor: Colors.white,
-                  //           padding: const EdgeInsets.symmetric(vertical: 14),
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //         ),
-                  //         onPressed: () {
-                  //           Navigator.pushNamed(
-                  //             context,
-                  //             AppRoutes.attendance,
-                  //             arguments: {
-                  //               "camp": widget.camp,
-                  //               "campers": campers,
-                  //             },
-                  //           );
-                  //         },
-                  //         icon: const Icon(Icons.check_circle),
-                  //         label: const Text(
-                  //           "Điểm danh",
-                  //           style: TextStyle(
-                  //             fontFamily: "Quicksand",
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 12),
-                  //     Expanded(
-                  //       child: ElevatedButton.icon(
-                  //         style: ElevatedButton.styleFrom(
-                  //           backgroundColor: Colors.blue,
-                  //           foregroundColor: Colors.white,
-                  //           padding: const EdgeInsets.symmetric(vertical: 14),
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //         ),
-                  //         onPressed: () {
-                  //           Navigator.pushNamed(
-                  //             context,
-                  //             AppRoutes.uploadPhoto,
-                  //             arguments: widget.camp,
-                  //           );
-                  //         },
-                  //         icon: const Icon(Icons.photo_camera),
-                  //         label: const Text(
-                  //           "Photo",
-                  //           style: TextStyle(
-                  //             fontFamily: "Quicksand",
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-
-                  // const SizedBox(height: 16),
-
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: ElevatedButton.icon(
-                  //         style: ElevatedButton.styleFrom(
-                  //           backgroundColor: StaffTheme.staffAccent,
-                  //           foregroundColor: Colors.white,
-                  //           padding: const EdgeInsets.symmetric(vertical: 14),
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //         ),
-                  //         // onPressed: () {
-                  //         //   Navigator.pushNamed(context, AppRoutes.joinLivestream);
-                  //         // },
-                  //         // onPressed: () => onCreateButtonPressed(context),
-                  //         onPressed: () {
-                  //           onJoinLivestreamPressed(
-                  //             context,
-                  //             // camp.roomId,
-                  //             'ic99-z3ap-2yns',
-                  //             Mode.SEND_AND_RECV,
-                  //           );
-                  //         },
-                  //         icon: const Icon(Icons.check_circle),
-                  //         label: const Text(
-                  //           "Livestream",
-                  //           style: TextStyle(
-                  //             fontFamily: "Quicksand",
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-
-                  //     const SizedBox(width: 12),
-
-                  //     Expanded(
-                  //       child: ElevatedButton.icon(
-                  //         style: ElevatedButton.styleFrom(
-                  //           backgroundColor: Colors.blue,
-                  //           foregroundColor: Colors.white,
-                  //           padding: const EdgeInsets.symmetric(vertical: 14),
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //         ),
-                  //         onPressed: () {
-                  //           Navigator.pushNamed(
-                  //             context,
-                  //             AppRoutes.faceRecognitionAttendance,
-                  //             arguments: campers,
-                  //           );
-                  //         },
-                  //         icon: const Icon(Icons.photo_camera),
-                  //         label: const Text(
-                  //           "Điểm danh khuôn mặt",
-                  //           style: TextStyle(
-                  //             fontFamily: "Quicksand",
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildActivityTile(BuildContext context, ActivitySchedule act) {
+    bool isLive = false;
+    if (act.isLivestream) {
+      final now = DateTime.now();
+      isLive = now.isAfter(act.startTime) && now.isBefore(act.endTime);
+    }
+
+    final bool isThisButtonLoading =
+        _fetchingActivityId == act.activityScheduleId;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.access_time, size: 18, color: StaffTheme.staffAccent),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${DateFormatter.formatTime(act.startTime)} - ${DateFormatter.formatTime(act.endTime)}",
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 13,
+                    color: Colors.black54,
+                  ),
+                ),
+                Text(
+                  "${act.activity?.name ?? 'N/A'} @ ${act.locationId ?? 'N/A'}",
+                  style: const TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (act.isLivestream)
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isLive ? Colors.red : Colors.grey.shade400,
+                foregroundColor: Colors.white,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              onPressed: isLive
+                  ? () => onJoinLivestreamPressed(
+                      context,
+                      act.roomId!,
+                      Mode.SEND_AND_RECV,
+                    )
+                  : null,
+              child: const Icon(Icons.videocam, size: 20),
+            )
+          else
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: StaffTheme.staffPrimary.withValues(alpha: 0.1),
+                foregroundColor: StaffTheme.staffPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+              ),
+              onPressed: _fetchingActivityId != null
+                  ? null
+                  : () => _showAttendanceOptions(context, act),
+              child: isThisButtonLoading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check_circle_outline, size: 20),
+            ),
+        ],
+      ),
     );
   }
 }

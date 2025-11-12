@@ -4,7 +4,9 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 
@@ -14,6 +16,8 @@ class CamperProvider with ChangeNotifier {
   final UpdateCamper updateCamperUseCase;
   final GetCamperById getCamperByIdUseCase;
   final GetCamperGroups getCamperGroupsUseCase;
+  final GetCampersByCoreActivityId getCampersByCoreActivityIdUseCase;
+  final GetCampersByOptionalActivityId getCampersByOptionalActivityIdUseCase;
 
   CamperProvider(
     this.createCamperUseCase,
@@ -21,10 +25,18 @@ class CamperProvider with ChangeNotifier {
     this.updateCamperUseCase,
     this.getCamperByIdUseCase,
     this.getCamperGroupsUseCase,
+    this.getCampersByCoreActivityIdUseCase,
+    this.getCampersByOptionalActivityIdUseCase,
   );
 
   List<Camper> _campers = [];
   List<Camper> get campers => _campers;
+
+  List<Camper> _campersCoreActivity = [];
+  List<Camper> get campersCoreActivity => _campersCoreActivity;
+
+  List<Camper> _campersOptionalActivity = [];
+  List<Camper> get campersOptionalActivity => _campersOptionalActivity;
 
   Camper? _selectedCamper;
   Camper? get selectedCamper => _selectedCamper;
@@ -124,6 +136,30 @@ class CamperProvider with ChangeNotifier {
     notifyListeners();
 
     _camperGroups = await getCamperGroupsUseCase();
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadCampersByCoreActivityId(int coreActivityId) async {
+    _loading = true;
+    notifyListeners();
+
+    _campersCoreActivity = await getCampersByCoreActivityIdUseCase(
+      coreActivityId,
+    );
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadCampersByOptionalActivityId(int optionalActivityId) async {
+    _loading = true;
+    notifyListeners();
+
+    _campersOptionalActivity = await getCampersByOptionalActivityIdUseCase(
+      optionalActivityId,
+    );
 
     _loading = false;
     notifyListeners();

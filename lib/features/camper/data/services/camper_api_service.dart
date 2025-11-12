@@ -11,6 +11,22 @@ class CamperApiService {
     return res.data as List;
   }
 
+  Future<List<dynamic>> fetchCampersByCoreActivity(int coreActivityId) async {
+    final res = await client.get(
+      'Camper/coreActivities/$coreActivityId/campers',
+    );
+    return res.data as List<dynamic>;
+  }
+
+  Future<List<dynamic>> fetchCampersByOptionalActivity(
+    int optionalActivityId,
+  ) async {
+    final res = await client.get(
+      'Camper/optionalActivities/$optionalActivityId/campers',
+    );
+    return res.data as List<dynamic>;
+  }
+
   Future<Map<String, dynamic>> createCamper({
     required Map<String, dynamic> data,
   }) async {

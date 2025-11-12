@@ -10,12 +10,12 @@ import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
-import 'package:summercamp/features/schedule/presentation/screens/attendance_screen.dart';
+import 'package:summercamp/features/attendance/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
 import 'package:summercamp/features/schedule/presentation/screens/camp_schedule_screen.dart';
 import 'package:summercamp/features/schedule/presentation/screens/camp_schedulle_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_search_screen.dart';
-import 'package:summercamp/features/schedule/presentation/screens/face_recognition_attendance_screen.dart';
+import 'package:summercamp/features/attendance/presentation/screens/face_recognition_attendance_screen.dart';
 import 'package:summercamp/features/album/presentation/screens/upload_photo_screen.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/presentation/screens/camper_create_screen.dart';
@@ -151,10 +151,11 @@ class AppRoutes {
 
       case attendance:
         final args = settings.arguments as Map<String, dynamic>;
-        final camp = args["camp"] as Camp;
+        final schedule = args["schedule"] as Schedule;
         final campers = args["campers"] as List<Camper>;
         return MaterialPageRoute(
-          builder: (_) => AttendanceScreen(campers: campers, camp: camp),
+          builder: (_) =>
+              AttendanceScreen(campers: campers, schedule: schedule),
         );
 
       // Parent, Staff can use this screen
