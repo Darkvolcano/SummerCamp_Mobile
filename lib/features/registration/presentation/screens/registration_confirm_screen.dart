@@ -13,6 +13,7 @@ class RegistrationConfirmScreen extends StatefulWidget {
   final Camp camp;
   final List<Camper> campers;
   final int paymentId;
+  final int? appliedPromotionId;
   final String? promotionCode;
   final String? note;
 
@@ -21,6 +22,7 @@ class RegistrationConfirmScreen extends StatefulWidget {
     required this.camp,
     required this.campers,
     required this.paymentId,
+    this.appliedPromotionId,
     this.promotionCode,
     this.note,
   });
@@ -45,7 +47,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
       await provider.createRegistration(
         campId: widget.camp.campId,
         campers: widget.campers,
-        appliedPromotionId: widget.promotionCode,
+        appliedPromotionId: widget.appliedPromotionId,
         note: widget.note,
       );
 
@@ -376,10 +378,9 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                // Vô hiệu hóa nút khi đang loading
                 onPressed: _isLoading ? null : _handleRegistration,
                 icon: _isLoading
-                    ? Container() // Ẩn icon khi đang loading
+                    ? Container()
                     : const Icon(Icons.check_circle, size: 22),
                 label: _isLoading
                     ? const SizedBox(
@@ -391,7 +392,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                         ),
                       )
                     : Text(
-                        "Xác nhận & Thanh toán",
+                        "Xác nhận thông tin",
                         style: textTheme.titleMedium?.copyWith(
                           fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,

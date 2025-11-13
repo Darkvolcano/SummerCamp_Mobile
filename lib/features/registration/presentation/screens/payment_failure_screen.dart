@@ -11,7 +11,7 @@ class PaymentFailedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.summerBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

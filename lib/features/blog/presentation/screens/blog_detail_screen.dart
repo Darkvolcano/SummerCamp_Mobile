@@ -42,24 +42,6 @@ class BlogDetailScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Row(
-                //   children: [
-                //     Icon(
-                //       blog.isActive ? Icons.check_circle : Icons.cancel,
-                //       color: blog.isActive ? Colors.green : Colors.red,
-                //       size: 18,
-                //     ),
-                //     const SizedBox(width: 6),
-                //     Text(
-                //       blog.isActive ? "Đang hiển thị" : "Đã ẩn",
-                //       style: textTheme.bodyMedium?.copyWith(
-                //         fontFamily: "Quicksand",
-                //         color: blog.isActive ? Colors.green : Colors.red,
-                //         fontWeight: FontWeight.w600,
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Text(
                   "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
                   style: textTheme.bodySmall?.copyWith(

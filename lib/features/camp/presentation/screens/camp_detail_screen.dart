@@ -9,10 +9,7 @@ class CampDetailScreen extends StatelessWidget {
   final Camp camp;
   const CampDetailScreen({super.key, required this.camp});
 
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
+  Widget _buildPriceDetail(BuildContext context) {
     if (camp.promotion == null) {
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -36,14 +33,46 @@ class CampDetailScreen extends StatelessWidget {
     }
 
     final double price = camp.price;
-    final double percent = camp.promotion!.percent.toDouble();
-    final double maxDiscount = camp.promotion!.maxDiscountAmount.toDouble();
+    final double percent = (camp.promotion!.percent as num).toDouble();
+    final double maxDiscount = (camp.promotion!.maxDiscountAmount as num)
+        .toDouble();
 
     double discount = price * (percent / 100);
     if (discount > maxDiscount) {
       discount = maxDiscount;
     }
     final double newPrice = price - discount;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "${PriceFormatter.format(price)}/người",
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            color: Colors.grey,
+            fontSize: 14,
+            decoration: TextDecoration.lineThrough,
+            decorationColor: Colors.grey,
+          ),
+        ),
+        Text(
+          "${PriceFormatter.format(newPrice)}/người",
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppTheme.summerAccent,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       bottomNavigationBar: Container(
@@ -61,40 +90,8 @@ class CampDetailScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Giá",
-                  style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${PriceFormatter.format(price)}/người",
-                      style: const TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.grey,
-                        fontSize: 14,
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                    Text(
-                      "${PriceFormatter.format(newPrice)}/người",
-                      style: const TextStyle(
-                        fontFamily: "Quicksand",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppTheme.summerAccent,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            _buildPriceDetail(context),
+
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

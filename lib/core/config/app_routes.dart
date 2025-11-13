@@ -75,8 +75,9 @@ class AppRoutes {
   static const String uploadPhoto = '/upload-photo';
   static const String registrationSuccess = '/registration-success';
   static const String registrationFailure = '/registration-failure';
-  static const String paymentSuccess = '/payment/success';
-  static const String paymentFailure = '/payment/failure';
+  static const String paymentHost = 'payment';
+  static const String paymentSuccess = '/success';
+  static const String paymentFailure = '/failure';
   static const String album = '/album'; // hiện tại chưa có
   static const String feedbackForm = '/feedback-form';
   static const String faceRecognitionAttendance =
@@ -84,25 +85,22 @@ class AppRoutes {
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // final role = settings.arguments;
-
     final Uri uri = Uri.parse(settings.name ?? '');
 
-    if (uri.path.startsWith('/payment/')) {
+    if (uri.path == paymentSuccess) {
       final orderCode = uri.queryParameters['orderCode'] ?? 'N/A';
+      return MaterialPageRoute(
+        builder: (_) => PaymentSuccessScreen(orderCode: orderCode),
+        settings: settings,
+      );
+    }
 
-      if (uri.path == paymentSuccess) {
-        return MaterialPageRoute(
-          builder: (_) => PaymentSuccessScreen(orderCode: orderCode),
-          settings: settings, // Chuyển tiếp settings
-        );
-      }
-      if (uri.path == paymentFailure) {
-        return MaterialPageRoute(
-          builder: (_) => PaymentFailedScreen(orderCode: orderCode),
-          settings: settings, // Chuyển tiếp settings
-        );
-      }
+    if (uri.path == paymentFailure) {
+      final orderCode = uri.queryParameters['orderCode'] ?? 'N/A';
+      return MaterialPageRoute(
+        builder: (_) => PaymentFailedScreen(orderCode: orderCode),
+        settings: settings,
+      );
     }
 
     switch (settings.name) {

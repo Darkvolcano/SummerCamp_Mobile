@@ -255,28 +255,6 @@ Future<void> main() async {
   );
 }
 
-// class SummerCampApp extends StatelessWidget {
-//   const SummerCampApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Summer Camp',
-//       theme: AppTheme.lightTheme,
-//       darkTheme: AppTheme.darkTheme,
-//       debugShowCheckedModeBanner: false,
-//       initialRoute: AppRoutes.login,
-//       onGenerateRoute: AppRoutes.generateRoute,
-
-//       localizationsDelegates: const [
-//         GlobalMaterialLocalizations.delegate,
-//         GlobalWidgetsLocalizations.delegate,
-//         GlobalCupertinoLocalizations.delegate,
-//       ],
-//       supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
-//     );
-//   }
-// }
 class SummerCampApp extends StatefulWidget {
   const SummerCampApp({super.key});
 

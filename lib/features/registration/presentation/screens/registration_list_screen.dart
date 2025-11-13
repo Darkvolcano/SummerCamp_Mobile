@@ -35,7 +35,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
     // _TabInfo('Chờ hoàn thành', [RegistrationStatus.PendingCompletion]),
     // _TabInfo('Chờ phân nhóm', [RegistrationStatus.PendingAssignGroup]),
     _TabInfo('Chờ thanh toán', [RegistrationStatus.PendingPayment]),
-    // _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
+    _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
     _TabInfo('Hoàn thành', [RegistrationStatus.Completed]),
     _TabInfo('Đã hủy', [RegistrationStatus.Canceled]),
   ];
@@ -122,6 +122,21 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
           ),
         ),
         backgroundColor: AppTheme.summerPrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+                arguments: 4,
+              );
+            }
+          },
+        ),
       ),
       body: Column(
         children: [

@@ -32,8 +32,8 @@ class RegistrationModel extends Registration {
         return RegistrationStatus.Approved;
       case 'PendingPayment':
         return RegistrationStatus.PendingPayment;
-      // case 'Confirmed':
-      //   return RegistrationStatus.Confirmed;
+      case 'Confirmed':
+        return RegistrationStatus.Confirmed;
       case 'Completed':
         return RegistrationStatus.Completed;
       case 'Canceled':

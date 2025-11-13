@@ -87,7 +87,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
               itemBuilder: (_, idx) {
                 if (idx == provider.messages.length) {
                   if (provider.isLoading && provider.messages.isNotEmpty) {
-                    // return const AIChatBubble(text: "...", isMe: false);
                     return Align(
                       alignment: Alignment.centerLeft,
                       child: Container(

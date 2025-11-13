@@ -34,7 +34,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
   bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
 
-  bool _isUploading = false; // Loading cho upload ảnh
+  bool _isUploading = false;
   String? _avatarUrl;
 
   @override
@@ -57,7 +57,6 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
       text: widget.camper.healthRecord?.note ?? "",
     );
 
-    // gender = widget.camper.gender;
     String apiGender = widget.camper.gender.toLowerCase();
     if (apiGender == 'male' || apiGender == 'nam') {
       gender = "Male";

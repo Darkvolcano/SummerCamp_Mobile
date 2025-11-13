@@ -195,15 +195,25 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         ),
         backgroundColor: AppTheme.summerPrimary,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.registrationList,
+              (route) => route.isFirst,
+            );
+          },
+        ),
       ),
       body: Builder(
         builder: (context) {
           if (registrationProvider.loading && registration == null) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (registrationProvider.error != null && registration == null) {
-            return Center(child: Text("Lỗi: ${registrationProvider.error}"));
-          }
+          // if (registrationProvider.error != null && registration == null) {
+          //   return Center(child: Text("Lỗi: ${registrationProvider.error}"));
+          // }
           if (registration == null) {
             return const Center(
               child: Text("Không tìm thấy thông tin đăng ký."),
@@ -303,7 +313,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
           const SizedBox(height: 24),
 
-          if (registration.status == RegistrationStatus.Completed
+          if (registration.status == RegistrationStatus.Completed ||
+              registration.status == RegistrationStatus.Confirmed
           // ||    registration.status == RegistrationStatus.PendingCompletion ||
           //     registration.status == RegistrationStatus.PendingAssignGroup
           )
@@ -728,11 +739,11 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       //   textColor = Colors.indigo.shade800;
       //   text = "Chờ phân nhóm";
       //   break;
-      // case RegistrationStatus.Confirmed:
-      //   backgroundColor = Colors.teal.shade100;
-      //   textColor = Colors.teal.shade800;
-      //   text = "Đã xác nhận";
-      //   break;
+      case RegistrationStatus.Confirmed:
+        backgroundColor = Colors.teal.shade100;
+        textColor = Colors.teal.shade800;
+        text = "Đã xác nhận";
+        break;
       case RegistrationStatus.Completed:
         backgroundColor = Colors.blue.shade100;
         textColor = Colors.blue.shade800;

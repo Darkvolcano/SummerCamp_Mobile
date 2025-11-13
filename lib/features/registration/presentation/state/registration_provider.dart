@@ -58,7 +58,7 @@ class RegistrationProvider with ChangeNotifier {
   Future<void> createRegistration({
     required int campId,
     required List<Camper> campers,
-    String? appliedPromotionId,
+    int? appliedPromotionId,
     String? note,
   }) async {
     _loading = true;

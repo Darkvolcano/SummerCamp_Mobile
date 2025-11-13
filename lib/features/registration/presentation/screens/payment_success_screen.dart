@@ -12,7 +12,7 @@ class PaymentSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.summerBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -24,10 +24,12 @@ class PaymentSuccessScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Lottie.asset(
-                'assets/mock/register_successfully_anim.json',
+              SizedBox(
                 height: 200,
-                repeat: false,
+                child: Lottie.asset(
+                  "assets/mock/register_successfully_anim.json",
+                  fit: BoxFit.contain,
+                ),
               ),
               const SizedBox(height: 24),
               Text(
@@ -40,7 +42,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "Mã đơn hàng của bạn:",
+                "Mã đơn đăng ký:",
                 textAlign: TextAlign.center,
                 style: textTheme.bodyLarge?.copyWith(
                   fontFamily: "Quicksand",

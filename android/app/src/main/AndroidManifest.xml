@@ -55,7 +55,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="summercamp" />
+                <data android:scheme="summercamp" android:host="payment"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

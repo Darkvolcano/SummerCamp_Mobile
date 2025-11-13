@@ -43,7 +43,7 @@ class _RegistrationSuccessScreenState extends State<RegistrationSuccessScreen>
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.summerBackground,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

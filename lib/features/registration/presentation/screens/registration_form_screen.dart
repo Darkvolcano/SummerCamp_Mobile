@@ -23,6 +23,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   int _selectedPaymentId = 1;
   final _noteController = TextEditingController();
   final List<Camper> _selectedCampers = [];
+  int? _appliedPromotionId;
+  String? _appliedPromotionCode;
 
   @override
   void initState() {
@@ -30,6 +32,18 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CamperProvider>().loadCampers();
     });
+
+    if (widget.camp.promotion != null) {
+      _appliedPromotionCode = widget.camp.promotion!.name; // Hiển thị tên KM
+      _appliedPromotionId = widget.camp.promotion!.id; // Lưu ID
+    }
+  }
+
+  @override
+  void dispose() {
+    _promotionCodeController.dispose();
+    _noteController.dispose();
+    super.dispose();
   }
 
   @override
@@ -314,25 +328,80 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
                   const SizedBox(height: 20),
 
-                  TextField(
-                    controller: _promotionCodeController,
-                    style: TextStyle(
-                      color: AppTheme.summerPrimary,
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.w600,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: "Mã khuyến mãi",
-                      labelStyle: TextStyle(
-                        fontFamily: 'Quicksand',
-                        fontWeight: FontWeight.bold,
+                  // TextField(
+                  //   controller: _promotionCodeController,
+                  //   style: TextStyle(
+                  //     color: AppTheme.summerPrimary,
+                  //     fontFamily: "Quicksand",
+                  //     fontWeight: FontWeight.w600,
+                  //   ),
+                  //   decoration: InputDecoration(
+                  //     labelText: "Mã khuyến mãi",
+                  //     labelStyle: TextStyle(
+                  //       fontFamily: 'Quicksand',
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //     prefixIcon: const Icon(Icons.discount),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //   ),
+                  // ),
+                  if (!hasPromotion)
+                    TextField(
+                      controller: TextEditingController(
+                        text: _appliedPromotionCode ?? "",
                       ),
-                      prefixIcon: const Icon(Icons.discount),
-                      border: OutlineInputBorder(
+                      readOnly: true,
+                      style: TextStyle(
+                        color: AppTheme.summerPrimary,
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: "Mã khuyến mãi",
+                        labelStyle: const TextStyle(
+                          fontFamily: 'Quicksand',
+                          fontWeight: FontWeight.bold,
+                        ),
+                        prefixIcon: const Icon(Icons.discount),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: _appliedPromotionCode != null,
+                        fillColor: _appliedPromotionCode != null
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.white,
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.discount, color: Colors.green.shade800),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "Đã áp dụng: ${_appliedPromotionCode ?? ''}",
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green.shade900,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
 
                   const SizedBox(height: 16),
                   TextField(
@@ -428,6 +497,15 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           return;
                         }
 
+                        String? finalPromotionCode;
+
+                        if (hasPromotion) {
+                          finalPromotionCode = _appliedPromotionCode;
+                        } else if (_promotionCodeController.text.isNotEmpty) {
+                          finalPromotionCode = _promotionCodeController.text;
+                          _appliedPromotionId = 0;
+                        }
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -435,10 +513,12 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                               camp: camp,
                               campers: _selectedCampers,
                               paymentId: _selectedPaymentId,
-                              promotionCode:
-                                  _promotionCodeController.text.isEmpty
-                                  ? null
-                                  : _promotionCodeController.text,
+                              // promotionCode:
+                              //     _promotionCodeController.text.isEmpty
+                              //     ? null
+                              //     : _promotionCodeController.text,
+                              appliedPromotionId: _appliedPromotionId,
+                              promotionCode: finalPromotionCode,
                               note: _noteController.text.isEmpty
                                   ? null
                                   : _noteController.text,

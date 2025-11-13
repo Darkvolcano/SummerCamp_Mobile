@@ -19,7 +19,7 @@ class RegistrationApiService {
   Future<void> registerCamp({
     required int campId,
     required List<int> camperIds,
-    String? appliedPromotionId,
+    int? appliedPromotionId,
     String? note,
   }) async {
     try {

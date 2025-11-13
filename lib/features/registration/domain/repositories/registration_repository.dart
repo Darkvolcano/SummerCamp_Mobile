@@ -6,7 +6,7 @@ abstract class RegistrationRepository {
   Future<void> register({
     required int campId,
     required List<int> camperIds,
-    String? appliedPromotionId,
+    int? appliedPromotionId,
     String? note,
   });
   Future<String> registerPaymentLink({

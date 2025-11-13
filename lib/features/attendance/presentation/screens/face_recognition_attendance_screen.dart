@@ -52,10 +52,6 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
 
     if (!mounted) return;
 
-    // replace this with actual face recognition API call
-    // Send _capturedImage and widget.campers (with avatars) to API
-    // API should compare captured image with camper avatars
-
     // Mock: Simulate matching with first camper who hasn't been marked yet
     final unmarkedCampers = widget.campers.where((camper) {
       return !_attendanceList.any((att) => att['camperId'] == camper.camperId);
@@ -90,97 +86,8 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
       _attendanceList.add(result);
     });
 
-    // Show success dialog
     _showRecognitionResultDialog(result);
   }
-
-  //   Future<void> _processFaceRecognition() async {
-  //   if (!mounted) return;
-
-  //   try {
-  //     // Chuẩn bị data gửi lên API
-  //     final request = {
-  //       'capturedImage': _capturedImage, // Ảnh vừa chụp
-  //       'camperAvatars': widget.campers.map((camper) => {
-  //         'camperId': camper.camperId,
-  //         'name': camper.fullName,
-  //         'avatarUrl': camper.avatar,
-  //       }).toList(),
-  //     };
-
-  //     // Call Face Recognition API
-  //     final response = await yourFaceRecognitionAPI.comparefaces(request);
-
-  //     // API trả về camper phù hợp nhất
-  //     if (response.success && response.match != null) {
-  //       final matchedCamperId = response.match.camperId;
-  //       final confidence = response.match.confidence;
-
-  //       // Tìm camper từ danh sách
-  //       final matchedCamper = widget.campers.firstWhere(
-  //         (c) => c.camperId == matchedCamperId,
-  //       );
-
-  //       // Check đã điểm danh chưa
-  //       if (_attendanceList.any((att) => att['camperId'] == matchedCamperId)) {
-  //         _showAlreadyMarkedDialog(matchedCamper.fullName);
-  //         return;
-  //       }
-
-  //       // Thêm vào danh sách điểm danh
-  //       final result = {
-  //         'camperId': matchedCamper.camperId,
-  //         'name': matchedCamper.fullName,
-  //         'avatar': matchedCamper.avatar,
-  //         'confidence': confidence,
-  //         'status': 'Có mặt',
-  //         'time': _getCurrentTime(),
-  //         'timestamp': DateTime.now(),
-  //       };
-
-  //       setState(() {
-  //         _isProcessing = false;
-  //         _attendanceList.add(result);
-  //       });
-
-  //       _showRecognitionResultDialog(result);
-  //     } else {
-  //       setState(() => _isProcessing = false);
-  //       _showNoMatchDialog();
-  //     }
-  //   } catch (e) {
-  //     setState(() => _isProcessing = false);
-  //     _showErrorDialog(e.toString());
-  //   }
-  // }
-
-  // void _showAlreadyMarkedDialog(String name) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: Row(
-  //         children: [
-  //           const Icon(Icons.info, color: Colors.blue, size: 32),
-  //           const SizedBox(width: 12),
-  //           const Text('Đã điểm danh', style: TextStyle(fontFamily: "Quicksand")),
-  //         ],
-  //       ),
-  //       content: Text(
-  //         '$name đã được điểm danh rồi!',
-  //         style: const TextStyle(fontFamily: "Quicksand"),
-  //       ),
-  //       actions: [
-  //         ElevatedButton(
-  //           onPressed: () {
-  //             Navigator.pop(context);
-  //             setState(() => _capturedImage = null);
-  //           },
-  //           child: const Text('OK'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   void _showRecognitionResultDialog(Map<String, dynamic> result) {
     showDialog(

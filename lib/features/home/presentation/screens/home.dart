@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+  bool _didReadArgs = false;
 
   final List<Widget> _pages = [
     const HomeContent(),
@@ -22,6 +23,21 @@ class _HomeState extends State<Home> {
     const _RouteWrapper(AppRoutes.blogList),
     const _RouteWrapper(AppRoutes.profile),
   ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_didReadArgs) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int) {
+        if (args >= 0 && args < _pages.length && args != 2) {
+          _selectedIndex = args;
+        }
+      }
+      _didReadArgs = true;
+    }
+  }
 
   void onItemTapped(int index) {
     if (index == 2) {

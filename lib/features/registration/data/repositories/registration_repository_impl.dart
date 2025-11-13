@@ -19,7 +19,7 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
   Future<void> register({
     required int campId,
     required List<int> camperIds,
-    String? appliedPromotionId,
+    int? appliedPromotionId,
     String? note,
   }) async {
     await service.registerCamp(
