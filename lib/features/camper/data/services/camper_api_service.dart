@@ -7,7 +7,7 @@ class CamperApiService {
   CamperApiService(this.client);
 
   Future<List<dynamic>> fetchCampers() async {
-    final res = await client.get('Camper');
+    final res = await client.get('Camper/my-campers');
     return res.data as List;
   }
 
