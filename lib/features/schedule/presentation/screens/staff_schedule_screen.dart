@@ -6,8 +6,8 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 
-class CampScheduleScreen extends StatelessWidget {
-  const CampScheduleScreen({super.key});
+class StaffScheduleScreen extends StatelessWidget {
+  const StaffScheduleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class CampScheduleScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        AppRoutes.campScheduleDetail,
+                        AppRoutes.staffScheduleDetail,
                         arguments: schedule,
                       );
                     },

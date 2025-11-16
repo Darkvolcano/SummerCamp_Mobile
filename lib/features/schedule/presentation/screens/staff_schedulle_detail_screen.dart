@@ -12,16 +12,16 @@ import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
-class CampScheduleDetailScreen extends StatefulWidget {
+class StaffScheduleDetailScreen extends StatefulWidget {
   final Schedule schedule;
-  const CampScheduleDetailScreen({super.key, required this.schedule});
+  const StaffScheduleDetailScreen({super.key, required this.schedule});
 
   @override
-  State<CampScheduleDetailScreen> createState() =>
-      _CampScheduleDetailScreenState();
+  State<StaffScheduleDetailScreen> createState() =>
+      _StaffScheduleDetailScreenState();
 }
 
-class _CampScheduleDetailScreenState extends State<CampScheduleDetailScreen> {
+class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
   int? _fetchingActivityId;
 
   @override

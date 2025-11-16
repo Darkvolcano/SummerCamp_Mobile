@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
-import 'package:summercamp/core/widgets/custom_bottom_nav_bar.dart';
+import 'package:summercamp/core/widgets/parent_bottom_nav_bar.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class Home extends StatefulWidget {

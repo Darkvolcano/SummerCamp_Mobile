@@ -9,11 +9,15 @@ import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/home/presentation/screens/home_driver.dart';
+import 'package:summercamp/features/profile/presentation/screens/profile_driver_screen.dart';
+import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/attendance/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
-import 'package:summercamp/features/schedule/presentation/screens/camp_schedule_screen.dart';
-import 'package:summercamp/features/schedule/presentation/screens/camp_schedulle_detail_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/driver_schedule_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/staff_schedule_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/staff_schedulle_detail_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_search_screen.dart';
 import 'package:summercamp/features/attendance/presentation/screens/face_recognition_attendance_screen.dart';
 import 'package:summercamp/features/album/presentation/screens/upload_photo_screen.dart';
@@ -57,8 +61,8 @@ class AppRoutes {
   static const String registrationForm = '/registration-form';
   static const String home = '/home';
   static const String staffHome = '/staff-home';
-  static const String campSchedule = '/camp-schedule';
-  static const String campScheduleDetail = '/camp-schedule-detail';
+  static const String staffSchedule = '/staff-schedule';
+  static const String staffScheduleDetail = '/staff-schedule-detail';
   static const String attendance = '/attendance';
   static const String campDetail = '/camp-detail';
   static const String camperList = '/camper-list';
@@ -70,6 +74,7 @@ class AppRoutes {
   static const String blogList = '/blog-list';
   static const String blogDetail = '/blog-detail';
   static const String profile = '/profile';
+  static const String staffProfile = '/staff-profile';
   static const String campList = '/camp-list';
   static const String registrationList = '/registration-list';
   static const String uploadPhoto = '/upload-photo';
@@ -82,6 +87,11 @@ class AppRoutes {
   static const String feedbackForm = '/feedback-form';
   static const String faceRecognitionAttendance =
       '/face-recognition-attendance';
+  static const String driverHome = '/driver-home';
+  static const String driverSchedule = '/driver-schedule';
+  static const String driverScheduleDetail =
+      '/driver-schedule-detail'; // hiện tại chưa có
+  static const String driverProfile = '/driver-profile';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -135,17 +145,23 @@ class AppRoutes {
       case staffHome:
         return MaterialPageRoute(builder: (_) => const StaffHome());
 
+      case driverHome:
+        return MaterialPageRoute(builder: (_) => const DriverHome());
+
       case joinLivestream:
         return MaterialPageRoute(builder: (_) => JoinScreen());
 
-      case campSchedule:
-        return MaterialPageRoute(builder: (_) => const CampScheduleScreen());
+      case staffSchedule:
+        return MaterialPageRoute(builder: (_) => const StaffScheduleScreen());
 
-      case campScheduleDetail:
+      case staffScheduleDetail:
         final schedule = settings.arguments as Schedule;
         return MaterialPageRoute(
-          builder: (_) => CampScheduleDetailScreen(schedule: schedule),
+          builder: (_) => StaffScheduleDetailScreen(schedule: schedule),
         );
+
+      case driverSchedule:
+        return MaterialPageRoute(builder: (_) => const DriverScheduleScreen());
 
       case attendance:
         final args = settings.arguments as Map<String, dynamic>;
@@ -156,18 +172,20 @@ class AppRoutes {
               AttendanceScreen(campers: campers, schedule: schedule),
         );
 
-      // Parent, Staff can use this screen
       case profile:
         return MaterialPageRoute(builder: (_) => ProfileScreen());
+
+      case staffProfile:
+        return MaterialPageRoute(builder: (_) => const StaffProfileScreen());
+
+      case driverProfile:
+        return MaterialPageRoute(builder: (_) => const DriverProfileScreen());
 
       case chatAI:
         return MaterialPageRoute(builder: (_) => AIChatScreen());
 
       case campList:
-        // if (role == "Parent" || role == "Staff") {
         return MaterialPageRoute(builder: (_) => CampListScreen());
-      // }
-      // return _unauthorizedRoute();
 
       case blogList:
         // if (role == "Parent" || role == "Staff") {
