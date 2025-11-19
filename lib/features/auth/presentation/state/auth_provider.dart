@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
@@ -24,6 +25,7 @@ class AuthProvider with ChangeNotifier {
   final ResendOtp resendOTPUseCase;
   final ForgotPassword forgotPasswordUseCase;
   final ResetPassword resetPasswordUseCase;
+  final DriverRegister driverRegisterUseCase;
 
   AuthProvider(
     this.loginUserUseCase,
@@ -36,6 +38,7 @@ class AuthProvider with ChangeNotifier {
     this.resendOTPUseCase,
     this.forgotPasswordUseCase,
     this.resetPasswordUseCase,
+    this.driverRegisterUseCase,
   );
 
   List<User> _users = [];
@@ -205,6 +208,42 @@ class AuthProvider with ChangeNotifier {
       rethrow;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> driverRegister({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dob,
+    required String licenseNumber,
+    required String licenseExpiry,
+    required String driverAddress,
+  }) async {
+    _setLoading(true);
+    _error = null;
+    notifyListeners();
+
+    try {
+      await driverRegisterUseCase(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        dob: dob,
+        licenseNumber: licenseNumber,
+        licenseExpiry: licenseExpiry,
+        driverAddress: driverAddress,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
     }
   }
 

@@ -20,4 +20,15 @@ abstract class UserRepository {
   Future<String> forgotPassword(String email);
   Future<String> resetPassword(String email, String otp, String newPassword);
   Future<void> resendOtp({required String email});
+  Future<void> driverRegister({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dob,
+    required String licenseNumber,
+    required String licenseExpiry,
+    required String driverAddress,
+  });
 }

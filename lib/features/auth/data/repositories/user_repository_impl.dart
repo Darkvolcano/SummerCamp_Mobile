@@ -148,4 +148,29 @@ class UserRepositoryImpl implements UserRepository {
   Future<void> resendOtp({required String email}) async {
     return await service.resendOtp(email: email);
   }
+
+  @override
+  Future<void> driverRegister({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dob,
+    required String licenseNumber,
+    required String licenseExpiry,
+    required String driverAddress,
+  }) async {
+    await service.driverRegister(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: password,
+      dob: dob,
+      licenseNumber: licenseNumber,
+      licenseExpiry: licenseExpiry,
+      driverAddress: driverAddress,
+    );
+  }
 }

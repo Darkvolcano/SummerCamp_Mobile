@@ -12,6 +12,7 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.da
 import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
+import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
@@ -230,6 +231,7 @@ void main() {
     final resendOTPUseCase = ResendOtp(userRepo);
     final forgotPasswordUseCase = ForgotPassword(userRepo);
     final resetPasswordUseCase = ResetPassword(userRepo);
+    final driverRegisterUseCase = DriverRegister(userRepo);
 
     // Camp
     final campApiService = CampApiService(apiClient);
@@ -314,6 +316,7 @@ void main() {
               resendOTPUseCase,
               forgotPasswordUseCase,
               resetPasswordUseCase,
+              driverRegisterUseCase,
             ),
           ),
 
