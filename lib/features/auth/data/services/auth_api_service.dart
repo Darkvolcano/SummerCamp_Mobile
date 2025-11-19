@@ -179,4 +179,37 @@ class AuthApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<void> driverRegister({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required String dob,
+    required String licenseNumber,
+    required String licenseExpiry,
+    required String driverAddress,
+  }) async {
+    try {
+      await client.post(
+        'drivers/register',
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'phoneNumber': phoneNumber,
+          'password': password,
+          'dob': dob,
+          'licenseNumber': licenseNumber,
+          'licenseExpiry': licenseExpiry,
+          'driverAddress': driverAddress,
+        },
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
