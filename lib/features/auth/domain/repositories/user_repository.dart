@@ -31,4 +31,9 @@ abstract class UserRepository {
     required String licenseExpiry,
     required String driverAddress,
   });
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmNewPassword,
+  });
 }

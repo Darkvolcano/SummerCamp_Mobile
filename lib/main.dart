@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
+import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
@@ -104,6 +105,7 @@ Future<void> main() async {
   final forgotPasswordUseCase = ForgotPassword(userRepo);
   final resetPasswordUseCase = ResetPassword(userRepo);
   final driverRegisterUseCase = DriverRegister(userRepo);
+  final changePasswordUseCase = ChangePassword(userRepo);
 
   // Camp
   final campApiService = CampApiService(apiClient);
@@ -189,6 +191,7 @@ Future<void> main() async {
             forgotPasswordUseCase,
             resetPasswordUseCase,
             driverRegisterUseCase,
+            changePasswordUseCase,
           ),
         ),
 

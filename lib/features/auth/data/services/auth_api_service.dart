@@ -212,4 +212,25 @@ class AuthApiService {
       rethrow;
     }
   }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    try {
+      await client.post(
+        'user/reset-password',
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+          'confirmNewPassword': confirmNewPassword,
+        },
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

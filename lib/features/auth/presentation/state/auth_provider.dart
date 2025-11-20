@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
+import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
@@ -26,6 +27,7 @@ class AuthProvider with ChangeNotifier {
   final ForgotPassword forgotPasswordUseCase;
   final ResetPassword resetPasswordUseCase;
   final DriverRegister driverRegisterUseCase;
+  final ChangePassword changePasswordUseCase;
 
   AuthProvider(
     this.loginUserUseCase,
@@ -39,6 +41,7 @@ class AuthProvider with ChangeNotifier {
     this.forgotPasswordUseCase,
     this.resetPasswordUseCase,
     this.driverRegisterUseCase,
+    this.changePasswordUseCase,
   );
 
   List<User> _users = [];
@@ -237,6 +240,30 @@ class AuthProvider with ChangeNotifier {
         licenseNumber: licenseNumber,
         licenseExpiry: licenseExpiry,
         driverAddress: driverAddress,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    _setLoading(true);
+    _error = null;
+    notifyListeners();
+
+    try {
+      await changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmNewPassword: confirmNewPassword,
       );
     } catch (e) {
       _error = e.toString();

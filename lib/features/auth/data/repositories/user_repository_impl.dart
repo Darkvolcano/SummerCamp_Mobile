@@ -173,4 +173,17 @@ class UserRepositoryImpl implements UserRepository {
       driverAddress: driverAddress,
     );
   }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmNewPassword,
+  }) async {
+    await service.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmNewPassword: confirmNewPassword,
+    );
+  }
 }
