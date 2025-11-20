@@ -5,6 +5,7 @@ import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:summercamp/features/auth/presentation/widgets/change_password_dialog.dart';
 import 'package:summercamp/features/profile/presentation/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -432,14 +433,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Icons.assignment_ind_outlined,
           () => Navigator.pushNamed(context, AppRoutes.camperList),
         ),
-        _buildProfileMenuItem(
-          "Thay đổi mật khẩu",
-          Icons.lock_outline,
-          () => _showMessageBox(
-            "Chức năng",
-            "Chức năng này chưa được triển khai.",
-          ),
-        ),
+        _buildProfileMenuItem("Thay đổi mật khẩu", Icons.lock_outline, () {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const ChangePasswordDialog(),
+          );
+        }),
         _buildProfileMenuItem(
           "Về ứng dụng",
           Icons.confirmation_number_outlined,
