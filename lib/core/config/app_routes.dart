@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
+import 'package:summercamp/features/auth/presentation/screens/driver_register_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_email_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/login_screen.dart';
@@ -87,6 +88,7 @@ class AppRoutes {
   static const String feedbackForm = '/feedback-form';
   static const String faceRecognitionAttendance =
       '/face-recognition-attendance';
+  static const String driverRegister = '/driver-register';
   static const String driverHome = '/driver-home';
   static const String driverSchedule = '/driver-schedule';
   static const String driverScheduleDetail =
@@ -260,6 +262,9 @@ class AppRoutes {
       //     return MaterialPageRoute(builder: (_) => StaffDashboardScreen());
       //   }
       //   return _unauthorizedRoute();
+
+      case driverRegister:
+        return MaterialPageRoute(builder: (_) => const DriverRegisterScreen());
 
       default:
         return _notFoundRoute();

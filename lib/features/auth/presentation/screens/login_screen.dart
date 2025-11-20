@@ -314,6 +314,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white.withValues(alpha: 0.9),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: const BorderSide(color: Colors.transparent),
+                        ),
+                        onPressed: provider.isLoading
+                            ? null
+                            : () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.driverRegister,
+                                );
+                              },
+                        child: Text(
+                          "Đăng ký với tư cách tài xế",
+                          style: textTheme.titleMedium?.copyWith(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.summerPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
