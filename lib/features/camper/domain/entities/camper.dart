@@ -10,6 +10,8 @@ class Camper {
   final int? groupId;
   final String? avatar;
   final HealthRecord? healthRecord;
+  final int? attendanceLogId;
+  final String? status;
 
   const Camper({
     required this.camperId,
@@ -21,5 +23,7 @@ class Camper {
     this.groupId,
     this.avatar,
     this.healthRecord,
+    this.attendanceLogId,
+    this.status,
   });
 }

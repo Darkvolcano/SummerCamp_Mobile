@@ -12,6 +12,8 @@ class CamperModel extends Camper {
     super.createAt,
     super.groupId,
     super.avatar,
+    super.attendanceLogId,
+    super.status,
   });
 
   factory CamperModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,8 @@ class CamperModel extends Camper {
       groupId: json['groupId'],
       createAt: null,
       avatar: json['avatar'],
+      attendanceLogId: json['attendanceLogId'],
+      status: json['status'],
     );
   }
 
@@ -41,5 +45,7 @@ class CamperModel extends Camper {
     'groupId': groupId,
     'avatar': avatar,
     'healthRecord': (healthRecord as HealthRecordModel?)?.toJson(),
+    'attendanceLogId': attendanceLogId,
+    'status': status,
   };
 }

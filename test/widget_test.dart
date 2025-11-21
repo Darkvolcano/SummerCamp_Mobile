@@ -12,6 +12,10 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.da
 import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
+import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
+import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
+import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
@@ -303,6 +307,11 @@ void main() {
     final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
     final getSchedulesUseCase = GetSchedules(scheduleRepo);
 
+    // Attendance
+    final attendanceApi = AttendanceApiService(apiClient);
+    final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
+    final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -383,6 +392,11 @@ void main() {
           // ScheduleProvider need 1 usecases (GetSchedules)
           ChangeNotifierProvider(
             create: (_) => ScheduleProvider(getSchedulesUseCase),
+          ),
+
+          // AttendanceProvider need 1 usecases (UpdateAttendanceList)
+          ChangeNotifierProvider(
+            create: (_) => AttendanceProvider(updateAttendanceUseCase),
           ),
         ],
         child: const SummerCampApp(),

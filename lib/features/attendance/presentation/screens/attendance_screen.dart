@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/features/attendance/domain/entities/update_attendance.dart';
+import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 
-enum AttendanceStatus { absent, present }
+enum AttendanceStatus { absent, present, notYet }
 
 class AttendanceScreen extends StatefulWidget {
   final List<Camper> campers;
@@ -22,11 +25,80 @@ class AttendanceScreen extends StatefulWidget {
 class _AttendanceScreenState extends State<AttendanceScreen> {
   final Map<int, AttendanceStatus> attendance = {};
 
+  final Map<int, int> logIds = {};
+
   @override
   void initState() {
     super.initState();
     for (var camper in widget.campers) {
-      attendance[camper.camperId] = AttendanceStatus.absent;
+      if (camper.attendanceLogId != null) {
+        logIds[camper.camperId] = camper.attendanceLogId!;
+      }
+
+      if (camper.status == "Present") {
+        attendance[camper.camperId] = AttendanceStatus.present;
+      } else if (camper.status == "Absent") {
+        attendance[camper.camperId] = AttendanceStatus.absent;
+      } else {
+        attendance[camper.camperId] = AttendanceStatus.notYet;
+      }
+    }
+  }
+
+  Future<void> _submitAttendance() async {
+    final provider = context.read<AttendanceProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    List<UpdateAttendance> requests = [];
+
+    attendance.forEach((camperId, status) {
+      if (logIds.containsKey(camperId)) {
+        String statusString;
+        if (status == AttendanceStatus.present) {
+          statusString = "Present";
+        } else {
+          statusString = "Absent";
+        }
+
+        requests.add(
+          UpdateAttendance(
+            attendanceLogId: logIds[camperId]!,
+            participantStatus: statusString,
+            note: "",
+          ),
+        );
+      }
+    });
+
+    if (requests.isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Không có dữ liệu để lưu")),
+      );
+      return;
+    }
+
+    try {
+      await provider.submitAttendance(requests);
+
+      if (mounted) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text("Cập nhật điểm danh thành công!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        navigator.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text("Lỗi: ${e.toString()}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -59,6 +131,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Widget build(BuildContext context) {
     const double statusColWidth = 40;
     const double genderColWidth = 70;
+    final provider = context.watch<AttendanceProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -188,13 +261,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               Colors.red,
                             ),
                           ),
-                          // Center(
-                          //   child: _buildStatusCell(
-                          //     camper.camperId,
-                          //     AttendanceStatus.late,
-                          //     Colors.orange,
-                          //   ),
-                          // ),
                           Center(
                             child: _buildStatusCell(
                               camper.camperId,
@@ -215,29 +281,30 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: StaffTheme.staffAccent,
         foregroundColor: Colors.white,
-        onPressed: () {
-          final total = widget.campers.length;
-          final presentCount = attendance.values
-              .where((s) => s == AttendanceStatus.present)
-              .length;
-          // final lateCount = attendance.values
-          //     .where((s) => s == AttendanceStatus.late)
-          //     .length;
-          final absentCount = attendance.values
-              .where((s) => s == AttendanceStatus.absent)
-              .length;
+        // onPressed: () {
+        //   final total = widget.campers.length;
+        //   final presentCount = attendance.values
+        //       .where((s) => s == AttendanceStatus.present)
+        //       .length;
+        //   // final lateCount = attendance.values
+        //   //     .where((s) => s == AttendanceStatus.late)
+        //   //     .length;
+        //   final absentCount = attendance.values
+        //       .where((s) => s == AttendanceStatus.absent)
+        //       .length;
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: StaffTheme.staffPrimary,
-              content: Text(
-                "Kết quả: P=$presentCount, A=$absentCount / $total",
-                style: const TextStyle(fontFamily: "Quicksand"),
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        },
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       backgroundColor: StaffTheme.staffPrimary,
+        //       content: Text(
+        //         "Kết quả: P=$presentCount, A=$absentCount / $total",
+        //         style: const TextStyle(fontFamily: "Quicksand"),
+        //       ),
+        //       duration: const Duration(seconds: 2),
+        //     ),
+        //   );
+        // },
+        onPressed: provider.loading ? null : _submitAttendance,
         icon: const Icon(Icons.save),
         label: const Text("Lưu", style: TextStyle(fontFamily: "Quicksand")),
       ),
