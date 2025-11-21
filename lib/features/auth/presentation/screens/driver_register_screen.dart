@@ -1,404 +1,282 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_routes.dart';
+import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/config/constants.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:intl/intl.dart';
 
-class DriverRegisterScreen extends StatelessWidget {
+class DriverRegisterScreen extends StatefulWidget {
   const DriverRegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Đọc Bằng Lái Xe',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-      ),
-      home: const LicenseScannerView(),
-    );
-  }
+  State<DriverRegisterScreen> createState() => _DriverRegisterScreenState();
 }
 
-class LicenseScannerView extends StatefulWidget {
-  const LicenseScannerView({super.key});
+class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
 
-  @override
-  State<LicenseScannerView> createState() => _LicenseScannerViewState();
-}
+  final String _apiKey = AppConstants.geminiApiKey;
 
-class _LicenseScannerViewState extends State<LicenseScannerView> {
-  File? _selectedImage;
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _dobController = TextEditingController();
+  final _licenseNumberController = TextEditingController();
+  final _licenseExpiryController = TextEditingController();
+  final _addressController = TextEditingController();
+
+  String? _apiDob;
+  String? _apiExpiry;
+
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+  File? _licenseImage;
   bool _isScanning = false;
-
-  // Các controller
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _classController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _expiryController = TextEditingController();
-
-  final TextRecognizer _textRecognizer = TextRecognizer(
-    script: TextRecognitionScript.latin,
-  );
 
   @override
   void dispose() {
-    _textRecognizer.close();
-    _idController.dispose();
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
     _dobController.dispose();
-    _classController.dispose();
+    _licenseNumberController.dispose();
+    _licenseExpiryController.dispose();
     _addressController.dispose();
-    _expiryController.dispose();
     super.dispose();
   }
 
+  // scan image using gemini AI
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
+    final pickedFile = await picker.pickImage(
+      source: source,
+      imageQuality: 100,
+    );
 
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
-        _clearFields();
+        _licenseImage = File(pickedFile.path);
+        _isScanning = true;
       });
-      _processImage();
+
+      await _processImageWithGemini();
     }
   }
 
-  void _clearFields() {
-    _idController.clear();
-    _nameController.clear();
-    _dobController.clear();
-    _classController.clear();
-    _addressController.clear();
-    _expiryController.clear();
-  }
-
-  Future<void> _processImage() async {
-    if (_selectedImage == null) return;
-
-    setState(() {
-      _isScanning = true;
-    });
+  Future<void> _processImageWithGemini() async {
+    if (_licenseImage == null) return;
 
     try {
-      final inputImage = InputImage.fromFile(_selectedImage!);
-      final RecognizedText recognizedText = await _textRecognizer.processImage(
-        inputImage,
-      );
-      _extractLicenseInfo(recognizedText);
+      final imageBytes = await _licenseImage!.readAsBytes();
+      final imagePart = DataPart('image/jpeg', imageBytes);
+
+      final promptText = """
+        Bạn là AI hỗ trợ nhập liệu. Hãy trích xuất thông tin từ Bằng Lái Xe này để điền vào form đăng ký.
+        
+        Yêu cầu quan trọng:
+        1. Sửa lỗi chính tả tiếng Việt (ví dụ: Nguyền -> Nguyễn, So -> Số).
+        2. Phân biệt số 0 và chữ O chuẩn xác.
+        3. Tách riêng Họ và Tên.
+        4. Trả về JSON thuần túy (không markdown) theo cấu trúc sau:
+        {
+          "license_number": "Số giấy phép lái xe (chỉ lấy số)",
+          "first_name": "Họ và Tên đệm (Ví dụ: NGUYỄN VĂN)",
+          "last_name": "Tên (Ví dụ: A)",
+          "dob": "Ngày sinh (định dạng dd/MM/yyyy)",
+          "address": "Nơi cư trú / Địa chỉ đầy đủ (Viết liền 1 dòng, không xuống dòng)",
+          "expiry_date": "Ngày hết hạn (định dạng dd/MM/yyyy) hoặc 'Không thời hạn'"
+        }
+      """;
+
+      final List<String> modelsToTry = [
+        'gemini-2.0-flash',
+        'gemini-2.0-pro',
+        'gemini-pro-vision',
+      ];
+
+      bool isSuccess = false;
+
+      for (String modelName in modelsToTry) {
+        if (!mounted) break;
+        try {
+          final model = GenerativeModel(
+            model: modelName,
+            apiKey: _apiKey,
+            generationConfig: GenerationConfig(temperature: 0.0),
+          );
+
+          final response = await model.generateContent([
+            Content.multi([TextPart(promptText), imagePart]),
+          ]);
+
+          if (response.text != null && response.text!.isNotEmpty) {
+            // clean json response
+            String cleanJson = response.text!
+                .replaceAll('```json', '')
+                .replaceAll('```', '')
+                .trim();
+
+            final Map<String, dynamic> data = jsonDecode(cleanJson);
+
+            // fill data into form
+            _fillFormWithAiData(data);
+
+            isSuccess = true;
+            break;
+          }
+        } catch (e) {
+          print("Model $modelName thất bại: $e");
+          continue;
+        }
+      }
+
+      if (!isSuccess && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể quét thông tin. Vui lòng nhập tay.'),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+        ).showSnackBar(SnackBar(content: Text('Lỗi kết nối AI: $e')));
       }
     } finally {
-      setState(() {
-        _isScanning = false;
-      });
+      if (mounted) {
+        setState(() => _isScanning = false);
+      }
     }
   }
 
-  String _cleanAddress(String text) {
-    String result = text;
-
-    // QUY TẮC 1: Sửa lỗi ký tự "l" (L thường) bị đọc nhầm thành số "1"
-    // Nếu chữ "l" nằm cạnh một con số, khả năng cao nó là số 1.
-    // Ví dụ: "Cal3" -> "Ca13", "Q1" -> "Q1" (đúng), "Phuong 1" -> "Phuong 1"
-    result = result.replaceAllMapped(
-      RegExp(r'(?<=[a-zA-Z])l(?=\d)|(?<=\d)l(?=\d)'),
-      (match) => "1",
-    );
-
-    // QUY TẮC 2: Sửa lỗi "De" + Số -> "Dc" + Số
-    // "Dc" (Địa chỉ/Dãy) hay bị đọc nhầm thành "De".
-    // Ví dụ: "De8" -> "Dc8", "De13" -> "Dc13"
-    result = result.replaceAllMapped(RegExp(r'\bDe(?=\d)'), (match) => "Dc");
-
-    // QUY TẮC 3: Sửa lỗi dấu "&" bị đọc nhầm từ số "8"
-    // Trong địa chỉ rất hiếm khi dùng dấu &, mà thường là số 8.
-    result = result.replaceAll("&", "8");
-
-    // QUY TẮC 4: Sửa lỗi "CC" -> "C/C" (Chung cư)
-    // Chỉ sửa khi nó đứng riêng lẻ (Word boundary)
-    result = result.replaceAll(RegExp(r'\bCC\b'), "C/C");
-
-    // QUY TẮC 5: Xóa các ký tự rác ở đầu câu (. , -) do cắt ảnh
-    while (result.isNotEmpty &&
-        (result.startsWith('.') ||
-            result.startsWith(',') ||
-            result.startsWith('-') ||
-            result.startsWith(' '))) {
-      result = result.substring(1);
-    }
-
-    return result.trim();
-  }
-
-  // === HÀM XỬ LÝ LOGIC MỚI: QUÉT XUNG QUANH (i-1, i, i+1) ===
-  void _extractLicenseInfo(RecognizedText text) {
-    // 1. Lấy tất cả các dòng text
-    List<TextLine> rawLines = [];
-    for (TextBlock block in text.blocks) {
-      rawLines.addAll(block.lines);
-    }
-
-    // 2. Sắp xếp theo tọa độ Y (trên xuống dưới)
-    rawLines.sort((a, b) => a.boundingBox.top.compareTo(b.boundingBox.top));
-
-    List<String> lines = rawLines.map((e) => e.text.trim()).toList();
-
-    // Biến cờ
-    bool foundName = false;
-    bool foundDob = false;
-    bool foundClass = false;
-    bool foundExpiry = false;
-
-    for (int i = 0; i < lines.length; i++) {
-      String line = lines[i];
-      String lowerLine = line.toLowerCase();
-
-      // --- 1. TÌM SỐ GPLX ---
-      String numbersOnly = line.replaceAll(RegExp(r'[^0-9]'), '');
-      if (numbersOnly.length > 6) {
-        if (lowerLine.contains("số") ||
-            lowerLine.contains("no") ||
-            line.startsWith(numbersOnly)) {
-          _idController.text = numbersOnly;
-        }
+  // fill data into form
+  void _fillFormWithAiData(Map<String, dynamic> data) {
+    setState(() {
+      if (data['license_number'] != null) {
+        _licenseNumberController.text = data['license_number'].toString();
       }
 
-      // --- 2. TÌM HỌ TÊN (Chiến thuật quét 3 dòng) ---
-      if (!foundName &&
-          (lowerLine.contains("họ tên") || lowerLine.contains("full name"))) {
-        // Kiểm tra dòng TRƯỚC, dòng HIỆN TẠI, và dòng SAU
-        List<int> candidatesIndex = [i, i + 1, i - 1];
-
-        for (int index in candidatesIndex) {
-          if (index >= 0 && index < lines.length) {
-            String txt = lines[index];
-            // Xóa bỏ từ khóa nhãn nếu có
-            String cleanTxt = txt
-                .replaceAll(
-                  RegExp(r'họ tên|full name|[:]', caseSensitive: false),
-                  '',
-                )
-                .trim();
-
-            // ĐIỀU KIỆN CHỌN TÊN:
-            // 1. Không chứa số (Quan trọng nhất)
-            // 2. Độ dài > 2
-            // 3. Không chứa từ khóa khác (Ngày sinh, Quốc tịch)
-            if (cleanTxt.length > 2 &&
-                !RegExp(r'[0-9]').hasMatch(cleanTxt) &&
-                !cleanTxt.toLowerCase().contains("ngày") &&
-                !cleanTxt.toLowerCase().contains("birth") &&
-                !cleanTxt.toLowerCase().contains("quốc tịch")) {
-              _nameController.text = cleanTxt
-                  .toUpperCase(); // Ép về in hoa cho đẹp
-              foundName = true;
-              break; // Tìm thấy rồi thì dừng vòng lặp con
-            }
-          }
-        }
+      if (data['first_name'] != null) {
+        _firstNameController.text = data['first_name'].toString();
       }
 
-      // --- 3. TÌM NGÀY SINH (Chiến thuật quét 3 dòng) ---
-      if (!foundDob &&
-          (lowerLine.contains("ngày sinh") || lowerLine.contains("birth"))) {
-        RegExp dateReg = RegExp(
-          r'(\d{2})\s*[\/.-]\s*(\d{2})\s*[\/.-]\s*(\d{4})',
-        );
-
-        List<int> candidatesIndex = [i, i + 1, i - 1];
-        for (int index in candidatesIndex) {
-          if (index >= 0 && index < lines.length) {
-            Match? match = dateReg.firstMatch(lines[index]);
-            if (match != null) {
-              _dobController.text = match
-                  .group(0)!
-                  .replaceAll(' ', ''); // Xóa khoảng trắng thừa
-              foundDob = true;
-              break;
-            }
-          }
-        }
+      if (data['last_name'] != null) {
+        _lastNameController.text = data['last_name'].toString();
       }
 
-      // --- 4. TÌM ĐỊA CHỈ ---
-      if (lowerLine.contains("nơi cư trú") || lowerLine.contains("address")) {
-        String address = "";
+      if (data['address'] != null) {
+        String rawAddr = data['address'].toString();
+        String cleanAddr = rawAddr.replaceAll('\n', ', ');
+        cleanAddr = cleanAddr.replaceAll(RegExp(r'\s+'), ' ').trim();
+        cleanAddr = cleanAddr.replaceAll(RegExp(r',\s*,'), ',');
 
-        String inlineAddr = line;
-
-        // Cách 1: Nếu có dấu hai chấm (:), cắt bỏ phần trước dấu hai chấm
-        if (inlineAddr.contains(':')) {
-          inlineAddr = inlineAddr.split(':').last.trim();
-        }
-
-        // Cách 2: Dùng Regex mạnh để xóa các từ khóa (kể cả không dấu hoặc sai dấu)
-        // (nơi|noi): Bắt chữ Nơi hoặc Noi
-        // (cư|cu): Bắt chữ Cư hoặc Cu
-        // (trú|tru): Bắt chữ Trú hoặc Tru
-        inlineAddr = inlineAddr
-            .replaceAll(
-              RegExp(
-                r'(nơi|noi)\s*(cư|cu)\s*(trú|tru|trù)|address|[:\/]',
-                caseSensitive: false,
-              ),
-              '',
-            )
-            .trim();
-
-        if (inlineAddr.length > 1) address += "$inlineAddr, ";
-
-        // Lấy các dòng tiếp theo
-        for (int k = i + 1; k < lines.length; k++) {
-          String currentLine = lines[k].trim();
-          String lowerK = currentLine.toLowerCase();
-
-          if (lowerK.contains("có giá trị") ||
-              lowerK.contains("expires") ||
-              lowerK.contains("giám đốc") ||
-              lowerK.contains("trưởng phòng") ||
-              lowerK.contains("sở gtvt") ||
-              (lowerK.startsWith("tp") &&
-                  (lowerK.contains("ngày") || lowerK.contains("năm"))) ||
-              (lowerK.contains("ngày") &&
-                  lowerK.contains("tháng") &&
-                  lowerK.contains("năm"))) {
-            break;
-          }
-          address += "$currentLine, ";
-        }
-
-        if (address.endsWith(", ")) {
-          address = address.substring(0, address.length - 2);
-        }
-
-        // Gọi hàm làm sạch tổng quát
-        _addressController.text = _cleanAddress(address);
+        _addressController.text = cleanAddr;
       }
 
-      // --- 5. TÌM HẠNG ---
-      if (!foundClass &&
-          (lowerLine.contains("hạng") || lowerLine.contains("class"))) {
-        RegExp classReg = RegExp(
-          r'\b(C1E|D1E|D2E|BE|CE|DE|A1|B1|C1|D1|D2|A|B|C|D)\b',
-        );
-        // Tìm dòng hiện tại và dòng kế tiếp
-        String target = line;
-        if (i + 1 < lines.length) target += " ${lines[i + 1]}";
-
-        Match? match = classReg.firstMatch(target);
-        if (match != null) {
-          _classController.text = match.group(0)!;
-          foundClass = true;
-        }
+      if (data['dob'] != null) {
+        String dobRaw = data['dob'].toString();
+        _dobController.text = dobRaw;
+        _apiDob = _formatDateForApi(dobRaw);
       }
 
-      // --- 6. TÌM HẠN SỬ DỤNG ---
-      if (!foundExpiry &&
-          (lowerLine.contains("có giá trị") || lowerLine.contains("expires"))) {
-        if (lowerLine.contains("không thời hạn") ||
-            lowerLine.contains("unlimited")) {
-          _expiryController.text = "Không thời hạn";
-          foundExpiry = true;
+      if (data['expiry_date'] != null) {
+        String expRaw = data['expiry_date'].toString();
+        _licenseExpiryController.text = expRaw;
+
+        if (expRaw.toLowerCase().contains("không")) {
+          _apiExpiry = "2099-12-31";
         } else {
-          RegExp dateReg = RegExp(
-            r'(\d{2})\s*[\/.-]\s*(\d{2})\s*[\/.-]\s*(\d{4})',
-          );
-          Match? match = dateReg.firstMatch(line);
-          if (match != null) {
-            _expiryController.text = match.group(0)!.replaceAll(' ', '');
-            foundExpiry = true;
-          } else if (i + 1 < lines.length) {
-            Match? matchNext = dateReg.firstMatch(lines[i + 1]);
-            if (matchNext != null) {
-              _expiryController.text = matchNext.group(0)!.replaceAll(' ', '');
-              foundExpiry = true;
-            }
-          }
+          _apiExpiry = _formatDateForApi(expRaw);
         }
       }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Đã điền thông tin từ ảnh thành công!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  String? _formatDateForApi(String dateStr) {
+    try {
+      dateStr = dateStr
+          .replaceAll('.', '/')
+          .replaceAll('-', '/')
+          .replaceAll(' ', '');
+      final format = DateFormat('dd/MM/yyyy');
+      final date = format.parse(dateStr);
+      return DateFormat('yyyy-MM-dd').format(date);
+    } catch (e) {
+      return null;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Scan Bằng Lái Xe')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () => _showImageSourceDialog(),
-              child: Container(
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: _selectedImage != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(_selectedImage!, fit: BoxFit.cover),
-                      )
-                    : const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.camera_alt, size: 50, color: Colors.grey),
-                          Text("Chạm để chụp bằng lái"),
-                        ],
-                      ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (_isScanning) const LinearProgressIndicator(),
-            const SizedBox(height: 20),
-            _buildTextField("Số GPLX", _idController),
-            _buildTextField("Họ và tên", _nameController),
-            _buildTextField("Ngày sinh", _dobController),
-            _buildTextField("Hạng bằng", _classController),
-            _buildTextField("Có giá trị đến", _expiryController),
-            _buildTextField("Nơi cư trú", _addressController, maxLines: 3),
-          ],
+  Future<void> _submitRegister() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_apiDob == null && _dobController.text.isNotEmpty) {
+      _apiDob = _formatDateForApi(_dobController.text);
+    }
+    if (_apiExpiry == null && _licenseExpiryController.text.isNotEmpty) {
+      _apiExpiry = _formatDateForApi(_licenseExpiryController.text);
+    }
+
+    if (_apiDob == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Vui lòng nhập ngày sinh đúng định dạng dd/MM/yyyy"),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showImageSourceDialog(),
-        child: const Icon(Icons.qr_code_scanner),
-      ),
-    );
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final provider = context.read<AuthProvider>();
+    final navigator = Navigator.of(context);
+
+    try {
+      await provider.driverRegister(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        email: _emailController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        password: _passwordController.text,
+        dob: _apiDob!,
+        licenseNumber: _licenseNumberController.text,
+        licenseExpiry: _apiExpiry ?? "2099-12-31",
+        driverAddress: _addressController.text,
+      );
+
+      if (mounted) {
+        navigator.pushNamed(
+          AppRoutes.verifyOTP,
+          arguments: _emailController.text.trim(),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Đăng ký thất bại: $e")));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller, {
-    int maxLines = 1,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: TextField(
-        controller: controller,
-        maxLines: maxLines,
-        decoration: InputDecoration(labelText: label),
-      ),
-    );
-  }
-
-  void _showImageSourceDialog() {
+  void _showImageSourceSheet() {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
@@ -408,7 +286,7 @@ class _LicenseScannerViewState extends State<LicenseScannerView> {
               leading: const Icon(Icons.photo_library),
               title: const Text('Thư viện ảnh'),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
               },
             ),
@@ -416,12 +294,289 @@ class _LicenseScannerViewState extends State<LicenseScannerView> {
               leading: const Icon(Icons.camera_alt),
               title: const Text('Chụp ảnh mới'),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
                 _pickImage(ImageSource.camera);
               },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Đăng ký Tài xế",
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: AppTheme.summerPrimary,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "1. Thông tin Bằng lái xe (Scan)",
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.summerPrimary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: _showImageSourceSheet,
+                  child: Container(
+                    height: 180,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade400),
+                      image: _licenseImage != null
+                          ? DecorationImage(
+                              image: FileImage(_licenseImage!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: _licenseImage == null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                size: 40,
+                                color: Colors.grey.shade600,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Chạm để chụp/tải ảnh bằng lái",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontFamily: "Quicksand",
+                                ),
+                              ),
+                            ],
+                          )
+                        : null,
+                  ),
+                ),
+                if (_isScanning)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "AI đang phân tích & điền form...",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
+                _buildTextField(
+                  controller: _licenseNumberController,
+                  label: "Số GPLX",
+                  icon: Icons.credit_card,
+                  readOnly: true,
+                ),
+
+                const SizedBox(width: 12),
+
+                _buildTextField(
+                  controller: _licenseExpiryController,
+                  label: "Hết hạn",
+                  icon: Icons.event_busy,
+                  readOnly: true,
+                ),
+
+                const SizedBox(width: 12),
+
+                _buildTextField(
+                  controller: _addressController,
+                  label: "Địa chỉ thường trú",
+                  icon: Icons.home,
+                  maxLines: 3,
+                  readOnly: true,
+                ),
+
+                const SizedBox(height: 24),
+
+                Text(
+                  "2. Thông tin Tài khoản & Cá nhân",
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.summerPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                _buildTextField(
+                  controller: _firstNameController,
+                  label: "Họ",
+                  icon: Icons.person,
+                  readOnly: true,
+                ),
+
+                const SizedBox(width: 12),
+
+                _buildTextField(
+                  controller: _lastNameController,
+                  label: "Tên",
+                  icon: Icons.person_outline,
+                  readOnly: true,
+                ),
+
+                const SizedBox(width: 12),
+
+                _buildTextField(
+                  controller: _dobController,
+                  label: "Ngày sinh",
+                  icon: Icons.cake,
+                  readOnly: true,
+                ),
+                _buildTextField(
+                  controller: _emailController,
+                  label: "Email",
+                  icon: Icons.email,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                _buildTextField(
+                  controller: _phoneController,
+                  label: "Số điện thoại",
+                  icon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    style: const TextStyle(fontFamily: "Quicksand"),
+                    decoration: InputDecoration(
+                      labelText: "Mật khẩu",
+                      labelStyle: const TextStyle(fontFamily: "Quicksand"),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: AppTheme.summerPrimary,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (val) => (val == null || val.length < 6)
+                        ? "Mật khẩu tối thiểu 6 ký tự"
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _submitRegister,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.summerPrimary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            "Đăng Ký",
+                            style: TextStyle(
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        controller: controller,
+        readOnly: readOnly,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        style: const TextStyle(fontFamily: "Quicksand"),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(fontFamily: "Quicksand"),
+          prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: readOnly ? Colors.grey[100] : Colors.white,
+        ),
+        validator:
+            validator ??
+            (val) =>
+                (val == null || val.isEmpty) ? "Vui lòng nhập $label" : null,
       ),
     );
   }

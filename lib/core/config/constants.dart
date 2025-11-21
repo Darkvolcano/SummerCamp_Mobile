@@ -1,7 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppConstants {
   // API
-  static const String apiBaseUrl =
-      'https://summercampapi-339197681269.asia-southeast1.run.app/api/';
+  static String get apiBaseUrl => dotenv.env['BE_API'] ?? '';
+
+  // Gemini API Key
+  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   // Socket
   static const String socketUrl = 'https://wdp301-su25.space/';

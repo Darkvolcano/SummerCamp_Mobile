@@ -59,7 +59,8 @@ dependencies:
   connectivity_plus: ^6.0.3 # Check connect internet
   path: ^1.9.0 # Xử lý đường dẫn file
   firebase_app_check: ^0.4.1+1 # App Check
-  google_mlkit_text_recognition: ^0.15.0 # Text recognition
+  google_generative_ai: ^0.4.7 # Google Generative AI API
+  flutter_dotenv: ^5.1.0 # Load env file
 
 dev_dependencies:
   flutter_test:
@@ -135,6 +136,7 @@ flutter:
     - assets/mock/register_successfully_anim.json
     - assets/mock/register_failed_anim.json
     - assets/images/google.png
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
