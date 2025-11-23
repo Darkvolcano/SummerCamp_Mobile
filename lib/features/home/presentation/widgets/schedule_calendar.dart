@@ -1,196 +1,201 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 
 class ScheduleCalendar extends StatefulWidget {
-  const ScheduleCalendar({super.key});
+  final List<Schedule> schedules;
+
+  const ScheduleCalendar({super.key, required this.schedules});
 
   @override
   State<ScheduleCalendar> createState() => _ScheduleCalendarState();
 }
 
 class _ScheduleCalendarState extends State<ScheduleCalendar> {
-  List<ScheduleRecord> scheduleRecords = [
-    ScheduleRecord(date: DateTime.now(), isPresent: true),
-    ScheduleRecord(
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      isPresent: false,
-    ),
-  ];
+  late final ValueNotifier<List<Schedule>> _selectedEvents;
+  LinkedHashMap<DateTime, List<Schedule>>? _kEvents;
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  Map<DateTime, List<ScheduleRecord>> _getEventsForDay() {
-    Map<DateTime, List<ScheduleRecord>> events = {};
-    for (var record in scheduleRecords) {
-      final date = DateTime(
-        record.date.year,
-        record.date.month,
-        record.date.day,
-      );
-      events.putIfAbsent(date, () => []).add(record);
-    }
-    return events;
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = _focusedDay;
+    _initEvents();
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
-  List<ScheduleRecord> _getRecordsForSelectedDay() {
-    if (_selectedDay == null) return scheduleRecords;
-    final selectedDate = DateTime(
-      _selectedDay!.year,
-      _selectedDay!.month,
-      _selectedDay!.day,
-    );
-    return scheduleRecords.where((record) {
-      final recordDate = DateTime(
-        record.date.year,
-        record.date.month,
-        record.date.day,
-      );
-      return isSameDay(recordDate, selectedDate);
-    }).toList();
+  @override
+  void didUpdateWidget(covariant ScheduleCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.schedules != oldWidget.schedules) {
+      _initEvents();
+      _selectedEvents.value = _getEventsForDay(_selectedDay!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _selectedEvents.dispose();
+    super.dispose();
+  }
+
+  void _initEvents() {
+    final events = <DateTime, List<Schedule>>{};
+
+    for (var schedule in widget.schedules) {
+      try {
+        final start = DateTime.parse(schedule.startDate);
+        final end = DateTime.parse(schedule.endDate);
+
+        DateTime currentDay = start;
+        while (!currentDay.isAfter(end)) {
+          final keyDay = DateTime(
+            currentDay.year,
+            currentDay.month,
+            currentDay.day,
+          );
+
+          if (events[keyDay] == null) {
+            events[keyDay] = [];
+          }
+          events[keyDay]!.add(schedule);
+
+          currentDay = currentDay.add(const Duration(days: 1));
+        }
+      } catch (e) {
+        print("Lỗi parse ngày trong ScheduleCalendar: $e");
+      }
+    }
+
+    _kEvents = LinkedHashMap<DateTime, List<Schedule>>(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    )..addAll(events);
+  }
+
+  List<Schedule> _getEventsForDay(DateTime day) {
+    return _kEvents?[day] ?? [];
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+      });
+
+      _selectedEvents.value = _getEventsForDay(selectedDay);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final events = _getEventsForDay();
-    final selectedRecords = _getRecordsForSelectedDay();
-
     return Column(
       children: [
-        TableCalendar(
+        TableCalendar<Schedule>(
           locale: 'vi_VN',
-          firstDay: DateTime(2020),
-          lastDay: DateTime(2030),
+          firstDay: DateTime.utc(2024, 1, 1),
+          lastDay: DateTime.utc(2030, 12, 31),
           focusedDay: _focusedDay,
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
-            });
-          },
-          eventLoader: (day) {
-            final date = DateTime(day.year, day.month, day.day);
-            return events[date] ?? [];
-          },
+          eventLoader: _getEventsForDay,
+          startingDayOfWeek: StartingDayOfWeek.monday,
 
           calendarStyle: CalendarStyle(
-            todayDecoration: BoxDecoration(
-              color: StaffTheme.staffAccent.withValues(alpha: 0.7),
+            markerDecoration: const BoxDecoration(
+              color: Colors.lightGreen,
               shape: BoxShape.circle,
             ),
-            selectedDecoration: BoxDecoration(
+            todayDecoration: BoxDecoration(
+              color: StaffTheme.staffAccent.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: const BoxDecoration(
               color: StaffTheme.staffPrimary,
               shape: BoxShape.circle,
             ),
-            markerDecoration: BoxDecoration(
-              color: StaffTheme.staffPrimary.withValues(alpha: 0.8),
-              shape: BoxShape.circle,
-            ),
-            weekendTextStyle: const TextStyle(color: Colors.red),
-            defaultTextStyle: const TextStyle(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.w600,
-            ),
           ),
 
-          headerStyle: HeaderStyle(
+          headerStyle: const HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
-            titleTextFormatter: (date, locale) =>
-                DateFormat.yMMMM(locale).format(date),
             titleTextStyle: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               fontFamily: "Quicksand",
               color: StaffTheme.staffPrimary,
             ),
-            leftChevronIcon: Icon(
-              Icons.chevron_left,
-              color: StaffTheme.staffPrimary,
-              size: 28,
-            ),
-            rightChevronIcon: Icon(
-              Icons.chevron_right,
-              color: StaffTheme.staffPrimary,
-              size: 28,
-            ),
           ),
 
-          calendarBuilders: CalendarBuilders(
-            markerBuilder: (context, date, events) {
-              if (events.isNotEmpty) {
-                final record = events.first as ScheduleRecord;
-                return Positioned(
-                  bottom: 4,
-                  child: Icon(
-                    record.isPresent ? Icons.check_circle : Icons.cancel,
-                    size: 18.0,
-                    color: record.isPresent ? Colors.green : Colors.red,
-                  ),
-                );
-              }
-              return null;
-            },
-          ),
+          onDaySelected: _onDaySelected,
         ),
 
-        const SizedBox(height: 12),
+        const Divider(),
 
-        Expanded(
-          child: selectedRecords.isEmpty
-              ? const Center(
+        ValueListenableBuilder<List<Schedule>>(
+          valueListenable: _selectedEvents,
+          builder: (context, value, _) {
+            if (value.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
                   child: Text(
-                    'Không có bản ghi nào.',
-                    style: TextStyle(fontFamily: "Quicksand"),
+                    'Không có lịch trình.',
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      color: Colors.grey,
+                    ),
                   ),
-                )
-              : ListView.builder(
-                  itemCount: selectedRecords.length,
-                  itemBuilder: (context, index) {
-                    final record = selectedRecords[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 6,
-                        horizontal: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          record.isPresent ? Icons.check_circle : Icons.cancel,
-                          color: record.isPresent ? Colors.green : Colors.red,
-                        ),
-                        title: Text(
-                          DateFormat('dd/MM/yyyy HH:mm').format(record.date),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "Quicksand",
-                          ),
-                        ),
-                        subtitle: Text(
-                          record.isPresent ? 'Có mặt' : 'Vắng mặt',
-                          style: TextStyle(
-                            fontFamily: "Quicksand",
-                            color: record.isPresent ? Colors.green : Colors.red,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
                 ),
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.length,
+              itemBuilder: (context, index) {
+                final schedule = value[index];
+                return Card(
+                  shadowColor: Colors.white.withValues(alpha: 0.0),
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 8,
+                  ),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.event,
+                      color: StaffTheme.staffPrimary,
+                    ),
+                    title: Text(
+                      schedule.name,
+                      style: const TextStyle(
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      schedule.place,
+                      style: const TextStyle(
+                        fontFamily: "Quicksand",
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         ),
       ],
     );
   }
 }
 
-class ScheduleRecord {
-  final DateTime date;
-  final bool isPresent;
-
-  ScheduleRecord({required this.date, required this.isPresent});
+int getHashCode(DateTime key) {
+  return key.day * 1000000 + key.month * 10000 + key.year;
 }
