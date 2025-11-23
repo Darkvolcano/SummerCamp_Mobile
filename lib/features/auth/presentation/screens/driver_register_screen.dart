@@ -54,6 +54,94 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     super.dispose();
   }
 
+  void _showStyledDialog({
+    required String title,
+    required String message,
+    required DialogType type,
+    VoidCallback? onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: type.color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(type.icon, size: 40, color: type.color),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Quicksand",
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontFamily: "Quicksand",
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: type.color,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    if (onConfirm != null) onConfirm();
+                  },
+                  child: const Text(
+                    "Đóng",
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // scan image using gemini AI
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -79,22 +167,46 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       final imageBytes = await _licenseImage!.readAsBytes();
       final imagePart = DataPart('image/jpeg', imageBytes);
 
+      // final promptText = """
+      //   Bạn là AI hỗ trợ nhập liệu. Hãy trích xuất thông tin từ Bằng Lái Xe này để điền vào form đăng ký.
+
+      //   Yêu cầu quan trọng:
+      //   1. Sửa lỗi chính tả tiếng Việt (ví dụ: Nguyền -> Nguyễn, So -> Số).
+      //   2. Phân biệt số 0 và chữ O chuẩn xác.
+      //   3. Tách riêng Họ và Tên.
+      //   4. Trả về JSON thuần túy (không markdown) theo cấu trúc sau:
+      //   {
+      //     "license_number": "Số giấy phép lái xe (chỉ lấy số)",
+      //     "first_name": "Họ và Tên đệm (Ví dụ: NGUYỄN VĂN)",
+      //     "last_name": "Tên (Ví dụ: A)",
+      //     "dob": "Ngày sinh (định dạng dd/MM/yyyy)",
+      //     "address": "Nơi cư trú / Địa chỉ đầy đủ (Viết liền 1 dòng, không xuống dòng)",
+      //     "expiry_date": "Ngày hết hạn (định dạng dd/MM/yyyy) hoặc 'Không thời hạn'"
+      //   }
+      // """;
       final promptText = """
-        Bạn là AI hỗ trợ nhập liệu. Hãy trích xuất thông tin từ Bằng Lái Xe này để điền vào form đăng ký.
+        Bạn là hệ thống xác thực giấy tờ tự động (KYC). 
         
-        Yêu cầu quan trọng:
-        1. Sửa lỗi chính tả tiếng Việt (ví dụ: Nguyền -> Nguyễn, So -> Số).
-        2. Phân biệt số 0 và chữ O chuẩn xác.
-        3. Tách riêng Họ và Tên.
-        4. Trả về JSON thuần túy (không markdown) theo cấu trúc sau:
+        NHIỆM VỤ 1: KIỂM TRA HỢP LỆ (QUAN TRỌNG NHẤT)
+        Hãy nhìn kỹ bức ảnh. Đây CÓ PHẢI là mặt trước của "Giấy Phép Lái Xe" (Driving License) của Việt Nam không?
+        - Phải có chữ "GIẤY PHÉP LÁI XE" hoặc "DRIVER'S LICENSE" rõ ràng.
+        - Phải có ảnh chân dung và quốc huy hoặc hoa văn đặc trưng.
+        
+        *** NẾU KHÔNG PHẢI LÀ BẰNG LÁI XE (ví dụ: ảnh chụp màn hình chat, ảnh phong cảnh, thẻ sinh viên, thẻ ngân hàng...), BẮT BUỘC PHẢI TRẢ VỀ JSON DUY NHẤT SAU: ***
+        {"error": "invalid_license_image"}
+
+        NHIỆM VỤ 2: TRÍCH XUẤT DỮ LIỆU (Chỉ thực hiện nếu Nhiệm vụ 1 là ĐÚNG)
+        Nếu đúng là GPLX, hãy trích xuất và trả về JSON:
         {
-          "license_number": "Số giấy phép lái xe (chỉ lấy số)",
-          "first_name": "Họ và Tên đệm (Ví dụ: NGUYỄN VĂN)",
-          "last_name": "Tên (Ví dụ: A)",
-          "dob": "Ngày sinh (định dạng dd/MM/yyyy)",
-          "address": "Nơi cư trú / Địa chỉ đầy đủ (Viết liền 1 dòng, không xuống dòng)",
-          "expiry_date": "Ngày hết hạn (định dạng dd/MM/yyyy) hoặc 'Không thời hạn'"
+          "license_number": "Số giấy phép (chỉ lấy số)",
+          "first_name": "Họ và Tên đệm (Viết hoa, sửa lỗi chính tả tiếng Việt)",
+          "last_name": "Tên (Viết hoa)",
+          "dob": "Ngày sinh (dd/MM/yyyy)",
+          "address": "Nơi cư trú (Viết liền 1 dòng, sửa lỗi chính tả)",
+          "expiry_date": "Có giá trị đến (dd/MM/yyyy) hoặc 'Không thời hạn'"
         }
+
+        LƯU Ý: Chỉ trả về JSON thuần túy, không Markdown, không giải thích thêm.
       """;
 
       final List<String> modelsToTry = [
@@ -127,6 +239,19 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
 
             final Map<String, dynamic> data = jsonDecode(cleanJson);
 
+            if (data.containsKey('error') &&
+                data['error'] == 'invalid_license_image') {
+              throw Exception(
+                "Ảnh không hợp lệ. Vui lòng chụp đúng Bằng Lái Xe.",
+              );
+            }
+
+            if (data['license_number'] == null && data['first_name'] == null) {
+              throw Exception(
+                "Không tìm thấy thông tin trên ảnh. Vui lòng chụp rõ hơn.",
+              );
+            }
+
             // fill data into form
             _fillFormWithAiData(data);
 
@@ -140,17 +265,21 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
 
       if (!isSuccess && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Không thể quét thông tin. Vui lòng nhập tay.'),
-          ),
+        _showStyledDialog(
+          title: "Quét thất bại",
+          message:
+              "Không thể quét thông tin từ ảnh này. Vui lòng thử lại hoặc nhập tay.",
+          type: DialogType.error,
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi kết nối AI: $e')));
+        _showStyledDialog(
+          title: "Lỗi phân tích ảnh",
+          message: e.toString().replaceAll("Exception:", ""),
+          type: DialogType.error,
+        );
+        setState(() => _licenseImage = null);
       }
     } finally {
       if (mounted) {
@@ -201,11 +330,10 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Đã điền thông tin từ ảnh thành công!'),
-        backgroundColor: Colors.green,
-      ),
+    _showStyledDialog(
+      title: "Thành công!",
+      message: "Đã trích xuất thông tin từ bằng lái xe.",
+      type: DialogType.success,
     );
   }
 
@@ -229,21 +357,26 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
 
     while (!uploadSuccess) {
       try {
-        final provider = context.read<AuthProvider>();
-        // Gọi hàm upload mới trong provider
-        await provider.uploadLicense(imageFile, token);
-        uploadSuccess = true;
-        print("Upload license thành công!");
+        if (mounted) {
+          final provider = context.read<AuthProvider>();
+          await provider.uploadLicense(imageFile, token);
+          uploadSuccess = true;
+          print("Upload license thành công!");
+        }
       } catch (e) {
         retryCount++;
         print("Upload thất bại ($retryCount): $e. Thử lại sau 2s...");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Lỗi upload ảnh ($retryCount). Đang thử lại..."),
-              duration: const Duration(milliseconds: 1000),
-            ),
+        if (retryCount >= 5) {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+          _showStyledDialog(
+            title: "Lỗi tải ảnh",
+            message:
+                "Không thể tải ảnh bằng lái lên sau nhiều lần thử. Vui lòng liên hệ hỗ trợ.",
+            type: DialogType.error,
           );
+          return;
         }
         await Future.delayed(const Duration(seconds: 2));
       }
@@ -258,15 +391,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     }
     if (_apiExpiry == null && _licenseExpiryController.text.isNotEmpty) {
       _apiExpiry = _formatDateForApi(_licenseExpiryController.text);
-    }
-
-    if (_apiDob == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Vui lòng nhập ngày sinh đúng định dạng dd/MM/yyyy"),
-        ),
-      );
-      return;
     }
 
     setState(() => _isLoading = true);
@@ -292,11 +416,12 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         );
       }
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Đang chuẩn bị upload ảnh...")),
-        );
-      }
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text("Đang chuẩn bị upload ảnh...")),
+      //   );
+      // }
+
       await Future.delayed(const Duration(seconds: 3));
 
       await _uploadLicenseWithRetry(oneTimeToken, _licenseImage!);
@@ -309,9 +434,11 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Đăng ký thất bại: $e")));
+        _showStyledDialog(
+          title: "Đăng ký thất bại",
+          message: e.toString().replaceAll("Exception:", ""),
+          type: DialogType.error,
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -622,4 +749,14 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       ),
     );
   }
+}
+
+enum DialogType {
+  success(Colors.green, Icons.check_circle),
+  error(Colors.red, Icons.error),
+  warning(Colors.orange, Icons.warning);
+
+  final Color color;
+  final IconData icon;
+  const DialogType(this.color, this.icon);
 }
