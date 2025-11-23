@@ -89,6 +89,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacementNamed(context, AppRoutes.staffHome);
     } else if (userRole == 'User' || userRole == 'Parent') {
       Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else if (userRole == 'Driver') {
+      Navigator.pushReplacementNamed(context, AppRoutes.driverHome);
     } else {
       _showErrorDialog('Role không hợp lệ: $userRole');
     }

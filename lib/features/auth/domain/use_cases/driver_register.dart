@@ -4,7 +4,7 @@ class DriverRegister {
   final UserRepository repository;
   DriverRegister(this.repository);
 
-  Future<void> call({
+  Future<Map<String, dynamic>> call({
     required String firstName,
     required String lastName,
     required String email,
@@ -15,7 +15,7 @@ class DriverRegister {
     required String licenseExpiry,
     required String driverAddress,
   }) async {
-    await repository.driverRegister(
+    return await repository.driverRegister(
       firstName: firstName,
       lastName: lastName,
       email: email,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 
@@ -20,7 +22,7 @@ abstract class UserRepository {
   Future<String> forgotPassword(String email);
   Future<String> resetPassword(String email, String otp, String newPassword);
   Future<void> resendOtp({required String email});
-  Future<void> driverRegister({
+  Future<Map<String, dynamic>> driverRegister({
     required String firstName,
     required String lastName,
     required String email,
@@ -31,6 +33,7 @@ abstract class UserRepository {
     required String licenseExpiry,
     required String driverAddress,
   });
+  Future<void> uploadLicense(File imageFile, String token);
   Future<void> changePassword({
     required String currentPassword,
     required String newPassword,

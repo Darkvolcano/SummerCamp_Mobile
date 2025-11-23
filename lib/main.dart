@@ -13,6 +13,7 @@ import 'package:summercamp/features/attendance/domain/use_cases/update_attendanc
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
+import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'firebase_options.dart';
@@ -112,6 +113,7 @@ Future<void> main() async {
   final forgotPasswordUseCase = ForgotPassword(userRepo);
   final resetPasswordUseCase = ResetPassword(userRepo);
   final driverRegisterUseCase = DriverRegister(userRepo);
+  final uploadLicenseUseCase = UploadLicense(userRepo);
   final changePasswordUseCase = ChangePassword(userRepo);
 
   // Camp
@@ -203,6 +205,7 @@ Future<void> main() async {
             forgotPasswordUseCase,
             resetPasswordUseCase,
             driverRegisterUseCase,
+            uploadLicenseUseCase,
             changePasswordUseCase,
           ),
         ),

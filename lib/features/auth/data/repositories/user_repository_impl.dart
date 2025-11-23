@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summercamp/core/config/constants.dart';
@@ -150,7 +151,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> driverRegister({
+  Future<Map<String, dynamic>> driverRegister({
     required String firstName,
     required String lastName,
     required String email,
@@ -161,7 +162,7 @@ class UserRepositoryImpl implements UserRepository {
     required String licenseExpiry,
     required String driverAddress,
   }) async {
-    await service.driverRegister(
+    return await service.driverRegister(
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -172,6 +173,11 @@ class UserRepositoryImpl implements UserRepository {
       licenseExpiry: licenseExpiry,
       driverAddress: driverAddress,
     );
+  }
+
+  @override
+  Future<void> uploadLicense(File imageFile, String token) async {
+    await service.uploadLicense(imageFile, token);
   }
 
   @override

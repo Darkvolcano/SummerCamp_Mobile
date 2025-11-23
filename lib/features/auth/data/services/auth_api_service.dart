@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -180,7 +181,7 @@ class AuthApiService {
     }
   }
 
-  Future<void> driverRegister({
+  Future<Map<String, dynamic>> driverRegister({
     required String firstName,
     required String lastName,
     required String email,
@@ -192,8 +193,8 @@ class AuthApiService {
     required String driverAddress,
   }) async {
     try {
-      await client.post(
-        'drivers/register',
+      final response = await client.post(
+        'driver/register',
         data: {
           'firstName': firstName,
           'lastName': lastName,
@@ -206,10 +207,34 @@ class AuthApiService {
           'driverAddress': driverAddress,
         },
       );
+
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> uploadLicense(File imageFile, String uploadToken) async {
+    try {
+      String fileName = imageFile.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "uploadToken": uploadToken,
+        "licensePhoto": await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+        ),
+      });
+
+      await client.post(
+        'driver/upload-photo-by-token',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
     }
   }
 

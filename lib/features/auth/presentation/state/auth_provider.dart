@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
@@ -13,6 +15,7 @@ import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
+import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -27,6 +30,7 @@ class AuthProvider with ChangeNotifier {
   final ForgotPassword forgotPasswordUseCase;
   final ResetPassword resetPasswordUseCase;
   final DriverRegister driverRegisterUseCase;
+  final UploadLicense uploadLicenseUseCase;
   final ChangePassword changePasswordUseCase;
 
   AuthProvider(
@@ -41,6 +45,7 @@ class AuthProvider with ChangeNotifier {
     this.forgotPasswordUseCase,
     this.resetPasswordUseCase,
     this.driverRegisterUseCase,
+    this.uploadLicenseUseCase,
     this.changePasswordUseCase,
   );
 
@@ -214,7 +219,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> driverRegister({
+  Future<String?> driverRegister({
     required String firstName,
     required String lastName,
     required String email,
@@ -230,7 +235,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await driverRegisterUseCase(
+      final result = await driverRegisterUseCase(
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -241,12 +246,24 @@ class AuthProvider with ChangeNotifier {
         licenseExpiry: licenseExpiry,
         driverAddress: driverAddress,
       );
+
+      final token = result['oneTimeUploadToken'] as String?;
+      return token;
     } catch (e) {
       _error = e.toString();
       rethrow;
     } finally {
       _setLoading(false);
       notifyListeners();
+    }
+  }
+
+  Future<void> uploadLicense(File imageFile, String token) async {
+    try {
+      await uploadLicenseUseCase(imageFile, token);
+    } catch (e) {
+      print("Lỗi upload bằng lái: $e");
+      rethrow;
     }
   }
 

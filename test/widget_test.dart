@@ -24,6 +24,7 @@ import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
+import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:summercamp/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:summercamp/features/blog/data/services/blog_api_service.dart';
@@ -237,6 +238,7 @@ void main() {
     final forgotPasswordUseCase = ForgotPassword(userRepo);
     final resetPasswordUseCase = ResetPassword(userRepo);
     final driverRegisterUseCase = DriverRegister(userRepo);
+    final uploadLicenseUseCase = UploadLicense(userRepo);
     final changePasswordUseCase = ChangePassword(userRepo);
 
     // Camp
@@ -328,6 +330,7 @@ void main() {
               forgotPasswordUseCase,
               resetPasswordUseCase,
               driverRegisterUseCase,
+              uploadLicenseUseCase,
               changePasswordUseCase,
             ),
           ),

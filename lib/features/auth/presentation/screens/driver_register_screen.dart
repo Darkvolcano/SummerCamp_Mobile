@@ -223,6 +223,33 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     }
   }
 
+  Future<void> _uploadLicenseWithRetry(String token, File imageFile) async {
+    bool uploadSuccess = false;
+    int retryCount = 0;
+
+    while (!uploadSuccess) {
+      try {
+        final provider = context.read<AuthProvider>();
+        // Gọi hàm upload mới trong provider
+        await provider.uploadLicense(imageFile, token);
+        uploadSuccess = true;
+        print("Upload license thành công!");
+      } catch (e) {
+        retryCount++;
+        print("Upload thất bại ($retryCount): $e. Thử lại sau 2s...");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Lỗi upload ảnh ($retryCount). Đang thử lại..."),
+              duration: const Duration(milliseconds: 1000),
+            ),
+          );
+        }
+        await Future.delayed(const Duration(seconds: 2));
+      }
+    }
+  }
+
   Future<void> _submitRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -247,7 +274,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     final navigator = Navigator.of(context);
 
     try {
-      await provider.driverRegister(
+      final oneTimeToken = await provider.driverRegister(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         email: _emailController.text.trim(),
@@ -258,6 +285,21 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         licenseExpiry: _apiExpiry ?? "2099-12-31",
         driverAddress: _addressController.text,
       );
+
+      if (oneTimeToken == null) {
+        throw Exception(
+          "Đăng ký thành công nhưng không nhận được token upload ảnh.",
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Đang chuẩn bị upload ảnh...")),
+        );
+      }
+      await Future.delayed(const Duration(seconds: 3));
+
+      await _uploadLicenseWithRetry(oneTimeToken, _licenseImage!);
 
       if (mounted) {
         navigator.pushNamed(
