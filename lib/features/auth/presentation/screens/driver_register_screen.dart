@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/config/constants.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -52,94 +53,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     _licenseExpiryController.dispose();
     _addressController.dispose();
     super.dispose();
-  }
-
-  void _showStyledDialog({
-    required String title,
-    required String message,
-    required DialogType type,
-    VoidCallback? onConfirm,
-  }) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: type.color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(type.icon, size: 40, color: type.color),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Quicksand",
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                  fontFamily: "Quicksand",
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: type.color,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    if (onConfirm != null) onConfirm();
-                  },
-                  child: const Text(
-                    "Đóng",
-                    style: TextStyle(
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   // scan image using gemini AI
@@ -265,7 +178,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
 
       if (!isSuccess && mounted) {
-        _showStyledDialog(
+        showCustomDialog(
+          context,
           title: "Quét thất bại",
           message:
               "Không thể quét thông tin từ ảnh này. Vui lòng thử lại hoặc nhập tay.",
@@ -274,7 +188,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        _showStyledDialog(
+        showCustomDialog(
+          context,
           title: "Lỗi phân tích ảnh",
           message: e.toString().replaceAll("Exception:", ""),
           type: DialogType.error,
@@ -330,7 +245,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     });
 
-    _showStyledDialog(
+    showCustomDialog(
+      context,
       title: "Thành công!",
       message: "Đã trích xuất thông tin từ bằng lái xe.",
       type: DialogType.success,
@@ -370,12 +286,24 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
           if (mounted) {
             Navigator.pop(context);
           }
-          _showStyledDialog(
-            title: "Lỗi tải ảnh",
-            message:
-                "Không thể tải ảnh bằng lái lên sau nhiều lần thử. Vui lòng liên hệ hỗ trợ.",
-            type: DialogType.error,
-          );
+          if (mounted) {
+            showCustomDialog(
+              context,
+              title: "Lỗi tải ảnh",
+              message:
+                  "Không thể tải ảnh bằng lái lên sau nhiều lần thử. Vui lòng liên hệ hỗ trợ.",
+              type: DialogType.error,
+              onConfirm: () {
+                if (mounted) {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.verifyOTP,
+                    arguments: _emailController.text.trim(),
+                  );
+                }
+              },
+            );
+          }
           return;
         }
         await Future.delayed(const Duration(seconds: 2));
@@ -434,7 +362,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        _showStyledDialog(
+        showCustomDialog(
+          context,
           title: "Đăng ký thất bại",
           message: e.toString().replaceAll("Exception:", ""),
           type: DialogType.error,
@@ -749,14 +678,4 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       ),
     );
   }
-}
-
-enum DialogType {
-  success(Colors.green, Icons.check_circle),
-  error(Colors.red, Icons.error),
-  warning(Colors.orange, Icons.warning);
-
-  final Color color;
-  final IconData icon;
-  const DialogType(this.color, this.icon);
 }

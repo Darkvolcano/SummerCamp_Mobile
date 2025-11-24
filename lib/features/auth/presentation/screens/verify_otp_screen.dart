@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/animated_gradient_background.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
@@ -91,7 +92,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   Future<void> _verifyOtp(String email) async {
     if (!_isOtpComplete) {
-      _showErrorDialog('Vui lòng nhập đầy đủ 6 số OTP');
+      showCustomDialog(
+        context,
+        title: "Chưa hoàn tất",
+        message: "Vui lòng nhập đầy đủ 6 số OTP.",
+        type: DialogType.warning,
+      );
       return;
     }
 
@@ -104,75 +110,30 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
       if (!mounted) return;
 
-      _showSuccessDialog();
+      showCustomDialog(
+        context,
+        title: "Xác thực thành công!",
+        message: "Tài khoản của bạn đã được xác minh. Vui lòng đăng nhập.",
+        type: DialogType.success,
+        dismissible: false,
+        btnText: "Đăng nhập ngay",
+        onConfirm: () {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+        },
+      );
     } catch (e) {
       if (!mounted) return;
-      _showErrorDialog('Mã OTP không đúng. Vui lòng thử lại.');
+      showCustomDialog(
+        context,
+        title: "Xác thực thất bại",
+        message: "Mã OTP không đúng hoặc đã hết hạn. Vui lòng thử lại.",
+        type: DialogType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 32),
-            SizedBox(width: 12),
-            Text('Xác thực thành công!'),
-          ],
-        ),
-        content: const Text(
-          'Tài khoản của bạn đã được xác thực.',
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.summerPrimary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-            },
-            child: const Text('Tiếp tục'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 32),
-            SizedBox(width: 12),
-            Text('Lỗi'),
-          ],
-        ),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Đóng'),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _resendOtp(String email) async {
@@ -197,7 +158,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       _focusNodes[0].requestFocus();
     } catch (e) {
       if (!mounted) return;
-      _showErrorDialog('Không thể gửi lại mã OTP. Vui lòng thử lại sau.');
+      showCustomDialog(
+        context,
+        title: "Lỗi gửi mã",
+        message: "Không thể gửi lại mã OTP. Vui lòng kiểm tra kết nối mạng.",
+        type: DialogType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
