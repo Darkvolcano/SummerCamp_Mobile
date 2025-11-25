@@ -17,6 +17,9 @@ Camp staff responsible for activity management, camper supervision, and parent c
 
 ### Driver (Tài xế)
 
+Transport staff responsible for safe camper transportation, managing
+trip schedules, and performing location check-ins during transit
+
 ---
 
 ## 📱 Parent Features
@@ -183,6 +186,36 @@ Receive alerts for:
 
 ## 📱 Driver Features
 
+### 🪪 Smart Registration (AI KYC)
+
+- **AI License Scanning**:
+- Upload/Capture driver's license image
+- **Gemini AI Integration**: Automatically analyzes and extracts
+  information (Full Name, DOB, License Number, Expiry Date,
+  Address)
+- **Auto-fill Form**: Populates registration fields automatically from image data
+- **Error Handling**: Detects invalid images or unreadable licenses
+- **Profile Management**: Update personal details and manage account settings
+
+### 🗺️ Trip Management
+
+- **Schedule Overview**:
+  - View daily assigned trips and tasks
+  - Check upcoming and completed trips
+- **Trip Details**:
+  - Pickup point (From) and Destination (To)
+  - Start and End times
+  - Specific task descriptions (e.g., "Pick up camper at District 1")
+
+### 📍 Location & Task Handling
+
+- **Trip Actions**:
+  - **Start Trip**: Check-in current location when starting
+  - **End Trip**: Check-out location upon arrival
+  - **Status Updates**: Mark trips as "Completed"
+- **Route Information**:
+  - Visual distinction between upcoming, ongoing, and completed trips
+
 ---
 
 ## 🏗️ Mobile App Architecture
@@ -290,6 +323,8 @@ feature_name/
    <string>Microphone access for live streaming</string>
    <key>NSPhotoLibraryUsageDescription</key>
    <string>Photo library access to upload photos</string>
+   <key>NSLocationWhenInUseUsageDescription</key>
+   <string>Access location for driver trip tracking</string>
    ```
 
 6. **Run the app**:
@@ -379,6 +414,26 @@ Uses [VideoSDK](https://www.videosdk.live/) for WebRTC streaming:
 
 ---
 
+## 🪪 AI Driver License Scanning
+
+### Mobile Flow
+
+1. **Image Input**: Driver uploads photo from Gallery or Camera
+2. **AI Analysis**: Image sent to Google Gemini (Multi-model fallback)
+3. **KYC Check**: Validates if image is a genuine Vietnamese Driver's License
+4. **Data Extraction**: OCRs text and auto-corrects spelling errors
+5. **Auto-fill**: Populates registration form fields automatically
+
+### AI Capabilities
+
+- **Smart Correction**: Fixes common OCR typos
+- **Structure Parsing**: Separates Full Name into First/Last Name
+- **Date Standardization**: Formats diverse date styles to yyyy-MM-dd
+- **Expiry Handling**: Detects "Unlimited" expiry dates
+- **Fraud Detection**: Rejects invalid images or non-license documents
+
+---
+
 ## 📦 Key Dependencies
 
 ```yaml
@@ -428,6 +483,12 @@ dependencies:
   cupertino_icons: ^1.0.8 # iOS icons
   connectivity_plus: ^6.0.3 # Check connect internet
   path: ^1.9.0 # File path processing
+
+  # AI & Machine Learning
+  google_generative_ai: ^0.4.7 # Gemini API for OCR
+
+  # Configuration
+  flutter_dotenv: ^5.1.0 # Manage environment variables
 ```
 
 ---
@@ -483,6 +544,15 @@ Surface: White
 - Card elevation: 4
 - Clean, business-oriented appearance
 
+### Driver Theme (`DriverTheme`)
+
+**Light Theme Only**:
+
+````dart
+Primary: #388E3C (Green 700)
+Accent: #66BB6A (Green 400)
+Background: #F1F8E9 (Green 50)
+Surface: White
 ---
 
 ## 📱 Navigation Flow
@@ -500,7 +570,7 @@ Login → Home
   ├── Messages → Chat
   ├── AI Assistant
   └── Notifications
-```
+````
 
 ### Staff Flow
 
@@ -513,6 +583,17 @@ Login → Work Schedule
   │   └── Report Incident
   ├── Messages → Parent Chat
   └── Notifications
+```
+
+### Driver Flow
+
+```bash
+Register (AI KYC) → Login → Home
+                      ├── Work Schedule
+                      │   └── Trip Detail → Update Location (Start/End)
+                      ├── Profile
+                      │   └── Edit Profile
+                      └── Notifications
 ```
 
 ---
