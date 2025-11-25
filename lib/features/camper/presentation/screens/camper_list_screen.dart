@@ -31,16 +31,19 @@ class _CamperListScreenState extends State<CamperListScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: Text(
           "Danh sách Camper",
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
@@ -62,11 +65,19 @@ class _CamperListScreenState extends State<CamperListScreen> {
                       arguments: camper.camperId,
                     );
                   },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 15,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
                     ),
-                    elevation: 3,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(

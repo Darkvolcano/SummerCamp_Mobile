@@ -59,16 +59,19 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: Text(
           "Đăng ký trại",
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
       body: camperProvider.loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -76,11 +79,19 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 15,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
                     ),
-                    elevation: 3,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(

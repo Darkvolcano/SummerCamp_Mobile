@@ -122,7 +122,7 @@ class AuthApiService {
 
   Future<Map<String, dynamic>> getUserProfile() async {
     try {
-      final res = await client.get('user/user');
+      final res = await client.get('user/me');
       return res.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw mapDioError(e);
@@ -130,7 +130,7 @@ class AuthApiService {
   }
 
   Future<void> updateUserProfile(Map<String, dynamic> data) async {
-    final res = await client.put('user/user', data: data);
+    final res = await client.put('user', data: data);
     return res.data;
   }
 

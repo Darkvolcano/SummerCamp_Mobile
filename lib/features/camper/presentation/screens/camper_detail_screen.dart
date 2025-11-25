@@ -35,12 +35,14 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
       ),
+      backgroundColor: Colors.white,
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : provider.error != null
@@ -63,10 +65,18 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Card(
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 15,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -141,6 +151,7 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
                         style: textTheme.titleMedium?.copyWith(
                           fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),

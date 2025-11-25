@@ -124,26 +124,37 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: Text(
           "Xác nhận đăng ký",
           style: textTheme.titleLarge?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              shape: RoundedRectangleBorder(
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 15,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
               ),
-              elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -216,6 +227,7 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
                 fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
+                fontSize: 20,
               ),
             ),
             const SizedBox(height: 8),
@@ -266,22 +278,29 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
               },
             ),
 
-            const SizedBox(height: 20),
-
             Text(
               "Thông tin thanh toán",
               style: textTheme.titleMedium?.copyWith(
                 fontFamily: "Quicksand",
                 fontWeight: FontWeight.bold,
                 color: AppTheme.summerPrimary,
+                fontSize: 20,
               ),
             ),
             const SizedBox(height: 8),
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 15,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
               ),
-              elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
