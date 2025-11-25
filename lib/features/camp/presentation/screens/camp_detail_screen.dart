@@ -5,12 +5,32 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 
-class CampDetailScreen extends StatelessWidget {
+class CampDetailScreen extends StatefulWidget {
   final Camp camp;
   const CampDetailScreen({super.key, required this.camp});
 
+  @override
+  State<CampDetailScreen> createState() => _CampDetailScreenState();
+}
+
+class _CampDetailScreenState extends State<CampDetailScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   Widget _buildPriceDetail(BuildContext context) {
-    if (camp.promotion == null) {
+    if (widget.camp.promotion == null) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,7 +40,7 @@ class CampDetailScreen extends StatelessWidget {
             style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
           ),
           Text(
-            "${PriceFormatter.format(camp.price)}/người",
+            "${PriceFormatter.format(widget.camp.price)}/người",
             style: const TextStyle(
               fontFamily: "Quicksand",
               fontWeight: FontWeight.bold,
@@ -31,16 +51,12 @@ class CampDetailScreen extends StatelessWidget {
         ],
       );
     }
-
-    final double price = camp.price;
-    final double percent = (camp.promotion!.percent as num).toDouble();
-    final double maxDiscount = (camp.promotion!.maxDiscountAmount as num)
+    final double price = widget.camp.price;
+    final double percent = (widget.camp.promotion!.percent as num).toDouble();
+    final double maxDiscount = (widget.camp.promotion!.maxDiscountAmount as num)
         .toDouble();
-
     double discount = price * (percent / 100);
-    if (discount > maxDiscount) {
-      discount = maxDiscount;
-    }
+    if (discount > maxDiscount) discount = maxDiscount;
     final double newPrice = price - discount;
 
     return Column(
@@ -70,11 +86,60 @@ class CampDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTabContent(TextTheme textTheme) {
+    return AnimatedBuilder(
+      animation: _tabController,
+      builder: (context, child) {
+        switch (_tabController.index) {
+          case 0:
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Mô tả chi tiết",
+                  style: textTheme.titleLarge?.copyWith(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 19,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.camp.description,
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontFamily: "Quicksand",
+                    color: Colors.black87,
+                    height: 1.5,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            );
+          case 1:
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: Text(
+                  "Chưa có đánh giá nào",
+                  style: TextStyle(fontFamily: "Quicksand", color: Colors.grey),
+                ),
+              ),
+            );
+          default:
+            return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final camp = widget.camp;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         decoration: BoxDecoration(
@@ -91,7 +156,6 @@ class CampDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildPriceDetail(context),
-
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -99,13 +163,11 @@ class CampDetailScreen extends StatelessWidget {
                   vertical: 12,
                 ),
               ),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.registrationForm,
-                  arguments: camp,
-                );
-              },
+              onPressed: () => Navigator.pushNamed(
+                context,
+                AppRoutes.registrationForm,
+                arguments: camp,
+              ),
               child: const Text(
                 "Đăng ký ngay",
                 style: TextStyle(
@@ -118,6 +180,7 @@ class CampDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -130,7 +193,17 @@ class CampDetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(camp.image, fit: BoxFit.cover),
+                  Image.network(
+                    camp.image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
                   Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -147,76 +220,181 @@ class CampDetailScreen extends StatelessWidget {
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(top: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    camp.name,
-                    style: textTheme.headlineMedium?.copyWith(
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.summerPrimary,
-                      fontSize: 24,
+                  Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          camp.name,
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.summerPrimary,
+                            fontSize: 24,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+
+                            const SizedBox(width: 4),
+
+                            Expanded(
+                              child: Text(
+                                camp.place,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontFamily: "Quicksand",
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  height: 0.9,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        if (camp.campType != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE3F2FD),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                camp.campType!.name,
+                                style: const TextStyle(
+                                  fontFamily: "Quicksand",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1565C0),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          _buildDetailRow(
-                            Icons.place_outlined,
-                            "Địa điểm",
-                            camp.place,
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 16,
+                      left: 16,
+                      right: 16,
+                    ),
+                    color: Color(0xFFF5F7F8),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 15,
+                                spreadRadius: 0,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
                           ),
-                          const Divider(height: 24),
-                          _buildDetailRow(
-                            Icons.calendar_month_outlined,
-                            "Thời gian",
-                            "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                _buildDetailRow(
+                                  Icons.calendar_month_outlined,
+                                  "Thời gian",
+                                  "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                                ),
+                                const Divider(height: 24),
+                                _buildDetailRow(
+                                  Icons.groups_outlined,
+                                  "Số lượng",
+                                  "Từ ${camp.minParticipants} đến ${camp.maxParticipants} trẻ",
+                                ),
+                                const Divider(height: 24),
+                                _buildDetailRow(
+                                  Icons.child_care_outlined,
+                                  "Độ tuổi",
+                                  "${camp.minAge ?? '?'} - ${camp.maxAge ?? '?'} tuổi",
+                                ),
+                              ],
+                            ),
                           ),
-                          const Divider(height: 24),
-                          _buildDetailRow(
-                            Icons.groups_outlined,
-                            "Số lượng",
-                            "Từ ${camp.minParticipants} đến ${camp.maxParticipants} trẻ",
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        Container(
+                          height: 45,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.transparent,
+                                width: 0,
+                              ),
+                            ),
                           ),
-                          const Divider(height: 24),
-                          _buildDetailRow(
-                            Icons.child_care_outlined,
-                            "Độ tuổi",
-                            "${camp.minAge ?? '?'} - ${camp.maxAge ?? '?'} tuổi",
+                          child: TabBar(
+                            controller: _tabController,
+
+                            dividerColor: Colors.transparent,
+
+                            indicator: const UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                color: Color(0xFF1565C0),
+                                width: 3.0,
+                              ),
+                              // insets: EdgeInsets.symmetric(horizontal: 16.0),
+                            ),
+
+                            labelColor: Color(0xFF1565C0),
+                            unselectedLabelColor: Colors.grey,
+                            labelStyle: const TextStyle(
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            tabs: const [
+                              Tab(text: "Tổng quan"),
+                              Tab(text: "Đánh giá"),
+                            ],
+                            onTap: (index) {
+                              setState(() {});
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        _buildTabContent(textTheme),
+
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    "Mô tả chi tiết",
-                    style: textTheme.titleLarge?.copyWith(
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                    camp.description,
-                    style: textTheme.bodyLarge?.copyWith(
-                      fontFamily: "Quicksand",
-                      color: Colors.black54,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 80),
                 ],
               ),
             ),

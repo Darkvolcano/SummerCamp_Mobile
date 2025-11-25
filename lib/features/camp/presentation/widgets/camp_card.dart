@@ -136,7 +136,8 @@ class CampCard extends StatelessWidget {
                     style: textTheme.titleLarge?.copyWith(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      // color: Color(0xFF045C9D),
+                      color: AppTheme.summerPrimary,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
