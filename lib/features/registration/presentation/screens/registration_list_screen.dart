@@ -113,15 +113,17 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: Text(
           "Danh sách đăng ký",
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -138,6 +140,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(

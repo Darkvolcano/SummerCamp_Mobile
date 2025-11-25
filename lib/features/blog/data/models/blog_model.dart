@@ -6,27 +6,27 @@ class BlogModel extends Blog {
     required super.title,
     required super.content,
     required super.authorId,
-    required super.isActive,
-    required super.createAt,
+    super.isActive,
+    required super.createdAt,
   });
 
   factory BlogModel.fromJson(Map<String, dynamic> json) {
     return BlogModel(
-      blogId: json['blogId'],
+      blogId: json['id'],
       title: json['title'],
       content: json['content'],
       authorId: json['authorId'],
       isActive: json['isActive'],
-      createAt: DateTime.parse(json['createAt']),
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'blogId': blogId,
+    'id': blogId,
     'title': title,
     'content': content,
     'authorId': authorId,
     'isActive': isActive,
-    'createAt': createAt.toIso8601String(),
+    'createdAt': createdAt.toIso8601String(),
   };
 }

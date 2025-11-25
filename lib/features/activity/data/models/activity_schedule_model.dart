@@ -1,11 +1,12 @@
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/activity/domain/entities/staff.dart';
 
 class ActivityScheduleModel extends ActivitySchedule {
   const ActivityScheduleModel({
     required super.activityScheduleId,
     super.activity,
-    required super.staffId,
+    super.staff,
     required super.startTime,
     required super.endTime,
     required super.status,
@@ -24,10 +25,16 @@ class ActivityScheduleModel extends ActivitySchedule {
       activity = Activity.fromJson(activityData);
     }
 
+    final staffData = json['staff'];
+    Staff? staff;
+    if (staffData != null && staffData is Map<String, dynamic>) {
+      staff = Staff.fromJson(staffData);
+    }
+
     return ActivityScheduleModel(
       activityScheduleId: json['activityScheduleId'],
       activity: activity,
-      staffId: json['staffId'],
+      staff: staff,
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
       status: json['status'],
@@ -43,7 +50,7 @@ class ActivityScheduleModel extends ActivitySchedule {
   Map<String, dynamic> toJson() => {
     'activityScheduleId': activityScheduleId,
     'activity': activity?.toJson(),
-    'staffId': staffId,
+    'staff': staff?.toJson(),
     'startTime': startTime.toIso8601String(),
     'endTime': endTime.toIso8601String(),
     'status': status,

@@ -48,6 +48,17 @@ class RegistrationModel extends Registration {
   }
 
   factory RegistrationModel.fromJson(Map<String, dynamic> json) {
+    final campData = json['camp'];
+    String campName = '';
+    String campStartDate = '';
+
+    if (campData != null && campData is Map<String, dynamic>) {
+      campName = campData['name']?.toString() ?? '';
+      campStartDate = campData['startDate']?.toString() ?? '';
+    } else {
+      campName = json['campName']?.toString() ?? '';
+    }
+
     var camperList = <RegistrationCamper>[];
     if (json['campers'] != null && json['campers'] is List) {
       camperList = (json['campers'] as List)
@@ -58,29 +69,34 @@ class RegistrationModel extends Registration {
     var optionalChoices = <RegistrationOptionalChoice>[];
     if (json['optionalChoices'] != null && json['optionalChoices'] is List) {
       optionalChoices = (json['optionalChoices'] as List)
-          .map(
-            (optionalChoicesJson) =>
-                RegistrationOptionalChoice.fromJson(optionalChoicesJson),
-          )
+          .map((e) => RegistrationOptionalChoice.fromJson(e))
           .toList();
     }
 
     return RegistrationModel(
-      registrationId: json['registrationId'],
-      camperId: json['camperId'],
-      campId: json['campId'],
-      paymentId: json['paymentId'],
+      registrationId: json['registrationId'] as int,
+
       registrationCreateAt: DateTime.parse(json['registrationCreateAt']),
       status: _statusFromString(json['status']),
-      price: json['price'],
-      campName: json['campName'],
-      campDescription: json['campDescription'],
-      campPlace: json['campPlace'],
-      campStartDate: json['campStartDate'],
-      campEndDate: json['campEndDate'],
+
+      price:
+          (json['finalPrice'] as num?)?.toInt() ??
+          (json['price'] as num?)?.toInt(),
+
+      campName: campName,
+
+      campDescription: json['campDescription']?.toString(),
+      campPlace: json['campPlace']?.toString(),
+
+      campStartDate: campStartDate.isNotEmpty
+          ? campStartDate
+          : json['campStartDate']?.toString(),
+      campEndDate: json['campEndDate']?.toString(),
+
       appliedPromotionId: json['appliedPromotionId'],
       promotionCode: json['promotionCode'],
-      discount: json['discount'],
+      discount: (json['discount'] as num?)?.toInt(),
+
       campers: camperList,
       optionalChoices: optionalChoices,
     );

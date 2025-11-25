@@ -37,12 +37,14 @@ class _BlogListScreenState extends State<BlogListScreen> {
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
         centerTitle: true,
       ),
+      backgroundColor: Colors.white,
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : provider.blogs.isEmpty

@@ -13,10 +13,22 @@ class BlogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 0,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
+      // elevation: 4,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
@@ -51,7 +63,7 @@ class BlogCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
+                    "Ngày đăng: ${DateFormatter.formatDate(blog.createdAt)}",
                     style: textTheme.bodySmall?.copyWith(
                       fontFamily: "Quicksand",
                       color: Colors.grey[600],

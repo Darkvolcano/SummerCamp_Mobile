@@ -113,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final authProvider = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -121,18 +121,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            // color: Colors.white,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        shadowColor: Colors.black.withValues(alpha: 0.9),
+        elevation: 1,
+        backgroundColor: Colors.white,
         actions: [
           if (authProvider.user != null && !authProvider.isLoading)
             IconButton(
-              icon: const Icon(Icons.edit_rounded, color: Colors.white),
+              icon: const Icon(
+                Icons.edit_rounded,
+                color: AppTheme.summerPrimary,
+              ),
               onPressed: _navigateToEditProfile,
             ),
         ],
-        elevation: 0,
       ),
       body: _buildBody(authProvider),
     );

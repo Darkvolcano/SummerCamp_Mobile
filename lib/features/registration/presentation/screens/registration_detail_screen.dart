@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
@@ -170,8 +171,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       MaterialPageRoute(
         builder: (context) => ILSScreen(
           liveStreamId: activity.roomId!.toString(),
-          token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0ZWQzZTNmNC0zMjBlLTQ5ZGYtOWM3ZS1kZjViZWMxNmIxOTkiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1OTEzNTYwOSwiZXhwIjoxNzc0Njg3NjA5fQ.5m-pLjkx_fqpc4nYWeEl-Xkbt_8uIg8o2tlnjlY-irU",
+          token: dotenv.env['VIDEO_SDK_TOKEN'] ?? '',
           mode: Mode.RECV_ONLY,
         ),
       ),
@@ -185,16 +185,17 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: const Text(
           "Chi tiết đăng ký",
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppTheme.summerPrimary,
+            fontSize: 24,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -206,6 +207,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: Builder(
         builder: (context) {
           if (registrationProvider.loading && registration == null) {
@@ -346,7 +348,8 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 style: TextStyle(fontFamily: "Quicksand"),
               ),
             )
-          else if (registration.status == RegistrationStatus.Completed)
+          else if (registration.status == RegistrationStatus.Completed ||
+              registration.status == RegistrationStatus.Confirmed)
             _buildSchedule(context, groupedActivities),
         ],
       ),
@@ -479,9 +482,19 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     final startDate = _campDetails?.startDate ?? registration.campStartDate;
     final endDate = _campDetails?.endDate ?? registration.campEndDate;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 0,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -537,9 +550,19 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     TextTheme textTheme,
     Registration registration,
   ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 0,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -599,11 +622,19 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         final activitiesOfDay = entry.value;
         activitiesOfDay.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-        return Card(
+        return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 15,
+                spreadRadius: 0,
+                offset: const Offset(0, 0),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(12),

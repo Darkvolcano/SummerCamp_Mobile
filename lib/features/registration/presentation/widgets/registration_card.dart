@@ -98,10 +98,20 @@ class RegistrationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        elevation: 2,
+      child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 15,
+              spreadRadius: 0,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
         clipBehavior: Clip.antiAlias,
         child: IntrinsicHeight(
           child: Row(

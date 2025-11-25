@@ -14,16 +14,19 @@ class BlogDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: Text(
           blog.title,
           style: textTheme.titleMedium?.copyWith(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -43,7 +46,7 @@ class BlogDetailScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Ngày đăng: ${DateFormatter.formatDate(blog.createAt)}",
+                  "Ngày đăng: ${DateFormatter.formatDate(blog.createdAt)}",
                   style: textTheme.bodySmall?.copyWith(
                     fontFamily: "Quicksand",
                     color: Colors.grey[600],
