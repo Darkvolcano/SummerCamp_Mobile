@@ -124,21 +124,21 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
           ),
         ),
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.home,
-                (route) => false,
-                arguments: 4,
-              );
-            }
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     if (Navigator.canPop(context)) {
+        //       Navigator.pop(context);
+        //     } else {
+        //       Navigator.pushNamedAndRemoveUntil(
+        //         context,
+        //         AppRoutes.home,
+        //         (route) => false,
+        //         arguments: 4,
+        //       );
+        //     }
+        //   },
+        // ),
       ),
       backgroundColor: Colors.white,
       body: Column(
