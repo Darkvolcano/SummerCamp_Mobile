@@ -8,4 +8,12 @@ class ScheduleApiService {
     final res = await client.get('Staff/my-camps');
     return res.data as List;
   }
+
+  Future<void> updateTransportScheduleStartTrip(int transportScheduleId) async {
+    await client.patch('transportschedules/$transportScheduleId/start-trip');
+  }
+
+  Future<void> updateTransportScheduleEndTrip(int transportScheduleId) async {
+    await client.patch('transportschedules/$transportScheduleId/end-trip');
+  }
 }

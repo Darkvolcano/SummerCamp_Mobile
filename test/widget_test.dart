@@ -65,6 +65,8 @@ import 'package:summercamp/features/report/presentation/state/report_provider.da
 import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
 import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 import 'package:summercamp/main.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
@@ -308,6 +310,10 @@ void main() {
     final scheduleApi = ScheduleApiService(apiClient);
     final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
     final getSchedulesUseCase = GetSchedules(scheduleRepo);
+    final updateTransportScheduleStartTripUseCase =
+        UpdateTransportScheduleStartTrip(scheduleRepo);
+    final updateTransportScheduleEndTripUseCase =
+        UpdateTransportScheduleEndTrip(scheduleRepo);
 
     // Attendance
     final attendanceApi = AttendanceApiService(apiClient);
@@ -392,9 +398,13 @@ void main() {
             ),
           ),
 
-          // ScheduleProvider need 1 usecases (GetSchedules)
+          // ScheduleProvider need 3 usecases (GetSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip)
           ChangeNotifierProvider(
-            create: (_) => ScheduleProvider(getSchedulesUseCase),
+            create: (_) => ScheduleProvider(
+              getSchedulesUseCase,
+              updateTransportScheduleStartTripUseCase,
+              updateTransportScheduleEndTripUseCase,
+            ),
           ),
 
           // AttendanceProvider need 1 usecases (UpdateAttendanceList)

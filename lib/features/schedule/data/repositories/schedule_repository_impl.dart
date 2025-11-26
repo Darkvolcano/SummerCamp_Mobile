@@ -12,4 +12,14 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
     final list = await service.fetchSchedules();
     return list.map((e) => ScheduleModel.fromJson(e)).toList();
   }
+
+  @override
+  Future<void> updateTransportScheduleStartTrip(int id) async {
+    await service.updateTransportScheduleStartTrip(id);
+  }
+
+  @override
+  Future<void> updateTransportScheduleEndTrip(int id) async {
+    await service.updateTransportScheduleEndTrip(id);
+  }
 }
