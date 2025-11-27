@@ -167,6 +167,64 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
     }
   }
 
+  bool _isActionAllowed(TransportSchedule trip) {
+    final now = DateTime.now();
+
+    final tripDate = DateTime.parse(trip.date);
+    final isToday =
+        tripDate.year == now.year &&
+        tripDate.month == now.month &&
+        tripDate.day == now.day;
+
+    if (!isToday) return false;
+
+    final startDateTime = _parseDateTime(trip.date, trip.startTime);
+    final endDateTime = _parseDateTime(trip.date, trip.endTime);
+
+    if (trip.status == TransportScheduleStatus.NotYet) {
+      final allowedStartWindow = startDateTime.subtract(
+        const Duration(minutes: 30),
+      );
+      final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
+      return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
+    } else if (trip.status == TransportScheduleStatus.InProgress) {
+      final deadline = endDateTime.add(const Duration(minutes: 120));
+      return now.isBefore(deadline);
+    }
+
+    return false;
+  }
+
+  void _showDisabledReason(TransportSchedule trip) {
+    final now = DateTime.now();
+    final tripDate = DateTime.parse(trip.date);
+    final isToday =
+        tripDate.year == now.year &&
+        tripDate.month == now.month &&
+        tripDate.day == now.day;
+
+    if (!isToday) {
+      _showStatusDialog("Chuyến đi không phải ngày hôm nay!", isSuccess: false);
+      return;
+    }
+
+    final startDateTime = _parseDateTime(trip.date, trip.startTime);
+    final endDateTime = _parseDateTime(trip.date, trip.endTime);
+    String message = "";
+
+    if (trip.status == TransportScheduleStatus.NotYet) {
+      message =
+          "Chỉ được bắt đầu từ ${DateFormatter.formatTime(startDateTime.subtract(const Duration(minutes: 30)))} đến ${DateFormatter.formatTime(startDateTime.add(const Duration(minutes: 60)))}";
+    } else if (trip.status == TransportScheduleStatus.InProgress) {
+      message =
+          "Đã quá thời gian cho phép kết thúc chuyến đi (${DateFormatter.formatTime(endDateTime.add(const Duration(minutes: 120)))})";
+    }
+
+    if (message.isNotEmpty) {
+      _showStatusDialog(message, isSuccess: false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -205,7 +263,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                 final isCanceled =
                     trip.status == TransportScheduleStatus.Canceled;
 
-                final canUpdate = !isCompleted && !isCanceled;
+                // final canUpdate = !isCompleted && !isCanceled;
 
                 String buttonLabel = "Cập nhật";
                 IconData buttonIcon = Icons.update;
@@ -231,6 +289,10 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                   trip.date,
                   trip.actualEndTime ?? '',
                 );
+
+                final bool isTimeAllowed = _isActionAllowed(trip);
+                final bool canUpdate =
+                    !isCompleted && !isCanceled && isTimeAllowed;
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -378,9 +440,16 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
+                            // onPressed: canUpdate
+                            //     ? () => _handleUpdateStatus(trip)
+                            //     : null,
                             onPressed: canUpdate
                                 ? () => _handleUpdateStatus(trip)
-                                : null,
+                                : () {
+                                    if (!isCompleted && !isCanceled) {
+                                      _showDisabledReason(trip);
+                                    }
+                                  },
                             icon: Icon(
                               buttonIcon,
                               size: 20,

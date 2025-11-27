@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/driver_theme.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
-import 'package:summercamp/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:summercamp/features/profile/presentation/screens/edit_profile_driver_screen.dart';
 
 class DriverProfileScreen extends StatefulWidget {
   const DriverProfileScreen({super.key});
@@ -17,7 +18,7 @@ class DriverProfileScreen extends StatefulWidget {
 class _DriverProfileScreenState extends State<DriverProfileScreen> {
   bool _isFetching = false;
   File? _profileImage;
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
   Future<void> _fetchUserData() async {
     final authProvider = context.read<AuthProvider>();
-    if (authProvider.user == null && !_isFetching) {
+    if (!_isFetching) {
       setState(() {
         _isFetching = true;
       });
@@ -58,7 +59,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfileScreen(user: authProvider.user!),
+        builder: (context) => EditProfileDriverScreen(user: authProvider.user!),
       ),
     );
 
@@ -85,13 +86,12 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     }
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() => _profileImage = File(pickedFile.path));
-      // Thêm logic upload ảnh
-    }
-  }
+  // Future<void> _pickImage() async {
+  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() => _profileImage = File(pickedFile.path));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
         ),
         backgroundColor: DriverTheme.driverPrimary,
         actions: [
-          if (authProvider.user != null && !authProvider.isLoading)
+          if (authProvider.user != null)
             IconButton(
               icon: const Icon(Icons.edit_rounded, color: Colors.white),
               onPressed: _navigateToEditProfile,
@@ -128,6 +128,22 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       return const Center(
         child: CircularProgressIndicator(color: DriverTheme.driverPrimary),
       );
+    }
+
+    final user = authProvider.user!;
+    final String staffName = '${user.firstName} ${user.lastName}'.trim();
+    final String? staffEmail = user.email;
+    final String staffPhone = user.phoneNumber;
+
+    String dobFormatted = "Chưa cập nhật";
+    if (user.dateOfBirth != null && user.dateOfBirth != "0001-01-01") {
+      try {
+        dobFormatted = DateFormat(
+          'dd/MM/yyyy',
+        ).format(DateFormat('yyyy-MM-dd').parse(user.dateOfBirth!));
+      } catch (e) {
+        dobFormatted = user.dateOfBirth!;
+      }
     }
 
     if (authProvider.error != null && authProvider.user == null) {
@@ -213,12 +229,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
         ),
       );
     }
-
-    final user = authProvider.user!;
-    final String staffName = '${user.firstName} ${user.lastName}'.trim();
     final String staffPosition = user.role ?? "Driver";
-    final String? staffEmail = user.email;
-    final String staffPhone = user.phoneNumber;
     final String? avatarUrl = user.avatar;
     final bool hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
 
@@ -258,22 +269,22 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                             )
                           : null,
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: _pickImage,
-                        child: const CircleAvatar(
-                          backgroundColor: DriverTheme.driverAccent,
-                          radius: 20,
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   right: 0,
+                    //   child: InkWell(
+                    //     onTap: _pickImage,
+                    //     child: const CircleAvatar(
+                    //       backgroundColor: DriverTheme.driverAccent,
+                    //       radius: 20,
+                    //       child: Icon(
+                    //         Icons.camera_alt,
+                    //         color: Colors.white,
+                    //         size: 18,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -303,6 +314,11 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               children: [
                 _buildInfoCard("Email", staffEmail!, Icons.email),
                 _buildInfoCard("Số điện thoại", staffPhone, Icons.phone),
+                _buildInfoCard(
+                  "Ngày sinh",
+                  dobFormatted,
+                  Icons.calendar_today_outlined,
+                ),
               ],
             ),
           ),
