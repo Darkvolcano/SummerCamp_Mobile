@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
-import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 
 class ScheduleProvider with ChangeNotifier {
-  final GetSchedules getSchedulesUseCase;
+  final GetStaffSchedules getStaffSchedulesUseCase;
   final UpdateTransportScheduleStartTrip
   updateTransportScheduleStartTripUseCase;
   final UpdateTransportScheduleEndTrip updateTransportScheduleEndTripUseCase;
+  final GetDriverSchedules getDriverSchedulesUseCase;
 
   ScheduleProvider(
-    this.getSchedulesUseCase,
+    this.getStaffSchedulesUseCase,
     this.updateTransportScheduleStartTripUseCase,
     this.updateTransportScheduleEndTripUseCase,
+    this.getDriverSchedulesUseCase,
   );
 
   List<Schedule> _schedules = [];
   List<Schedule> get schedules => _schedules;
 
+  List<TransportSchedule> _transportSchedules = [];
+  List<TransportSchedule> get transportSchedules => _transportSchedules;
+
   bool _loading = false;
   bool get loading => _loading;
 
-  Future<void> loadSchedules() async {
+  Future<void> loadStaffSchedules() async {
     _loading = true;
     notifyListeners();
 
     try {
-      _schedules = await getSchedulesUseCase();
+      _schedules = await getStaffSchedulesUseCase();
     } catch (e) {
-      print("Lỗi load lịch: $e");
+      print("Lỗi load lịch staff: $e");
       _schedules = [];
     }
 
@@ -63,5 +70,20 @@ class ScheduleProvider with ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> loadDriverSchedules() async {
+    _loading = true;
+    notifyListeners();
+
+    try {
+      _transportSchedules = await getDriverSchedulesUseCase();
+    } catch (e) {
+      print("Lỗi load lịch driver: $e");
+      _transportSchedules = [];
+    }
+
+    _loading = false;
+    notifyListeners();
   }
 }

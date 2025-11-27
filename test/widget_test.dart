@@ -64,7 +64,8 @@ import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
 import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
 import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
-import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
@@ -309,11 +310,12 @@ void main() {
     // Schedule
     final scheduleApi = ScheduleApiService(apiClient);
     final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
-    final getSchedulesUseCase = GetSchedules(scheduleRepo);
+    final getStaffSchedulesUseCase = GetStaffSchedules(scheduleRepo);
     final updateTransportScheduleStartTripUseCase =
         UpdateTransportScheduleStartTrip(scheduleRepo);
     final updateTransportScheduleEndTripUseCase =
         UpdateTransportScheduleEndTrip(scheduleRepo);
+    final getDriverSchedulesUseCase = GetDriverSchedules(scheduleRepo);
 
     // Attendance
     final attendanceApi = AttendanceApiService(apiClient);
@@ -398,12 +400,13 @@ void main() {
             ),
           ),
 
-          // ScheduleProvider need 3 usecases (GetSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip)
+          // ScheduleProvider need 4 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules)
           ChangeNotifierProvider(
             create: (_) => ScheduleProvider(
-              getSchedulesUseCase,
+              getStaffSchedulesUseCase,
               updateTransportScheduleStartTripUseCase,
               updateTransportScheduleEndTripUseCase,
+              getDriverSchedulesUseCase,
             ),
           ),
 

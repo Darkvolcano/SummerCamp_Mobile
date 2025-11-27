@@ -16,7 +16,7 @@ class StaffScheduleScreen extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (provider.schedules.isEmpty && !provider.loading) {
-        provider.loadSchedules();
+        provider.loadStaffSchedules();
       }
     });
 

@@ -4,7 +4,7 @@ class ScheduleApiService {
   final ApiClient client;
   ScheduleApiService(this.client);
 
-  Future<List<dynamic>> fetchSchedules() async {
+  Future<List<dynamic>> fetchStaffSchedules() async {
     final res = await client.get('Staff/my-camps');
     return res.data as List;
   }
@@ -15,5 +15,10 @@ class ScheduleApiService {
 
   Future<void> updateTransportScheduleEndTrip(int transportScheduleId) async {
     await client.patch('transportschedules/$transportScheduleId/end-trip');
+  }
+
+  Future<List<dynamic>> fetchDriverSchedules() async {
+    final res = await client.get('transportschedules/driver-schedule');
+    return res.data as List;
   }
 }

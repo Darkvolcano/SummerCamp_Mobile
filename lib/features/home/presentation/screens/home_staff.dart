@@ -55,7 +55,7 @@ class _StaffHomeContentState extends State<StaffHomeContent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<ScheduleProvider>();
       if (provider.schedules.isEmpty) {
-        provider.loadSchedules();
+        provider.loadStaffSchedules();
       }
     });
   }

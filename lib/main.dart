@@ -16,6 +16,7 @@ import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 import 'firebase_options.dart';
@@ -29,7 +30,7 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.d
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
 import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
-import 'package:summercamp/features/schedule/domain/use_cases/get_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
@@ -184,12 +185,13 @@ Future<void> main() async {
   // Schedule
   final scheduleApi = ScheduleApiService(apiClient);
   final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
-  final getSchedulesUseCase = GetSchedules(scheduleRepo);
+  final getStaffSchedulesUseCase = GetStaffSchedules(scheduleRepo);
   final updateTransportScheduleStartTripUseCase =
       UpdateTransportScheduleStartTrip(scheduleRepo);
   final updateTransportScheduleEndTripUseCase = UpdateTransportScheduleEndTrip(
     scheduleRepo,
   );
+  final getDriverSchedulesUseCase = GetDriverSchedules(scheduleRepo);
 
   // Attendance
   final attendanceApi = AttendanceApiService(apiClient);
@@ -273,12 +275,13 @@ Future<void> main() async {
           ),
         ),
 
-        // ScheduleProvider need 3 usecases (GetSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip)
+        // ScheduleProvider need 4 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules)
         ChangeNotifierProvider(
           create: (_) => ScheduleProvider(
-            getSchedulesUseCase,
+            getStaffSchedulesUseCase,
             updateTransportScheduleStartTripUseCase,
             updateTransportScheduleEndTripUseCase,
+            getDriverSchedulesUseCase,
           ),
         ),
 
