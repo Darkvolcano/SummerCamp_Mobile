@@ -280,11 +280,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                     _buildStaffMenu("Báo cáo sự cố", Icons.report_problem, () {
                       Navigator.pushNamed(context, AppRoutes.report);
                     }),
-                    _buildStaffMenu("Quản lý camper", Icons.group, () {
-                      Navigator.pushNamed(context, AppRoutes.camperList);
-                    }),
-                    _buildStaffMenu("Thống kê", Icons.bar_chart, () {}),
-                    _buildStaffMenu("Tin nhắn", Icons.message, () {}),
+                    // _buildStaffMenu("Quản lý camper", Icons.group, () {
+                    //   Navigator.pushNamed(context, AppRoutes.camperList);
+                    // }),
+                    // _buildStaffMenu("Thống kê", Icons.bar_chart, () {}),
+                    // _buildStaffMenu("Tin nhắn", Icons.message, () {}),
                   ],
                 ),
               ],

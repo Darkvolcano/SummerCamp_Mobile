@@ -149,15 +149,15 @@ class _StaffHomeContentState extends State<StaffHomeContent> {
                         arguments: camp,
                       );
                     },
-                    leading: CircleAvatar(
-                      backgroundColor: StaffTheme.staffAccent,
-                      backgroundImage: camp.image.isNotEmpty
-                          ? NetworkImage(camp.image)
-                          : null,
-                      child: camp.image.isEmpty
-                          ? const Icon(Icons.terrain, color: Colors.white)
-                          : null,
-                    ),
+                    // leading: CircleAvatar(
+                    //   backgroundColor: StaffTheme.staffAccent,
+                    //   backgroundImage: camp.image.isNotEmpty
+                    //       ? NetworkImage(camp.image)
+                    //       : null,
+                    //   child: camp.image.isEmpty
+                    //       ? const Icon(Icons.terrain, color: Colors.white)
+                    //       : null,
+                    // ),
                     title: Text(
                       camp.name,
                       style: const TextStyle(
