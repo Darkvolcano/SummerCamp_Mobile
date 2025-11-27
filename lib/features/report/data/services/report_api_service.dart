@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:summercamp/core/network/api_client.dart';
+import 'package:summercamp/core/network/dio_error_mapper.dart';
 
 class ReportApiService {
   final ApiClient client;
@@ -10,7 +12,11 @@ class ReportApiService {
   }
 
   Future<Map<String, dynamic>> createReport(Map<String, dynamic> data) async {
-    final res = await client.post('reports', data: data);
-    return res.data;
+    try {
+      final res = await client.post('Eeport', data: data);
+      return res.data;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
   }
 }

@@ -3,7 +3,7 @@ class Report {
   final int camperId;
   final String note;
   final String image;
-  final DateTime createAt;
+  final DateTime? createAt;
   final String status;
   final String level;
   final int? reportedBy;
@@ -14,7 +14,7 @@ class Report {
     required this.camperId,
     required this.note,
     required this.image,
-    required this.createAt,
+    this.createAt,
     required this.status,
     required this.level,
     this.reportedBy,

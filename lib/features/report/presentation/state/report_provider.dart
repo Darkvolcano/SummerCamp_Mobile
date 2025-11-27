@@ -17,6 +17,8 @@ class ReportProvider with ChangeNotifier {
 
   bool _loading = false;
   bool get loading => _loading;
+  String? _error;
+  String? get error => _error;
 
   Future<void> loadReports() async {
     _loading = true;
@@ -35,8 +37,19 @@ class ReportProvider with ChangeNotifier {
   }
 
   Future<void> addReport(Report r) async {
-    await createReportUseCase(r);
-    _reports.add(r);
+    _loading = true;
+    _error = null;
     notifyListeners();
+
+    try {
+      await createReportUseCase(r);
+    } catch (e) {
+      _error = "Lỗi khi tạo report: $e";
+      print(_error);
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 }

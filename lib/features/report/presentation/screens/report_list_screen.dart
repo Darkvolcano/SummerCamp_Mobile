@@ -37,7 +37,6 @@ class _ReportListScreenState extends State<ReportListScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: StaffTheme.staffPrimary,
         foregroundColor: Colors.white,
@@ -146,7 +145,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                                         const Spacer(),
                                         Text(
                                           DateFormatter.formatDate(
-                                            report.createAt,
+                                            report.createAt ?? DateTime.now(),
                                           ),
                                           style: const TextStyle(
                                             fontSize: 12,

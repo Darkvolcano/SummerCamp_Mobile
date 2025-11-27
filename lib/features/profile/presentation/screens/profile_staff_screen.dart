@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
-import 'package:summercamp/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:summercamp/features/profile/presentation/screens/edit_profile_staff_screen.dart';
 
 class StaffProfileScreen extends StatefulWidget {
   const StaffProfileScreen({super.key});
@@ -55,7 +55,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfileScreen(user: authProvider.user!),
+        builder: (context) => EditProfileStaffScreen(user: authProvider.user!),
       ),
     );
 
@@ -274,14 +274,12 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                   childAspectRatio: 1,
                   children: [
                     _buildStaffMenu("Quản lý trại hè", Icons.campaign, () {
-                      Navigator.pushNamed(context, AppRoutes.campList);
+                      Navigator.pushNamed(context, AppRoutes.staffSchedule);
                     }),
                     _buildStaffMenu("Điểm danh", Icons.check_circle, () {}),
-                    _buildStaffMenu(
-                      "Báo cáo sự cố",
-                      Icons.report_problem,
-                      () {},
-                    ),
+                    _buildStaffMenu("Báo cáo sự cố", Icons.report_problem, () {
+                      Navigator.pushNamed(context, AppRoutes.report);
+                    }),
                     _buildStaffMenu("Quản lý camper", Icons.group, () {
                       Navigator.pushNamed(context, AppRoutes.camperList);
                     }),

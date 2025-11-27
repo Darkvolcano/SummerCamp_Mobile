@@ -21,7 +21,6 @@ class ReportRepositoryImpl implements ReportRepository {
       camperId: report.camperId,
       note: report.note,
       image: report.image,
-      createAt: report.createAt,
       status: report.status,
       level: report.level,
       activityId: report.activityId,
