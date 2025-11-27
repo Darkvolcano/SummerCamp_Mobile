@@ -41,9 +41,9 @@ class _CamperListScreenState extends State<CamperListScreen> {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(

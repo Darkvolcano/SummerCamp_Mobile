@@ -9,6 +9,7 @@ class ReportModel extends Report {
     required super.createAt,
     required super.status,
     required super.level,
+    super.reportedBy,
     required super.activityId,
   });
 
@@ -21,6 +22,7 @@ class ReportModel extends Report {
       createAt: DateTime.parse(json['createAt']),
       status: json['status'],
       level: json['level'],
+      reportedBy: json['reportedBy'],
       activityId: json['activityId'],
     );
   }
@@ -33,6 +35,7 @@ class ReportModel extends Report {
     'createAt': createAt.toIso8601String(),
     'status': status,
     'level': level,
+    'reportedBy': reportedBy,
     'activityId': activityId,
   };
 }

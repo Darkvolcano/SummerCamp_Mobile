@@ -24,9 +24,9 @@ class BlogDetailScreen extends StatelessWidget {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

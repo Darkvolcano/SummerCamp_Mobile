@@ -195,7 +195,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             fontSize: 24,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

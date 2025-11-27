@@ -196,10 +196,10 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
         iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(

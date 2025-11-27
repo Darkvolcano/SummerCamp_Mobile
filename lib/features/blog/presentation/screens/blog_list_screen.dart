@@ -41,10 +41,10 @@ class _BlogListScreenState extends State<BlogListScreen> {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
         centerTitle: true,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : provider.blogs.isEmpty

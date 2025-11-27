@@ -45,16 +45,17 @@ class _CampSearchScreenState extends State<CampSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Color(0xFFF5F7F8),
         title: const Text(
           "Tìm kiếm Trại hè",
           style: TextStyle(
             fontFamily: "Quicksand",
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
       ),
       body: Column(
         children: [

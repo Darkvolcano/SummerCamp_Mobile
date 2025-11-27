@@ -69,9 +69,9 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: camperProvider.loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

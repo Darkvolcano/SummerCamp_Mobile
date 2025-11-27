@@ -39,10 +39,10 @@ class _CamperDetailScreenState extends State<CamperDetailScreen> {
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
         iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: provider.loading
           ? const Center(child: CircularProgressIndicator())
           : provider.error != null

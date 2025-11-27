@@ -6,6 +6,7 @@ class Report {
   final DateTime createAt;
   final String status;
   final String level;
+  final int? reportedBy;
   final int activityId;
 
   const Report({
@@ -16,6 +17,7 @@ class Report {
     required this.createAt,
     required this.status,
     required this.level,
+    this.reportedBy,
     required this.activityId,
   });
 }

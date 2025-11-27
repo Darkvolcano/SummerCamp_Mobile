@@ -109,11 +109,21 @@ class CampProvider with ChangeNotifier {
     if (query.isEmpty) {
       _filteredCamps = [];
     } else {
-      _filteredCamps = _camps
-          .where(
-            (camp) => camp.name.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+      const allowedStatuses = {
+        CampStatus.Published,
+        CampStatus.OpenForRegistration,
+        CampStatus.RegistrationClosed,
+      };
+
+      _filteredCamps = _camps.where((camp) {
+        final nameMatches = camp.name.toLowerCase().contains(
+          query.toLowerCase(),
+        );
+
+        final statusMatches = allowedStatuses.contains(camp.status);
+
+        return nameMatches && statusMatches;
+      }).toList();
     }
     notifyListeners();
   }

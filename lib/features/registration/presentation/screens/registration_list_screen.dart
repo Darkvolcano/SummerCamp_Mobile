@@ -123,7 +123,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
             color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),
         //   onPressed: () {
@@ -140,11 +140,11 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
         //   },
         // ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: Column(
         children: [
           Container(
-            color: Theme.of(context).cardColor,
+            color: Color(0xFFF5F7F8),
             child: TabBar(
               controller: _tabController,
               isScrollable: true,

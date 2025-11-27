@@ -244,18 +244,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(0),
       children: [
         _buildProfileHeader(user),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoCard(user),
-              const SizedBox(height: 20),
-              _buildMenuSection(),
-              const SizedBox(height: 20),
-              _buildLogoutButton(),
-              const SizedBox(height: 30),
-            ],
+        Container(
+          color: Color(0xFFF5F7F8),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoCard(user),
+                const SizedBox(height: 20),
+                _buildMenuSection(),
+                const SizedBox(height: 20),
+                _buildLogoutButton(),
+                const SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ],

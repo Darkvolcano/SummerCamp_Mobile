@@ -64,15 +64,18 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: const Text(
           "AI Chat 🤖",
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppTheme.summerPrimary,
+        backgroundColor: Color(0xFFF5F7F8),
         foregroundColor: Colors.white,
         elevation: 3,
       ),

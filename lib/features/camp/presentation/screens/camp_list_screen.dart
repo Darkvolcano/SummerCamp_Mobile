@@ -146,9 +146,9 @@ class _CampListScreenState extends State<CampListScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5F7F8),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7F8),
       body: Column(
         children: [
           Container(

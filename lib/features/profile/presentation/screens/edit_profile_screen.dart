@@ -189,11 +189,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            fontSize: 24,
+            color: AppTheme.summerPrimary,
           ),
         ),
-        backgroundColor: AppTheme.summerPrimary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xFFF5F7F8),
+        iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
       ),
       body: Form(
         key: _formKey,
