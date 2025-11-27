@@ -105,6 +105,11 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updateUploadAvatar(File imageFile) async {
+    await service.updateUploadAvatar(imageFile);
+  }
+
+  @override
   Future<List<User>> getUsers() async {
     final list = await service.fetchUsers();
     return list.map((e) => UserModel.fromJson(e)).toList();

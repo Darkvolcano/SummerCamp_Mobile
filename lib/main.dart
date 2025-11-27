@@ -13,6 +13,7 @@ import 'package:summercamp/features/attendance/domain/use_cases/update_attendanc
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
@@ -111,6 +112,7 @@ Future<void> main() async {
   final verifyOTPUseCase = VerifyOtp(userRepo);
   final getUserProfileUseCase = GetUserProfile(userRepo);
   final updateUserProfileUseCase = UpdateUserProfile(userRepo);
+  final updateUploadAvatarUseCase = UpdateUploadAvatar(userRepo);
   final getUsersUseCase = GetUsers(userRepo);
   final resendOTPUseCase = ResendOtp(userRepo);
   final forgotPasswordUseCase = ForgotPassword(userRepo);
@@ -208,6 +210,7 @@ Future<void> main() async {
             verifyOTPUseCase,
             getUserProfileUseCase,
             updateUserProfileUseCase,
+            updateUploadAvatarUseCase,
             userRepo,
             getUsersUseCase,
             resendOTPUseCase,

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -26,8 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   DateTime? _selectedDate;
   File? _profileImage;
-  String? _newAvatarUrl;
-  bool _isUploadingAvatar = false;
   bool _isSaving = false;
 
   @override
@@ -76,12 +73,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    if (_isUploadingAvatar) {
-      _showMessageBox('Đang tải ảnh', 'Vui lòng chờ ảnh tải lên xong.');
       return;
     }
 
@@ -100,11 +104,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
         phoneNumber: _phoneController.text.trim(),
-        avatar: _newAvatarUrl ?? widget.user.avatar,
         dob: dobForApi,
       );
 
       await authProvider.updateUserProfile(updatedUser);
+
+      if (_profileImage != null) {
+        await authProvider.updateUploadAvatar(_profileImage!);
+
+        await authProvider.fetchProfileUser();
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -121,34 +130,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         setState(() => _isSaving = false);
       }
-    }
-  }
-
-  Future<void> _pickImage() async {
-    if (_isUploadingAvatar) return;
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      final imageFile = File(pickedFile.path);
-      setState(() => _profileImage = imageFile);
-      await _uploadAvatar(imageFile);
-    }
-  }
-
-  Future<void> _uploadAvatar(File file) async {
-    setState(() => _isUploadingAvatar = true);
-    try {
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final ref = FirebaseStorage.instance.ref('user_avatars').child(fileName);
-      await ref.putFile(file);
-      final downloadUrl = await ref.getDownloadURL();
-      setState(() {
-        _newAvatarUrl = downloadUrl;
-      });
-    } catch (e) {
-      _showMessageBox("Lỗi", "Upload ảnh thất bại: ${e.toString()}");
-    } finally {
-      setState(() => _isUploadingAvatar = false);
     }
   }
 
@@ -243,12 +224,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                   ),
-                  if (_isUploadingAvatar)
-                    const CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.black54,
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
                 ],
               ),
             ),

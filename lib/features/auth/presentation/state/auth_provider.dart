@@ -14,6 +14,7 @@ import 'package:summercamp/features/auth/domain/use_cases/register_response.dart
 import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
@@ -24,6 +25,7 @@ class AuthProvider with ChangeNotifier {
   final VerifyOtp verifyOTPUseCase;
   final GetUserProfile getUserProfileUseCase;
   final UpdateUserProfile updateUserProfileUseCase;
+  final UpdateUploadAvatar updateUploadAvatarUseCase;
   final UserRepository repositoryUseCase;
   final GetUsers getUsersUseCase;
   final ResendOtp resendOTPUseCase;
@@ -39,6 +41,7 @@ class AuthProvider with ChangeNotifier {
     this.verifyOTPUseCase,
     this.getUserProfileUseCase,
     this.updateUserProfileUseCase,
+    this.updateUploadAvatarUseCase,
     this.repositoryUseCase,
     this.getUsersUseCase,
     this.resendOTPUseCase,
@@ -158,6 +161,15 @@ class AuthProvider with ChangeNotifier {
     } finally {
       _setLoading(false);
       notifyListeners();
+    }
+  }
+
+  Future<void> updateUploadAvatar(File imageFile) async {
+    try {
+      await updateUploadAvatarUseCase(imageFile);
+    } catch (e) {
+      print("Lỗi upload avatar: $e");
+      rethrow;
     }
   }
 

@@ -7,13 +7,13 @@ class ReportApiService {
   ReportApiService(this.client);
 
   Future<List<dynamic>> fetchReports() async {
-    final res = await client.get('reports');
+    final res = await client.get('Report');
     return res.data as List;
   }
 
   Future<Map<String, dynamic>> createReport(Map<String, dynamic> data) async {
     try {
-      final res = await client.post('Eeport', data: data);
+      final res = await client.post('Report', data: data);
       return res.data;
     } on DioException catch (e) {
       throw mapDioError(e);

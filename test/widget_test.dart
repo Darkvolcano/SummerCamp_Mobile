@@ -23,6 +23,7 @@ import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart'
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
@@ -236,6 +237,7 @@ void main() {
     final verifyOTPUseCase = VerifyOtp(userRepo);
     final getUserProfileUseCase = GetUserProfile(userRepo);
     final updateUserProfileUseCase = UpdateUserProfile(userRepo);
+    final updateUploadAvatarUseCase = UpdateUploadAvatar(userRepo);
     final getUsersUseCase = GetUsers(userRepo);
     final resendOTPUseCase = ResendOtp(userRepo);
     final forgotPasswordUseCase = ForgotPassword(userRepo);
@@ -332,6 +334,7 @@ void main() {
               verifyOTPUseCase,
               getUserProfileUseCase,
               updateUserProfileUseCase,
+              updateUploadAvatarUseCase,
               userRepo,
               getUsersUseCase,
               resendOTPUseCase,

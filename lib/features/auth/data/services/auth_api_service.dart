@@ -134,6 +134,27 @@ class AuthApiService {
     return res.data;
   }
 
+  Future<void> updateUploadAvatar(File imageFile) async {
+    try {
+      String fileName = imageFile.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+        ),
+      });
+
+      await client.put(
+        'upload/my-avatar',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
   Future<List<dynamic>> fetchUsers() async {
     final res = await client.get('users');
     return res.data as List;
