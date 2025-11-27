@@ -1,3 +1,4 @@
+import 'package:summercamp/core/enum/transport_schedule_status.enum.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_driver.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_route.dart';
@@ -12,10 +13,30 @@ class TransportScheduleModel extends TransportSchedule {
     required super.date,
     required super.startTime,
     required super.endTime,
-    required super.actualStartTime,
-    required super.actualEndTime,
+    super.actualStartTime,
+    super.actualEndTime,
     required super.status,
   });
+
+  static TransportScheduleStatus _statusFromString(String statusString) {
+    switch (statusString) {
+      case 'Draft':
+        return TransportScheduleStatus.Draft;
+      case 'Rejected':
+        return TransportScheduleStatus.Rejected;
+      case 'NotYet':
+        return TransportScheduleStatus.NotYet;
+      case 'InProgress':
+        return TransportScheduleStatus.InProgress;
+      case 'Completed':
+        return TransportScheduleStatus.Completed;
+      case 'Canceled':
+        return TransportScheduleStatus.Canceled;
+      default:
+        print("Warning: Unknown CampStatus string '$statusString'");
+        return TransportScheduleStatus.Draft;
+    }
+  }
 
   factory TransportScheduleModel.fromJson(Map<String, dynamic> json) {
     final route = json['routeName'];
@@ -32,7 +53,7 @@ class TransportScheduleModel extends TransportSchedule {
       endTime: json['endTime'],
       actualStartTime: json['actualStartTime'],
       actualEndTime: json['actualEndTime'],
-      status: json['status'],
+      status: _statusFromString(json['status']),
     );
   }
 
