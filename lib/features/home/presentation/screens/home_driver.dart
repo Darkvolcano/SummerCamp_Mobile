@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/driver_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/widgets/driver_bottom_nav_bar.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
 class DriverHome extends StatefulWidget {
   const DriverHome({super.key});
@@ -14,6 +17,13 @@ class DriverHome extends StatefulWidget {
 
 class _DriverHomeState extends State<DriverHome> {
   int _selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScheduleProvider>().loadDriverSchedules();
+    });
+  }
 
   final List<Widget> _pages = [
     const _DriverHomeContent(),
@@ -40,11 +50,57 @@ class _DriverHomeState extends State<DriverHome> {
 class _DriverHomeContent extends StatelessWidget {
   const _DriverHomeContent();
 
+  TransportSchedule? _findNextTrip(List<TransportSchedule> schedules) {
+    final now = DateTime.now();
+
+    final validTrips = schedules.where((trip) {
+      // Điều kiện 1: Chưa hoàn thành (chưa có actualEndTime)
+      // Hoặc kiểm tra theo status != Completed nếu muốn
+      final bool isNotCompleted =
+          (trip.actualEndTime == null || trip.actualEndTime!.isEmpty);
+
+      // Điều kiện 2: Thời gian phải ở tương lai hoặc đang diễn ra
+      // (EndTime chưa qua quá khứ)
+      final endTime =
+          DateTime.tryParse("${trip.date}T${trip.endTime}") ?? DateTime(2100);
+      final bool isInFutureOrPresent = endTime.isAfter(now);
+
+      return isNotCompleted && isInFutureOrPresent;
+    }).toList();
+
+    if (validTrips.isEmpty) return null;
+
+    // 2. Sắp xếp theo ưu tiên: Date -> StartTime -> EndTime
+    validTrips.sort((a, b) {
+      final dateA = DateTime.tryParse(a.date) ?? DateTime(2100);
+      final dateB = DateTime.tryParse(b.date) ?? DateTime(2100);
+      int dateCompare = dateA.compareTo(dateB);
+      if (dateCompare != 0) return dateCompare;
+
+      final startA =
+          DateTime.tryParse("${a.date}T${a.startTime}") ?? DateTime(2100);
+      final startB =
+          DateTime.tryParse("${b.date}T${b.startTime}") ?? DateTime(2100);
+      int startCompare = startA.compareTo(startB);
+      if (startCompare != 0) return startCompare;
+
+      final endA =
+          DateTime.tryParse("${a.date}T${a.endTime}") ?? DateTime(2100);
+      final endB =
+          DateTime.tryParse("${b.date}T${b.endTime}") ?? DateTime(2100);
+      return endA.compareTo(endB);
+    });
+
+    // 3. Lấy chuyến đầu tiên
+    return validTrips.first;
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
+    final scheduleProvider = context.watch<ScheduleProvider>();
 
     String userName = "Tài xế";
     if (user != null &&
@@ -54,6 +110,8 @@ class _DriverHomeContent extends StatelessWidget {
 
     final avatarUrl = user?.avatar;
     final bool hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+
+    final nextTrip = _findNextTrip(scheduleProvider.transportSchedules);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -107,38 +165,86 @@ class _DriverHomeContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+          if (scheduleProvider.loading)
+            const Center(
+              child: CircularProgressIndicator(
+                color: DriverTheme.driverPrimary,
+              ),
+            )
+          else if (nextTrip != null)
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.calendar_today,
+                      title: "Ngày",
+                      content: DateFormatter.formatFromString(nextTrip.date),
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.access_time_filled,
+                      title: "Thời gian",
+                      // Format lại startTime và endTime cho đẹp
+                      content:
+                          "${DateFormatter.formatTime(DateTime.parse("${nextTrip.date}T${nextTrip.startTime}"))} - ${DateFormatter.formatTime(DateTime.parse("${nextTrip.date}T${nextTrip.endTime}"))}",
+                      color: DriverTheme.driverAccent,
+                    ),
+                    const Divider(height: 24),
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.route, // Icon tuyến đường
+                      title: "Tuyến đường",
+                      content: nextTrip.routeName.routeName, // Lấy tên tuyến
+                      color: DriverTheme.driverPrimary,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildInfoRow(
+                      context,
+                      icon: Icons.directions_bus, // Icon xe
+                      title: "Xe",
+                      content: nextTrip.vehicleName.vehicleName, // Lấy tên xe
+                      color: DriverTheme.driverPrimary,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            // Trường hợp không có chuyến đi nào
+            Container(
+              padding: const EdgeInsets.all(24),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.access_time_filled,
-                    title: "Thời gian",
-                    content: "08:00 - 09:00 (Hôm nay)",
-                    color: DriverTheme.driverAccent,
-                  ),
-                  const Divider(height: 24),
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.pin_drop_rounded,
-                    title: "Nhiệm vụ",
-                    content: "Đón camper tại Quận 1",
-                    color: DriverTheme.driverPrimary,
-                  ),
+                  Icon(Icons.event_busy, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 12),
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.flag_rounded,
-                    title: "Điểm đến",
-                    content: "Khu sinh thái FPT Campus",
-                    color: DriverTheme.driverPrimary,
+                  Text(
+                    "Không có chuyến đi sắp tới",
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
         ],
       ),
     );
