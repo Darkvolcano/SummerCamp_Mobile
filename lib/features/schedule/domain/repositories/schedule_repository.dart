@@ -1,3 +1,4 @@
+import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 
@@ -6,4 +7,7 @@ abstract class ScheduleRepository {
   Future<void> updateTransportScheduleStartTrip(int id);
   Future<void> updateTransportScheduleEndTrip(int id);
   Future<List<TransportSchedule>> getDriverSchedules();
+  Future<List<CamperTransport>> getCampersTransportByTransportScheduleId(
+    int transportScheduleId,
+  );
 }

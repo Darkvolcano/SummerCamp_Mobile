@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
@@ -12,12 +14,15 @@ class ScheduleProvider with ChangeNotifier {
   updateTransportScheduleStartTripUseCase;
   final UpdateTransportScheduleEndTrip updateTransportScheduleEndTripUseCase;
   final GetDriverSchedules getDriverSchedulesUseCase;
+  final GetCampersTransportByTransportScheduleId
+  getCampersTransportByTransportScheduleIdUseCase;
 
   ScheduleProvider(
     this.getStaffSchedulesUseCase,
     this.updateTransportScheduleStartTripUseCase,
     this.updateTransportScheduleEndTripUseCase,
     this.getDriverSchedulesUseCase,
+    this.getCampersTransportByTransportScheduleIdUseCase,
   );
 
   List<Schedule> _schedules = [];
@@ -25,6 +30,9 @@ class ScheduleProvider with ChangeNotifier {
 
   List<TransportSchedule> _transportSchedules = [];
   List<TransportSchedule> get transportSchedules => _transportSchedules;
+
+  List<CamperTransport> _campersTransport = [];
+  List<CamperTransport> get campersTransport => _campersTransport;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -82,6 +90,20 @@ class ScheduleProvider with ChangeNotifier {
       print("Lỗi load lịch driver: $e");
       _transportSchedules = [];
     }
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadCampersTransportByTransportScheduleId(
+    int transportScheduleId,
+  ) async {
+    _loading = true;
+    notifyListeners();
+
+    _campersTransport = await getCampersTransportByTransportScheduleIdUseCase(
+      transportScheduleId,
+    );
 
     _loading = false;
     notifyListeners();

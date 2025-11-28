@@ -21,4 +21,13 @@ class ScheduleApiService {
     final res = await client.get('transportschedules/driver-schedule');
     return res.data as List;
   }
+
+  Future<List<dynamic>> fetchCampersTransportByTransportScheduleId(
+    int transportScheduleId,
+  ) async {
+    final res = await client.get(
+      'campertransport/schedule/$transportScheduleId',
+    );
+    return res.data as List;
+  }
 }

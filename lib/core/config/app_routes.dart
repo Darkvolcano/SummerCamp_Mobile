@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
+import 'package:summercamp/features/attendance/presentation/screens/driver_attendance_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/driver_register_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_email_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
@@ -94,6 +95,7 @@ class AppRoutes {
   static const String driverScheduleDetail =
       '/driver-schedule-detail'; // hiện tại chưa có
   static const String driverProfile = '/driver-profile';
+  static const String driverAttendance = '/driver-attendance';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -265,6 +267,13 @@ class AppRoutes {
 
       case driverRegister:
         return MaterialPageRoute(builder: (_) => const DriverRegisterScreen());
+
+      case driverAttendance:
+        final transportScheduleId = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (_) =>
+              DriverAttendanceScreen(transportScheduleId: transportScheduleId),
+        );
 
       default:
         return _notFoundRoute();

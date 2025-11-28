@@ -17,6 +17,7 @@ import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.d
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
@@ -194,6 +195,8 @@ Future<void> main() async {
     scheduleRepo,
   );
   final getDriverSchedulesUseCase = GetDriverSchedules(scheduleRepo);
+  final getCampersTransportByTransportScheduleIdUseCase =
+      GetCampersTransportByTransportScheduleId(scheduleRepo);
 
   // Attendance
   final attendanceApi = AttendanceApiService(apiClient);
@@ -278,13 +281,14 @@ Future<void> main() async {
           ),
         ),
 
-        // ScheduleProvider need 4 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules)
+        // ScheduleProvider need 5 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId)
         ChangeNotifierProvider(
           create: (_) => ScheduleProvider(
             getStaffSchedulesUseCase,
             updateTransportScheduleStartTripUseCase,
             updateTransportScheduleEndTripUseCase,
             getDriverSchedulesUseCase,
+            getCampersTransportByTransportScheduleIdUseCase,
           ),
         ),
 

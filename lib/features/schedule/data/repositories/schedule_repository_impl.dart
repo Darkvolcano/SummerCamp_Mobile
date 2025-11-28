@@ -1,6 +1,8 @@
+import 'package:summercamp/features/schedule/data/models/camper_transport_model.dart';
 import 'package:summercamp/features/schedule/data/models/schedule_model.dart';
 import 'package:summercamp/features/schedule/data/models/transport_schedule_model.dart';
 import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
+import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/repositories/schedule_repository.dart';
@@ -29,5 +31,19 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<List<TransportSchedule>> getDriverSchedules() async {
     final list = await service.fetchDriverSchedules();
     return list.map((e) => TransportScheduleModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<List<CamperTransport>> getCampersTransportByTransportScheduleId(
+    int transportScheduleId,
+  ) async {
+    final list = await service.fetchCampersTransportByTransportScheduleId(
+      transportScheduleId,
+    );
+    return list
+        .map(
+          (data) => CamperTransportModel.fromJson(data as Map<String, dynamic>),
+        )
+        .toList();
   }
 }

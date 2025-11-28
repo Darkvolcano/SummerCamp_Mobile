@@ -10,4 +10,8 @@ class RegistrationCamper {
       camperName: json['camperName'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {'camperId': camperId, 'camperName': camperName};
+  }
 }
