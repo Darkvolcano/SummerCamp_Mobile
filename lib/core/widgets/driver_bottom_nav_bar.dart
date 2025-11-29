@@ -29,7 +29,7 @@ class DriverBottomNavBar extends StatelessWidget {
               children: [
                 _buildNavItem(
                   Icons.home_filled,
-                  "Home",
+                  "Trang chủ",
                   0,
                   activeColor,
                   inactiveColor,
@@ -43,7 +43,7 @@ class DriverBottomNavBar extends StatelessWidget {
                 ),
                 _buildNavItem(
                   Icons.person,
-                  "Profile",
+                  "Cá nhân",
                   2,
                   activeColor,
                   inactiveColor,

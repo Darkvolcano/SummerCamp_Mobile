@@ -29,14 +29,14 @@ class StaffBottomNavBar extends StatelessWidget {
               children: [
                 _buildNavItem(
                   Icons.home,
-                  "Home",
+                  "trang chủ",
                   0,
                   activeColor,
                   inactiveColor,
                 ),
                 _buildNavItem(
                   Icons.schedule,
-                  "Schedule",
+                  "Lịch làm",
                   1,
                   activeColor,
                   inactiveColor,
@@ -50,7 +50,7 @@ class StaffBottomNavBar extends StatelessWidget {
                 // ),
                 _buildNavItem(
                   Icons.person,
-                  "Profile",
+                  "Cá nhân",
                   2,
                   activeColor,
                   inactiveColor,
