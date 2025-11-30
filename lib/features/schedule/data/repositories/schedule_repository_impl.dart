@@ -54,4 +54,11 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   ) async {
     await service.updateCampertransportAttendanceCheckIn(requests);
   }
+
+  @override
+  Future<void> updateCamperTransportAttendanceCheckOutList(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    await service.updateCampertransportAttendanceCheckOut(requests);
+  }
 }

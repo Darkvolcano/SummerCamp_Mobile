@@ -14,4 +14,7 @@ abstract class ScheduleRepository {
   Future<void> updateCamperTransportAttendanceCheckInList(
     List<UpdateCamperTransport> requests,
   );
+  Future<void> updateCamperTransportAttendanceCheckOutList(
+    List<UpdateCamperTransport> requests,
+  );
 }

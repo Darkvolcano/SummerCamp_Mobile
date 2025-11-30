@@ -20,6 +20,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_option
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 import 'firebase_options.dart';
@@ -200,6 +201,8 @@ Future<void> main() async {
       GetCampersTransportByTransportScheduleId(scheduleRepo);
   final updateCamperTransportAttendanceCheckInListUseCase =
       UpdateCamperTransportAttendanceListCheckIn(scheduleRepo);
+  final updateCamperTransportAttendanceCheckOutListUseCase =
+      UpdateCamperTransportAttendanceListCheckOut(scheduleRepo);
 
   // Attendance
   final attendanceApi = AttendanceApiService(apiClient);
@@ -284,7 +287,7 @@ Future<void> main() async {
           ),
         ),
 
-        // ScheduleProvider need 6 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList)
+        // ScheduleProvider need 7 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList)
         ChangeNotifierProvider(
           create: (_) => ScheduleProvider(
             getStaffSchedulesUseCase,
@@ -293,6 +296,7 @@ Future<void> main() async {
             getDriverSchedulesUseCase,
             getCampersTransportByTransportScheduleIdUseCase,
             updateCamperTransportAttendanceCheckInListUseCase,
+            updateCamperTransportAttendanceCheckOutListUseCase,
           ),
         ),
 

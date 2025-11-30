@@ -7,6 +7,7 @@ import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transpo
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 
@@ -20,6 +21,8 @@ class ScheduleProvider with ChangeNotifier {
   getCampersTransportByTransportScheduleIdUseCase;
   final UpdateCamperTransportAttendanceListCheckIn
   updateAttendanceCamperTransportCheckInListUseCase;
+  final UpdateCamperTransportAttendanceListCheckOut
+  updateAttendanceCamperTransportCheckOutListUseCase;
 
   ScheduleProvider(
     this.getStaffSchedulesUseCase,
@@ -28,6 +31,7 @@ class ScheduleProvider with ChangeNotifier {
     this.getDriverSchedulesUseCase,
     this.getCampersTransportByTransportScheduleIdUseCase,
     this.updateAttendanceCamperTransportCheckInListUseCase,
+    this.updateAttendanceCamperTransportCheckOutListUseCase,
   );
 
   List<Schedule> _schedules = [];
@@ -126,6 +130,24 @@ class ScheduleProvider with ChangeNotifier {
 
     try {
       await updateAttendanceCamperTransportCheckInListUseCase(requests);
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> submitAttendanceCamperTransportCheckOut(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await updateAttendanceCamperTransportCheckOutListUseCase(requests);
     } catch (e) {
       _error = e.toString();
       rethrow;

@@ -45,4 +45,16 @@ class ScheduleApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<void> updateCampertransportAttendanceCheckOut(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    try {
+      final data = requests.map((e) => e.toJson()).toList();
+
+      await client.put('campertransport/check-out', data: data);
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
 }
