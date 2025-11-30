@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/entities/update_camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 
@@ -16,6 +18,8 @@ class ScheduleProvider with ChangeNotifier {
   final GetDriverSchedules getDriverSchedulesUseCase;
   final GetCampersTransportByTransportScheduleId
   getCampersTransportByTransportScheduleIdUseCase;
+  final UpdateCamperTransportAttendanceListCheckIn
+  updateAttendanceCamperTransportCheckInListUseCase;
 
   ScheduleProvider(
     this.getStaffSchedulesUseCase,
@@ -23,6 +27,7 @@ class ScheduleProvider with ChangeNotifier {
     this.updateTransportScheduleEndTripUseCase,
     this.getDriverSchedulesUseCase,
     this.getCampersTransportByTransportScheduleIdUseCase,
+    this.updateAttendanceCamperTransportCheckInListUseCase,
   );
 
   List<Schedule> _schedules = [];
@@ -36,6 +41,9 @@ class ScheduleProvider with ChangeNotifier {
 
   bool _loading = false;
   bool get loading => _loading;
+
+  String? _error;
+  String? get error => _error;
 
   Future<void> loadStaffSchedules() async {
     _loading = true;
@@ -107,5 +115,23 @@ class ScheduleProvider with ChangeNotifier {
 
     _loading = false;
     notifyListeners();
+  }
+
+  Future<void> submitAttendanceCamperTransportCheckIn(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await updateAttendanceCamperTransportCheckInListUseCase(requests);
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 }

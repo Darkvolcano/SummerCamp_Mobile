@@ -5,6 +5,7 @@ import 'package:summercamp/features/schedule/data/services/schedule_api_service.
 import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/entities/update_camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/repositories/schedule_repository.dart';
 
 class ScheduleRepositoryImpl implements ScheduleRepository {
@@ -45,5 +46,12 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
           (data) => CamperTransportModel.fromJson(data as Map<String, dynamic>),
         )
         .toList();
+  }
+
+  @override
+  Future<void> updateCamperTransportAttendanceCheckInList(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    await service.updateCampertransportAttendanceCheckIn(requests);
   }
 }

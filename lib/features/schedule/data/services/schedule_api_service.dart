@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:summercamp/core/network/api_client.dart';
+import 'package:summercamp/core/network/dio_error_mapper.dart';
+import 'package:summercamp/features/schedule/domain/entities/update_camper_transport.dart';
 
 class ScheduleApiService {
   final ApiClient client;
@@ -29,5 +32,17 @@ class ScheduleApiService {
       'campertransport/schedule/$transportScheduleId',
     );
     return res.data as List;
+  }
+
+  Future<void> updateCampertransportAttendanceCheckIn(
+    List<UpdateCamperTransport> requests,
+  ) async {
+    try {
+      final data = requests.map((e) => e.toJson()).toList();
+
+      await client.put('campertransport/check-in', data: data);
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
   }
 }

@@ -19,6 +19,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_a
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
 import 'firebase_options.dart';
@@ -197,6 +198,8 @@ Future<void> main() async {
   final getDriverSchedulesUseCase = GetDriverSchedules(scheduleRepo);
   final getCampersTransportByTransportScheduleIdUseCase =
       GetCampersTransportByTransportScheduleId(scheduleRepo);
+  final updateCamperTransportAttendanceCheckInListUseCase =
+      UpdateCamperTransportAttendanceListCheckIn(scheduleRepo);
 
   // Attendance
   final attendanceApi = AttendanceApiService(apiClient);
@@ -281,7 +284,7 @@ Future<void> main() async {
           ),
         ),
 
-        // ScheduleProvider need 5 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId)
+        // ScheduleProvider need 6 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList)
         ChangeNotifierProvider(
           create: (_) => ScheduleProvider(
             getStaffSchedulesUseCase,
@@ -289,6 +292,7 @@ Future<void> main() async {
             updateTransportScheduleEndTripUseCase,
             getDriverSchedulesUseCase,
             getCampersTransportByTransportScheduleIdUseCase,
+            updateCamperTransportAttendanceCheckInListUseCase,
           ),
         ),
 
