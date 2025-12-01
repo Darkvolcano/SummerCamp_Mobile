@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
-import 'package:summercamp/features/schedule/domain/entities/update_camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
@@ -121,15 +120,23 @@ class ScheduleProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitAttendanceCamperTransportCheckIn(
-    List<UpdateCamperTransport> requests,
-  ) async {
+  Future<void> submitAttendanceCamperTransportCheckIn({
+    required List<CamperTransport> camperTransportId,
+    String? note,
+  }) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await updateAttendanceCamperTransportCheckInListUseCase(requests);
+      final camperTransportIds = campersTransport
+          .map((c) => c.camperTransportId)
+          .toList();
+
+      await updateAttendanceCamperTransportCheckInListUseCase(
+        camperTransportIds: camperTransportIds,
+        note: note,
+      );
     } catch (e) {
       _error = e.toString();
       rethrow;
@@ -139,15 +146,23 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  Future<void> submitAttendanceCamperTransportCheckOut(
-    List<UpdateCamperTransport> requests,
-  ) async {
+  Future<void> submitAttendanceCamperTransportCheckOut({
+    required List<CamperTransport> camperTransportId,
+    String? note,
+  }) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await updateAttendanceCamperTransportCheckOutListUseCase(requests);
+      final camperTransportIds = campersTransport
+          .map((c) => c.camperTransportId)
+          .toList();
+
+      await updateAttendanceCamperTransportCheckOutListUseCase(
+        camperTransportIds: camperTransportIds,
+        note: note,
+      );
     } catch (e) {
       _error = e.toString();
       rethrow;
