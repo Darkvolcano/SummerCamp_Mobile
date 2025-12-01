@@ -17,6 +17,7 @@ import 'package:summercamp/features/profile/presentation/screens/profile_staff_s
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/attendance/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/presentation/screens/driver_schedule_screen.dart';
 import 'package:summercamp/features/schedule/presentation/screens/staff_schedule_screen.dart';
 import 'package:summercamp/features/schedule/presentation/screens/staff_schedulle_detail_screen.dart';
@@ -269,10 +270,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const DriverRegisterScreen());
 
       case driverAttendance:
-        final transportScheduleId = settings.arguments as int;
+        final schedule = settings.arguments as TransportSchedule;
         return MaterialPageRoute(
-          builder: (_) =>
-              DriverAttendanceScreen(transportScheduleId: transportScheduleId),
+          builder: (_) => DriverAttendanceScreen(schedule: schedule),
         );
 
       default:

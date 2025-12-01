@@ -484,7 +484,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                               Navigator.pushNamed(
                                 context,
                                 AppRoutes.driverAttendance,
-                                arguments: trip.transportScheduleId,
+                                arguments: trip,
                               );
                             },
                             icon: const Icon(

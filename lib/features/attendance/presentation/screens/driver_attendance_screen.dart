@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/driver_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
 class DriverAttendanceScreen extends StatefulWidget {
-  final int transportScheduleId;
-  const DriverAttendanceScreen({super.key, required this.transportScheduleId});
+  final TransportSchedule schedule;
+  const DriverAttendanceScreen({super.key, required this.schedule});
 
   @override
   State<DriverAttendanceScreen> createState() => _DriverAttendanceScreenState();
@@ -17,6 +19,71 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
 
   final Map<int, bool> _checkInStatus = {};
   final Map<int, bool> _checkOutStatus = {};
+
+  DateTime _parseDateTime(String dateStr, String timeStr) {
+    try {
+      if (timeStr.isEmpty) return DateTime.parse(dateStr);
+      return DateTime.parse("${dateStr}T$timeStr");
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  bool _isTimeValidToSubmit(bool isCheckOut) {
+    final now = DateTime.now();
+    final schedule = widget.schedule;
+
+    final tripDate = DateTime.parse(schedule.date);
+    final isToday =
+        tripDate.year == now.year &&
+        tripDate.month == now.month &&
+        tripDate.day == now.day;
+
+    if (!isToday) return false;
+
+    if (!isCheckOut) {
+      final start = _parseDateTime(schedule.date, schedule.startTime);
+      final validStart = start.subtract(const Duration(minutes: 30));
+      final validEnd = start.add(const Duration(minutes: 30));
+
+      return now.isAfter(validStart) && now.isBefore(validEnd);
+    } else {
+      final end = _parseDateTime(schedule.date, schedule.endTime);
+      final validStart = end.subtract(const Duration(minutes: 30));
+      final validEnd = end.add(const Duration(minutes: 60));
+
+      return now.isAfter(validStart) && now.isBefore(validEnd);
+    }
+  }
+
+  void _showTimeError(bool isCheckOut) {
+    final schedule = widget.schedule;
+    String msg;
+
+    if (!isCheckOut) {
+      final start = _parseDateTime(schedule.date, schedule.startTime);
+      final sTime = DateFormatter.formatTime(
+        start.subtract(const Duration(minutes: 30)),
+      );
+      final eTime = DateFormatter.formatTime(
+        start.add(const Duration(minutes: 30)),
+      );
+      msg = "Chỉ được xác nhận lên xe từ $sTime đến $eTime";
+    } else {
+      final end = _parseDateTime(schedule.date, schedule.endTime);
+      final sTime = DateFormatter.formatTime(
+        end.subtract(const Duration(minutes: 30)),
+      );
+      final eTime = DateFormatter.formatTime(
+        end.add(const Duration(minutes: 60)),
+      );
+      msg = "Chỉ được xác nhận xuống xe từ $sTime đến $eTime";
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
+  }
 
   @override
   void initState() {
@@ -43,7 +110,7 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
   Future<void> _loadData() async {
     final provider = context.read<ScheduleProvider>();
     await provider.loadCampersTransportByTransportScheduleId(
-      widget.transportScheduleId,
+      widget.schedule.transportScheduleId,
     );
 
     final transports = provider.campersTransport;
@@ -63,6 +130,11 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
 
   Future<void> _submitAttendance() async {
     final isCheckOutTab = _tabController.index == 1;
+
+    if (!_isTimeValidToSubmit(isCheckOutTab)) {
+      _showTimeError(isCheckOutTab);
+      return;
+    }
 
     final currentStatusMap = isCheckOutTab ? _checkOutStatus : _checkInStatus;
 
