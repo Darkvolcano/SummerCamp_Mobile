@@ -20,6 +20,8 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
   final Map<int, bool> _checkInStatus = {};
   final Map<int, bool> _checkOutStatus = {};
 
+  final Map<int, bool> _selectionState = {};
+
   DateTime _parseDateTime(String dateStr, String timeStr) {
     try {
       if (timeStr.isEmpty) return DateTime.parse(dateStr);
@@ -115,8 +117,7 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
 
     final transports = provider.campersTransport;
 
-    _checkInStatus.clear();
-    _checkOutStatus.clear();
+    _selectionState.clear();
 
     for (var transport in transports) {
       _checkInStatus[transport.camperTransportId] =
@@ -128,6 +129,80 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
     if (mounted) setState(() {});
   }
 
+  void _showStatusDialog(String message, {bool isSuccess = true}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withValues(alpha: 0.1),
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+        });
+
+        return Dialog(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: isSuccess
+                        ? Colors.green.shade50
+                        : Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isSuccess ? Icons.check_circle : Icons.error,
+                    color: isSuccess ? Colors.green : Colors.red,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  isSuccess ? "Thành công" : "Thất bại",
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isSuccess ? Colors.green : Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 15,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _submitAttendance() async {
     final isCheckOutTab = _tabController.index == 1;
 
@@ -136,28 +211,64 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
       return;
     }
 
-    final currentStatusMap = isCheckOutTab ? _checkOutStatus : _checkInStatus;
+    final provider = context.read<ScheduleProvider>();
+    final transports = provider.campersTransport;
+    final List<int> selectedIds = [];
 
-    final selectedIds = currentStatusMap.entries
-        .where((entry) => entry.value == true)
-        .map((entry) => entry.key)
-        .toList();
+    for (var t in transports) {
+      bool isSelected = false;
 
-    // api update status camper transport
-    // if (isCheckOutTab) provider.submitCheckOut(selectedIds);
-    // else provider.submitCheckIn(selectedIds);
+      bool originalSelected = false;
+      if (isCheckOutTab) {
+        originalSelected = t.status == "Completed";
+      } else {
+        originalSelected = t.status == "Onboard" || t.status == "Completed";
+      }
+
+      if (_selectionState.containsKey(t.camperTransportId)) {
+        isSelected = _selectionState[t.camperTransportId]!;
+      } else {
+        isSelected = originalSelected;
+      }
+
+      if (isSelected) {
+        selectedIds.add(t.camperTransportId);
+      }
+    }
+
+    if (selectedIds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng chọn ít nhất 1 hành khách")),
+      );
+      return;
+    }
 
     final actionText = isCheckOutTab ? "xuống xe" : "lên xe";
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Đã cập nhật danh sách $actionText (${selectedIds.length})!',
-        ),
-        backgroundColor: Colors.green,
-      ),
-    );
 
-    Navigator.pop(context);
+    try {
+      if (isCheckOutTab) {
+        await provider.submitAttendanceCamperTransportCheckOut(
+          camperTransportIds: selectedIds,
+        );
+      } else {
+        await provider.submitAttendanceCamperTransportCheckIn(
+          camperTransportIds: selectedIds,
+        );
+      }
+
+      if (mounted) {
+        _showStatusDialog(
+          'Đã cập nhật danh sách $actionText thành công!',
+          isSuccess: true,
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMessage = e.toString();
+        _showStatusDialog(errorMessage, isSuccess: false);
+      }
+    }
   }
 
   @override
@@ -355,13 +466,24 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
         final transport = transports[index];
         final camper = transport.camper;
         final int id = transport.camperTransportId;
+        final String status = transport.status;
 
-        final bool isCheckedIn = _checkInStatus[id] ?? false;
-        final bool isCheckedOut = _checkOutStatus[id] ?? false;
+        bool isPickedUp = status == "Onboard" || status == "Completed";
 
-        final bool isDisabled = isCheckOutMode && !isCheckedIn;
+        bool isDroppedOff = status == "Completed";
 
-        final bool isSelected = isCheckOutMode ? isCheckedOut : isCheckedIn;
+        bool originalSelected = isCheckOutMode ? isDroppedOff : isPickedUp;
+
+        bool isSelected = _selectionState.containsKey(id)
+            ? _selectionState[id]!
+            : originalSelected;
+
+        bool isDisabled = false;
+        if (isCheckOutMode) {
+          if (status == "Assigned") isDisabled = true;
+        } else {
+          if (status == "Completed") isDisabled = true;
+        }
 
         return Opacity(
           opacity: isDisabled ? 0.5 : 1.0,
@@ -370,14 +492,7 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
                 ? null
                 : () {
                     setState(() {
-                      if (isCheckOutMode) {
-                        _checkOutStatus[id] = !isCheckedOut;
-                      } else {
-                        _checkInStatus[id] = !isCheckedIn;
-                        if (_checkInStatus[id] == false) {
-                          _checkOutStatus[id] = false;
-                        }
-                      }
+                      _selectionState[id] = !isSelected;
                     });
                   },
             borderRadius: BorderRadius.circular(12),
@@ -439,12 +554,20 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
                         //   maxLines: 1,
                         //   overflow: TextOverflow.ellipsis,
                         // ),
-                        if (isDisabled)
+                        if (status == "Assigned" && isCheckOutMode)
                           const Text(
                             "Chưa lên xe",
                             style: TextStyle(
-                              fontFamily: "Quicksand",
                               color: Colors.red,
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        if (status == "Completed" && !isCheckOutMode)
+                          const Text(
+                            "Đã hoàn thành",
+                            style: TextStyle(
+                              color: Colors.green,
                               fontSize: 12,
                               fontStyle: FontStyle.italic,
                             ),

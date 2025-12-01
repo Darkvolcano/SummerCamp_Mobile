@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
@@ -121,7 +122,7 @@ class ScheduleProvider with ChangeNotifier {
   }
 
   Future<void> submitAttendanceCamperTransportCheckIn({
-    required List<CamperTransport> camperTransportId,
+    required List<int> camperTransportIds,
     String? note,
   }) async {
     _loading = true;
@@ -129,17 +130,23 @@ class ScheduleProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final camperTransportIds = campersTransport
-          .map((c) => c.camperTransportId)
-          .toList();
-
       await updateAttendanceCamperTransportCheckInListUseCase(
         camperTransportIds: camperTransportIds,
         note: note,
       );
     } catch (e) {
-      _error = e.toString();
-      rethrow;
+      String errorMessage = e.toString();
+
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map<String, dynamic> && data.containsKey('message')) {
+          errorMessage = data['message'];
+        }
+      }
+
+      _error = errorMessage.replaceAll("Exception: ", "");
+
+      throw _error!;
     } finally {
       _loading = false;
       notifyListeners();
@@ -147,7 +154,7 @@ class ScheduleProvider with ChangeNotifier {
   }
 
   Future<void> submitAttendanceCamperTransportCheckOut({
-    required List<CamperTransport> camperTransportId,
+    required List<int> camperTransportIds,
     String? note,
   }) async {
     _loading = true;
@@ -155,17 +162,23 @@ class ScheduleProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final camperTransportIds = campersTransport
-          .map((c) => c.camperTransportId)
-          .toList();
-
       await updateAttendanceCamperTransportCheckOutListUseCase(
         camperTransportIds: camperTransportIds,
         note: note,
       );
     } catch (e) {
-      _error = e.toString();
-      rethrow;
+      String errorMessage = e.toString();
+
+      if (e is DioException && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map<String, dynamic> && data.containsKey('message')) {
+          errorMessage = data['message'];
+        }
+      }
+
+      _error = errorMessage.replaceAll("Exception: ", "");
+
+      throw _error!;
     } finally {
       _loading = false;
       notifyListeners();

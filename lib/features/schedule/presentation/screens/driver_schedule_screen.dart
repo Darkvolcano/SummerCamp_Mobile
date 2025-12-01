@@ -189,8 +189,10 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
       final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
       return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
     } else if (trip.status == TransportScheduleStatus.InProgress) {
-      final deadline = endDateTime.add(const Duration(minutes: 120));
-      return now.isBefore(deadline);
+      final earliestEndTime = endDateTime.subtract(const Duration(minutes: 30));
+      final latestEndTime = endDateTime.add(const Duration(minutes: 90));
+
+      return now.isAfter(earliestEndTime) && now.isBefore(latestEndTime);
     }
 
     return false;

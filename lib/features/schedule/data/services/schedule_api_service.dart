@@ -43,6 +43,12 @@ class ScheduleApiService {
         data: {'camperTransportIds': camperTransportIds, 'note': note},
       );
     } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map) {
+        final data = e.response!.data as Map;
+        if (data['message'] != null) {
+          throw Exception(data['message']);
+        }
+      }
       throw mapDioError(e);
     }
   }
@@ -57,6 +63,12 @@ class ScheduleApiService {
         data: {'camperTransportIds': camperTransportIds, 'note': note},
       );
     } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map) {
+        final data = e.response!.data as Map;
+        if (data['message'] != null) {
+          throw Exception(data['message']);
+        }
+      }
       throw mapDioError(e);
     }
   }
