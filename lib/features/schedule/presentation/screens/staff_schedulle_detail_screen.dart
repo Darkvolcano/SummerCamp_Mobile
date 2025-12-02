@@ -487,7 +487,7 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
               onPressed: isLive
                   ? () => onJoinLivestreamPressed(
                       context,
-                      act.roomId!,
+                      act.liveStream!.roomId,
                       Mode.SEND_AND_RECV,
                     )
                   : null,

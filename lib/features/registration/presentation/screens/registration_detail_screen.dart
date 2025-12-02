@@ -165,12 +165,12 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   }
 
   void joinLivestream(BuildContext context, ActivitySchedule activity) {
-    if (activity.roomId == null) return;
+    if (activity.liveStream?.roomId == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ILSScreen(
-          liveStreamId: activity.roomId!.toString(),
+          liveStreamId: activity.liveStream!.roomId.toString(),
           token: dotenv.env['VIDEO_SDK_TOKEN'] ?? '',
           mode: Mode.RECV_ONLY,
         ),

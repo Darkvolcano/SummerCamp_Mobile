@@ -123,6 +123,7 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
             color: AppTheme.summerPrimary,
           ),
         ),
+        automaticallyImplyLeading: true,
         backgroundColor: Color(0xFFF5F7F8),
         // leading: IconButton(
         //   icon: const Icon(Icons.arrow_back),

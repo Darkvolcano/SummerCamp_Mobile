@@ -1,5 +1,6 @@
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
+import 'package:summercamp/features/activity/domain/entities/livestream.dart';
 import 'package:summercamp/features/activity/domain/entities/staff.dart';
 
 class ActivityScheduleModel extends ActivitySchedule {
@@ -11,7 +12,7 @@ class ActivityScheduleModel extends ActivitySchedule {
     required super.endTime,
     required super.status,
     required super.isLivestream,
-    super.roomId,
+    super.liveStream,
     super.maxCapacity,
     required super.isOptional,
     super.locationId,
@@ -31,6 +32,12 @@ class ActivityScheduleModel extends ActivitySchedule {
       staff = Staff.fromJson(staffData);
     }
 
+    final liveStreamData = json['liveStream'];
+    Livestream? liveStream;
+    if (liveStreamData != null && liveStreamData is Map<String, dynamic>) {
+      liveStream = Livestream.fromJson(liveStreamData);
+    }
+
     return ActivityScheduleModel(
       activityScheduleId: json['activityScheduleId'],
       activity: activity,
@@ -39,7 +46,7 @@ class ActivityScheduleModel extends ActivitySchedule {
       endTime: DateTime.parse(json['endTime']),
       status: json['status'],
       isLivestream: json['isLivestream'],
-      roomId: json['roomId'],
+      liveStream: liveStream,
       maxCapacity: json['maxCapacity'] as int?,
       isOptional: json['isOptional'],
       locationId: json['locationId'] as int?,
@@ -55,7 +62,7 @@ class ActivityScheduleModel extends ActivitySchedule {
     'endTime': endTime.toIso8601String(),
     'status': status,
     'isLivestream': isLivestream,
-    'roomId': roomId,
+    'liveStream': liveStream?.toJson(),
     'maxCapacity': maxCapacity,
     'isOptional': isOptional,
     'locationId': locationId,
