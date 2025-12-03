@@ -29,6 +29,25 @@ class _CampDetailScreenState extends State<CampDetailScreen>
     super.dispose();
   }
 
+  int _checkRegistrationStatus() {
+    try {
+      final now = DateTime.now();
+      final start = DateTime.parse(
+        widget.camp.registrationStartDate.toString(),
+      );
+      final end = DateTime.parse(widget.camp.registrationEndDate.toString());
+
+      if (now.isBefore(start)) {
+        return -1;
+      } else if (now.isAfter(end)) {
+        return 1;
+      }
+      return 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   Widget _buildPriceDetail(BuildContext context) {
     if (widget.camp.promotion == null) {
       return Column(
@@ -86,6 +105,49 @@ class _CampDetailScreenState extends State<CampDetailScreen>
     );
   }
 
+  Widget _buildRegisterButton() {
+    final status = _checkRegistrationStatus();
+    String buttonText = "Đăng ký ngay";
+    Color buttonColor = AppTheme.summerAccent;
+    VoidCallback? onPressed;
+
+    if (status == -1) {
+      buttonText = "Chưa mở đăng ký";
+      buttonColor = Colors.grey;
+      onPressed = null;
+    } else if (status == 1) {
+      buttonText = "Đã hết hạn đăng ký";
+      buttonColor = Colors.grey;
+      onPressed = null;
+    } else {
+      buttonText = "Đăng ký ngay";
+      buttonColor = AppTheme.summerAccent;
+      onPressed = () => Navigator.pushNamed(
+        context,
+        AppRoutes.registrationForm,
+        arguments: widget.camp,
+      );
+    }
+
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        backgroundColor: buttonColor,
+        disabledBackgroundColor: Colors.grey.shade300,
+      ),
+      onPressed: onPressed,
+      child: Text(
+        buttonText,
+        style: const TextStyle(
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   Widget _buildTabContent(TextTheme textTheme) {
     return AnimatedBuilder(
       animation: _tabController,
@@ -138,6 +200,18 @@ class _CampDetailScreenState extends State<CampDetailScreen>
     final textTheme = Theme.of(context).textTheme;
     final camp = widget.camp;
 
+    String registrationStartDate = "";
+    String registrationEndDate = "";
+    try {
+      registrationStartDate = DateFormatter.formatDate(
+        camp.registrationStartDate,
+      );
+      registrationEndDate = DateFormatter.formatDate(camp.registrationEndDate);
+    } catch (e) {
+      registrationStartDate = camp.registrationStartDate.toString();
+      registrationEndDate = camp.registrationEndDate.toString();
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: Container(
@@ -156,27 +230,28 @@ class _CampDetailScreenState extends State<CampDetailScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildPriceDetail(context),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-              ),
-              onPressed: () => Navigator.pushNamed(
-                context,
-                AppRoutes.registrationForm,
-                arguments: camp,
-              ),
-              child: const Text(
-                "Đăng ký ngay",
-                style: TextStyle(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 20,
+            //       vertical: 12,
+            //     ),
+            //   ),
+            //   onPressed: () => Navigator.pushNamed(
+            //     context,
+            //     AppRoutes.registrationForm,
+            //     arguments: camp,
+            //   ),
+            //   child: const Text(
+            //     "Đăng ký ngay",
+            //     style: TextStyle(
+            //       fontFamily: "Quicksand",
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: 14,
+            //     ),
+            //   ),
+            // ),
+            _buildRegisterButton(),
           ],
         ),
       ),
@@ -325,8 +400,14 @@ class _CampDetailScreenState extends State<CampDetailScreen>
                               children: [
                                 _buildDetailRow(
                                   Icons.calendar_month_outlined,
-                                  "Thời gian",
+                                  "Thời gian diễn ra",
                                   "${DateFormatter.formatFromString(camp.startDate)} - ${DateFormatter.formatFromString(camp.endDate)}",
+                                ),
+                                const Divider(height: 24),
+                                _buildDetailRow(
+                                  Icons.app_registration_rounded,
+                                  "Thời gian đăng ký",
+                                  "$registrationStartDate - $registrationEndDate",
                                 ),
                                 const Divider(height: 24),
                                 _buildDetailRow(

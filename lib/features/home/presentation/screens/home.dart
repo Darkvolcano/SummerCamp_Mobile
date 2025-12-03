@@ -310,14 +310,14 @@ class HomeContent extends StatelessWidget {
                 context,
                 Icons.assignment,
                 "Đăng Ký",
-                () => Navigator.pushNamed(context, AppRoutes.registrationList),
+                () => Navigator.pushNamed(context, AppRoutes.campList),
                 color: const Color(0xFFE8F5E9),
                 iconColor: const Color(0xFF388E3C),
               ),
               _buildActionItem(
                 context,
                 Icons.child_care,
-                "Bé Yêu",
+                "Camper",
                 () => Navigator.pushNamed(context, AppRoutes.camperList),
                 color: const Color(0xFFFFF3E0),
                 iconColor: const Color(0xFFF57C00),
@@ -670,7 +670,7 @@ class HomeContent extends StatelessWidget {
             ),
             child: Icon(icon, color: iconColor, size: 28),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           Text(
             label,
             style: const TextStyle(
