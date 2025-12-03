@@ -341,13 +341,13 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 ),
               ),
             )
-          else if (coreActivities.isEmpty)
-            const Center(
-              child: Text(
-                "Chưa có lịch trình hoạt động chính.",
-                style: TextStyle(fontFamily: "Quicksand"),
-              ),
-            )
+          // else if (coreActivities.isEmpty)
+          //   const Center(
+          //     child: Text(
+          //       "Chưa có lịch trình hoạt động chính.",
+          //       style: TextStyle(fontFamily: "Quicksand"),
+          //     ),
+          //   )
           else if (registration.status == RegistrationStatus.Completed ||
               registration.status == RegistrationStatus.Confirmed)
             _buildSchedule(context, groupedActivities),

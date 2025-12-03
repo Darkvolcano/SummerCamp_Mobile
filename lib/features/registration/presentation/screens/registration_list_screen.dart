@@ -123,23 +123,23 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
             color: AppTheme.summerPrimary,
           ),
         ),
-        automaticallyImplyLeading: true,
+        // automaticallyImplyLeading: true,
         backgroundColor: Color(0xFFF5F7F8),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     if (Navigator.canPop(context)) {
-        //       Navigator.pop(context);
-        //     } else {
-        //       Navigator.pushNamedAndRemoveUntil(
-        //         context,
-        //         AppRoutes.home,
-        //         (route) => false,
-        //         arguments: 4,
-        //       );
-        //     }
-        //   },
-        // ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.home,
+                (route) => false,
+                arguments: 4,
+              );
+            }
+          },
+        ),
       ),
       backgroundColor: Color(0xFFF5F7F8),
       body: Column(
