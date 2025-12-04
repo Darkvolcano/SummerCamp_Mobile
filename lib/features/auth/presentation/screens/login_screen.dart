@@ -101,19 +101,30 @@ class _LoginScreenState extends State<LoginScreen> {
     final textTheme = Theme.of(context).textTheme;
     final provider = context.watch<AuthProvider>();
 
+    final ButtonStyle whiteButtonStyle = ElevatedButton.styleFrom(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      foregroundColor: AppTheme.summerPrimary,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.2),
+      side: const BorderSide(color: Colors.transparent),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+
     return Scaffold(
       body: Stack(
         children: [
           const AnimatedGradientBackground(
             gradientColors: [
-              Color(0xFF854D0E),
-              Color(0xFFB45309),
-              Color(0xFFF59E0B),
+              Color(0xFFFFFFFF),
+              Color(0xFFF5F5F5),
+              Color(0xFFECEFF1),
             ],
             blobColors: [
-              Color.fromARGB(45, 253, 186, 116),
-              Color.fromARGB(45, 251, 146, 60),
-              Color.fromARGB(45, 251, 191, 36),
+              Color.fromARGB(30, 160, 163, 167),
+              Color.fromARGB(30, 255, 140, 0),
+              Color.fromARGB(30, 158, 158, 158),
             ],
           ),
           Center(
@@ -134,12 +145,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: textTheme.headlineSmall?.copyWith(
                         fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppTheme.summerPrimary,
                         shadows: const [
                           Shadow(
                             blurRadius: 6,
                             offset: Offset(0, 2),
-                            color: Colors.black26,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -200,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                             fontFamily: "Quicksand",
                             fontStyle: FontStyle.italic,
-                            color: Colors.white,
+                            color: Color(0xFF546E7A),
                           ),
                         ),
                       ),
@@ -208,13 +219,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 8),
 
-                    SizedBox(
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.summerPrimary.withValues(
+                              alpha: 0.4,
+                            ),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.summerPrimary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -238,66 +263,58 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                       ),
                     ),
+                    // const SizedBox(height: 12),
 
-                    const SizedBox(height: 12),
+                    // const Row(
+                    //   children: [
+                    //     Expanded(child: Divider(color: Colors.grey)),
+                    //     Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 8),
+                    //       child: Text(
+                    //         "Hoặc",
+                    //         style: TextStyle(
+                    //           fontFamily: "Quicksand",
+                    //           color: Colors.black,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(child: Divider(color: Colors.grey)),
+                    //   ],
+                    // ),
 
-                    const Row(
-                      children: [
-                        Expanded(child: Divider(color: Colors.white70)),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            "Hoặc",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Expanded(child: Divider(color: Colors.white70)),
-                      ],
-                    ),
+                    // const SizedBox(height: 12),
 
-                    const SizedBox(height: 12),
-
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.9),
-                        minimumSize: const Size(double.infinity, 50),
-                        side: BorderSide.none,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: provider.isLoading
-                          ? null
-                          : () {
-                              // implement Google login
-                            },
-                      icon: Image.asset("assets/images/google.png", height: 24),
-                      label: Text(
-                        "Đăng nhập bằng Google",
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-
+                    // OutlinedButton.icon(
+                    //   style: OutlinedButton.styleFrom(
+                    //     backgroundColor: Colors.white.withValues(alpha: 0.9),
+                    //     minimumSize: const Size(double.infinity, 50),
+                    //     // side: BorderSide.none,
+                    //     side: BorderSide(color: Colors.grey.shade300),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(12),
+                    //     ),
+                    //   ),
+                    //   onPressed: provider.isLoading
+                    //       ? null
+                    //       : () {
+                    //           // implement Google login
+                    //         },
+                    //   icon: Image.asset("assets/images/google.png", height: 24),
+                    //   label: Text(
+                    //     "Đăng nhập bằng Google",
+                    //     style: textTheme.bodyMedium?.copyWith(
+                    //       fontFamily: "Quicksand",
+                    //       fontWeight: FontWeight.w600,
+                    //       color: Colors.black87,
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 12),
 
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 0.9),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: const BorderSide(color: Colors.transparent),
-                        ),
+                        style: whiteButtonStyle,
                         onPressed: provider.isLoading
                             ? null
                             : () {
@@ -322,14 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 0.9),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: const BorderSide(color: Colors.transparent),
-                        ),
+                        style: whiteButtonStyle,
                         onPressed: provider.isLoading
                             ? null
                             : () {
@@ -366,8 +376,20 @@ class _LoginScreenState extends State<LoginScreen> {
     String? Function(String?)? validator,
     Widget? suffixIcon,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.35),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
@@ -377,27 +399,35 @@ class _LoginScreenState extends State<LoginScreen> {
           fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           suffixIcon: suffixIcon,
           labelText: label,
-          labelStyle: const TextStyle(
+          labelStyle: TextStyle(
             fontFamily: "Quicksand",
-            fontWeight: FontWeight.w600,
-            color: AppTheme.summerPrimary,
+            fontWeight: FontWeight.w700,
+            color: AppTheme.summerPrimary.withValues(alpha: 0.7),
           ),
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.9),
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
               color: AppTheme.summerAccent,
               width: 1.5,
             ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.redAccent),
           ),
         ),
         validator: validator,

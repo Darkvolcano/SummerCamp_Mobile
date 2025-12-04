@@ -89,14 +89,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         children: [
           const AnimatedGradientBackground(
             gradientColors: [
-              Color(0xFF854D0E),
-              Color(0xFFB45309),
-              Color(0xFFF59E0B),
+              Color(0xFFFFFFFF),
+              Color(0xFFF5F5F5),
+              Color(0xFFECEFF1),
             ],
             blobColors: [
-              Color.fromARGB(45, 253, 186, 116),
-              Color.fromARGB(45, 251, 146, 60),
-              Color.fromARGB(45, 251, 191, 36),
+              Color.fromARGB(30, 160, 163, 167),
+              Color.fromARGB(30, 255, 140, 0),
+              Color.fromARGB(30, 158, 158, 158),
             ],
           ),
           SafeArea(
@@ -123,7 +123,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       style: textTheme.headlineSmall?.copyWith(
                         fontFamily: "Quicksand",
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppTheme.summerPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -131,7 +131,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       "Vui lòng nhập mật khẩu mới của bạn.",
                       style: textTheme.bodyMedium?.copyWith(
                         fontFamily: "Quicksand",
-                        color: Colors.white70,
+                        color: AppTheme.summerPrimary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -204,7 +204,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: const Text(
                         "Đã có tài khoản? Đăng nhập",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF546E7A),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -233,6 +233,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
         labelText: label,
+        labelStyle: TextStyle(
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.w600,
+          color: AppTheme.summerPrimary.withValues(alpha: 0.7),
+        ),
         prefixIcon: const Icon(
           Icons.lock_outline,
           color: AppTheme.summerPrimary,

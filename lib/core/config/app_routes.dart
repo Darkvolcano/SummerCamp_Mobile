@@ -135,7 +135,10 @@ class AppRoutes {
         );
 
       case resetPassword:
-        return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => ResetPasswordScreen(),
+        );
 
       case verifyOTP:
         final email = settings.arguments as String;

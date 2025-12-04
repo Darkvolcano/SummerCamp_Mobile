@@ -102,17 +102,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         title: const Row(
           children: [
             Icon(Icons.error_outline, color: Colors.red, size: 32),
-
             SizedBox(width: 12),
-
-            Text('Lỗi'),
+            Text('Lỗi', style: TextStyle(fontFamily: "Quicksand")),
           ],
         ),
-        content: Text(message),
+        content: Text(message, style: const TextStyle(fontFamily: "Quicksand")),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Đóng'),
+            child: const Text(
+              'Đóng',
+              style: TextStyle(fontFamily: "Quicksand"),
+            ),
           ),
         ],
       ),
@@ -185,14 +186,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           const AnimatedGradientBackground(
             gradientColors: [
-              Color(0xFF7F1D1D),
-              Color(0xFFC2410C),
-              Color(0xFFEA580C),
+              Color(0xFFFFFFFF),
+              Color(0xFFF5F5F5),
+              Color(0xFFECEFF1),
             ],
             blobColors: [
-              Color.fromARGB(40, 249, 115, 22),
-              Color.fromARGB(40, 251, 146, 60),
-              Color.fromARGB(40, 251, 191, 36),
+              Color.fromARGB(30, 160, 163, 167),
+              Color.fromARGB(30, 255, 140, 0),
+              Color.fromARGB(30, 158, 158, 158),
             ],
           ),
           Center(
@@ -214,32 +215,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               "assets/mock/email_successfully_sent_anim.json",
                             ),
                           ),
-
                           const SizedBox(height: 24),
-
                           Text(
                             "Đăng ký thành công!",
                             style: textTheme.headlineSmall?.copyWith(
                               fontFamily: "Quicksand",
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppTheme.summerPrimary,
                             ),
                           ),
-
                           const SizedBox(height: 12),
-
                           Text(
                             "Mã xác thực đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.",
                             textAlign: TextAlign.center,
                             style: textTheme.bodyMedium?.copyWith(
                               fontFamily: "Quicksand",
-                              color: Colors.white70,
+                              color: Colors.grey[700],
                             ),
                           ),
-
                           const SizedBox(height: 32),
-
-                          const CircularProgressIndicator(color: Colors.white),
+                          const CircularProgressIndicator(
+                            color: AppTheme.summerPrimary,
+                          ),
                         ],
                       )
                     : Form(
@@ -252,27 +249,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               "Tạo tài khoản",
                               style: textTheme.headlineSmall?.copyWith(
                                 fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.summerPrimary,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                    color: Colors.grey.withValues(alpha: 0.3),
+                                  ),
+                                ],
                               ),
                             ),
-
                             const SizedBox(height: 32),
-
-                            _buildInput(
-                              firstNameController,
-                              "Họ",
-                              Icons.person,
+                            _buildShadowInput(
+                              controller: firstNameController,
+                              label: "Họ",
+                              icon: Icons.person,
                               validator: (v) => _validateRequired(v, 'họ'),
                             ),
-                            _buildInput(
-                              lastNameController,
-                              "Tên",
-                              Icons.person_outline,
+                            _buildShadowInput(
+                              controller: lastNameController,
+                              label: "Tên",
+                              icon: Icons.person_outline,
                               validator: (v) => _validateRequired(v, 'tên'),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withValues(alpha: 0.15),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
                               child: TextFormField(
                                 controller: dobController,
                                 readOnly: true,
@@ -281,17 +295,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fontFamily: "Quicksand",
                                   fontWeight: FontWeight.w600,
                                 ),
-                                decoration: _inputDecoration("Ngày sinh")
-                                    .copyWith(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            vertical: 12.0,
-                                          ),
-                                      prefixIcon: const Icon(
-                                        Icons.calendar_today,
-                                        color: AppTheme.summerPrimary,
-                                      ),
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 16.0,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.calendar_today,
+                                    color: AppTheme.summerPrimary,
+                                  ),
+                                  labelText: "Ngày sinh",
+                                  labelStyle: TextStyle(
+                                    fontFamily: "Quicksand",
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.summerPrimary.withValues(
+                                      alpha: 0.7,
                                     ),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppTheme.summerAccent,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                ),
                                 validator: (value) =>
                                     (value == null || value.isEmpty)
                                     ? 'Vui lòng chọn ngày sinh'
@@ -299,23 +342,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 onTap: () => _selectDate(context),
                               ),
                             ),
-                            _buildInput(
-                              emailController,
-                              "Email",
-                              Icons.email,
+                            _buildShadowInput(
+                              controller: emailController,
+                              label: "Email",
+                              icon: Icons.email,
                               validator: _validateEmail,
                             ),
-                            _buildInput(
-                              phoneController,
-                              "Số điện thoại",
-                              Icons.phone,
+                            _buildShadowInput(
+                              controller: phoneController,
+                              label: "Số điện thoại",
+                              icon: Icons.phone,
                               validator: _validatePhone,
                               keyboardType: TextInputType.phone,
                             ),
-                            _buildInput(
-                              passwordController,
-                              "Mật khẩu",
-                              Icons.lock,
+                            _buildShadowInput(
+                              controller: passwordController,
+                              label: "Mật khẩu",
+                              icon: Icons.lock,
                               obscure: _obscurePassword,
                               validator: _validatePassword,
                               suffixIcon: IconButton(
@@ -330,18 +373,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 24),
-
-                            SizedBox(
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.summerPrimary.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 5),
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
                               width: double.infinity,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.summerPrimary,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
+                                    vertical: 12,
                                   ),
+                                  elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -367,9 +422,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                               ),
                             ),
-
                             const SizedBox(height: 16),
-
                             TextButton(
                               onPressed: () => Navigator.pushReplacementNamed(
                                 context,
@@ -378,8 +431,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               child: const Text(
                                 "Đã có tài khoản? Đăng nhập",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF546E7A),
                                   fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -394,17 +448,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildInput(
-    TextEditingController controller,
-    String label,
-    IconData icon, {
+  Widget _buildShadowInput({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
     bool obscure = false,
     String? Function(String?)? validator,
     TextInputType? keyboardType,
     Widget? suffixIcon,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.35),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
@@ -414,42 +480,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
           fontFamily: "Quicksand",
           fontWeight: FontWeight.w600,
         ),
-        decoration: _inputDecoration(label).copyWith(
-          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           suffixIcon: suffixIcon,
+          labelText: label,
+          labelStyle: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.w600,
+            color: AppTheme.summerPrimary.withValues(alpha: 0.7),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(
+              color: AppTheme.summerAccent,
+              width: 1.5,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.redAccent),
+          ),
         ),
         validator: validator,
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(
-        fontFamily: "Quicksand",
-        fontWeight: FontWeight.w600,
-        color: AppTheme.summerPrimary,
-      ),
-      errorStyle: const TextStyle(fontFamily: "Quicksand", fontSize: 12),
-      filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.9),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppTheme.summerAccent, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
     );
   }
