@@ -102,8 +102,8 @@ class HomeContent extends StatelessWidget {
                   children: [
                     Text(
                       userName != null && userName.isNotEmpty
-                          ? 'Xin chào, $userName 👋'
-                          : 'Xin chào, Phụ huynh 👋',
+                          ? 'Xin chào, $userName'
+                          : 'Xin chào, Phụ huynh',
                       style: TextStyle(
                         fontFamily: "Quicksand",
                         color: Colors.grey[600],

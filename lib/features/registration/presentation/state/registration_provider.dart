@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/entities/registration_camper_response.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_camper_activity.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register_payment_link.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
 
 class RegistrationProvider with ChangeNotifier {
   final CreateRegister createRegisterUseCase;
@@ -17,6 +19,7 @@ class RegistrationProvider with ChangeNotifier {
   final CreateRegisterPaymentLink createRegisterPaymentLinkUseCase;
   final CreateRegisterOptionalCamperActivity
   createRegisterOptionalCamperActivityUseCase;
+  final GetRegistrationCamper getRegistrationCamperUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
@@ -25,6 +28,7 @@ class RegistrationProvider with ChangeNotifier {
     this.getRegistrationByIdUseCase,
     this.createRegisterPaymentLinkUseCase,
     this.createRegisterOptionalCamperActivityUseCase,
+    this.getRegistrationCamperUseCase,
   );
 
   List<Registration> _registrations = [];
@@ -32,6 +36,10 @@ class RegistrationProvider with ChangeNotifier {
 
   Registration? _selectedRegistration;
   Registration? get selectedRegistration => _selectedRegistration;
+
+  List<RegistrationCamperResponse> _registrationCampers = [];
+  List<RegistrationCamperResponse> get registrationCampers =>
+      _registrationCampers;
 
   bool _loading = false;
   String? _error;
@@ -145,6 +153,23 @@ class RegistrationProvider with ChangeNotifier {
     } catch (e) {
       _error = e.toString();
       rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadRegistrationCampers() async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _registrationCampers = await getRegistrationCamperUseCase();
+    } catch (e) {
+      _error = e.toString();
+      _registrationCampers = [];
+      print("Lỗi load registration campers: $e");
     } finally {
       _loading = false;
       notifyListeners();

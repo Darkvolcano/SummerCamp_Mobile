@@ -2,6 +2,7 @@ import 'package:summercamp/features/registration/data/models/registration_model.
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/entities/registration_camper_response.dart';
 import 'package:summercamp/features/registration/domain/repositories/registration_repository.dart';
 
 class RegistrationRepositoryImpl implements RegistrationRepository {
@@ -63,5 +64,12 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
       camperId: camperId,
       activityId: activityId,
     );
+  }
+
+  @override
+  Future<List<RegistrationCamperResponse>> getRegistrationCamper() async {
+    final list = await service.fetchRegistrationCampers();
+
+    return list;
   }
 }

@@ -258,9 +258,13 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => RegistrationFailedScreen());
 
       case faceRecognitionAttendance:
-        final campers = settings.arguments as List<Camper>;
+        final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => FaceAttendanceScreen(campers: campers),
+          builder: (_) => FaceAttendanceScreen(
+            campers: args['campers'] as List<Camper>,
+            activityScheduleId: args['activityScheduleId'] as int,
+            campId: args['campId'] as int,
+          ),
         );
       // Ex: staff only
       // case '/staff-dashboard':

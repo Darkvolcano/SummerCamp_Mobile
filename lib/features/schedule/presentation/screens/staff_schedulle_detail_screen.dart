@@ -62,7 +62,10 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
     try {
       List<Camper> campersToShow = [];
 
-      if (activity.activity?.activityType == "Core") {
+      if (activity.activity?.activityType == "Core" ||
+          activity.activity?.activityType == "Checkin" ||
+          activity.activity?.activityType == "Checkout" ||
+          activity.activity?.activityType == "Resting") {
         await camperProvider.loadCampersByCoreActivityId(
           activity.activityScheduleId,
         );
@@ -132,7 +135,11 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
                     navigator.pop();
                     navigator.pushNamed(
                       AppRoutes.faceRecognitionAttendance,
-                      arguments: campersToShow,
+                      arguments: {
+                        "campers": campersToShow,
+                        "activityScheduleId": activity.activityScheduleId,
+                        "campId": widget.schedule.campId,
+                      },
                     );
                   },
                 ),

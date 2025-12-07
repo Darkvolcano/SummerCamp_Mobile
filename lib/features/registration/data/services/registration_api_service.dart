@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:summercamp/core/network/api_client.dart';
 import 'package:summercamp/core/network/dio_error_mapper.dart';
+import 'package:summercamp/features/registration/data/models/registration_camper_model.dart';
 
 class RegistrationApiService {
   final ApiClient client;
@@ -73,6 +74,21 @@ class RegistrationApiService {
       throw mapDioError(e);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<List<RegistrationCamperResponseModel>>
+  fetchRegistrationCampers() async {
+    try {
+      final res = await client.get('registrationcamper');
+
+      final List<dynamic> data = res.data;
+
+      return data
+          .map((e) => RegistrationCamperResponseModel.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      throw mapDioError(e);
     }
   }
 }

@@ -14,6 +14,7 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.d
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
@@ -57,6 +58,7 @@ import 'package:summercamp/features/activity/domain/use_cases/get_activity_sched
 import 'package:summercamp/features/registration/domain/use_cases/get_registraion_by_id.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
+import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
 import 'package:summercamp/features/report/data/services/report_api_service.dart';
@@ -278,6 +280,9 @@ void main() {
     );
     final createRegisterOptionalCamperActivityUseCase =
         CreateRegisterOptionalCamperActivity(registrationRepo);
+    final getRegistrationCamperUseCase = GetRegistrationCamper(
+      registrationRepo,
+    );
 
     // Blog
     final blogApi = BlogApiService(apiClient);
@@ -332,6 +337,7 @@ void main() {
     final attendanceApi = AttendanceApiService(apiClient);
     final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
     final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
+    final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -369,7 +375,7 @@ void main() {
             ),
           ),
 
-          // RegistrationProvider need 6 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity)
+          // RegistrationProvider need 7 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetRegistrationCamper)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -378,6 +384,7 @@ void main() {
               getRegistrationByIdUseCase,
               createRegisterPaymentLinkUseCase,
               createRegisterOptionalCamperActivityUseCase,
+              getRegistrationCamperUseCase,
             ),
           ),
 
@@ -425,9 +432,12 @@ void main() {
             ),
           ),
 
-          // AttendanceProvider need 1 usecases (UpdateAttendanceList)
+          // AttendanceProvider need 2 usecases (UpdateAttendanceList, RecognizeFace)
           ChangeNotifierProvider(
-            create: (_) => AttendanceProvider(updateAttendanceUseCase),
+            create: (_) => AttendanceProvider(
+              updateAttendanceUseCase,
+              recognizeFaceUseCase,
+            ),
           ),
         ],
         child: const SummerCampApp(),

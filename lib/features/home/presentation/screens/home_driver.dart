@@ -137,7 +137,7 @@ class _DriverHomeContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Xin chào, $userName 👋',
+                    'Xin chào, $userName ',
                     style: textTheme.titleMedium?.copyWith(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,

@@ -45,10 +45,10 @@ class ActivityScheduleModel extends ActivitySchedule {
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
       status: json['status'],
-      isLivestream: json['isLivestream'],
+      isLivestream: json['isLivestream'] ?? false,
       liveStream: liveStream,
       maxCapacity: json['maxCapacity'] as int?,
-      isOptional: json['isOptional'],
+      isOptional: json['isOptional'] ?? false,
       locationId: json['locationId'] as int?,
       currentCapacity: json['currentCapacity'] as int?,
     );

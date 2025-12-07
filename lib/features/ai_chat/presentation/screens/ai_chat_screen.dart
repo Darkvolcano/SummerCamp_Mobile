@@ -66,7 +66,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: AppTheme.summerPrimary),
         title: const Text(
-          "AI Chat 🤖",
+          "AI Chat",
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
+import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 
 class FaceAttendanceScreen extends StatefulWidget {
   final List<Camper> campers;
+  final int activityScheduleId;
+  final int campId;
 
-  const FaceAttendanceScreen({super.key, required this.campers});
+  const FaceAttendanceScreen({
+    super.key,
+    required this.campers,
+    required this.activityScheduleId,
+    required this.campId,
+  });
 
   @override
   State<FaceAttendanceScreen> createState() => _FaceAttendanceScreenState();
@@ -19,6 +29,70 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
   final ImagePicker _picker = ImagePicker();
 
   final List<Map<String, dynamic>> _attendanceList = [];
+
+  final Map<int, int> _camperGroups = {};
+  bool _isDataReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRegistrationData();
+    });
+    _retrieveLostData();
+  }
+
+  Future<void> _retrieveLostData() async {
+    final LostDataResponse response = await _picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+
+    if (response.file != null) {
+      // Khôi phục lại ảnh đã chụp
+      setState(() {
+        _capturedImage = File(response.file!.path);
+        _isProcessing = true;
+      });
+      // Gọi lại logic nhận diện
+      await _processFaceRecognition();
+    } else {
+      // Xử lý lỗi nếu có
+      _showErrorSnackBar('Lỗi khôi phục ảnh: ${response.exception?.code}');
+    }
+  }
+
+  Future<void> _loadRegistrationData() async {
+    setState(() => _isDataReady = false); // Bắt đầu tải
+
+    try {
+      final regProvider = context.read<RegistrationProvider>();
+      await regProvider.loadRegistrationCampers();
+
+      final regCampers = regProvider.registrationCampers;
+
+      // Clear map cũ để tránh duplicate nếu load lại
+      _camperGroups.clear();
+
+      for (var reg in regCampers) {
+        // Kiểm tra kỹ null safety ở đây
+        // ignore: unnecessary_null_comparison
+        if (reg.camperGroup != null && reg.camperGroup!.groupName != null) {
+          // Đảm bảo truy xuất đúng cấp độ object
+          _camperGroups[reg.camperId] = reg.camperGroup!.groupName.groupId;
+        }
+      }
+
+      print("Đã tải xong thông tin nhóm: ${_camperGroups.length} records");
+    } catch (e) {
+      print("Lỗi tải data nhóm: $e");
+      _showErrorSnackBar("Không tải được dữ liệu nhóm camper");
+    } finally {
+      if (mounted) {
+        setState(() => _isDataReady = true); // Tải xong (dù lỗi hay không)
+      }
+    }
+  }
 
   Future<void> _openCamera() async {
     try {
@@ -34,59 +108,93 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
           _isProcessing = true;
         });
 
-        // Process face recognition with camper avatars
+        // Gọi API nhận diện
         await _processFaceRecognition();
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi: ${e.toString()}')));
-      }
+      _showErrorSnackBar('Lỗi camera: ${e.toString()}');
     }
   }
 
   Future<void> _processFaceRecognition() async {
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 2));
+    if (_capturedImage == null) return;
 
-    if (!mounted) return;
+    final attendanceProvider = context.read<AttendanceProvider>();
 
-    // Mock: Simulate matching with first camper who hasn't been marked yet
-    final unmarkedCampers = widget.campers.where((camper) {
-      return !_attendanceList.any((att) => att['camperId'] == camper.camperId);
-    }).toList();
+    try {
+      int targetGroupId = 0;
+      for (var camper in widget.campers) {
+        if (_camperGroups.containsKey(camper.camperId)) {
+          targetGroupId = _camperGroups[camper.camperId]!;
+          break;
+        }
+      }
 
-    if (unmarkedCampers.isEmpty) {
+      if (targetGroupId == 0) {
+        throw Exception("Không tìm thấy thông tin nhóm của các camper này.");
+      }
+
+      // GỌI API NHẬN DIỆN
+      final result = await attendanceProvider.recognizeFaceUseCase(
+        activityScheduleId: widget.activityScheduleId,
+        photo: _capturedImage!,
+        campId: widget.campId,
+        groupId: targetGroupId,
+      );
+
+      final bool success = result['success'] ?? false;
+      final List<dynamic> recognizedCampers = result['recognizedCampers'] ?? [];
+
+      if (!success || recognizedCampers.isEmpty) {
+        setState(() => _isProcessing = false);
+        _showNoMatchDialog();
+        return;
+      }
+
+      // Giả sử lấy camper đầu tiên nhận diện được (hoặc xử lý danh sách nếu cần)
+      // Trong UI hiện tại bạn đang show 1 dialog kết quả, nên ta lấy người đầu tiên
+      final match = recognizedCampers.first;
+
+      final now = DateTime.now();
+      final timeStr =
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+      final displayResult = {
+        'camperId': match['camperId'],
+        'name': match['camperName'] ?? 'Unknown',
+        'avatar': _findAvatar(match['camperId']),
+        'confidence': (match['confidence'] ?? 0.0) * 100,
+        'status': 'Có mặt', // Mặc định là có mặt nếu nhận diện thành công
+        'time': timeStr,
+      };
+
       setState(() {
         _isProcessing = false;
+        _attendanceList.add(displayResult);
       });
-      _showNoMatchDialog();
-      return;
+
+      _showRecognitionResultDialog(displayResult);
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      _showErrorSnackBar('Lỗi nhận diện: ${e.toString()}');
     }
+  }
 
-    // Simulate successful match with first unmarked camper
-    final matchedCamper = unmarkedCampers.first;
-    final now = DateTime.now();
-    final timeStr =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  String? _findAvatar(int camperId) {
+    try {
+      final camper = widget.campers.firstWhere((c) => c.camperId == camperId);
+      return camper.avatar;
+    } catch (e) {
+      return null;
+    }
+  }
 
-    final result = {
-      'camperId': matchedCamper.camperId,
-      'name': matchedCamper.camperName,
-      'avatar': matchedCamper.avatar,
-      'confidence': unmarkedCampers.length % 5,
-      'status': 'Có mặt',
-      'time': timeStr,
-      'timestamp': now,
-    };
-
-    setState(() {
-      _isProcessing = false;
-      _attendanceList.add(result);
-    });
-
-    _showRecognitionResultDialog(result);
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
   }
 
   void _showRecognitionResultDialog(Map<String, dynamic> result) {
@@ -362,7 +470,9 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton.icon(
-                onPressed: _isProcessing ? null : _openCamera,
+                onPressed: (_isProcessing || !_isDataReady)
+                    ? null
+                    : _openCamera,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: StaffTheme.staffAccent,
                   foregroundColor: Colors.white,
@@ -373,7 +483,11 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                 ),
                 icon: const Icon(Icons.camera_alt, size: 28),
                 label: Text(
-                  _isProcessing ? 'Đang xử lý...' : 'Quét khuôn mặt',
+                  _isProcessing
+                      ? 'Đang xử lý...'
+                      : (!_isDataReady
+                            ? 'Đang tải dữ liệu...'
+                            : 'Quét khuôn mặt'),
                   style: const TextStyle(
                     fontFamily: "Quicksand",
                     fontSize: 18,

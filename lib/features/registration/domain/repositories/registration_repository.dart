@@ -1,5 +1,6 @@
 import 'package:summercamp/features/registration/domain/entities/optional_choice.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
+import 'package:summercamp/features/registration/domain/entities/registration_camper_response.dart';
 
 abstract class RegistrationRepository {
   Future<List<Registration>> getRegistrations();
@@ -19,4 +20,5 @@ abstract class RegistrationRepository {
     required int camperId,
     required int activityId,
   });
+  Future<List<RegistrationCamperResponse>> getRegistrationCamper();
 }
