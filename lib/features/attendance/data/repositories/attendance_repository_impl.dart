@@ -27,4 +27,12 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       groupId: groupId,
     );
   }
+
+  @override
+  Future<void> preloadFaceDatabase(
+    int campId, {
+    bool forceReload = false,
+  }) async {
+    await service.preloadFaceDatabase(campId, forceReload: forceReload);
+  }
 }

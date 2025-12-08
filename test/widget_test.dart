@@ -14,6 +14,7 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.d
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
@@ -45,6 +46,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_a
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
@@ -303,6 +305,7 @@ void main() {
     final getCampersByOptionalActivityUseCase = GetCampersByOptionalActivityId(
       camperRepo,
     );
+    final getCampGroupUseCase = GetCampGroup(camperRepo);
 
     // Report
     final reportApi = ReportApiService(apiClient);
@@ -338,6 +341,7 @@ void main() {
     final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
     final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
     final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
+    final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
 
     await tester.pumpWidget(
       MultiProvider(
@@ -391,7 +395,7 @@ void main() {
           // BlogProvider need 1 usecases (GetBlogs)
           ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-          // CamperProvider need 7 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId)
+          // CamperProvider need 8 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup)
           ChangeNotifierProvider(
             create: (_) => CamperProvider(
               createCamperUseCase,
@@ -401,6 +405,7 @@ void main() {
               getCamperGroupsUseCase,
               getCampersByCoreActivityUseCase,
               getCampersByOptionalActivityUseCase,
+              getCampGroupUseCase,
             ),
           ),
 
@@ -432,11 +437,12 @@ void main() {
             ),
           ),
 
-          // AttendanceProvider need 2 usecases (UpdateAttendanceList, RecognizeFace)
+          // AttendanceProvider need 3 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase)
           ChangeNotifierProvider(
             create: (_) => AttendanceProvider(
               updateAttendanceUseCase,
               recognizeFaceUseCase,
+              preloadFaceDatabaseUseCase,
             ),
           ),
         ],

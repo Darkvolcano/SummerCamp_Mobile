@@ -12,15 +12,15 @@ class ScheduleApiService {
   }
 
   Future<void> updateTransportScheduleStartTrip(int transportScheduleId) async {
-    await client.patch('transportschedules/$transportScheduleId/start-trip');
+    await client.patch('transport-schedules/$transportScheduleId/start-trip');
   }
 
   Future<void> updateTransportScheduleEndTrip(int transportScheduleId) async {
-    await client.patch('transportschedules/$transportScheduleId/end-trip');
+    await client.patch('transport-schedules/$transportScheduleId/end-trip');
   }
 
   Future<List<dynamic>> fetchDriverSchedules() async {
-    final res = await client.get('transportschedules/driver-schedule');
+    final res = await client.get('transport-schedules/driver-schedule');
     return res.data as List;
   }
 

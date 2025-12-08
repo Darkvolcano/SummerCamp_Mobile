@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
+import 'package:summercamp/features/camper/domain/entities/group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 
 class CamperProvider with ChangeNotifier {
@@ -18,6 +20,7 @@ class CamperProvider with ChangeNotifier {
   final GetCamperGroups getCamperGroupsUseCase;
   final GetCampersByCoreActivityId getCampersByCoreActivityIdUseCase;
   final GetCampersByOptionalActivityId getCampersByOptionalActivityIdUseCase;
+  final GetCampGroup getCampGroupUseCase;
 
   CamperProvider(
     this.createCamperUseCase,
@@ -27,6 +30,7 @@ class CamperProvider with ChangeNotifier {
     this.getCamperGroupsUseCase,
     this.getCampersByCoreActivityIdUseCase,
     this.getCampersByOptionalActivityIdUseCase,
+    this.getCampGroupUseCase,
   );
 
   List<Camper> _campers = [];
@@ -43,6 +47,9 @@ class CamperProvider with ChangeNotifier {
 
   List<CamperGroup> _camperGroups = [];
   List<CamperGroup> get camperGroups => _camperGroups;
+
+  Group? _group;
+  Group? get group => _group;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -131,14 +138,37 @@ class CamperProvider with ChangeNotifier {
     }
   }
 
-  Future<void> loadCamperGroups() async {
+  Future<void> loadCamperGroups(int campId) async {
     _loading = true;
+    _error = null;
     notifyListeners();
 
-    _camperGroups = await getCamperGroupsUseCase();
+    try {
+      _camperGroups = await getCamperGroupsUseCase(campId);
+    } catch (e) {
+      _error = e.toString();
+      _camperGroups = [];
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
 
-    _loading = false;
+  Future<void> loadStaffCampGroup(int campId) async {
+    _loading = true;
+    _error = null;
     notifyListeners();
+
+    try {
+      _group = await getCampGroupUseCase(campId);
+    } catch (e) {
+      _error = e.toString();
+      _group = null;
+      print("Lỗi load staff camp group: $e");
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> loadCampersByCoreActivityId(int coreActivityId) async {

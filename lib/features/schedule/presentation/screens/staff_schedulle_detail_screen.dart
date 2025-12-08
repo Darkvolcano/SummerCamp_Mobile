@@ -6,6 +6,7 @@ import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
+import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
@@ -31,8 +32,25 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
       if (mounted) {
         final activityProvider = context.read<ActivityProvider>();
         activityProvider.loadActivitySchedulesByCampId(widget.schedule.campId);
+
+        _preloadFaceData();
       }
     });
+  }
+
+  Future<void> _preloadFaceData() async {
+    try {
+      final attendanceProvider = context.read<AttendanceProvider>();
+      await attendanceProvider.preloadFaceData(
+        widget.schedule.campId,
+        forceReload: false,
+      );
+      print(
+        "Preload face data initiated for Camp ID: ${widget.schedule.campId}",
+      );
+    } catch (e) {
+      print("Warning: Preload face data failed: $e");
+    }
   }
 
   void onJoinLivestreamPressed(BuildContext context, String roomId, Mode mode) {

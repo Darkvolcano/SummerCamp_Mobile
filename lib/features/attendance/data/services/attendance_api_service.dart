@@ -46,4 +46,15 @@ class AttendanceApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<void> preloadFaceDatabase(
+    int campId, {
+    bool forceReload = false,
+  }) async {
+    try {
+      await client.post('admin/ai/preload/$campId?forceReload=false');
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
 }

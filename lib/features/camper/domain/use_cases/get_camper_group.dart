@@ -5,7 +5,7 @@ class GetCamperGroups {
   final CamperRepository repository;
   GetCamperGroups(this.repository);
 
-  Future<List<CamperGroup>> call() async {
-    return await repository.getCamperGroups();
+  Future<List<CamperGroup>> call(int campId) {
+    return repository.getCamperGroups(campId);
   }
 }

@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
@@ -18,6 +19,7 @@ import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.d
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
@@ -176,6 +178,7 @@ Future<void> main() async {
   final getCampersByOptionalActivityUseCase = GetCampersByOptionalActivityId(
     camperRepo,
   );
+  final getCampGroupUseCase = GetCampGroup(camperRepo);
 
   // Report
   final reportApi = ReportApiService(apiClient);
@@ -212,6 +215,7 @@ Future<void> main() async {
   final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
   final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
   final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
+  final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
 
   runApp(
     MultiProvider(
@@ -265,7 +269,7 @@ Future<void> main() async {
         // BlogProvider need 1 usecases (GetBlogs)
         ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-        // CamperProvider need 7 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId)
+        // CamperProvider need 8 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup)
         ChangeNotifierProvider(
           create: (_) => CamperProvider(
             createCamperUseCase,
@@ -275,6 +279,7 @@ Future<void> main() async {
             getCamperGroupsUseCase,
             getCampersByCoreActivityUseCase,
             getCampersByOptionalActivityUseCase,
+            getCampGroupUseCase,
           ),
         ),
 
@@ -305,10 +310,13 @@ Future<void> main() async {
           ),
         ),
 
-        // AttendanceProvider need 2 usecases (UpdateAttendanceList, RecognizeFace)
+        // AttendanceProvider need 2 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase)
         ChangeNotifierProvider(
-          create: (_) =>
-              AttendanceProvider(updateAttendanceUseCase, recognizeFaceUseCase),
+          create: (_) => AttendanceProvider(
+            updateAttendanceUseCase,
+            recognizeFaceUseCase,
+            preloadFaceDatabaseUseCase,
+          ),
         ),
       ],
       child: const SummerCampApp(),

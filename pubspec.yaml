@@ -61,6 +61,7 @@ dependencies:
   firebase_app_check: ^0.4.1+1 # App Check
   google_generative_ai: ^0.4.7 # Google Generative AI API
   flutter_dotenv: ^5.1.0 # Load env file
+  camera: ^0.10.5+9
 
 dev_dependencies:
   flutter_test:

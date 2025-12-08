@@ -10,4 +10,5 @@ abstract class AttendanceRepository {
     required int campId,
     required int groupId,
   });
+  Future<void> preloadFaceDatabase(int campId, {bool forceReload = false});
 }

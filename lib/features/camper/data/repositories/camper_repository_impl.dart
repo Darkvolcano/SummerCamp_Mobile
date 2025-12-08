@@ -1,9 +1,11 @@
 import 'package:summercamp/features/camper/data/models/camper_group_model.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
+import 'package:summercamp/features/camper/data/models/group_model.dart';
 import 'package:summercamp/features/camper/data/models/health_record_model.dart';
 import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
+import 'package:summercamp/features/camper/domain/entities/group.dart';
 import 'package:summercamp/features/camper/domain/repositories/camper_repository.dart';
 
 class CamperRepositoryImpl implements CamperRepository {
@@ -79,9 +81,15 @@ class CamperRepositoryImpl implements CamperRepository {
   }
 
   @override
-  Future<List<CamperGroup>> getCamperGroups() async {
-    final list = await service.fetchCamperGroups();
+  Future<List<CamperGroup>> getCamperGroups(int campId) async {
+    final list = await service.getCamperGroupsByCampId(campId);
     return list.map((e) => CamperGroupModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<Group> getCampGroup(int campId) async {
+    final data = await service.getCampGroup(campId);
+    return GroupModel.fromJson(data);
   }
 
   @override
