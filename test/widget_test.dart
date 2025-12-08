@@ -49,6 +49,10 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dar
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
+import 'package:summercamp/features/livestream/data/repositories/livestream_repository_impl.dart';
+import 'package:summercamp/features/livestream/data/services/livestream_api_service.dart';
+import 'package:summercamp/features/livestream/domain/use_cases/update_livestream_room_id.dart';
+import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/registration/data/repositories/registration_repository_impl.dart';
 import 'package:summercamp/features/registration/data/services/registration_api_service.dart';
 import 'package:summercamp/features/registration/domain/use_cases/cancel_registration.dart';
@@ -343,6 +347,13 @@ void main() {
     final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
     final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
 
+    // Livestream
+    final livestreamApi = LivestreamApiService(apiClient);
+    final livestreamRepo = LivestreamRepositoryImpl(livestreamApi);
+    final updateLivestreamRoomIdUseCase = UpdateLivestreamRoomId(
+      livestreamRepo,
+    );
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -444,6 +455,11 @@ void main() {
               recognizeFaceUseCase,
               preloadFaceDatabaseUseCase,
             ),
+          ),
+
+          // LivestreamProvider need 1 usecases (UpdateLivestreamRoomId)
+          ChangeNotifierProvider(
+            create: (_) => LivestreamProvider(updateLivestreamRoomIdUseCase),
           ),
         ],
         child: const SummerCampApp(),

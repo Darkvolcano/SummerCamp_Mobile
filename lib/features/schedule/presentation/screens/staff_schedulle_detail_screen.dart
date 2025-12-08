@@ -9,7 +9,9 @@ import 'package:summercamp/features/activity/domain/entities/activity_schedule.d
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
+import 'package:summercamp/features/livestream/domain/entities/livestream.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
+import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:videosdk/videosdk.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
@@ -25,6 +27,8 @@ class StaffScheduleDetailScreen extends StatefulWidget {
 
 class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
   int? _fetchingActivityId;
+
+  int? _loadingLivestreamId;
 
   @override
   void initState() {
@@ -66,6 +70,68 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleLivestreamPress(ActivitySchedule act) async {
+    final livestreamEntity = act.liveStream;
+    if (livestreamEntity == null) return;
+
+    if (livestreamEntity.roomId != null &&
+        livestreamEntity.roomId!.isNotEmpty) {
+      onJoinLivestreamPressed(
+        context,
+        livestreamEntity.roomId!,
+        Mode.SEND_AND_RECV,
+      );
+      return;
+    }
+
+    setState(() {
+      _loadingLivestreamId = act.activityScheduleId;
+    });
+
+    try {
+      // Create videoSDK API create roomId
+      final String newRoomId = await createLivestream();
+
+      // Create new object Livestream with roomId created
+      final updatedLivestream = Livestream(
+        livestreamId: livestreamEntity.livestreamId,
+        roomId: newRoomId,
+      );
+
+      // Call API update livestream roomId
+      if (!mounted) return;
+      await context.read<LivestreamProvider>().updateLivestreamRoomId(
+        updatedLivestream,
+      );
+
+      // Reload activity
+      if (mounted) {
+        context.read<ActivityProvider>().loadActivitySchedulesByCampId(
+          widget.schedule.campId,
+        );
+      }
+
+      // Join room
+      if (!mounted) return;
+      onJoinLivestreamPressed(context, newRoomId, Mode.SEND_AND_RECV);
+    } catch (e) {
+      if (mounted) {
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: "Không thể tạo phòng Livestream: $e",
+          type: DialogType.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingLivestreamId = null;
+        });
+      }
+    }
   }
 
   void _showAttendanceOptions(
@@ -471,8 +537,11 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
       isLive = now.isAfter(act.startTime) && now.isBefore(act.endTime);
     }
 
-    final bool isThisButtonLoading =
+    final bool isAttendanceLoading =
         _fetchingActivityId == act.activityScheduleId;
+
+    final bool isLivestreamLoading =
+        _loadingLivestreamId == act.activityScheduleId;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -512,14 +581,19 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(10),
               ),
-              onPressed: isLive
-                  ? () => onJoinLivestreamPressed(
-                      context,
-                      act.liveStream!.roomId,
-                      Mode.SEND_AND_RECV,
-                    )
+              onPressed: (isLive && !isLivestreamLoading)
+                  ? () => _handleLivestreamPress(act)
                   : null,
-              child: const Icon(Icons.videocam, size: 20),
+              child: isLivestreamLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.videocam, size: 20),
             )
           else
             ElevatedButton(
@@ -538,7 +612,7 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
               onPressed: _fetchingActivityId != null
                   ? null
                   : () => _showAttendanceOptions(context, act),
-              child: isThisButtonLoading
+              child: isAttendanceLoading
                   ? const SizedBox(
                       width: 16,
                       height: 16,

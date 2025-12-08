@@ -20,6 +20,10 @@ import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
+import 'package:summercamp/features/livestream/data/repositories/livestream_repository_impl.dart';
+import 'package:summercamp/features/livestream/data/services/livestream_api_service.dart';
+import 'package:summercamp/features/livestream/domain/use_cases/update_livestream_room_id.dart';
+import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
@@ -217,6 +221,11 @@ Future<void> main() async {
   final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
   final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
 
+  // Livestream
+  final livestreamApi = LivestreamApiService(apiClient);
+  final livestreamRepo = LivestreamRepositoryImpl(livestreamApi);
+  final updateLivestreamRoomIdUseCase = UpdateLivestreamRoomId(livestreamRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -317,6 +326,11 @@ Future<void> main() async {
             recognizeFaceUseCase,
             preloadFaceDatabaseUseCase,
           ),
+        ),
+
+        // LivestreamProvider need 1 usecases (UpdateLivestreamRoomId)
+        ChangeNotifierProvider(
+          create: (_) => LivestreamProvider(updateLivestreamRoomIdUseCase),
         ),
       ],
       child: const SummerCampApp(),

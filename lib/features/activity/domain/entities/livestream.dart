@@ -1,8 +1,8 @@
 class Livestream {
   final int livestreamId;
-  final String roomId;
+  final String? roomId;
 
-  const Livestream({required this.livestreamId, required this.roomId});
+  const Livestream({required this.livestreamId, this.roomId});
 
   factory Livestream.fromJson(Map<String, dynamic> json) {
     return Livestream(

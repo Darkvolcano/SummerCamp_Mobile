@@ -87,7 +87,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
 
     final provider = context.read<RegistrationProvider>();
     final navigator = Navigator.of(context);
-    final messenger = ScaffoldMessenger.of(context);
 
     try {
       final List<OptionalChoice> choicesList = [];
