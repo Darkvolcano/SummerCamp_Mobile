@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class ChangePasswordDialog extends StatefulWidget {
@@ -35,7 +36,6 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     setState(() => _isLoading = true);
 
     final provider = context.read<AuthProvider>();
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
     try {
@@ -47,22 +47,21 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
       if (mounted) {
         navigator.pop();
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text("Đổi mật khẩu thành công!"),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showCustomDialog(
+          context,
+          title: "Thành công",
+          message: "Đổi mật khẩu thành công!",
+          type: DialogType.success,
         );
       }
     } catch (e) {
       if (mounted) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text("Lỗi: ${e.toString()}"),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: e.toString().replaceAll("Exception: ", ""),
+          type: DialogType.error,
+          btnText: "Thử lại",
         );
       }
     } finally {

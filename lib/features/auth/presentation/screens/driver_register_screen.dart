@@ -344,12 +344,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         );
       }
 
-      // if (mounted) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text("Đang chuẩn bị upload ảnh...")),
-      //   );
-      // }
-
       await Future.delayed(const Duration(seconds: 3));
 
       await _uploadLicenseWithRetry(oneTimeToken, _licenseImage!);

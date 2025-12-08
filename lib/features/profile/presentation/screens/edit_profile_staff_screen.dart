@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:intl/intl.dart';
@@ -116,13 +117,17 @@ class _EditProfileStaffScreenState extends State<EditProfileStaffScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Cập nhật thành công!"),
-            backgroundColor: Colors.green,
-          ),
+        showCustomDialog(
+          context,
+          title: "Thành công",
+          message: "Cập nhật hồ sơ thành công!",
+          type: DialogType.success,
+          btnText: "OK",
+          dismissible: false,
+          onConfirm: () {
+            Navigator.pop(context, true);
+          },
         );
-        Navigator.pop(context, true);
       }
     } catch (e) {
       _showMessageBox('Lỗi', 'Cập nhật thất bại: ${e.toString()}');

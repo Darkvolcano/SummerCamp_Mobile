@@ -6,6 +6,7 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/camp/presentation/state/camp_provider.dart';
@@ -123,11 +124,11 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('Đã xảy ra lỗi: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: 'Đã xảy ra lỗi: ${e.toString()}',
+          type: DialogType.error,
         );
       }
     } finally {

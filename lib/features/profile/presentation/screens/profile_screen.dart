@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:intl/intl.dart';
@@ -101,8 +102,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Đăng xuất thất bại: ${e.toString()}")),
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: "Đăng xuất thất bại: ${e.toString()}",
+          type: DialogType.error,
         );
       }
     }

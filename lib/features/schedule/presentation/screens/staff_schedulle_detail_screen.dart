@@ -4,6 +4,7 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/enum/camp_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
@@ -73,7 +74,6 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
   ) async {
     final camperProvider = context.read<CamperProvider>();
     final navigator = Navigator.of(context);
-    final messenger = ScaffoldMessenger.of(context);
 
     setState(() => _fetchingActivityId = activity.activityScheduleId);
 
@@ -168,12 +168,15 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen> {
         },
       );
     } catch (e) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text("Lỗi tải danh sách camper: ${e.toString()}"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        showCustomDialog(
+          // ignore: use_build_context_synchronously
+          context,
+          title: "Lỗi",
+          message: "Lỗi tải danh sách camper: ${e.toString()}",
+          type: DialogType.error,
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _fetchingActivityId = null);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/driver_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
@@ -82,9 +83,13 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
       msg = "Chỉ được xác nhận xuống xe từ $sTime đến $eTime";
     }
 
-    ScaffoldMessenger.of(
+    showCustomDialog(
       context,
-    ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
+      title: "Chưa đến giờ",
+      message: msg,
+      type: DialogType.warning,
+      btnText: "Đã hiểu",
+    );
   }
 
   @override
@@ -237,8 +242,12 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen>
     }
 
     if (selectedIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vui lòng chọn ít nhất 1 hành khách")),
+      showCustomDialog(
+        context,
+        title: "Chưa chọn camper",
+        message: "Vui lòng chọn ít nhất 1 camper để xác nhận.",
+        type: DialogType.warning,
+        btnText: "Đóng",
       );
       return;
     }

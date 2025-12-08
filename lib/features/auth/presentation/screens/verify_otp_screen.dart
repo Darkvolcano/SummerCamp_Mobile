@@ -145,11 +145,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Mã OTP mới đã được gửi đến email của bạn.'),
-          backgroundColor: Colors.green,
-        ),
+      showCustomDialog(
+        context,
+        title: "Đã gửi lại OTP",
+        message: 'Mã OTP mới đã được gửi đến email của bạn.',
+        type: DialogType.success,
+        btnText: "OK",
       );
 
       for (var controller in _controllers) {

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/profile/presentation/screens/edit_profile_staff_screen.dart';
 
@@ -34,8 +35,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
         await authProvider.fetchProfileUser();
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Lỗi tải thông tin: ${e.toString()}")),
+          showCustomDialog(
+            context,
+            title: "Lỗi",
+            message: "Lỗi tải thông tin: ${e.toString()}",
+            type: DialogType.error,
           );
         }
       } finally {
@@ -76,8 +80,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Đăng xuất thất bại: ${e.toString()}")),
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: "Đăng xuất thất bại: ${e.toString()}",
+          type: DialogType.error,
         );
       }
     }

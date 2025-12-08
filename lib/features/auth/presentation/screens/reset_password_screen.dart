@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/widgets/animated_gradient_background.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -38,8 +39,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.green),
+      showCustomDialog(
+        context,
+        title: "Thành công",
+        message: message,
+        type: DialogType.success,
+        btnText: "Đăng nhập ngay",
+        onConfirm: () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.login,
+            (_) => false,
+          );
+        },
       );
 
       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);

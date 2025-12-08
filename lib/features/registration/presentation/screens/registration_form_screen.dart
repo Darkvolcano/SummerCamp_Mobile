@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 // import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_confirm_screen.dart';
@@ -461,49 +462,14 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      // onPressed: () {
-                      //   if (_selectedCampers.isEmpty) {
-                      //     ScaffoldMessenger.of(context).showSnackBar(
-                      //       const SnackBar(
-                      //         content: Text("Vui lòng chọn ít nhất 1 Camper"),
-                      //       ),
-                      //     );
-                      //     return;
-                      //   }
-
-                      //   for (final camper in _selectedCampers) {
-                      //     final r = Registration(
-                      //       registrationId:
-                      //           DateTime.now().millisecondsSinceEpoch,
-                      //       campId: camp.campId,
-                      //       camperId: camper.camperId,
-                      //       paymentId: _selectedPaymentId,
-                      //       registrationCreateAt: DateTime.now(),
-                      //       status: "pending",
-                      //       price: camp.price,
-                      //       promotionId: null,
-                      //       promotionCode: _promotionCodeController.text.isEmpty
-                      //           ? null
-                      //           : _promotionCodeController.text,
-                      //       discount: 0,
-                      //       campName: camp.name,
-                      //       campDescription: camp.description,
-                      //       campPlace: camp.place,
-                      //       campStartDate: camp.startDate,
-                      //       campEndDate: camp.endDate,
-                      //     );
-
-                      //     provider.addRegistration(r);
-                      //   }
-
-                      //   Navigator.pop(context);
-                      // },
                       onPressed: () {
                         if (_selectedCampers.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Vui lòng chọn ít nhất 1 Camper"),
-                            ),
+                          showCustomDialog(
+                            context,
+                            title: "Chưa chọn Camper",
+                            message:
+                                "Vui lòng chọn ít nhất 1 Camper để tiếp tục.",
+                            type: DialogType.warning,
                           );
                           return;
                         }

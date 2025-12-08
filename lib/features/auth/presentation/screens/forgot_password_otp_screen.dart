@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/animated_gradient_background.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class ForgotPasswordOtpScreen extends StatefulWidget {
@@ -82,11 +83,12 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
 
   void _handleSubmit(String email) {
     if (!_isOtpComplete) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Vui lòng nhập đủ 6 số OTP"),
-          backgroundColor: Colors.red,
-        ),
+      showCustomDialog(
+        context,
+        title: "Thiếu thông tin",
+        message: "Vui lòng nhập đủ 6 số OTP để tiếp tục.",
+        type: DialogType.warning,
+        btnText: "Đã hiểu",
       );
       return;
     }
@@ -105,11 +107,12 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Mã OTP mới đã được gửi đến email của bạn.'),
-          backgroundColor: Colors.green,
-        ),
+      showCustomDialog(
+        context,
+        title: "Đã gửi lại OTP",
+        message: 'Mã OTP mới đã được gửi đến email của bạn.',
+        type: DialogType.success,
+        btnText: "OK",
       );
 
       for (var controller in _controllers) {

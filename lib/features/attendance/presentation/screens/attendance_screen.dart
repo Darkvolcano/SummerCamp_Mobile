@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/attendance/domain/entities/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
@@ -47,8 +48,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   Future<void> _submitAttendance() async {
     final provider = context.read<AttendanceProvider>();
-    final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
 
     List<UpdateAttendance> requests = [];
 
@@ -72,8 +71,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
 
     if (requests.isEmpty) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text("Không có dữ liệu để lưu")),
+      showCustomDialog(
+        context,
+        title: "Thông báo",
+        message: "Không có dữ liệu thay đổi để lưu.",
+        type: DialogType.warning,
+        btnText: "Đóng",
       );
       return;
     }
@@ -82,21 +85,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       await provider.submitAttendance(requests);
 
       if (mounted) {
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text("Cập nhật điểm danh thành công!"),
-            backgroundColor: Colors.green,
-          ),
+        showCustomDialog(
+          context,
+          title: "Thành công",
+          message: "Cập nhật điểm danh thành công!",
+          type: DialogType.success,
+          btnText: "Hoàn tất",
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
         );
-        navigator.pop();
       }
     } catch (e) {
       if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text("Lỗi: ${e.toString()}"),
-            backgroundColor: Colors.red,
-          ),
+        showCustomDialog(
+          context,
+          title: "Đã xảy ra lỗi",
+          message: e.toString(),
+          type: DialogType.error,
+          btnText: "Thử lại",
         );
       }
     }

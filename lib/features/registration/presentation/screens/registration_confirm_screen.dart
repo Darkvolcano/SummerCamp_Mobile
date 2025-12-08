@@ -56,41 +56,6 @@ class _RegistrationConfirmScreenState extends State<RegistrationConfirmScreen> {
           MaterialPageRoute(builder: (_) => const RegistrationSuccessScreen()),
         );
       }
-      // final paymentUrl = await provider.createRegistration(
-      //   campId: widget.camp.campId,
-      //   campers: widget.campers,
-      //   appliedPromotionId: widget.promotionCode,
-      //   note: widget.note,
-      // );
-
-      // print("URL nhận được tại UI: $paymentUrl");
-
-      // final uri = Uri.tryParse(paymentUrl);
-
-      // if (uri != null && await canLaunchUrl(uri)) {
-      //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-      //   if (mounted) {
-      //     Navigator.of(context).popUntil((route) => route.isFirst);
-      //   }
-      // } else {
-      //   throw Exception('Không thể mở đường dẫn thanh toán: $paymentUrl');
-      // }
-      // } catch (e) {
-      //   if (mounted) {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       SnackBar(
-      //         content: Text('Đã xảy ra lỗi: ${e.toString()}'),
-      //         backgroundColor: Colors.red,
-      //       ),
-      //     );
-      //   }
-      // } finally {
-      //   if (mounted) {
-      //     setState(() {
-      //       _isLoading = false;
-      //     });
-      //   }
-      // }
     } catch (e) {
       if (mounted) {
         navigator.pushReplacement(
