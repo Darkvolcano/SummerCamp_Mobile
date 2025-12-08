@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summercamp/core/config/constants.dart';
+import 'package:summercamp/features/auth/data/models/bank_user_model.dart';
 import 'package:summercamp/features/auth/data/models/user_model.dart';
 import 'package:summercamp/features/auth/data/services/auth_api_service.dart';
+import 'package:summercamp/features/auth/domain/entities/bank_user.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
@@ -195,6 +197,27 @@ class UserRepositoryImpl implements UserRepository {
       currentPassword: currentPassword,
       newPassword: newPassword,
       confirmNewPassword: confirmNewPassword,
+    );
+  }
+
+  @override
+  Future<List<BankUser>> getBankUsers() async {
+    final list = await service.fetchBankUser();
+    return list.map((e) => BankUserModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<Map<String, dynamic>> createBankUser({
+    required String bankCode,
+    required String bankName,
+    required String bankNumber,
+    required bool isPrimary,
+  }) async {
+    return await service.createBankUser(
+      bankCode: bankCode,
+      bankName: bankName,
+      bankNumber: bankNumber,
+      isPrimary: isPrimary,
     );
   }
 }

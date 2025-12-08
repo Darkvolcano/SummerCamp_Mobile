@@ -14,7 +14,9 @@ import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.d
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/create_bank_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_bank_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
@@ -132,6 +134,8 @@ Future<void> main() async {
   final driverRegisterUseCase = DriverRegister(userRepo);
   final uploadLicenseUseCase = UploadLicense(userRepo);
   final changePasswordUseCase = ChangePassword(userRepo);
+  final getBankUserUseCase = GetBankUsers(userRepo);
+  final createBankUserUseCase = CreateBankUser(userRepo);
 
   // Camp
   final campApiService = CampApiService(apiClient);
@@ -247,6 +251,8 @@ Future<void> main() async {
             driverRegisterUseCase,
             uploadLicenseUseCase,
             changePasswordUseCase,
+            getBankUserUseCase,
+            createBankUserUseCase,
           ),
         ),
 

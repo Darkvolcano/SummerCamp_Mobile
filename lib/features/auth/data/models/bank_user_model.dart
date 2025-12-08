@@ -1,20 +1,14 @@
-class BankUserModel {
-  final int bankUserId;
-  final int userId;
-  final String bankCode;
-  final String bankName;
-  final String bankNumber;
-  final bool isPrimary;
-  final bool isActive;
+import 'package:summercamp/features/auth/domain/entities/bank_user.dart';
 
-  BankUserModel({
-    required this.bankUserId,
-    required this.userId,
-    required this.bankCode,
-    required this.bankName,
-    required this.bankNumber,
-    required this.isPrimary,
-    required this.isActive,
+class BankUserModel extends BankUser {
+  const BankUserModel({
+    required super.bankUserId,
+    required super.userId,
+    required super.bankCode,
+    required super.bankName,
+    required super.bankNumber,
+    required super.isPrimary,
+    required super.isActive,
   });
 
   factory BankUserModel.fromJson(Map<String, dynamic> json) {

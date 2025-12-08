@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:summercamp/features/auth/domain/entities/bank_user.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/register_response.dart';
 
@@ -39,5 +40,12 @@ abstract class UserRepository {
     required String currentPassword,
     required String newPassword,
     required String confirmNewPassword,
+  });
+  Future<List<BankUser>> getBankUsers();
+  Future<Map<String, dynamic>> createBankUser({
+    required String bankCode,
+    required String bankName,
+    required String bankNumber,
+    required bool isPrimary,
   });
 }

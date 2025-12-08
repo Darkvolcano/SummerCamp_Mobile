@@ -279,4 +279,34 @@ class AuthApiService {
       rethrow;
     }
   }
+
+  Future<List<dynamic>> fetchBankUser() async {
+    final res = await client.get('bank-user/my-accounts');
+    return res.data as List;
+  }
+
+  Future<Map<String, dynamic>> createBankUser({
+    required String bankCode,
+    required String bankName,
+    required String bankNumber,
+    required bool isPrimary,
+  }) async {
+    try {
+      final response = await client.post(
+        'bank-user',
+        data: {
+          'bankCode': bankCode,
+          'bankName': bankName,
+          'bankNumber': bankNumber,
+          'isPrimary': isPrimary,
+        },
+      );
+
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

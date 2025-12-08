@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:summercamp/features/auth/domain/entities/bank_user.dart';
 import 'package:summercamp/features/auth/domain/entities/user.dart';
 import 'package:summercamp/features/auth/domain/repositories/user_repository.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/create_bank_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/forgot_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/get_bank_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/login_user.dart';
@@ -34,6 +37,8 @@ class AuthProvider with ChangeNotifier {
   final DriverRegister driverRegisterUseCase;
   final UploadLicense uploadLicenseUseCase;
   final ChangePassword changePasswordUseCase;
+  final GetBankUsers getBankUsersUseCase;
+  final CreateBankUser createBankUserUseCase;
 
   AuthProvider(
     this.loginUserUseCase,
@@ -50,10 +55,15 @@ class AuthProvider with ChangeNotifier {
     this.driverRegisterUseCase,
     this.uploadLicenseUseCase,
     this.changePasswordUseCase,
+    this.getBankUsersUseCase,
+    this.createBankUserUseCase,
   );
 
   List<User> _users = [];
   List<User> get users => _users;
+
+  List<BankUser> _bankUsers = [];
+  List<BankUser> get bankUsers => _bankUsers;
 
   User? _selectedUser;
   User? get selectedUser => _selectedUser;
@@ -293,6 +303,47 @@ class AuthProvider with ChangeNotifier {
         currentPassword: currentPassword,
         newPassword: newPassword,
         confirmNewPassword: confirmNewPassword,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadBankUsers() async {
+    _setLoading(true);
+    notifyListeners();
+
+    try {
+      _bankUsers = await getBankUsersUseCase();
+    } catch (e) {
+      print("Lỗi load bank user: $e");
+      _bankUsers = [];
+    }
+
+    _setLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> createBankUser({
+    required String bankCode,
+    required String bankName,
+    required String bankNumber,
+    required bool isPrimary,
+  }) async {
+    _setLoading(true);
+    _error = null;
+    notifyListeners();
+
+    try {
+      await createBankUserUseCase(
+        bankCode: bankCode,
+        bankName: bankName,
+        bankNumber: bankNumber,
+        isPrimary: isPrimary,
       );
     } catch (e) {
       _error = e.toString();
