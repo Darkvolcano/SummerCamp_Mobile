@@ -8,9 +8,6 @@ import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/health_record.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as p;
-
 class CamperCreateScreen extends StatefulWidget {
   const CamperCreateScreen({super.key});
 
@@ -29,11 +26,9 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
   DateTime? _selectedDate;
   String? gender;
   bool? hasAllergy;
-  XFile? _avatar;
-  final ImagePicker _picker = ImagePicker();
 
-  bool _isUploading = false;
-  String? _avatarUrl;
+  File? _avatarFile;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void dispose() {
@@ -46,49 +41,11 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
   }
 
   Future<void> _pickAvatar() async {
-    // Không cho phép chọn ảnh mới khi đang upload
-    if (_isUploading) return;
-
     final picked = await _picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() {
-        _avatar = picked; // Hiển thị ảnh local đã chọn
-        _isUploading = true; // Bắt đầu hiển thị vòng xoay
+        _avatarFile = File(picked.path); // Chỉ lưu file, chưa upload
       });
-      // Bắt đầu tải ảnh lên
-      await _uploadFile(picked);
-    }
-  }
-
-  Future<void> _uploadFile(XFile file) async {
-    try {
-      final fileExtension = p.extension(file.path);
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}$fileExtension';
-      final ref = FirebaseStorage.instance
-          .ref('camper_avatars')
-          .child(fileName);
-
-      await ref.putFile(File(file.path));
-
-      final downloadUrl = await ref.getDownloadURL();
-
-      setState(() {
-        _avatarUrl = downloadUrl;
-        _isUploading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isUploading = false;
-        _avatar = null;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Upload ảnh thất bại: ${e.toString()}"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
 
@@ -129,12 +86,6 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
       );
       return;
     }
-    if (_isUploading) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đang tải ảnh lên, vui lòng chờ...")),
-      );
-      return;
-    }
 
     final healthRecord = HealthRecord(
       condition: conditionController.text,
@@ -150,13 +101,19 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
       gender: gender!,
       healthRecord: healthRecord,
       groupId: null,
-      avatar: _avatarUrl ?? "",
     );
 
     final provider = context.read<CamperProvider>();
 
     try {
       await provider.createCamper(newCamper);
+
+      if (_avatarFile != null) {
+        await provider.updateUploadAvatarCamper(
+          newCamper.camperId,
+          _avatarFile!,
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -176,8 +133,6 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
           ),
         );
       }
-    } finally {
-      if (mounted) {}
     }
   }
 
@@ -214,10 +169,10 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.grey.shade300,
-                      backgroundImage: _avatar != null
-                          ? FileImage(File(_avatar!.path))
+                      backgroundImage: _avatarFile != null
+                          ? FileImage(_avatarFile!)
                           : null,
-                      child: (_avatar == null && !_isUploading)
+                      child: (_avatarFile == null)
                           ? const Icon(
                               Icons.camera_alt,
                               size: 40,
@@ -225,10 +180,6 @@ class _CamperCreateScreenState extends State<CamperCreateScreen> {
                             )
                           : null,
                     ),
-                    if (_isUploading)
-                      const CircularProgressIndicator(
-                        color: AppTheme.summerAccent,
-                      ),
                   ],
                 ),
               ),

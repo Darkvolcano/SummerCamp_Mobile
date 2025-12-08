@@ -77,7 +77,9 @@ class CamperProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await createCamperUseCase(camper);
+      final newCamperData = await createCamperUseCase(camper);
+
+      return newCamperData;
     } catch (e) {
       _error = "Lỗi khi tạo camper: $e";
       print(_error);
