@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
 import 'package:summercamp/features/camper/domain/entities/group.dart';
@@ -11,4 +13,5 @@ abstract class CamperRepository {
   Future<Group> getCampGroup(int campId);
   Future<List<Camper>> getCampersByCoreActivityId(int coreActivityId);
   Future<List<Camper>> getCampersByOptionalActivityId(int optionalActivityId);
+  Future<void> updateUploadAvatarCamper(int camperId, File imageFile);
 }

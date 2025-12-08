@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
@@ -11,6 +13,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_option
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/update_upload_avatar_camper.dart';
 
 class CamperProvider with ChangeNotifier {
   final CreateCamper createCamperUseCase;
@@ -21,6 +24,7 @@ class CamperProvider with ChangeNotifier {
   final GetCampersByCoreActivityId getCampersByCoreActivityIdUseCase;
   final GetCampersByOptionalActivityId getCampersByOptionalActivityIdUseCase;
   final GetCampGroup getCampGroupUseCase;
+  final UpdateUploadAvatarCamper updateUploadAvatarCamperUseCase;
 
   CamperProvider(
     this.createCamperUseCase,
@@ -31,6 +35,7 @@ class CamperProvider with ChangeNotifier {
     this.getCampersByCoreActivityIdUseCase,
     this.getCampersByOptionalActivityIdUseCase,
     this.getCampGroupUseCase,
+    this.updateUploadAvatarCamperUseCase,
   );
 
   List<Camper> _campers = [];
@@ -193,5 +198,25 @@ class CamperProvider with ChangeNotifier {
 
     _loading = false;
     notifyListeners();
+  }
+
+  Future<void> updateUploadAvatarCamper(int camperId, File imageFile) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await updateUploadAvatarCamperUseCase(camperId, imageFile);
+
+      if (_selectedCamper != null && _selectedCamper!.camperId == camperId) {
+        await fetchCamperById(camperId);
+      }
+    } catch (e) {
+      _error = "Lỗi khi cập nhật camper: $e";
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:summercamp/features/camper/data/models/camper_group_model.dart';
 import 'package:summercamp/features/camper/data/models/camper_model.dart';
 import 'package:summercamp/features/camper/data/models/group_model.dart';
@@ -110,5 +112,10 @@ class CamperRepositoryImpl implements CamperRepository {
     return list
         .map((data) => CamperModel.fromJson(data as Map<String, dynamic>))
         .toList();
+  }
+
+  @override
+  Future<void> updateUploadAvatarCamper(int camperId, File imageFile) async {
+    await service.updateUploadAvatarCamper(camperId, imageFile);
   }
 }

@@ -48,6 +48,7 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_option
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/update_upload_avatar_camper.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/data/repositories/livestream_repository_impl.dart';
 import 'package:summercamp/features/livestream/data/services/livestream_api_service.dart';
@@ -310,6 +311,7 @@ void main() {
       camperRepo,
     );
     final getCampGroupUseCase = GetCampGroup(camperRepo);
+    final updateUploadAvatarCamper = UpdateUploadAvatarCamper(camperRepo);
 
     // Report
     final reportApi = ReportApiService(apiClient);
@@ -406,7 +408,7 @@ void main() {
           // BlogProvider need 1 usecases (GetBlogs)
           ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-          // CamperProvider need 8 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup)
+          // CamperProvider need 9 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup, updateUploadAvatarCamper)
           ChangeNotifierProvider(
             create: (_) => CamperProvider(
               createCamperUseCase,
@@ -417,6 +419,7 @@ void main() {
               getCampersByCoreActivityUseCase,
               getCampersByOptionalActivityUseCase,
               getCampGroupUseCase,
+              updateUploadAvatarCamper,
             ),
           ),
 

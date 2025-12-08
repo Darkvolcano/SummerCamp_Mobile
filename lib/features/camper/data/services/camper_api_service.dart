@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:summercamp/core/network/api_client.dart';
 import 'package:summercamp/core/network/dio_error_mapper.dart';
@@ -68,6 +70,27 @@ class CamperApiService {
     try {
       final response = await client.get('Staff/camps/$campId/group');
       return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
+  Future<void> updateUploadAvatarCamper(int camperId, File imageFile) async {
+    try {
+      String fileName = imageFile.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+        ),
+      });
+
+      await client.put(
+        'Camper/$camperId/avatar',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
     } on DioException catch (e) {
       throw mapDioError(e);
     }
