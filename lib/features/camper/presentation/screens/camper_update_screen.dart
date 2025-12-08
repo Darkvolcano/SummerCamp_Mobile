@@ -4,12 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 import 'package:summercamp/features/camper/domain/entities/health_record.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as p;
 
 class CamperUpdateScreen extends StatefulWidget {
   final Camper camper;
@@ -30,12 +28,10 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
   DateTime? _selectedDate;
   String? gender;
   bool? hasAllergy;
-  XFile? _avatar;
+
+  File? _newAvatarFile;
   bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
-
-  bool _isUploading = false;
-  String? _avatarUrl;
 
   @override
   void initState() {
@@ -66,8 +62,6 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
       gender = null;
     }
     hasAllergy = widget.camper.healthRecord?.isAllergy;
-
-    _avatarUrl = widget.camper.avatar;
   }
 
   @override
@@ -81,46 +75,11 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
   }
 
   Future<void> _pickAvatar() async {
-    if (_isUploading) return;
-
     final picked = await _picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() {
-        _avatar = picked;
-        _isUploading = true;
+        _newAvatarFile = File(picked.path);
       });
-      await _uploadFile(picked);
-    }
-  }
-
-  Future<void> _uploadFile(XFile file) async {
-    try {
-      final fileExtension = p.extension(file.path);
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}$fileExtension';
-      final ref = FirebaseStorage.instance
-          .ref('camper_avatars')
-          .child(fileName);
-
-      await ref.putFile(File(file.path));
-      final downloadUrl = await ref.getDownloadURL();
-
-      setState(() {
-        _avatarUrl = downloadUrl;
-        _isUploading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isUploading = false;
-        _avatar = null;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Upload ảnh thất bại: ${e.toString()}"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
 
@@ -144,6 +103,7 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isLoading = true);
+    final provider = context.read<CamperProvider>();
 
     final healthRecord = HealthRecord(
       condition: conditionController.text,
@@ -159,31 +119,38 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
       gender: gender!,
       healthRecord: healthRecord,
       groupId: widget.camper.groupId,
-      avatar: _avatarUrl,
     );
 
     try {
-      await context.read<CamperProvider>().updateCamper(
-        widget.camper.camperId,
-        updatedCamper,
-      );
+      await provider.updateCamper(widget.camper.camperId, updatedCamper);
+
+      if (_newAvatarFile != null) {
+        await provider.updateUploadAvatarCamper(
+          widget.camper.camperId,
+          _newAvatarFile!,
+        );
+      }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Cập nhật camper thành công!"),
-            backgroundColor: Colors.green,
-          ),
+        showCustomDialog(
+          context,
+          title: "Thành công",
+          message: "Cập nhật thông tin camper thành công!",
+          type: DialogType.success,
+          btnText: "OK",
+          dismissible: false,
+          onConfirm: () {
+            Navigator.pop(context, true);
+          },
         );
-        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Lỗi: ${e.toString()}"),
-            backgroundColor: Colors.red,
-          ),
+        showCustomDialog(
+          context,
+          title: "Lỗi",
+          message: "Cập nhật thất bại: ${e.toString()}",
+          type: DialogType.error,
         );
       }
     } finally {
@@ -196,6 +163,14 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    ImageProvider? imageToShow;
+    if (_newAvatarFile != null) {
+      imageToShow = FileImage(_newAvatarFile!);
+    } else if (widget.camper.avatar != null &&
+        widget.camper.avatar!.isNotEmpty) {
+      imageToShow = NetworkImage(widget.camper.avatar!);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -226,16 +201,8 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.grey.shade300,
-                      backgroundImage: _avatar != null
-                          ? FileImage(File(_avatar!.path))
-                          : (_avatarUrl != null && _avatarUrl!.isNotEmpty
-                                    ? NetworkImage(_avatarUrl!)
-                                    : null)
-                                as ImageProvider?,
-                      child:
-                          (_avatar == null &&
-                              (_avatarUrl == null || _avatarUrl!.isEmpty) &&
-                              !_isUploading)
+                      backgroundImage: imageToShow,
+                      child: (imageToShow == null)
                           ? const Icon(
                               Icons.camera_alt,
                               size: 40,
@@ -243,10 +210,6 @@ class _CamperUpdateScreenState extends State<CamperUpdateScreen> {
                             )
                           : null,
                     ),
-                    if (_isUploading)
-                      const CircularProgressIndicator(
-                        color: AppTheme.summerAccent,
-                      ),
                   ],
                 ),
               ),
