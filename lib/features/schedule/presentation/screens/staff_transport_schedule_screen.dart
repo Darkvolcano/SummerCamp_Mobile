@@ -1,131 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
-import 'package:summercamp/core/config/driver_theme.dart';
+import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/enum/transport_schedule_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
-// import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
-class DriverScheduleScreen extends StatefulWidget {
-  const DriverScheduleScreen({super.key});
+class StaffTransportScheduleScreen extends StatefulWidget {
+  const StaffTransportScheduleScreen({super.key});
 
   @override
-  State<DriverScheduleScreen> createState() => _DriverScheduleScreenState();
+  State<StaffTransportScheduleScreen> createState() =>
+      _StaffTransportScheduleScreenState();
 }
 
-class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
+class _StaffTransportScheduleScreenState
+    extends State<StaffTransportScheduleScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScheduleProvider>().loadDriverSchedules();
+      context.read<ScheduleProvider>().loadStaffTransportSchedules();
     });
   }
 
-  // void _showStatusDialog(String message, {bool isSuccess = true}) {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     barrierColor: Colors.black.withValues(alpha: 0.1),
-  //     builder: (context) {
-  //       Future.delayed(const Duration(milliseconds: 4500), () {
-  //         if (context.mounted) {
-  //           Navigator.of(context).pop();
-  //         }
-  //       });
+  void _showStatusDialog(String message, {bool isSuccess = true}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withValues(alpha: 0.1),
+      builder: (context) {
+        Future.delayed(const Duration(milliseconds: 4500), () {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+        });
 
-  //       return Dialog(
-  //         elevation: 0,
-  //         backgroundColor: Colors.transparent,
-  //         child: Container(
-  //           padding: const EdgeInsets.all(20),
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(20),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.black.withValues(alpha: 0.1),
-  //                 blurRadius: 20,
-  //                 offset: const Offset(0, 4),
-  //               ),
-  //             ],
-  //           ),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Container(
-  //                 padding: const EdgeInsets.all(15),
-  //                 decoration: BoxDecoration(
-  //                   color: isSuccess
-  //                       ? Colors.green.shade50
-  //                       : Colors.red.shade50,
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //                 child: Icon(
-  //                   isSuccess ? Icons.check_circle : Icons.error,
-  //                   color: isSuccess ? Colors.green : Colors.red,
-  //                   size: 40,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 16),
-  //               Text(
-  //                 isSuccess ? "Thành công" : "Thất bại",
-  //                 style: TextStyle(
-  //                   fontFamily: "Quicksand",
-  //                   fontSize: 18,
-  //                   fontWeight: FontWeight.bold,
-  //                   color: isSuccess ? Colors.green : Colors.red,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 8),
-  //               Text(
-  //                 message,
-  //                 textAlign: TextAlign.center,
-  //                 style: TextStyle(
-  //                   fontFamily: "Quicksand",
-  //                   fontSize: 15,
-  //                   color: Colors.grey[700],
-  //                   fontWeight: FontWeight.w500,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+        return Dialog(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: isSuccess
+                        ? Colors.green.shade50
+                        : Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isSuccess ? Icons.check_circle : Icons.error,
+                    color: isSuccess ? Colors.green : Colors.red,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  isSuccess ? "Thành công" : "Thất bại",
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isSuccess ? Colors.green : Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontSize: 15,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-  // Future<void> _handleUpdateStatus(TransportSchedule trip) async {
-  //   final provider = context.read<ScheduleProvider>();
+  Future<void> _handleUpdateStatus(TransportSchedule trip) async {
+    final provider = context.read<ScheduleProvider>();
 
-  //   try {
-  //     if (trip.status == TransportScheduleStatus.NotYet) {
-  //       // if not start call this API
-  //       await provider.updateTransportScheduleStartTrip(
-  //         trip.transportScheduleId,
-  //       );
-  //       if (mounted) {
-  //         _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
-  //       }
-  //     } else if (trip.status == TransportScheduleStatus.InProgress) {
-  //       // if in progress call this API
-  //       await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
-  //       if (mounted) {
-  //         _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
-  //       }
-  //     }
+    try {
+      if (trip.status == TransportScheduleStatus.NotYet) {
+        // if not start call this API
+        await provider.updateTransportScheduleStartTrip(
+          trip.transportScheduleId,
+        );
+        if (mounted) {
+          _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
+        }
+      } else if (trip.status == TransportScheduleStatus.InProgress) {
+        // if in progress call this API
+        await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
+        if (mounted) {
+          _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
+        }
+      }
 
-  //     if (mounted) {
-  //       provider.loadDriverSchedules();
-  //     }
-  //   } catch (e) {
-  //     if (mounted) {
-  //       _showStatusDialog('Lỗi cập nhật: ${e.toString()}', isSuccess: false);
-  //     }
-  //   }
-  // }
+      if (mounted) {
+        provider.loadStaffTransportSchedules();
+      }
+    } catch (e) {
+      if (mounted) {
+        _showStatusDialog('Lỗi cập nhật: ${e.toString()}', isSuccess: false);
+      }
+    }
+  }
 
   String _getStatusText(TransportScheduleStatus status) {
     switch (status) {
@@ -168,65 +170,65 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
     }
   }
 
-  // bool _isActionAllowed(TransportSchedule trip) {
-  //   final now = DateTime.now();
+  bool _isActionAllowed(TransportSchedule trip) {
+    final now = DateTime.now();
 
-  //   final tripDate = DateTime.parse(trip.date);
-  //   final isToday =
-  //       tripDate.year == now.year &&
-  //       tripDate.month == now.month &&
-  //       tripDate.day == now.day;
+    final tripDate = DateTime.parse(trip.date);
+    final isToday =
+        tripDate.year == now.year &&
+        tripDate.month == now.month &&
+        tripDate.day == now.day;
 
-  //   if (!isToday) return false;
+    if (!isToday) return false;
 
-  //   final startDateTime = _parseDateTime(trip.date, trip.startTime);
-  //   final endDateTime = _parseDateTime(trip.date, trip.endTime);
+    final startDateTime = _parseDateTime(trip.date, trip.startTime);
+    final endDateTime = _parseDateTime(trip.date, trip.endTime);
 
-  //   if (trip.status == TransportScheduleStatus.NotYet) {
-  //     final allowedStartWindow = startDateTime.subtract(
-  //       const Duration(minutes: 30),
-  //     );
-  //     final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
-  //     return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
-  //   } else if (trip.status == TransportScheduleStatus.InProgress) {
-  //     final earliestEndTime = endDateTime.subtract(const Duration(minutes: 30));
-  //     final latestEndTime = endDateTime.add(const Duration(minutes: 90));
+    if (trip.status == TransportScheduleStatus.NotYet) {
+      final allowedStartWindow = startDateTime.subtract(
+        const Duration(minutes: 30),
+      );
+      final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
+      return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
+    } else if (trip.status == TransportScheduleStatus.InProgress) {
+      final earliestEndTime = endDateTime.subtract(const Duration(minutes: 30));
+      final latestEndTime = endDateTime.add(const Duration(minutes: 90));
 
-  //     return now.isAfter(earliestEndTime) && now.isBefore(latestEndTime);
-  //   }
+      return now.isAfter(earliestEndTime) && now.isBefore(latestEndTime);
+    }
 
-  //   return false;
-  // }
+    return false;
+  }
 
-  // void _showDisabledReason(TransportSchedule trip) {
-  //   final now = DateTime.now();
-  //   final tripDate = DateTime.parse(trip.date);
-  //   final isToday =
-  //       tripDate.year == now.year &&
-  //       tripDate.month == now.month &&
-  //       tripDate.day == now.day;
+  void _showDisabledReason(TransportSchedule trip) {
+    final now = DateTime.now();
+    final tripDate = DateTime.parse(trip.date);
+    final isToday =
+        tripDate.year == now.year &&
+        tripDate.month == now.month &&
+        tripDate.day == now.day;
 
-  //   if (!isToday) {
-  //     _showStatusDialog("Chuyến đi không phải ngày hôm nay!", isSuccess: false);
-  //     return;
-  //   }
+    if (!isToday) {
+      _showStatusDialog("Chuyến đi không phải ngày hôm nay!", isSuccess: false);
+      return;
+    }
 
-  //   final startDateTime = _parseDateTime(trip.date, trip.startTime);
-  //   final endDateTime = _parseDateTime(trip.date, trip.endTime);
-  //   String message = "";
+    final startDateTime = _parseDateTime(trip.date, trip.startTime);
+    final endDateTime = _parseDateTime(trip.date, trip.endTime);
+    String message = "";
 
-  //   if (trip.status == TransportScheduleStatus.NotYet) {
-  //     message =
-  //         "Chỉ được bắt đầu từ ${DateFormatter.formatTime(startDateTime.subtract(const Duration(minutes: 30)))} đến ${DateFormatter.formatTime(startDateTime.add(const Duration(minutes: 60)))}";
-  //   } else if (trip.status == TransportScheduleStatus.InProgress) {
-  //     message =
-  //         "Đã quá thời gian cho phép kết thúc chuyến đi (${DateFormatter.formatTime(endDateTime.add(const Duration(minutes: 120)))})";
-  //   }
+    if (trip.status == TransportScheduleStatus.NotYet) {
+      message =
+          "Chỉ được bắt đầu từ ${DateFormatter.formatTime(startDateTime.subtract(const Duration(minutes: 30)))} đến ${DateFormatter.formatTime(startDateTime.add(const Duration(minutes: 60)))}";
+    } else if (trip.status == TransportScheduleStatus.InProgress) {
+      message =
+          "Đã quá thời gian cho phép kết thúc chuyến đi (${DateFormatter.formatTime(endDateTime.add(const Duration(minutes: 120)))})";
+    }
 
-  //   if (message.isNotEmpty) {
-  //     _showStatusDialog(message, isSuccess: false);
-  //   }
-  // }
+    if (message.isNotEmpty) {
+      _showStatusDialog(message, isSuccess: false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +246,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: DriverTheme.driverPrimary,
+        backgroundColor: StaffTheme.staffPrimary,
         automaticallyImplyLeading: false,
       ),
       body: provider.loading && schedules.isEmpty
@@ -261,22 +263,26 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
               itemCount: schedules.length,
               itemBuilder: (context, index) {
                 final trip = schedules[index];
-                // final isCompleted = trip.status == TransportScheduleStatus.Completed;
-                // final isCanceled = trip.status == TransportScheduleStatus.Canceled;
+                final isCompleted =
+                    trip.status == TransportScheduleStatus.Completed;
+                final isCanceled =
+                    trip.status == TransportScheduleStatus.Canceled;
 
-                // String buttonLabel = "Cập nhật";
-                // IconData buttonIcon = Icons.update;
+                // final canUpdate = !isCompleted && !isCanceled;
 
-                // if (trip.status == TransportScheduleStatus.NotYet) {
-                //   buttonLabel = "Bắt đầu chuyến đi";
-                //   buttonIcon = Icons.play_arrow;
-                // } else if (trip.status == TransportScheduleStatus.InProgress) {
-                //   buttonLabel = "Kết thúc chuyến đi";
-                //   buttonIcon = Icons.stop;
-                // } else if (isCompleted) {
-                //   buttonLabel = "Đã hoàn thành";
-                //   buttonIcon = Icons.check_circle;
-                // }
+                String buttonLabel = "Cập nhật";
+                IconData buttonIcon = Icons.update;
+
+                if (trip.status == TransportScheduleStatus.NotYet) {
+                  buttonLabel = "Bắt đầu chuyến đi";
+                  buttonIcon = Icons.play_arrow;
+                } else if (trip.status == TransportScheduleStatus.InProgress) {
+                  buttonLabel = "Kết thúc chuyến đi";
+                  buttonIcon = Icons.stop;
+                } else if (isCompleted) {
+                  buttonLabel = "Đã hoàn thành";
+                  buttonIcon = Icons.check_circle;
+                }
 
                 final startDateTime = _parseDateTime(trip.date, trip.startTime);
                 final endDateTime = _parseDateTime(trip.date, trip.endTime);
@@ -289,8 +295,9 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                   trip.actualEndTime ?? '',
                 );
 
-                // final bool isTimeAllowed = _isActionAllowed(trip);
-                // final bool canUpdate = !isCompleted && !isCanceled && isTimeAllowed;
+                final bool isTimeAllowed = _isActionAllowed(trip);
+                final bool canUpdate =
+                    !isCompleted && !isCanceled && isTimeAllowed;
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -311,7 +318,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                               style: textTheme.bodyLarge?.copyWith(
                                 fontFamily: "Quicksand",
                                 fontWeight: FontWeight.bold,
-                                color: DriverTheme.driverAccent,
+                                color: StaffTheme.staffAccent,
                               ),
                             ),
                             Container(
@@ -426,52 +433,52 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
 
                         const SizedBox(height: 16),
 
-                        // SizedBox(
-                        //   width: double.infinity,
-                        //   child: ElevatedButton.icon(
-                        //     style: ElevatedButton.styleFrom(
-                        //       backgroundColor: canUpdate
-                        //           ? DriverTheme.driverPrimary
-                        //           : Colors.grey,
-                        //       padding: const EdgeInsets.symmetric(vertical: 12),
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(8),
-                        //       ),
-                        //     ),
-                        //     // onPressed: canUpdate
-                        //     //     ? () => _handleUpdateStatus(trip)
-                        //     //     : null,
-                        //     onPressed: canUpdate
-                        //         ? () => _handleUpdateStatus(trip)
-                        //         : () {
-                        //             if (!isCompleted && !isCanceled) {
-                        //               _showDisabledReason(trip);
-                        //             }
-                        //           },
-                        //     icon: Icon(
-                        //       buttonIcon,
-                        //       size: 20,
-                        //       color: Colors.white,
-                        //     ),
-                        //     label: Text(
-                        //       buttonLabel,
-                        //       style: const TextStyle(
-                        //         fontFamily: "Quicksand",
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Colors.white,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: canUpdate
+                                  ? StaffTheme.staffPrimary
+                                  : Colors.grey,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            // onPressed: canUpdate
+                            //     ? () => _handleUpdateStatus(trip)
+                            //     : null,
+                            onPressed: canUpdate
+                                ? () => _handleUpdateStatus(trip)
+                                : () {
+                                    if (!isCompleted && !isCanceled) {
+                                      _showDisabledReason(trip);
+                                    }
+                                  },
+                            icon: Icon(
+                              buttonIcon,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            label: Text(
+                              buttonLabel,
+                              style: const TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
 
-                        // const SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               side: const BorderSide(
-                                color: DriverTheme.driverPrimary,
+                                color: StaffTheme.staffPrimary,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -480,21 +487,21 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                             onPressed: () {
                               Navigator.pushNamed(
                                 context,
-                                AppRoutes.driverAttendance,
+                                AppRoutes.staffTransportScheduleAttendance,
                                 arguments: trip,
                               );
                             },
                             icon: const Icon(
                               Icons.people_alt_outlined,
                               size: 20,
-                              color: DriverTheme.driverPrimary,
+                              color: StaffTheme.staffPrimary,
                             ),
                             label: const Text(
                               "Danh sách camper",
                               style: TextStyle(
                                 fontFamily: "Quicksand",
                                 fontWeight: FontWeight.bold,
-                                color: DriverTheme.driverPrimary,
+                                color: StaffTheme.staffPrimary,
                               ),
                             ),
                           ),

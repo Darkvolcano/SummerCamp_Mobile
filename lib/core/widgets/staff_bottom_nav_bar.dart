@@ -41,6 +41,13 @@ class StaffBottomNavBar extends StatelessWidget {
                   activeColor,
                   inactiveColor,
                 ),
+                _buildNavItem(
+                  Icons.schedule,
+                  "Đưa đón",
+                  2,
+                  activeColor,
+                  inactiveColor,
+                ),
                 // _buildNavItem(
                 //   Icons.report_problem,
                 //   "Incident",

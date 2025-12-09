@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import 'package:summercamp/features/attendance/presentation/screens/driver_attendance_screen.dart';
+import 'package:summercamp/features/attendance/presentation/screens/staff_transport_schedule_attendance_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/driver_register_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_email_screen.dart';
 import 'package:summercamp/features/auth/presentation/screens/forgot_password_otp_screen.dart';
@@ -44,6 +45,7 @@ import 'package:summercamp/features/registration/presentation/screens/registrati
 import 'package:summercamp/features/registration/presentation/screens/registration_success_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_form_screen.dart';
 import 'package:summercamp/features/report/presentation/screens/report_list_screen.dart';
+import 'package:summercamp/features/schedule/presentation/screens/staff_transport_schedule_screen.dart';
 
 class AppRoutes {
   // Define route
@@ -66,6 +68,9 @@ class AppRoutes {
   static const String staffHome = '/staff-home';
   static const String staffSchedule = '/staff-schedule';
   static const String staffScheduleDetail = '/staff-schedule-detail';
+  static const String staffTransportSchedule = '/staff-transport-schedule';
+  static const String staffTransportScheduleAttendance =
+      '/staff-transport-schedule-attendance';
   static const String attendance = '/attendance';
   static const String campDetail = '/camp-detail';
   static const String camperList = '/camper-list';
@@ -165,6 +170,18 @@ class AppRoutes {
         final schedule = settings.arguments as Schedule;
         return MaterialPageRoute(
           builder: (_) => StaffScheduleDetailScreen(schedule: schedule),
+        );
+
+      case staffTransportSchedule:
+        return MaterialPageRoute(
+          builder: (_) => const StaffTransportScheduleScreen(),
+        );
+
+      case staffTransportScheduleAttendance:
+        final schedule = settings.arguments as TransportSchedule;
+        return MaterialPageRoute(
+          builder: (_) =>
+              StaffTransportScheduleAttedanceScreen(schedule: schedule),
         );
 
       case driverSchedule:

@@ -21,6 +21,7 @@ class _StaffHomeState extends State<StaffHome> {
   final List<Widget> _pages = [
     const StaffHomeContent(),
     const _RouteWrapper(AppRoutes.staffSchedule),
+    const _RouteWrapper(AppRoutes.staffTransportSchedule),
     // const _RouteWrapper(AppRoutes.report),
     const _RouteWrapper(AppRoutes.staffProfile),
   ];
