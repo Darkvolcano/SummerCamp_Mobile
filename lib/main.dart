@@ -32,6 +32,7 @@ import 'package:summercamp/features/livestream/presentation/state/livestream_pro
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
@@ -222,6 +223,9 @@ Future<void> main() async {
       UpdateCamperTransportAttendanceListCheckIn(scheduleRepo);
   final updateCamperTransportAttendanceCheckOutListUseCase =
       UpdateCamperTransportAttendanceListCheckOut(scheduleRepo);
+  final getStaffTransportSchedulesUseCase = GetStaffTransportSchedule(
+    scheduleRepo,
+  );
 
   // Attendance
   final attendanceApi = AttendanceApiService(apiClient, apiPythonClient);
@@ -319,7 +323,7 @@ Future<void> main() async {
           ),
         ),
 
-        // ScheduleProvider need 7 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList)
+        // ScheduleProvider need 8 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList, GetStaffTransportSchedule)
         ChangeNotifierProvider(
           create: (_) => ScheduleProvider(
             getStaffSchedulesUseCase,
@@ -329,6 +333,7 @@ Future<void> main() async {
             getCampersTransportByTransportScheduleIdUseCase,
             updateCamperTransportAttendanceCheckInListUseCase,
             updateCamperTransportAttendanceCheckOutListUseCase,
+            getStaffTransportSchedulesUseCase,
           ),
         ),
 

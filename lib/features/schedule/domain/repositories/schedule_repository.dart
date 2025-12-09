@@ -18,4 +18,5 @@ abstract class ScheduleRepository {
     required List<int> camperTransportIds,
     String? note,
   });
+  Future<List<TransportSchedule>> getStaffTransportSchedules();
 }

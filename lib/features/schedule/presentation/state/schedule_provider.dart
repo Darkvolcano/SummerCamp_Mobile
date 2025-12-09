@@ -6,6 +6,7 @@ import 'package:summercamp/features/schedule/domain/entities/transport_schedule.
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
@@ -23,6 +24,7 @@ class ScheduleProvider with ChangeNotifier {
   updateAttendanceCamperTransportCheckInListUseCase;
   final UpdateCamperTransportAttendanceListCheckOut
   updateAttendanceCamperTransportCheckOutListUseCase;
+  final GetStaffTransportSchedule getStaffTransportSchedulesUseCase;
 
   ScheduleProvider(
     this.getStaffSchedulesUseCase,
@@ -32,6 +34,7 @@ class ScheduleProvider with ChangeNotifier {
     this.getCampersTransportByTransportScheduleIdUseCase,
     this.updateAttendanceCamperTransportCheckInListUseCase,
     this.updateAttendanceCamperTransportCheckOutListUseCase,
+    this.getStaffTransportSchedulesUseCase,
   );
 
   List<Schedule> _schedules = [];
@@ -39,6 +42,10 @@ class ScheduleProvider with ChangeNotifier {
 
   List<TransportSchedule> _transportSchedules = [];
   List<TransportSchedule> get transportSchedules => _transportSchedules;
+
+  List<TransportSchedule> _transportStaffSchedules = [];
+  List<TransportSchedule> get transportStaffSchedules =>
+      _transportStaffSchedules;
 
   List<CamperTransport> _campersTransport = [];
   List<CamperTransport> get campersTransport => _campersTransport;
@@ -183,5 +190,20 @@ class ScheduleProvider with ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> loadStaffTransportSchedules() async {
+    _loading = true;
+    notifyListeners();
+
+    try {
+      _transportStaffSchedules = await getStaffTransportSchedulesUseCase();
+    } catch (e) {
+      print("Lỗi load lịch đưa đón staff: $e");
+      _transportStaffSchedules = [];
+    }
+
+    _loading = false;
+    notifyListeners();
   }
 }

@@ -72,4 +72,9 @@ class ScheduleApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<List<dynamic>> fetchStaffTransportSchedules() async {
+    final res = await client.get('transport-schedules/staff-schedule');
+    return res.data as List;
+  }
 }

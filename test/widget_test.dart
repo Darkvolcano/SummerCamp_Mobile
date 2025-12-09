@@ -81,6 +81,7 @@ import 'package:summercamp/features/schedule/data/services/schedule_api_service.
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_staff_transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
@@ -348,6 +349,9 @@ void main() {
         UpdateCamperTransportAttendanceListCheckIn(scheduleRepo);
     final updateCamperTransportAttendanceCheckOutListUseCase =
         UpdateCamperTransportAttendanceListCheckOut(scheduleRepo);
+    final getStaffTransportSchedulesUseCase = GetStaffTransportSchedule(
+      scheduleRepo,
+    );
 
     // Attendance
     final attendanceApi = AttendanceApiService(apiClient, apiPythonClient);
@@ -448,7 +452,7 @@ void main() {
             ),
           ),
 
-          // ScheduleProvider need 7 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList)
+          // ScheduleProvider need 8 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList, GetStaffTransportSchedule)
           ChangeNotifierProvider(
             create: (_) => ScheduleProvider(
               getStaffSchedulesUseCase,
@@ -458,6 +462,7 @@ void main() {
               getCampersTransportByTransportScheduleIdUseCase,
               updateCamperTransportAttendanceCheckInListUseCase,
               updateCamperTransportAttendanceCheckOutListUseCase,
+              getStaffTransportSchedulesUseCase,
             ),
           ),
 

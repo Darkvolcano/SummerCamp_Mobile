@@ -68,4 +68,10 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       note: note,
     );
   }
+
+  @override
+  Future<List<TransportSchedule>> getStaffTransportSchedules() async {
+    final list = await service.fetchStaffTransportSchedules();
+    return list.map((e) => TransportScheduleModel.fromJson(e)).toList();
+  }
 }
