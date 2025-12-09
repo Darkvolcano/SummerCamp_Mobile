@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/attendance/domain/entities/update_attendance.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/recognize_group.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 
 class AttendanceProvider with ChangeNotifier {
   final UpdateAttendanceList updateAttendanceListUseCase;
   final RecognizeFace recognizeFaceUseCase;
   final PreloadFaceDatabase preloadFaceDatabaseUseCase;
+  final RecognizeGroup recognizeGroupUseCase;
 
   AttendanceProvider(
     this.updateAttendanceListUseCase,
     this.recognizeFaceUseCase,
     this.preloadFaceDatabaseUseCase,
+    this.recognizeGroupUseCase,
   );
 
   bool _loading = false;
@@ -82,6 +85,40 @@ class AttendanceProvider with ChangeNotifier {
     try {
       await preloadFaceDatabaseUseCase(campId, forceReload: forceReload);
       print("Preload database thành công cho Camp ID: $campId");
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>> recognizeGroup({
+    required int activityScheduleId,
+    required File photo,
+    required int campId,
+    required int groupId,
+  }) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final result =
+          await recognizeGroupUseCase(
+            activityScheduleId: activityScheduleId,
+            photo: photo,
+            campId: campId,
+            groupId: groupId,
+          ).timeout(
+            const Duration(minutes: 1),
+            onTimeout: () {
+              throw Exception("Quá thời gian chờ xử lý ảnh nhóm (60s).");
+            },
+          );
+
+      return result;
     } catch (e) {
       _error = e.toString();
       rethrow;

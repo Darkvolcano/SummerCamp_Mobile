@@ -28,7 +28,7 @@ class ScheduleApiService {
     int transportScheduleId,
   ) async {
     final res = await client.get(
-      'campertransport/schedule/$transportScheduleId',
+      'camper-transport/schedule/$transportScheduleId',
     );
     return res.data as List;
   }
@@ -39,7 +39,7 @@ class ScheduleApiService {
   }) async {
     try {
       await client.patch(
-        'campertransport/check-in',
+        'camper-transport/check-in',
         data: {'camperTransportIds': camperTransportIds, 'note': note},
       );
     } on DioException catch (e) {
@@ -59,7 +59,7 @@ class ScheduleApiService {
   }) async {
     try {
       await client.patch(
-        'campertransport/check-out',
+        'camper-transport/check-out',
         data: {'camperTransportIds': camperTransportIds, 'note': note},
       );
     } on DioException catch (e) {

@@ -35,4 +35,19 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   }) async {
     await service.preloadFaceDatabase(campId, forceReload: forceReload);
   }
+
+  @override
+  Future<Map<String, dynamic>> recognizeGroup({
+    required int activityScheduleId,
+    required File photo,
+    required int campId,
+    required int groupId,
+  }) async {
+    return await service.recognizeGroup(
+      activityScheduleId: activityScheduleId,
+      photo: photo,
+      campId: campId,
+      groupId: groupId,
+    );
+  }
 }

@@ -93,8 +93,7 @@ class AppRoutes {
   static const String driverRegister = '/driver-register';
   static const String driverHome = '/driver-home';
   static const String driverSchedule = '/driver-schedule';
-  static const String driverScheduleDetail =
-      '/driver-schedule-detail'; // hiện tại chưa có
+  static const String driverScheduleDetail = '/driver-schedule-detail';
   static const String driverProfile = '/driver-profile';
   static const String driverAttendance = '/driver-attendance';
 

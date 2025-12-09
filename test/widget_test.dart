@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/network/api_python_client.dart';
 import 'package:summercamp/features/activity/data/repositories/activity_repository_impl.dart';
 import 'package:summercamp/features/activity/data/services/activity_api_service.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
@@ -16,6 +17,7 @@ import 'package:summercamp/features/attendance/data/repositories/attendance_repo
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/recognize_group.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
@@ -242,6 +244,7 @@ void main() {
   });
   testWidgets('App loads login screen', (WidgetTester tester) async {
     final apiClient = ApiClient();
+    final apiPythonClient = ApiPythonClient();
 
     // Auth
     final authService = AuthApiService(apiClient);
@@ -347,11 +350,12 @@ void main() {
         UpdateCamperTransportAttendanceListCheckOut(scheduleRepo);
 
     // Attendance
-    final attendanceApi = AttendanceApiService(apiClient);
+    final attendanceApi = AttendanceApiService(apiClient, apiPythonClient);
     final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
     final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
     final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
     final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
+    final recognizeGroup = RecognizeGroup(attendanceRepo);
 
     // Livestream
     final livestreamApi = LivestreamApiService(apiClient);
@@ -457,12 +461,13 @@ void main() {
             ),
           ),
 
-          // AttendanceProvider need 3 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase)
+          // AttendanceProvider need 4 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase, RecognizeGroup)
           ChangeNotifierProvider(
             create: (_) => AttendanceProvider(
               updateAttendanceUseCase,
               recognizeFaceUseCase,
               preloadFaceDatabaseUseCase,
+              recognizeGroup,
             ),
           ),
 

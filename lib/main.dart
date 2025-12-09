@@ -6,11 +6,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:summercamp/core/network/api_python_client.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/recognize_face.dart';
+import 'package:summercamp/features/attendance/domain/use_cases/recognize_group.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/update_attendance.dart';
 import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
@@ -111,6 +113,7 @@ Future<void> main() async {
 
   await initializeDateFormatting('vi_VN');
   final apiClient = ApiClient();
+  final apiPythonClient = ApiPythonClient();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -221,11 +224,12 @@ Future<void> main() async {
       UpdateCamperTransportAttendanceListCheckOut(scheduleRepo);
 
   // Attendance
-  final attendanceApi = AttendanceApiService(apiClient);
+  final attendanceApi = AttendanceApiService(apiClient, apiPythonClient);
   final attendanceRepo = AttendanceRepositoryImpl(attendanceApi);
   final updateAttendanceUseCase = UpdateAttendanceList(attendanceRepo);
   final recognizeFaceUseCase = RecognizeFace(attendanceRepo);
   final preloadFaceDatabaseUseCase = PreloadFaceDatabase(attendanceRepo);
+  final recognizeGroup = RecognizeGroup(attendanceRepo);
 
   // Livestream
   final livestreamApi = LivestreamApiService(apiClient);
@@ -328,12 +332,13 @@ Future<void> main() async {
           ),
         ),
 
-        // AttendanceProvider need 2 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase)
+        // AttendanceProvider need 4 usecases (UpdateAttendanceList, RecognizeFace, PreloadFaceDatabase, RecognizeGroup)
         ChangeNotifierProvider(
           create: (_) => AttendanceProvider(
             updateAttendanceUseCase,
             recognizeFaceUseCase,
             preloadFaceDatabaseUseCase,
+            recognizeGroup,
           ),
         ),
 

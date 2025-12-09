@@ -125,11 +125,56 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
     }
   }
 
+  // Future<void> _processFaceRecognition(File imageFile) async {
+  //   final attendanceProvider = context.read<AttendanceProvider>();
+
+  //   try {
+  //     final result = await attendanceProvider.recognizeFace(
+  //       activityScheduleId: widget.activityScheduleId,
+  //       photo: imageFile,
+  //       campId: widget.campId,
+  //       groupId: _currentGroupId,
+  //     );
+
+  //     final bool success = result['success'] ?? false;
+  //     final List<dynamic> recognizedCampers = result['recognizedCampers'] ?? [];
+
+  //     if (!success || recognizedCampers.isEmpty) {
+  //       setState(() => _isProcessing = false);
+  //       _showNoMatchDialog();
+  //       return;
+  //     }
+
+  //     final match = recognizedCampers.first;
+  //     final now = DateTime.now();
+  //     final timeStr =
+  //         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+  //     final displayResult = {
+  //       'camperId': match['camperId'],
+  //       'name': match['camperName'] ?? 'Unknown',
+  //       'avatar': _findAvatar(match['camperId']),
+  //       'confidence': (match['confidence'] ?? 0.0) * 100,
+  //       'status': 'Có mặt',
+  //       'time': timeStr,
+  //     };
+
+  //     setState(() {
+  //       _isProcessing = false;
+  //       _attendanceList.add(displayResult);
+  //     });
+
+  //     _showRecognitionResultDialog(displayResult);
+  //   } catch (e) {
+  //     setState(() => _isProcessing = false);
+  //     _showErrorDialog('Lỗi nhận diện: ${e.toString()}');
+  //   }
+  // }
   Future<void> _processFaceRecognition(File imageFile) async {
     final attendanceProvider = context.read<AttendanceProvider>();
 
     try {
-      final result = await attendanceProvider.recognizeFace(
+      final result = await attendanceProvider.recognizeGroup(
         activityScheduleId: widget.activityScheduleId,
         photo: imageFile,
         campId: widget.campId,
@@ -145,40 +190,85 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
         return;
       }
 
-      final match = recognizedCampers.first;
       final now = DateTime.now();
       final timeStr =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-      final displayResult = {
-        'camperId': match['camperId'],
-        'name': match['camperName'] ?? 'Unknown',
-        'avatar': _findAvatar(match['camperId']),
-        'confidence': (match['confidence'] ?? 0.0) * 100,
-        'status': 'Có mặt',
-        'time': timeStr,
-      };
+      List<Map<String, dynamic>> newMatches = [];
+
+      // for (var match in recognizedCampers) {
+      //   final displayResult = {
+      //     'camperId': match['camperId'],
+      //     'name': match['camperName'] ?? 'Unknown',
+      //     'avatar': _findAvatar(match['camperId']),
+      //     'confidence': (match['confidence'] ?? 0.0) * 100,
+      //     'status': 'Có mặt',
+      //     'time': timeStr,
+      //   };
+      //   newMatches.add(displayResult);
+      // }
+      for (var match in recognizedCampers) {
+        final int matchedId = match['camperId'];
+
+        String displayName = 'Unknown';
+        String? displayAvatar;
+
+        try {
+          final localCamper = widget.campers.firstWhere(
+            (c) => c.camperId == matchedId,
+          );
+
+          displayName = localCamper.camperName;
+          displayAvatar = localCamper.avatar;
+        } catch (e) {
+          displayName = 'Unknown (ID: $matchedId)';
+        }
+
+        final displayResult = {
+          'camperId': matchedId,
+          'name': displayName,
+          'avatar': displayAvatar,
+          'confidence': (match['confidence'] ?? 0.0) * 100,
+          'status': 'Có mặt',
+          'time': timeStr,
+        };
+        newMatches.add(displayResult);
+      }
 
       setState(() {
         _isProcessing = false;
-        _attendanceList.add(displayResult);
+        _attendanceList.insertAll(0, newMatches);
       });
 
-      _showRecognitionResultDialog(displayResult);
+      _showRecognitionResultDialog(newMatches);
     } catch (e) {
       setState(() => _isProcessing = false);
-      _showErrorDialog('Lỗi nhận diện: ${e.toString()}');
+      String errorMessage = e.toString();
+
+      try {
+        errorMessage = (e as dynamic).message;
+      } catch (_) {
+        errorMessage = errorMessage
+            .replaceAll("Instance of 'NetworkException'", "")
+            .trim();
+      }
+
+      if (errorMessage.isEmpty || errorMessage == "null") {
+        errorMessage = "Lỗi kết nối hoặc server không phản hồi.";
+      }
+
+      _showErrorDialog(errorMessage);
     }
   }
 
-  String? _findAvatar(int camperId) {
-    try {
-      final camper = widget.campers.firstWhere((c) => c.camperId == camperId);
-      return camper.avatar;
-    } catch (e) {
-      return null;
-    }
-  }
+  // String? _findAvatar(int camperId) {
+  //   try {
+  //     final camper = widget.campers.firstWhere((c) => c.camperId == camperId);
+  //     return camper.avatar;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   void _showErrorDialog(String message) {
     if (mounted) {
@@ -197,14 +287,75 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
       showCustomDialog(
         context,
         title: "Không tìm thấy",
-        message: "Không tìm thấy camper phù hợp trong cơ sở dữ liệu.",
+        message: "Không tìm thấy camper phù hợp trong data.",
         type: DialogType.warning,
         btnText: "Thử lại",
       );
     }
   }
 
-  void _showRecognitionResultDialog(Map<String, dynamic> result) {
+  // void _showRecognitionResultDialog(Map<String, dynamic> result) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Row(
+  //         children: [
+  //           const Icon(Icons.check_circle, color: Colors.green, size: 32),
+  //           const SizedBox(width: 12),
+  //           const Text(
+  //             'Nhận diện thành công',
+  //             style: TextStyle(fontFamily: "Quicksand", fontSize: 18),
+  //           ),
+  //         ],
+  //       ),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           if (result['avatar'] != null)
+  //             ClipOval(
+  //               child: Image.network(
+  //                 result['avatar'],
+  //                 width: 80,
+  //                 height: 80,
+  //                 fit: BoxFit.cover,
+  //               ),
+  //             ),
+  //           const SizedBox(height: 16),
+  //           Text(
+  //             result['name'],
+  //             style: const TextStyle(
+  //               fontFamily: "Quicksand",
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //             textAlign: TextAlign.center,
+  //           ),
+  //           const SizedBox(height: 12),
+  //           Text(
+  //             'Độ chính xác: ${result['confidence'].toStringAsFixed(1)}%',
+  //             style: const TextStyle(
+  //               fontFamily: "Quicksand",
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.green,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text(
+  //             'Tiếp tục quét',
+  //             style: TextStyle(fontFamily: "Quicksand"),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  void _showRecognitionResultDialog(List<Map<String, dynamic>> results) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -212,45 +363,50 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 32),
             const SizedBox(width: 12),
-            const Text(
-              'Nhận diện thành công',
-              style: TextStyle(fontFamily: "Quicksand", fontSize: 18),
+            Expanded(
+              child: Text(
+                'Đã nhận diện ${results.length} người',
+                style: const TextStyle(fontFamily: "Quicksand", fontSize: 18),
+              ),
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (result['avatar'] != null)
-              ClipOval(
-                child: Image.network(
-                  result['avatar'],
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+        content: SizedBox(
+          width: double.maxFinite,
+          height: results.length > 1 ? 300 : null,
+          child: results.length == 1
+              ? _buildSingleResult(results.first)
+              : ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: results.length,
+                  separatorBuilder: (ctx, i) => const Divider(),
+                  itemBuilder: (ctx, index) {
+                    final item = results[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        backgroundImage: item['avatar'] != null
+                            ? NetworkImage(item['avatar'])
+                            : null,
+                        child: item['avatar'] == null
+                            ? const Icon(Icons.person)
+                            : null,
+                      ),
+                      title: Text(
+                        item['name'],
+                        style: const TextStyle(
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${item['confidence'].toStringAsFixed(1)}%',
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                      trailing: const Icon(Icons.check, color: Colors.green),
+                    );
+                  },
                 ),
-              ),
-            const SizedBox(height: 16),
-            Text(
-              result['name'],
-              style: const TextStyle(
-                fontFamily: "Quicksand",
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Độ chính xác: ${result['confidence'].toStringAsFixed(1)}%',
-              style: const TextStyle(
-                fontFamily: "Quicksand",
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-          ],
         ),
         actions: [
           TextButton(
@@ -262,6 +418,43 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSingleResult(Map<String, dynamic> result) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (result['avatar'] != null)
+          ClipOval(
+            child: Image.network(
+              result['avatar'],
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+        const SizedBox(height: 16),
+        Text(
+          result['name'],
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Độ chính xác: ${result['confidence'].toStringAsFixed(1)}%',
+          style: const TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+            fontSize: 16,
+          ),
+        ),
+      ],
     );
   }
 

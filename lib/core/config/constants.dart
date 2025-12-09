@@ -7,6 +7,9 @@ class AppConstants {
   // Gemini API Key
   static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
+  // API Python
+  static String get apiPythonBaseUrl => dotenv.env['PYTHON_BE_API'] ?? '';
+
   // Socket
   static const String socketUrl = 'https://wdp301-su25.space/';
 
