@@ -58,7 +58,7 @@ class StaffBottomNavBar extends StatelessWidget {
                 _buildNavItem(
                   Icons.person,
                   "Cá nhân",
-                  2,
+                  3,
                   activeColor,
                   inactiveColor,
                 ),

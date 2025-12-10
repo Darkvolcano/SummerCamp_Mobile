@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:summercamp/core/config/app_routes.dart';
+// import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/driver_theme.dart';
 import 'package:summercamp/core/enum/transport_schedule_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
@@ -465,40 +465,40 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                         // ),
 
                         // const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: const BorderSide(
-                                color: DriverTheme.driverPrimary,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.driverAttendance,
-                                arguments: trip,
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.people_alt_outlined,
-                              size: 20,
-                              color: DriverTheme.driverPrimary,
-                            ),
-                            label: const Text(
-                              "Danh sách camper",
-                              style: TextStyle(
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold,
-                                color: DriverTheme.driverPrimary,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   child: OutlinedButton.icon(
+                        //     style: OutlinedButton.styleFrom(
+                        //       padding: const EdgeInsets.symmetric(vertical: 12),
+                        //       side: const BorderSide(
+                        //         color: DriverTheme.driverPrimary,
+                        //       ),
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(8),
+                        //       ),
+                        //     ),
+                        //     onPressed: () {
+                        //       Navigator.pushNamed(
+                        //         context,
+                        //         AppRoutes.driverAttendance,
+                        //         arguments: trip,
+                        //       );
+                        //     },
+                        //     icon: const Icon(
+                        //       Icons.people_alt_outlined,
+                        //       size: 20,
+                        //       color: DriverTheme.driverPrimary,
+                        //     ),
+                        //     label: const Text(
+                        //       "Danh sách camper",
+                        //       style: TextStyle(
+                        //         fontFamily: "Quicksand",
+                        //         fontWeight: FontWeight.bold,
+                        //         color: DriverTheme.driverPrimary,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

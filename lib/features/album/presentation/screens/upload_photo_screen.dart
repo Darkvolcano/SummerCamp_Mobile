@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class UploadPhotoScreen extends StatefulWidget {
   final Camp camp;
@@ -64,39 +63,21 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
 
     try {
       final List<String> uploadedUrls = [];
-      final storage = FirebaseStorage.instance;
 
       for (int i = 0; i < _picked.length; i++) {
         setState(() {
           _currentUploadIndex = i + 1;
         });
 
-        final file = _picked[i];
-        final fileName =
-            'camp_${widget.camp.campId}_${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
-        final ref = storage.ref().child(
-          'camp_photos/${widget.camp.campId}/$fileName',
-        );
+        await Future.delayed(const Duration(milliseconds: 500));
 
-        // Upload file with progress tracking
-        final uploadTask = ref.putFile(file);
-
-        // Listen to upload progress
-        uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-          final progress = snapshot.bytesTransferred / snapshot.totalBytes;
-          final totalProgress = (i + progress) / _picked.length;
-
-          setState(() {
-            _uploadProgress = totalProgress;
-          });
+        setState(() {
+          _uploadProgress = (i + 1) / _picked.length;
         });
 
-        // Wait for upload to complete
-        await uploadTask;
-
-        // Get download URL
-        final downloadUrl = await ref.getDownloadURL();
-        uploadedUrls.add(downloadUrl);
+        final fakeUrl =
+            "https://your-backend.com/images/camp_${widget.camp.campId}_$i.jpg";
+        uploadedUrls.add(fakeUrl);
       }
 
       setState(() {
@@ -105,10 +86,8 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
 
       if (!mounted) return;
 
-      // Show success dialog
       _showSuccessDialog(uploadedUrls);
 
-      // Clear picked images
       setState(() {
         _picked.clear();
       });
@@ -135,10 +114,10 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 32),
+            const Icon(Icons.check_circle, color: Colors.green, size: 32),
             const SizedBox(width: 12),
             const Text(
-              'Upload thành công',
+              'Xử lý thành công',
               style: TextStyle(fontFamily: "Quicksand"),
             ),
           ],
@@ -148,13 +127,13 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Đã upload ${urls.length} ảnh lên Firebase Storage',
+              'Đã xử lý ${urls.length} ảnh.',
               style: const TextStyle(fontFamily: "Quicksand"),
             ),
             const SizedBox(height: 12),
             if (urls.isNotEmpty) ...[
               const Text(
-                'URL ảnh đầu tiên:',
+                'Demo kết quả:',
                 style: TextStyle(
                   fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
@@ -329,7 +308,6 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
           ),
         ),
 
-        // Loading Overlay
         if (_isUploading)
           Container(
             color: Colors.black54,

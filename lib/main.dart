@@ -1,11 +1,9 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:summercamp/core/network/api_python_client.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
@@ -37,7 +35,6 @@ import 'package:summercamp/features/schedule/domain/use_cases/update_camper_tran
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_out.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_end_trip.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_transport_schedule_start_trip.dart';
-import 'firebase_options.dart';
 import 'dart:async';
 
 import 'package:summercamp/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
@@ -115,12 +112,6 @@ Future<void> main() async {
   await initializeDateFormatting('vi_VN');
   final apiClient = ApiClient();
   final apiPythonClient = ApiPythonClient();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  await FirebaseAppCheck.instance.activate(
-    providerAndroid: const AndroidDebugProvider(),
-  );
 
   // Auth
   final authService = AuthApiService(apiClient);

@@ -297,12 +297,7 @@ feature_name/
    - `lib/features/camp/presentation/screens/camp_schedule_detail_screen.dart`
    - `lib/features/registration/presentation/screens/registration_detail_screen.dart`
 
-4. **Setup Firebase** (for notifications):
-
-   - Add `google-services.json` to `android/app/`
-   - Add `GoogleService-Info.plist` to `ios/Runner/`
-
-5. **Configure Permissions**:
+4. **Configure Permissions**:
 
    **Android** (`android/app/src/main/AndroidManifest.xml`):
 
@@ -327,7 +322,7 @@ feature_name/
    <string>Access location for driver trip tracking</string>
    ```
 
-6. **Run the app**:
+5. **Run the app**:
 
    ```bash
    flutter run
@@ -462,12 +457,6 @@ dependencies:
   # Image Handling
   image_picker: ^1.1.2 # Pick images from device
   wechat_assets_picker: ^9.0.2 # Multi-image picker
-
-  # Firebase
-  firebase_core: ^2.24.0
-  firebase_messaging: ^14.7.6 # Push notifications
-  firebase_storage: ^13.0.2 # Cloud storage
-  firebase_app_check: ^0.4.1+1 # App Check
 
   # UI Components
   table_calendar: ^3.0.8 # Calendar widget

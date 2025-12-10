@@ -13,9 +13,11 @@ class AttendanceApiService {
 
   Future<void> updateAttendance(List<UpdateAttendance> requests) async {
     try {
-      final data = requests.map((e) => e.toJson()).toList();
+      final logsList = requests.map((e) => e.toJson()).toList();
 
-      await client.put('AttendanceLog', data: data);
+      final requestBody = {"attendanceLogs": logsList};
+
+      await client.put('AttendanceLog/v2', data: requestBody);
     } on DioException catch (e) {
       throw mapDioError(e);
     }
