@@ -17,7 +17,9 @@ import 'package:summercamp/features/auth/domain/use_cases/register_response.dart
 import 'package:summercamp/features/auth/domain/use_cases/register_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_license_information.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
@@ -39,6 +41,8 @@ class AuthProvider with ChangeNotifier {
   final ChangePassword changePasswordUseCase;
   final GetBankUsers getBankUsersUseCase;
   final CreateBankUser createBankUserUseCase;
+  final UpdateUploadLicense updateUploadLicenseUseCase;
+  final UpdateLicenseInformation updateLicenseInformationUseCase;
 
   AuthProvider(
     this.loginUserUseCase,
@@ -57,6 +61,8 @@ class AuthProvider with ChangeNotifier {
     this.changePasswordUseCase,
     this.getBankUsersUseCase,
     this.createBankUserUseCase,
+    this.updateUploadLicenseUseCase,
+    this.updateLicenseInformationUseCase,
   );
 
   List<User> _users = [];
@@ -345,6 +351,56 @@ class AuthProvider with ChangeNotifier {
         bankNumber: bankNumber,
         isPrimary: isPrimary,
       );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateUploadLicense(File imageFile) async {
+    try {
+      await updateUploadLicenseUseCase(imageFile);
+    } catch (e) {
+      print("Lỗi update upload bằng lái: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateDriverLicense({
+    required String licenseNumber,
+    required String licenseExpiry,
+    required String driverAddress,
+    File? newLicenseImage,
+  }) async {
+    _setLoading(true);
+    _error = null;
+    notifyListeners();
+
+    try {
+      if (_currentUser == null) {
+        throw Exception(
+          "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.",
+        );
+      }
+
+      final int? driverId = _currentUser!.userId;
+
+      if (newLicenseImage != null) {
+        await updateUploadLicenseUseCase(newLicenseImage);
+      }
+
+      final Map<String, dynamic> updateData = {
+        'licenseNumber': licenseNumber,
+        'licenseExpiry': licenseExpiry,
+        'driverAddress': driverAddress,
+      };
+
+      await updateLicenseInformationUseCase(driverId!, updateData);
+
+      await fetchProfileUser();
     } catch (e) {
       _error = e.toString();
       rethrow;

@@ -17,7 +17,9 @@ import 'package:summercamp/features/auth/domain/use_cases/change_password.dart';
 import 'package:summercamp/features/auth/domain/use_cases/create_bank_user.dart';
 import 'package:summercamp/features/auth/domain/use_cases/driver_register.dart';
 import 'package:summercamp/features/auth/domain/use_cases/get_bank_user.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_license_information.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
@@ -131,6 +133,8 @@ Future<void> main() async {
   final changePasswordUseCase = ChangePassword(userRepo);
   final getBankUserUseCase = GetBankUsers(userRepo);
   final createBankUserUseCase = CreateBankUser(userRepo);
+  final updateUploadLicenseUseCase = UpdateUploadLicense(userRepo);
+  final updateLicenseInformation = UpdateLicenseInformation(userRepo);
 
   // Camp
   final campApiService = CampApiService(apiClient);
@@ -252,6 +256,8 @@ Future<void> main() async {
             changePasswordUseCase,
             getBankUserUseCase,
             createBankUserUseCase,
+            updateUploadLicenseUseCase,
+            updateLicenseInformation,
           ),
         ),
 

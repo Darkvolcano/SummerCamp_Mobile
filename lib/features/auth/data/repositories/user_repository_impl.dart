@@ -220,4 +220,17 @@ class UserRepositoryImpl implements UserRepository {
       isPrimary: isPrimary,
     );
   }
+
+  @override
+  Future<void> updateUploadLicense(File imageFile) async {
+    await service.updateUploadLicense(imageFile);
+  }
+
+  @override
+  Future<void> updateLicenseInformation(
+    int driverId,
+    Map<String, dynamic> data,
+  ) async {
+    await service.updateLicenseInformation(driverId, data);
+  }
 }

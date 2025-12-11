@@ -8,6 +8,7 @@ import 'package:summercamp/core/config/driver_theme.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/profile/presentation/screens/edit_profile_driver_screen.dart';
+import 'package:summercamp/features/profile/presentation/screens/update_license_screen.dart';
 
 class DriverProfileScreen extends StatefulWidget {
   const DriverProfileScreen({super.key});
@@ -329,6 +330,38 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               ],
             ),
           ),
+
+          const SizedBox(height: 20),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Card(
+              elevation: 2,
+              child: ListTile(
+                leading: const Icon(
+                  Icons.drive_eta,
+                  color: DriverTheme.driverPrimary,
+                ),
+                title: const Text(
+                  "Cập nhật Bằng lái xe",
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateLicenseScreen(user: user),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
           const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -29,7 +29,9 @@ import 'package:summercamp/features/auth/domain/use_cases/get_user_profile.dart'
 import 'package:summercamp/features/auth/domain/use_cases/get_users.dart';
 import 'package:summercamp/features/auth/domain/use_cases/resend_otp.dart';
 import 'package:summercamp/features/auth/domain/use_cases/reset_password.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_license_information.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
+import 'package:summercamp/features/auth/domain/use_cases/update_upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_user_profile.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/verify_otp.dart';
@@ -265,6 +267,8 @@ void main() {
     final changePasswordUseCase = ChangePassword(userRepo);
     final getBankUserUseCase = GetBankUsers(userRepo);
     final createBankUserUseCase = CreateBankUser(userRepo);
+    final updateUploadLicenseUseCase = UpdateUploadLicense(userRepo);
+    final updateLicenseInformation = UpdateLicenseInformation(userRepo);
 
     // Camp
     final campApiService = CampApiService(apiClient);
@@ -389,6 +393,8 @@ void main() {
               changePasswordUseCase,
               getBankUserUseCase,
               createBankUserUseCase,
+              updateUploadLicenseUseCase,
+              updateLicenseInformation,
             ),
           ),
 

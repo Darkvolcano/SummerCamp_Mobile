@@ -48,4 +48,9 @@ abstract class UserRepository {
     required String bankNumber,
     required bool isPrimary,
   });
+  Future<void> updateUploadLicense(File imageFile);
+  Future<void> updateLicenseInformation(
+    int driverId,
+    Map<String, dynamic> data,
+  );
 }

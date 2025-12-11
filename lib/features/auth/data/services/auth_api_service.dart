@@ -309,4 +309,33 @@ class AuthApiService {
       rethrow;
     }
   }
+
+  Future<void> updateUploadLicense(File imageFile) async {
+    try {
+      String fileName = imageFile.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "licensePhoto": await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+        ),
+      });
+
+      await client.put(
+        'driver/upload-photo',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
+  Future<void> updateLicenseInformation(
+    int driverId,
+    Map<String, dynamic> data,
+  ) async {
+    final res = await client.put('driver/$driverId', data: data);
+    return res.data;
+  }
 }

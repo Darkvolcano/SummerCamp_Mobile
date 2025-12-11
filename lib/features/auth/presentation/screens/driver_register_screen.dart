@@ -122,11 +122,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         LƯU Ý: Chỉ trả về JSON thuần túy, không Markdown, không giải thích thêm.
       """;
 
-      final List<String> modelsToTry = [
-        'gemini-2.0-flash',
-        'gemini-2.0-pro',
-        'gemini-pro-vision',
-      ];
+      final List<String> modelsToTry = ['gemini-2.0-flash'];
 
       bool isSuccess = false;
 
