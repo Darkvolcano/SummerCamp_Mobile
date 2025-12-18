@@ -2,6 +2,7 @@ import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/activity/domain/entities/livestream.dart';
 import 'package:summercamp/features/activity/domain/entities/staff.dart';
+import 'package:summercamp/features/schedule/domain/entities/location.dart';
 
 class ActivityScheduleModel extends ActivitySchedule {
   const ActivityScheduleModel({
@@ -15,6 +16,7 @@ class ActivityScheduleModel extends ActivitySchedule {
     super.liveStream,
     super.maxCapacity,
     required super.isOptional,
+    super.location,
     super.locationId,
     super.currentCapacity,
   });
@@ -38,6 +40,12 @@ class ActivityScheduleModel extends ActivitySchedule {
       liveStream = Livestream.fromJson(liveStreamData);
     }
 
+    final locationData = json['location'];
+    Location? location;
+    if (locationData != null && locationData is Map<String, dynamic>) {
+      location = Location.fromJson(locationData);
+    }
+
     return ActivityScheduleModel(
       activityScheduleId: json['activityScheduleId'],
       activity: activity,
@@ -49,6 +57,7 @@ class ActivityScheduleModel extends ActivitySchedule {
       liveStream: liveStream,
       maxCapacity: json['maxCapacity'] as int?,
       isOptional: json['isOptional'] ?? false,
+      location: location,
       locationId: json['locationId'] as int?,
       currentCapacity: json['currentCapacity'] as int?,
     );
@@ -65,6 +74,7 @@ class ActivityScheduleModel extends ActivitySchedule {
     'liveStream': liveStream?.toJson(),
     'maxCapacity': maxCapacity,
     'isOptional': isOptional,
+    'location': location?.toJson(),
     'locationId': locationId,
     'currentCapacity': currentCapacity,
   };

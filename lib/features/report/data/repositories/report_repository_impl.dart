@@ -15,16 +15,21 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 
   @override
-  Future<void> createReport(Report report) async {
-    final model = ReportModel(
-      reportId: report.reportId,
-      camperId: report.camperId,
-      note: report.note,
-      image: report.image,
-      status: report.status,
-      level: report.level,
-      activityId: report.activityId,
+  Future<Map<String, dynamic>> createReport({
+    required int campId,
+    required int camperId,
+    required String note,
+    required String status,
+    required int activityId,
+    required String level,
+  }) async {
+    return await service.createReport(
+      campId: campId,
+      camperId: camperId,
+      note: note,
+      status: status,
+      activityId: activityId,
+      level: level,
     );
-    await service.createReport(model.toJson());
   }
 }

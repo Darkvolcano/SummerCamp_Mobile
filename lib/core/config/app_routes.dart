@@ -265,7 +265,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => ReportListScreen());
 
       case createReport:
-        return MaterialPageRoute(builder: (_) => ReportCreateScreen());
+        final campId = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (_) => ReportCreateScreen(campId: campId),
+        );
 
       case registrationSuccess:
         return MaterialPageRoute(builder: (_) => RegistrationSuccessScreen());

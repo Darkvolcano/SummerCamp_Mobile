@@ -1,6 +1,7 @@
 import 'package:summercamp/features/activity/domain/entities/activity.dart';
 import 'package:summercamp/features/activity/domain/entities/livestream.dart';
 import 'package:summercamp/features/activity/domain/entities/staff.dart';
+import 'package:summercamp/features/schedule/domain/entities/location.dart';
 
 class ActivitySchedule {
   final int activityScheduleId;
@@ -13,6 +14,7 @@ class ActivitySchedule {
   final Livestream? liveStream;
   final int? maxCapacity;
   final bool isOptional;
+  final Location? location;
   final int? locationId;
   final int? currentCapacity;
 
@@ -27,6 +29,7 @@ class ActivitySchedule {
     this.liveStream,
     this.maxCapacity,
     required this.isOptional,
+    this.location,
     this.locationId,
     this.currentCapacity,
   });

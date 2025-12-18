@@ -284,7 +284,7 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
                       Navigator.pushNamed(context, AppRoutes.staffSchedule);
                     }),
                     _buildStaffMenu("Điểm danh", Icons.check_circle, () {}),
-                    _buildStaffMenu("Báo cáo sự cố", Icons.report_problem, () {
+                    _buildStaffMenu("Sự cố", Icons.report_problem, () {
                       Navigator.pushNamed(context, AppRoutes.report);
                     }),
                     // _buildStaffMenu("Quản lý camper", Icons.group, () {

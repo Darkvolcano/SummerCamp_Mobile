@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:summercamp/features/report/data/models/report_model.dart';
 import 'package:summercamp/features/report/domain/entities/report.dart';
 import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
 import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
@@ -24,28 +21,35 @@ class ReportProvider with ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    final jsonString = await rootBundle.loadString('assets/mock/reports.json');
-
-    final List<dynamic> jsonList = json.decode(jsonString);
-
-    _reports = jsonList.map((e) => ReportModel.fromJson(e)).toList();
-
-    // _reports = await getReportsUseCase();
+    _reports = await getReportsUseCase();
 
     _loading = false;
     notifyListeners();
   }
 
-  Future<void> addReport(Report r) async {
+  Future<void> createReport({
+    required int campId,
+    required int camperId,
+    required String note,
+    required String status,
+    required int activityId,
+    required String level,
+  }) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await createReportUseCase(r);
+      await createReportUseCase(
+        campId: campId,
+        camperId: camperId,
+        note: note,
+        status: status,
+        activityId: activityId,
+        level: level,
+      );
     } catch (e) {
-      _error = "Lỗi khi tạo report: $e";
-      print(_error);
+      _error = e.toString();
       rethrow;
     } finally {
       _loading = false;
