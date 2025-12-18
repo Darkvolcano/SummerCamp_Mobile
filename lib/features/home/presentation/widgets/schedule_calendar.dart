@@ -20,6 +20,14 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  final List<Color> _campColors = [
+    const Color(0xFFEF5350),
+    const Color(0xFF42A5F5),
+    const Color(0xFF66BB6A),
+    const Color(0xFFFFA726),
+    const Color(0xFFAB47BC),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +51,10 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
     super.dispose();
   }
 
+  Color _getColorForCamp(int campId) {
+    return _campColors[campId % _campColors.length];
+  }
+
   void _initEvents() {
     final events = <DateTime, List<Schedule>>{};
 
@@ -62,7 +74,10 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
           if (events[keyDay] == null) {
             events[keyDay] = [];
           }
-          events[keyDay]!.add(schedule);
+
+          if (!events[keyDay]!.any((s) => s.campId == schedule.campId)) {
+            events[keyDay]!.add(schedule);
+          }
 
           currentDay = currentDay.add(const Duration(days: 1));
         }
@@ -105,11 +120,31 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
           eventLoader: _getEventsForDay,
           startingDayOfWeek: StartingDayOfWeek.monday,
 
+          calendarBuilders: CalendarBuilders(
+            markerBuilder: (context, date, events) {
+              if (events.isEmpty) return null;
+
+              return Positioned(
+                bottom: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: events.map((schedule) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                      width: 7.0,
+                      height: 7.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _getColorForCamp(schedule.campId),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+
           calendarStyle: CalendarStyle(
-            markerDecoration: const BoxDecoration(
-              color: Colors.lightGreen,
-              shape: BoxShape.circle,
-            ),
             todayDecoration: BoxDecoration(
               color: StaffTheme.staffAccent.withValues(alpha: 0.5),
               shape: BoxShape.circle,
@@ -160,17 +195,23 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
               itemCount: value.length,
               itemBuilder: (context, index) {
                 final schedule = value[index];
+                final scheduleColor = _getColorForCamp(schedule.campId);
+
                 return Card(
                   shadowColor: Colors.white.withValues(alpha: 0.0),
                   margin: const EdgeInsets.symmetric(
-                    vertical: 4,
+                    vertical: 8,
                     horizontal: 8,
                   ),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.event,
-                      color: StaffTheme.staffPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: scheduleColor.withValues(alpha: 0.3),
+                      width: 1,
                     ),
+                  ),
+                  child: ListTile(
+                    leading: Icon(Icons.event, color: scheduleColor),
                     title: Text(
                       schedule.name,
                       style: const TextStyle(

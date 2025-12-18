@@ -29,7 +29,7 @@ class StaffBottomNavBar extends StatelessWidget {
               children: [
                 _buildNavItem(
                   Icons.home,
-                  "trang chủ",
+                  "Trang chủ",
                   0,
                   activeColor,
                   inactiveColor,
