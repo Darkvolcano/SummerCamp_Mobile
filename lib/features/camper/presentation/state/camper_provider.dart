@@ -7,7 +7,9 @@ import 'package:summercamp/features/camper/domain/entities/camper_group.dart';
 import 'package:summercamp/features/camper/domain/entities/group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_group_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
@@ -21,8 +23,10 @@ class CamperProvider with ChangeNotifier {
   final UpdateCamper updateCamperUseCase;
   final GetCamperById getCamperByIdUseCase;
   final GetCamperGroups getCamperGroupsUseCase;
+  final GetCamperGroupByGroupId getCamperGroupByGroupIdUseCase;
   final GetCampersByCoreActivityId getCampersByCoreActivityIdUseCase;
   final GetCampersByOptionalActivityId getCampersByOptionalActivityIdUseCase;
+  final GetCampersByActivityId getCampersByActivityIdUseCase;
   final GetCampGroup getCampGroupUseCase;
   final UpdateUploadAvatarCamper updateUploadAvatarCamperUseCase;
 
@@ -32,8 +36,10 @@ class CamperProvider with ChangeNotifier {
     this.updateCamperUseCase,
     this.getCamperByIdUseCase,
     this.getCamperGroupsUseCase,
+    this.getCamperGroupByGroupIdUseCase,
     this.getCampersByCoreActivityIdUseCase,
     this.getCampersByOptionalActivityIdUseCase,
+    this.getCampersByActivityIdUseCase,
     this.getCampGroupUseCase,
     this.updateUploadAvatarCamperUseCase,
   );
@@ -47,11 +53,17 @@ class CamperProvider with ChangeNotifier {
   List<Camper> _campersOptionalActivity = [];
   List<Camper> get campersOptionalActivity => _campersOptionalActivity;
 
+  List<Camper> _campersActivity = [];
+  List<Camper> get campersActivity => _campersActivity;
+
   Camper? _selectedCamper;
   Camper? get selectedCamper => _selectedCamper;
 
   List<CamperGroup> _camperGroups = [];
   List<CamperGroup> get camperGroups => _camperGroups;
+
+  List<CamperGroup> _groupMembers = [];
+  List<CamperGroup> get groupMembers => _groupMembers;
 
   Group? _group;
   Group? get group => _group;
@@ -161,17 +173,38 @@ class CamperProvider with ChangeNotifier {
     }
   }
 
-  Future<void> loadStaffCampGroup(int campId) async {
+  Future<void> loadCamperGroupsByGroupId(int groupId) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _group = await getCampGroupUseCase(campId);
+      _camperGroups = await getCamperGroupByGroupIdUseCase(groupId);
     } catch (e) {
       _error = e.toString();
-      _group = null;
-      print("Lỗi load staff camp group: $e");
+      _camperGroups = [];
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadStaffCampGroup(int campId) async {
+    _loading = true;
+    _error = null;
+    _group = null;
+    _groupMembers = [];
+    notifyListeners();
+
+    try {
+      _group = await getCampGroupUseCase(campId);
+
+      if (_group != null) {
+        _groupMembers = await getCamperGroupByGroupIdUseCase(_group!.groupId);
+      }
+    } catch (e) {
+      _error = e.toString();
+      print("Lỗi load staff camp group logic: $e");
     } finally {
       _loading = false;
       notifyListeners();
@@ -197,6 +230,16 @@ class CamperProvider with ChangeNotifier {
     _campersOptionalActivity = await getCampersByOptionalActivityIdUseCase(
       optionalActivityId,
     );
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadCampersByActivityId(int activityScheduleId) async {
+    _loading = true;
+    notifyListeners();
+
+    _campersActivity = await getCampersByActivityIdUseCase(activityScheduleId);
 
     _loading = false;
     notifyListeners();

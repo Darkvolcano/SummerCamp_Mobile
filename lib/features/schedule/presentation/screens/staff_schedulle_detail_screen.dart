@@ -785,15 +785,16 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/activity/domain/entities/activity_schedule.dart';
 import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
-import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
+// import 'package:summercamp/features/attendance/presentation/state/attendance_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/livestream/domain/entities/livestream.dart';
 import 'package:summercamp/features/livestream/presentation/screens/ils_screen.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/report/presentation/screens/report_form_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
+import 'package:summercamp/features/schedule/presentation/screens/staff_group_screen.dart';
 import 'package:videosdk/videosdk.dart';
-import 'package:summercamp/features/camper/domain/entities/camper.dart';
+// import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
 class StaffScheduleDetailScreen extends StatefulWidget {
   final Schedule schedule;
@@ -825,7 +826,7 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
       if (mounted) {
         final activityProvider = context.read<ActivityProvider>();
         activityProvider.loadActivitySchedulesByCampId(widget.schedule.campId);
-        _preloadFaceData();
+        // _preloadFaceData();
       }
     });
   }
@@ -836,17 +837,17 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
     super.dispose();
   }
 
-  Future<void> _preloadFaceData() async {
-    try {
-      final attendanceProvider = context.read<AttendanceProvider>();
-      await attendanceProvider.preloadFaceData(
-        widget.schedule.campId,
-        forceReload: false,
-      );
-    } catch (e) {
-      print("Warning: Preload face data failed: $e");
-    }
-  }
+  // Future<void> _preloadFaceData() async {
+  //   try {
+  //     final attendanceProvider = context.read<AttendanceProvider>();
+  //     await attendanceProvider.preloadFaceData(
+  //       widget.schedule.campId,
+  //       forceReload: false,
+  //     );
+  //   } catch (e) {
+  //     print("Warning: Preload face data failed: $e");
+  //   }
+  // }
 
   void onJoinLivestreamPressed(BuildContext context, String roomId, Mode mode) {
     if (!context.mounted) return;
@@ -918,7 +919,7 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
     }
   }
 
-  void _showAttendanceOptions(
+  Future<void> _navigateToFaceAttendance(
     BuildContext context,
     ActivitySchedule activity,
   ) async {
@@ -928,93 +929,21 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
     setState(() => _fetchingActivityId = activity.activityScheduleId);
 
     try {
-      List<Camper> campersToShow = [];
+      // 1. Gọi API lấy danh sách camper theo activity schedule
+      // Dùng hàm chung cho mọi loại hoạt động vì API đã hỗ trợ
+      await camperProvider.loadCampersByActivityId(activity.activityScheduleId);
 
-      if (activity.activity?.activityType == "Core" ||
-          activity.activity?.activityType == "Checkin" ||
-          activity.activity?.activityType == "Checkout" ||
-          activity.activity?.activityType == "Resting") {
-        await camperProvider.loadCampersByCoreActivityId(
-          activity.activityScheduleId,
-        );
-        campersToShow = camperProvider.campersCoreActivity;
-      } else if (activity.activity?.activityType == "Optional") {
-        await camperProvider.loadCampersByOptionalActivityId(
-          activity.activityScheduleId,
-        );
-        campersToShow = camperProvider.campersOptionalActivity;
-      } else {
-        throw Exception(
-          "Loại hoạt động không xác định: ${activity.activity?.activityType}",
-        );
-      }
+      final campersToShow = camperProvider.campersActivity;
 
       if (!mounted) return;
 
-      showModalBottomSheet(
-        context: this.context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Chọn phương thức điểm danh",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: const Icon(
-                    Icons.list_alt_rounded,
-                    color: StaffTheme.staffPrimary,
-                  ),
-                  title: const Text(
-                    "Điểm danh thủ công",
-                    style: TextStyle(fontFamily: "Quicksand"),
-                  ),
-                  onTap: () {
-                    navigator.pop();
-                    navigator.pushNamed(
-                      AppRoutes.attendance,
-                      arguments: {
-                        "schedule": widget.schedule,
-                        "campers": campersToShow,
-                      },
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.face_retouching_natural,
-                    color: StaffTheme.staffPrimary,
-                  ),
-                  title: const Text(
-                    "Điểm danh bằng khuôn mặt",
-                    style: TextStyle(fontFamily: "Quicksand"),
-                  ),
-                  onTap: () {
-                    navigator.pop();
-                    navigator.pushNamed(
-                      AppRoutes.faceRecognitionAttendance,
-                      arguments: {
-                        "campers": campersToShow,
-                        "activityScheduleId": activity.activityScheduleId,
-                        "campId": widget.schedule.campId,
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
+      // 2. Chuyển màn hình ngay lập tức
+      navigator.pushNamed(
+        AppRoutes.faceRecognitionAttendance,
+        arguments: {
+          "campers": campersToShow,
+          "activityScheduleId": activity.activityScheduleId,
+          "campId": widget.schedule.campId,
         },
       );
     } catch (e) {
@@ -1033,6 +962,126 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
       }
     }
   }
+
+  // void _showAttendanceOptions(
+  //   BuildContext context,
+  //   ActivitySchedule activity,
+  // ) async {
+  //   final camperProvider = context.read<CamperProvider>();
+  //   final navigator = Navigator.of(context);
+
+  //   setState(() => _fetchingActivityId = activity.activityScheduleId);
+
+  //   try {
+  //     List<Camper> campersToShow = [];
+
+  //     if (activity.activity?.activityType == "Core" ||
+  //         activity.activity?.activityType == "Checkin" ||
+  //         activity.activity?.activityType == "Checkout" ||
+  //         activity.activity?.activityType == "Resting") {
+  //       // await camperProvider.loadCampersByCoreActivityId(
+  //       //   activity.activityScheduleId,
+  //       // );
+  //       await camperProvider.loadCampersByActivityId(
+  //         activity.activityScheduleId,
+  //       );
+  //       // campersToShow = camperProvider.campersCoreActivity;
+  //       campersToShow = camperProvider.campersActivity;
+  //     } else if (activity.activity?.activityType == "Optional") {
+  //       await camperProvider.loadCampersByActivityId(
+  //         activity.activityScheduleId,
+  //       );
+  //       campersToShow = camperProvider.campersActivity;
+  //     } else {
+  //       throw Exception(
+  //         "Loại hoạt động không xác định: ${activity.activity?.activityType}",
+  //       );
+  //     }
+
+  //     if (!mounted) return;
+
+  //     showModalBottomSheet(
+  //       context: this.context,
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       builder: (context) {
+  //         return Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 "Chọn phương thức điểm danh",
+  //                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
+  //                   fontFamily: "Quicksand",
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               ListTile(
+  //                 leading: const Icon(
+  //                   Icons.list_alt_rounded,
+  //                   color: StaffTheme.staffPrimary,
+  //                 ),
+  //                 title: const Text(
+  //                   "Điểm danh thủ công",
+  //                   style: TextStyle(fontFamily: "Quicksand"),
+  //                 ),
+  //                 onTap: () {
+  //                   navigator.pop();
+  //                   navigator.pushNamed(
+  //                     AppRoutes.attendance,
+  //                     arguments: {
+  //                       "schedule": widget.schedule,
+  //                       "campers": campersToShow,
+  //                     },
+  //                   );
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(
+  //                   Icons.face_retouching_natural,
+  //                   color: StaffTheme.staffPrimary,
+  //                 ),
+  //                 title: const Text(
+  //                   "Điểm danh bằng khuôn mặt",
+  //                   style: TextStyle(fontFamily: "Quicksand"),
+  //                 ),
+  //                 onTap: () {
+  //                   navigator.pop();
+  //                   navigator.pushNamed(
+  //                     AppRoutes.faceRecognitionAttendance,
+  //                     arguments: {
+  //                       "campers": campersToShow,
+  //                       "activityScheduleId": activity.activityScheduleId,
+  //                       "campId": widget.schedule.campId,
+  //                     },
+  //                   );
+  //                 },
+  //               ),
+  //               const SizedBox(height: 16),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } catch (e) {
+  //     if (mounted) {
+  //       showCustomDialog(
+  //         // ignore: use_build_context_synchronously
+  //         context,
+  //         title: "Lỗi",
+  //         message: "Lỗi tải danh sách camper: ${e.toString()}",
+  //         type: DialogType.error,
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() => _fetchingActivityId = null);
+  //     }
+  //   }
+  // }
 
   Widget _buildActionButton({
     required String label,
@@ -1242,6 +1291,25 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
                                           context,
                                           AppRoutes.uploadPhoto,
                                           arguments: widget.schedule,
+                                        );
+                                      },
+                                    ),
+                                    _buildActionButton(
+                                      label: "Nhóm",
+                                      icon: Icons.groups_rounded,
+                                      onTap: () {
+                                        // Chuyển sang màn hình StaffGroupScreen và truyền campId
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                StaffGroupScreen(
+                                                  campId:
+                                                      widget.schedule.campId,
+                                                  campName:
+                                                      widget.schedule.name,
+                                                ),
+                                          ),
                                         );
                                       },
                                     ),
@@ -1506,9 +1574,12 @@ class _StaffScheduleDetailScreenState extends State<StaffScheduleDetailScreen>
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
+                    // onPressed: _fetchingActivityId != null
+                    //     ? null
+                    //     : () => _showAttendanceOptions(context, act),
                     onPressed: _fetchingActivityId != null
                         ? null
-                        : () => _showAttendanceOptions(context, act),
+                        : () => _navigateToFaceAttendance(context, act),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: StaffTheme.staffPrimary,
                       side: const BorderSide(color: StaffTheme.staffPrimary),

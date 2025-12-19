@@ -10,8 +10,10 @@ abstract class CamperRepository {
   Future<void> updateCamper(int camperId, Camper camper);
   Future<Camper> getCamperById(int camperId);
   Future<List<CamperGroup>> getCamperGroups(int campId);
+  Future<List<CamperGroup>> getCamperGroupId(int groupId);
   Future<Group> getCampGroup(int campId);
   Future<List<Camper>> getCampersByCoreActivityId(int coreActivityId);
   Future<List<Camper>> getCampersByOptionalActivityId(int optionalActivityId);
+  Future<List<Camper>> getCampersByActivityId(int activityScheduleId);
   Future<void> updateUploadAvatarCamper(int camperId, File imageFile);
 }

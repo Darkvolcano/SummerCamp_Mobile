@@ -48,7 +48,9 @@ import 'package:summercamp/features/camper/data/repositories/camper_repository_i
 import 'package:summercamp/features/camper/data/services/camper_api_service.dart';
 import 'package:summercamp/features/camper/domain/use_cases/create_camper.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_group_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_group.dart';
@@ -316,12 +318,14 @@ void main() {
     final updateCamperUseCase = UpdateCamper(camperRepo);
     final getCamperByIdUseCase = GetCamperById(camperRepo);
     final getCamperGroupsUseCase = GetCamperGroups(camperRepo);
+    final getCamperGroupByGroupIdUseCase = GetCamperGroupByGroupId(camperRepo);
     final getCampersByCoreActivityUseCase = GetCampersByCoreActivityId(
       camperRepo,
     );
     final getCampersByOptionalActivityUseCase = GetCampersByOptionalActivityId(
       camperRepo,
     );
+    final getCampersByActivityUseCase = GetCampersByActivityId(camperRepo);
     final getCampGroupUseCase = GetCampGroup(camperRepo);
     final updateUploadAvatarCamper = UpdateUploadAvatarCamper(camperRepo);
 
@@ -428,7 +432,7 @@ void main() {
           // BlogProvider need 1 usecases (GetBlogs)
           ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-          // CamperProvider need 9 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup, updateUploadAvatarCamper)
+          // CamperProvider need 11 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCamperGroupByGroupId, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampersByActivityId, getCampGroup, updateUploadAvatarCamper)
           ChangeNotifierProvider(
             create: (_) => CamperProvider(
               createCamperUseCase,
@@ -436,8 +440,10 @@ void main() {
               updateCamperUseCase,
               getCamperByIdUseCase,
               getCamperGroupsUseCase,
+              getCamperGroupByGroupIdUseCase,
               getCampersByCoreActivityUseCase,
               getCampersByOptionalActivityUseCase,
+              getCampersByActivityUseCase,
               getCampGroupUseCase,
               updateUploadAvatarCamper,
             ),

@@ -4,8 +4,12 @@ class ActivityApiService {
   final ApiClient client;
   ActivityApiService(this.client);
 
+  // Future<List<dynamic>> fetchActivitySchedulesByCampId(int campId) async {
+  //   final res = await client.get('ActivitySchedule/camp/$campId');
+  //   return res.data as List;
+  // }
   Future<List<dynamic>> fetchActivitySchedulesByCampId(int campId) async {
-    final res = await client.get('ActivitySchedule/camp/$campId');
+    final res = await client.get('Staff/camps/$campId/all-schedules');
     return res.data as List;
   }
 

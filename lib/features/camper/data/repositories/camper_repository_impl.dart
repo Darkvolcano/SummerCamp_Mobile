@@ -89,6 +89,12 @@ class CamperRepositoryImpl implements CamperRepository {
   }
 
   @override
+  Future<List<CamperGroup>> getCamperGroupId(int groupId) async {
+    final list = await service.getCamperGroupsByGroupId(groupId);
+    return list.map((e) => CamperGroupModel.fromJson(e)).toList();
+  }
+
+  @override
   Future<Group> getCampGroup(int campId) async {
     final data = await service.getCampGroup(campId);
     return GroupModel.fromJson(data);
@@ -117,5 +123,15 @@ class CamperRepositoryImpl implements CamperRepository {
   @override
   Future<void> updateUploadAvatarCamper(int camperId, File imageFile) async {
     await service.updateUploadAvatarCamper(camperId, imageFile);
+  }
+
+  @override
+  Future<List<Camper>> getCampersByActivityId(int activityScheduleId) async {
+    final list = await service.fetchCamperByActivitySchedule(
+      activityScheduleId,
+    );
+    return list
+        .map((data) => CamperModel.fromJson(data as Map<String, dynamic>))
+        .toList();
   }
 }

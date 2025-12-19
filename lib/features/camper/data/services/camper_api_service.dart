@@ -29,6 +29,15 @@ class CamperApiService {
     return res.data as List<dynamic>;
   }
 
+  Future<List<dynamic>> fetchCamperByActivitySchedule(
+    int activityScheduleId,
+  ) async {
+    final res = await client.get(
+      'Camper/activitiySchedules/$activityScheduleId/campers',
+    );
+    return res.data as List<dynamic>;
+  }
+
   Future<Map<String, dynamic>> createCamper({
     required Map<String, dynamic> data,
   }) async {
@@ -59,6 +68,18 @@ class CamperApiService {
       final response = await client.get(
         'campergroup',
         queryParameters: {'campId': campId},
+      );
+      return response.data as List;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
+  Future<List<dynamic>> getCamperGroupsByGroupId(int groupId) async {
+    try {
+      final response = await client.get(
+        'campergroup',
+        queryParameters: {'groupId': groupId},
       );
       return response.data as List;
     } on DioException catch (e) {

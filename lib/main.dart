@@ -21,7 +21,9 @@ import 'package:summercamp/features/auth/domain/use_cases/update_license_informa
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_avatar.dart';
 import 'package:summercamp/features/auth/domain/use_cases/update_upload_license.dart';
 import 'package:summercamp/features/auth/domain/use_cases/upload_license.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_core_activity_id.dart';
+import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_group_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_upload_avatar_camper.dart';
@@ -180,12 +182,14 @@ Future<void> main() async {
   final updateCamperUseCase = UpdateCamper(camperRepo);
   final getCamperByIdUseCase = GetCamperById(camperRepo);
   final getCamperGroupsUseCase = GetCamperGroups(camperRepo);
+  final getCamperGroupByGroupIdUseCase = GetCamperGroupByGroupId(camperRepo);
   final getCampersByCoreActivityUseCase = GetCampersByCoreActivityId(
     camperRepo,
   );
   final getCampersByOptionalActivityUseCase = GetCampersByOptionalActivityId(
     camperRepo,
   );
+  final getCampersByActivityUseCase = GetCampersByActivityId(camperRepo);
   final getCampGroupUseCase = GetCampGroup(camperRepo);
   final updateUploadAvatarCamper = UpdateUploadAvatarCamper(camperRepo);
 
@@ -291,7 +295,7 @@ Future<void> main() async {
         // BlogProvider need 1 usecases (GetBlogs)
         ChangeNotifierProvider(create: (_) => BlogProvider(getBlogsUseCase)),
 
-        // CamperProvider need 9 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampGroup, updateUploadAvatarCamper)
+        // CamperProvider need 11 usecases (GetCampers, CreateCamper, UpdateCamper, getCamperById, getCamperGroups, getCamperGroupByGroupId, getCampersByCoreActivityId, getCampersByOptionalActivityId, getCampersByActivityId, getCampGroup, updateUploadAvatarCamper)
         ChangeNotifierProvider(
           create: (_) => CamperProvider(
             createCamperUseCase,
@@ -299,8 +303,10 @@ Future<void> main() async {
             updateCamperUseCase,
             getCamperByIdUseCase,
             getCamperGroupsUseCase,
+            getCamperGroupByGroupIdUseCase,
             getCampersByCoreActivityUseCase,
             getCampersByOptionalActivityUseCase,
+            getCampersByActivityUseCase,
             getCampGroupUseCase,
             updateUploadAvatarCamper,
           ),
