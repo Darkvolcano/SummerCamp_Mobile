@@ -38,6 +38,7 @@ import 'package:summercamp/features/livestream/data/services/livestream_api_serv
 import 'package:summercamp/features/livestream/domain/use_cases/update_livestream_room_id.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
+import 'package:summercamp/features/report/domain/use_cases/create_transport_report.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_route_stop_by_route_id.dart';
@@ -205,6 +206,7 @@ Future<void> main() async {
   final reportRepo = ReportRepositoryImpl(reportApi);
   final getReportsUseCase = GetReports(reportRepo);
   final createReportUseCase = CreateReport(reportRepo);
+  final createTransportReportUseCase = CreateTransportReport(reportRepo);
 
   // AI Chat
   final aiChatApi = AIChatApiService(apiClient);
@@ -327,9 +329,13 @@ Future<void> main() async {
           ),
         ),
 
-        // ReportProvider need 2 usecases (GetReports, CreateReport)
+        // ReportProvider need 3 usecases (GetReports, CreateReport, CreateTransportReport)
         ChangeNotifierProvider(
-          create: (_) => ReportProvider(getReportsUseCase, createReportUseCase),
+          create: (_) => ReportProvider(
+            getReportsUseCase,
+            createReportUseCase,
+            createTransportReportUseCase,
+          ),
         ),
 
         // AIChatProvider need 3 usecases (SendChatMessage, GetChatHistory, GetConversation)

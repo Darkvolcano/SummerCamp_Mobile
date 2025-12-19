@@ -32,4 +32,21 @@ class ReportRepositoryImpl implements ReportRepository {
       imageUrl: imageUrl,
     );
   }
+
+  @override
+  Future<Map<String, dynamic>> createTransportReport({
+    required int campId,
+    required int camperId,
+    required int transportScheduleId,
+    required String note,
+    required String imageUrl,
+  }) async {
+    return await service.createReportTransport(
+      campId: campId,
+      camperId: camperId,
+      transportScheduleId: transportScheduleId,
+      note: note,
+      imageUrl: imageUrl,
+    );
+  }
 }

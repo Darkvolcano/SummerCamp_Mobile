@@ -10,4 +10,11 @@ abstract class ReportRepository {
     required int level,
     required String imageUrl,
   });
+  Future<Map<String, dynamic>> createTransportReport({
+    required int campId,
+    required int camperId,
+    required int transportScheduleId,
+    required String note,
+    required String imageUrl,
+  });
 }

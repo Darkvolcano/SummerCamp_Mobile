@@ -84,6 +84,7 @@ import 'package:summercamp/features/registration/presentation/state/registration
 import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
 import 'package:summercamp/features/report/data/services/report_api_service.dart';
 import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
+import 'package:summercamp/features/report/domain/use_cases/create_transport_report.dart';
 import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
 import 'package:summercamp/features/schedule/data/repositories/schedule_repository_impl.dart';
@@ -341,6 +342,7 @@ void main() {
     final reportRepo = ReportRepositoryImpl(reportApi);
     final getReportsUseCase = GetReports(reportRepo);
     final createReportUseCase = CreateReport(reportRepo);
+    final createTransportReportUseCase = CreateTransportReport(reportRepo);
 
     // AI Chat
     final aiChatApi = AIChatApiService(apiClient);
@@ -464,10 +466,13 @@ void main() {
             ),
           ),
 
-          // ReportProvider need 2 usecases (GetReports, CreateReport)
+          // ReportProvider need 3 usecases (GetReports, CreateReport, CreateTransportReport)
           ChangeNotifierProvider(
-            create: (_) =>
-                ReportProvider(getReportsUseCase, createReportUseCase),
+            create: (_) => ReportProvider(
+              getReportsUseCase,
+              createReportUseCase,
+              createTransportReportUseCase,
+            ),
           ),
 
           // AIChatProvider need 1 usecases (SendChatMessage)

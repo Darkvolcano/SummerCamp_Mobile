@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/report/domain/entities/report.dart';
 import 'package:summercamp/features/report/domain/use_cases/create_report.dart';
+import 'package:summercamp/features/report/domain/use_cases/create_transport_report.dart';
 import 'package:summercamp/features/report/domain/use_cases/get_report.dart';
 
 class ReportProvider with ChangeNotifier {
   final CreateReport createReportUseCase;
   final GetReports getReportsUseCase;
+  final CreateTransportReport createTransportReportUseCase;
 
-  ReportProvider(this.getReportsUseCase, this.createReportUseCase);
+  ReportProvider(
+    this.getReportsUseCase,
+    this.createReportUseCase,
+    this.createTransportReportUseCase,
+  );
 
   List<Report> _reports = [];
   List<Report> get reports => _reports;
@@ -46,6 +52,34 @@ class ReportProvider with ChangeNotifier {
         note: note,
         activityScheduleId: activityScheduleId,
         level: level,
+        imageUrl: imageUrl,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> createTransportReport({
+    required int campId,
+    required int camperId,
+    required int transportScheduleId,
+    required String note,
+    required String imageUrl,
+  }) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await createTransportReportUseCase(
+        campId: campId,
+        camperId: camperId,
+        transportScheduleId: transportScheduleId,
+        note: note,
         imageUrl: imageUrl,
       );
     } catch (e) {

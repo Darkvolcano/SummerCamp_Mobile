@@ -43,6 +43,7 @@ class ReportApiService {
     required int camperId,
     required int transportScheduleId,
     required String note,
+    required String imageUrl,
   }) async {
     try {
       final res = await client.post(
@@ -52,6 +53,7 @@ class ReportApiService {
           'camperId': camperId,
           'transportScheduleId': transportScheduleId,
           'note': note,
+          'imageUrl': imageUrl,
         },
       );
 
