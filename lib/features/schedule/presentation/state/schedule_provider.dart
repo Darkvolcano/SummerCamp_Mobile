@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:summercamp/features/schedule/domain/entities/camper_transport.dart';
+import 'package:summercamp/features/schedule/domain/entities/route.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_route_stop_by_route_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
@@ -25,6 +27,7 @@ class ScheduleProvider with ChangeNotifier {
   final UpdateCamperTransportAttendanceListCheckOut
   updateAttendanceCamperTransportCheckOutListUseCase;
   final GetStaffTransportSchedule getStaffTransportSchedulesUseCase;
+  final GetRouteStopByRouteId getRouteStopByRouteIdUseCase;
 
   ScheduleProvider(
     this.getStaffSchedulesUseCase,
@@ -35,6 +38,7 @@ class ScheduleProvider with ChangeNotifier {
     this.updateAttendanceCamperTransportCheckInListUseCase,
     this.updateAttendanceCamperTransportCheckOutListUseCase,
     this.getStaffTransportSchedulesUseCase,
+    this.getRouteStopByRouteIdUseCase,
   );
 
   List<Schedule> _schedules = [];
@@ -49,6 +53,9 @@ class ScheduleProvider with ChangeNotifier {
 
   List<CamperTransport> _campersTransport = [];
   List<CamperTransport> get campersTransport => _campersTransport;
+
+  List<Route> _routeStop = [];
+  List<Route> get routeStop => _routeStop;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -202,6 +209,16 @@ class ScheduleProvider with ChangeNotifier {
       print("Lỗi load lịch đưa đón staff: $e");
       _transportStaffSchedules = [];
     }
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadRouteStopByRouteId(int routeId) async {
+    _loading = true;
+    notifyListeners();
+
+    _routeStop = await getRouteStopByRouteIdUseCase(routeId);
 
     _loading = false;
     notifyListeners();

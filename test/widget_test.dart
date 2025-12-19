@@ -84,6 +84,7 @@ import 'package:summercamp/features/schedule/data/repositories/schedule_reposito
 import 'package:summercamp/features/schedule/data/services/schedule_api_service.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
+import 'package:summercamp/features/schedule/domain/use_cases/get_route_stop_by_route_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_schedules.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_staff_transport_schedule.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/update_camper_transport_check_in.dart';
@@ -360,6 +361,7 @@ void main() {
     final getStaffTransportSchedulesUseCase = GetStaffTransportSchedule(
       scheduleRepo,
     );
+    final getRouteStopByRouteIdUseCase = GetRouteStopByRouteId(scheduleRepo);
 
     // Attendance
     final attendanceApi = AttendanceApiService(apiClient, apiPythonClient);
@@ -464,7 +466,7 @@ void main() {
             ),
           ),
 
-          // ScheduleProvider need 8 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList, GetStaffTransportSchedule)
+          // ScheduleProvider need 9 usecases (GetStaffSchedules, UpdateTransportScheduleStartTrip, UpdateTransportScheduleEndTrip, GetDriverSchedules, GetCampersTransportByTransportScheduleId, UpdateCamperTransportAttendanceCheckInList, UpdateCamperTransportAttendanceCheckOutList, GetStaffTransportSchedule, GetRouteStopByRouteId)
           ChangeNotifierProvider(
             create: (_) => ScheduleProvider(
               getStaffSchedulesUseCase,
@@ -475,6 +477,7 @@ void main() {
               updateCamperTransportAttendanceCheckInListUseCase,
               updateCamperTransportAttendanceCheckOutListUseCase,
               getStaffTransportSchedulesUseCase,
+              getRouteStopByRouteIdUseCase,
             ),
           ),
 

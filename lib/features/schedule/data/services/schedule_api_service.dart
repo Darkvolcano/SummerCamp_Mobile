@@ -77,4 +77,9 @@ class ScheduleApiService {
     final res = await client.get('transport-schedules/staff-schedule');
     return res.data as List;
   }
+
+  Future<List<dynamic>> fetchRouteStopByRouteId(int routeId) async {
+    final res = await client.get('routestop/route/$routeId');
+    return res.data as List;
+  }
 }
