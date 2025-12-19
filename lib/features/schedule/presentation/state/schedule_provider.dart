@@ -54,8 +54,11 @@ class ScheduleProvider with ChangeNotifier {
   List<CamperTransport> _campersTransport = [];
   List<CamperTransport> get campersTransport => _campersTransport;
 
-  List<Route> _routeStop = [];
+  final List<Route> _routeStop = [];
   List<Route> get routeStop => _routeStop;
+
+  final Map<int, List<Route>> _routeStopsMap = {};
+  Map<int, List<Route>> get routeStopsMap => _routeStopsMap;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -215,12 +218,18 @@ class ScheduleProvider with ChangeNotifier {
   }
 
   Future<void> loadRouteStopByRouteId(int routeId) async {
-    _loading = true;
-    notifyListeners();
+    if (_routeStopsMap.containsKey(routeId)) return;
 
-    _routeStop = await getRouteStopByRouteIdUseCase(routeId);
+    try {
+      final stops = await getRouteStopByRouteIdUseCase(routeId);
 
-    _loading = false;
+      stops.sort((a, b) => a.stopOrder.compareTo(b.stopOrder));
+
+      _routeStopsMap[routeId] = stops;
+    } catch (e) {
+      print("Lỗi load route stop cho route $routeId: $e");
+    }
+
     notifyListeners();
   }
 }

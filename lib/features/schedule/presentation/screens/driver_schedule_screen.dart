@@ -19,8 +19,20 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScheduleProvider>().loadDriverSchedules();
+      // context.read<ScheduleProvider>().loadDriverSchedules();
+      _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    final provider = context.read<ScheduleProvider>();
+    await provider.loadDriverSchedules();
+
+    if (provider.transportSchedules.isNotEmpty) {
+      for (var schedule in provider.transportSchedules) {
+        provider.loadRouteStopByRouteId(schedule.routeName.routeId);
+      }
+    }
   }
 
   // void _showStatusDialog(String message, {bool isSuccess = true}) {
@@ -278,6 +290,9 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                 //   buttonIcon = Icons.check_circle;
                 // }
 
+                final routeStops =
+                    provider.routeStopsMap[trip.routeName.routeId] ?? [];
+
                 final startDateTime = _parseDateTime(trip.date, trip.startTime);
                 final endDateTime = _parseDateTime(trip.date, trip.endTime);
                 final actualStartDateTime = _parseDateTime(
@@ -358,6 +373,108 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                             color: Colors.grey[600],
                           ),
                         ),
+
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(),
+                        ),
+
+                        const Text(
+                          "Lộ trình:",
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        if (routeStops.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: routeStops.length,
+                            itemBuilder: (ctx, stopIndex) {
+                              final stop = routeStops[stopIndex];
+                              final isLast = stopIndex == routeStops.length - 1;
+
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: DriverTheme.driverPrimary,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (!isLast)
+                                        Container(
+                                          width: 2,
+                                          height: 30,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          stop.location.name,
+                                          style: const TextStyle(
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Thứ tự: ${stop.stopOrder} • ${stop.estimatedTime} phút",
+                                          style: TextStyle(
+                                            fontFamily: "Quicksand",
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
 
                         const Divider(height: 24),
 

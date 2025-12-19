@@ -28,6 +28,10 @@ class _StaffTransportScheduleAttedanceScreenState
 
   final Map<int, bool> _selectionState = {};
 
+  final Map<int, String> _routeStopLocationMap = {};
+
+  String _lastStopName = "Chưa cập nhật";
+
   DateTime _parseDateTime(String dateStr, String timeStr) {
     try {
       if (timeStr.isEmpty) return DateTime.parse(dateStr);
@@ -119,14 +123,52 @@ class _StaffTransportScheduleAttedanceScreenState
     super.dispose();
   }
 
+  // Future<void> _loadData() async {
+  //   final provider = context.read<ScheduleProvider>();
+  //   await provider.loadCampersTransportByTransportScheduleId(
+  //     widget.schedule.transportScheduleId,
+  //   );
+
+  //   final transports = provider.campersTransport;
+
+  //   _selectionState.clear();
+
+  //   for (var transport in transports) {
+  //     _checkInStatus[transport.camperTransportId] =
+  //         transport.checkInTime != null;
+  //     _checkOutStatus[transport.camperTransportId] =
+  //         transport.checkoutTime != null;
+  //   }
+
+  //   if (mounted) setState(() {});
+  // }
+
   Future<void> _loadData() async {
     final provider = context.read<ScheduleProvider>();
+
     await provider.loadCampersTransportByTransportScheduleId(
       widget.schedule.transportScheduleId,
     );
 
-    final transports = provider.campersTransport;
+    final int routeId = widget.schedule.routeName.routeId;
 
+    if (routeId != 0) {
+      await provider.loadRouteStopByRouteId(routeId);
+
+      final stops = provider.routeStopsMap[routeId] ?? [];
+
+      _routeStopLocationMap.clear();
+
+      if (stops.isNotEmpty) {
+        for (var stop in stops) {
+          _routeStopLocationMap[stop.location.id] = stop.location.name;
+        }
+
+        _lastStopName = stops.last.location.name;
+      }
+    }
+
+    final transports = provider.campersTransport;
     _selectionState.clear();
 
     for (var transport in transports) {
@@ -480,6 +522,21 @@ class _StaffTransportScheduleAttedanceScreenState
         final int id = transport.camperTransportId;
         final String status = transport.status;
 
+        String locationName = "Chưa cập nhật";
+
+        if (isCheckOutMode) {
+          locationName = _lastStopName;
+        } else {
+          int? camperLocationId = transport.location?.id;
+          if (camperLocationId != null) {
+            if (_routeStopLocationMap.containsKey(camperLocationId)) {
+              locationName = _routeStopLocationMap[camperLocationId]!;
+            } else {
+              locationName = transport.location?.name ?? "Địa điểm lạ";
+            }
+          }
+        }
+
         bool isPickedUp = status == "Onboard" || status == "Completed";
 
         bool isDroppedOff = status == "Completed";
@@ -554,6 +611,29 @@ class _StaffTransportScheduleAttedanceScreenState
                           ),
                         ),
                         const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              isCheckOutMode ? Icons.flag : Icons.location_on,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                "${isCheckOutMode ? 'Trả:' : 'Đón:'} $locationName",
+                                style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  color: Colors.grey[700],
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                         // Text(
                         //   "Tại: ${transport.location.name}",
                         //   style: TextStyle(

@@ -234,7 +234,7 @@ class _StaffTransportScheduleScreenState
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final provider = context.watch<ScheduleProvider>();
-    final schedules = provider.transportSchedules;
+    final schedules = provider.transportStaffSchedules;
 
     return Scaffold(
       appBar: AppBar(
@@ -378,6 +378,25 @@ class _StaffTransportScheduleScreenState
                             const SizedBox(width: 8),
                             Text(
                               "Xe: ${trip.vehicleName.vehicleName}",
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontFamily: "Quicksand",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.people,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Tài xế: ${trip.driverFullName.fullName}",
                               style: textTheme.bodyMedium?.copyWith(
                                 fontFamily: "Quicksand",
                               ),
