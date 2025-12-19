@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:summercamp/core/network/api_client.dart';
 import 'package:summercamp/core/network/dio_error_mapper.dart';
@@ -21,6 +23,27 @@ class AlbumApiService {
       throw mapDioError(e);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> uploadImage(File imageFile) async {
+    try {
+      String fileName = imageFile.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+        ),
+      });
+
+      await client.post(
+        'upload/image',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
     }
   }
 }

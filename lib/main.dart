@@ -6,6 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:summercamp/core/network/api_python_client.dart';
 import 'package:summercamp/features/activity/domain/use_cases/get_activity_schedule_by_camp_id.dart';
+import 'package:summercamp/features/album/data/repositories/album_repository_impl.dart';
+import 'package:summercamp/features/album/data/services/album_api_service.dart';
+import 'package:summercamp/features/album/domain/use_cases/get_albums.dart';
+import 'package:summercamp/features/album/domain/use_cases/upload_image.dart';
+import 'package:summercamp/features/album/domain/use_cases/upload_photo_album.dart';
+import 'package:summercamp/features/album/presentation/state/album_provider.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
@@ -241,6 +247,13 @@ Future<void> main() async {
   final livestreamRepo = LivestreamRepositoryImpl(livestreamApi);
   final updateLivestreamRoomIdUseCase = UpdateLivestreamRoomId(livestreamRepo);
 
+  // Album
+  final albumApiService = AlbumApiService(apiClient);
+  final albumRepo = AlbumRepositoryImpl(albumApiService);
+  final getAlbumsUseCase = GetAlbums(albumRepo);
+  final uploadPhotoAlbumUseCase = UploadPhotoAlbum(albumRepo);
+  final uploadImageUseCase = UploadImage(albumRepo);
+
   runApp(
     MultiProvider(
       providers: [
@@ -356,6 +369,15 @@ Future<void> main() async {
         // LivestreamProvider need 1 usecases (UpdateLivestreamRoomId)
         ChangeNotifierProvider(
           create: (_) => LivestreamProvider(updateLivestreamRoomIdUseCase),
+        ),
+
+        // Album need 1 usecases (GetAlbums, UploadPhotoAlbum, UploadImage)
+        ChangeNotifierProvider(
+          create: (_) => AlbumProvider(
+            getAlbumsUseCase,
+            uploadPhotoAlbumUseCase,
+            uploadImageUseCase,
+          ),
         ),
       ],
       child: const SummerCampApp(),

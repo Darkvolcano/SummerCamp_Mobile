@@ -13,6 +13,12 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/get_chat_history.da
 import 'package:summercamp/features/ai_chat/domain/use_cases/get_conversation.dart';
 import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.dart';
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
+import 'package:summercamp/features/album/data/repositories/album_repository_impl.dart';
+import 'package:summercamp/features/album/data/services/album_api_service.dart';
+import 'package:summercamp/features/album/domain/use_cases/get_albums.dart';
+import 'package:summercamp/features/album/domain/use_cases/upload_image.dart';
+import 'package:summercamp/features/album/domain/use_cases/upload_photo_album.dart';
+import 'package:summercamp/features/album/presentation/state/album_provider.dart';
 import 'package:summercamp/features/attendance/data/repositories/attendance_repository_impl.dart';
 import 'package:summercamp/features/attendance/data/services/attendance_api_service.dart';
 import 'package:summercamp/features/attendance/domain/use_cases/preload_face_database.dart';
@@ -378,6 +384,13 @@ void main() {
       livestreamRepo,
     );
 
+    // Album
+    final albumApiService = AlbumApiService(apiClient);
+    final albumRepo = AlbumRepositoryImpl(albumApiService);
+    final getAlbumsUseCase = GetAlbums(albumRepo);
+    final uploadPhotoAlbumUseCase = UploadPhotoAlbum(albumRepo);
+    final uploadImageUseCase = UploadImage(albumRepo);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -494,6 +507,15 @@ void main() {
           // LivestreamProvider need 1 usecases (UpdateLivestreamRoomId)
           ChangeNotifierProvider(
             create: (_) => LivestreamProvider(updateLivestreamRoomIdUseCase),
+          ),
+
+          // Album need 1 usecases (GetAlbums, UploadPhotoAlbum, UploadImage)
+          ChangeNotifierProvider(
+            create: (_) => AlbumProvider(
+              getAlbumsUseCase,
+              uploadPhotoAlbumUseCase,
+              uploadImageUseCase,
+            ),
           ),
         ],
         child: const SummerCampApp(),

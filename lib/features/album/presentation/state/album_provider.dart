@@ -1,14 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/album/domain/entities/album.dart';
 import 'package:summercamp/features/album/domain/entities/album_photo.dart';
 import 'package:summercamp/features/album/domain/use_cases/get_albums.dart';
+import 'package:summercamp/features/album/domain/use_cases/upload_image.dart';
 import 'package:summercamp/features/album/domain/use_cases/upload_photo_album.dart';
 
 class AlbumProvider with ChangeNotifier {
   final GetAlbums getAlbumsUseCase;
   final UploadPhotoAlbum uploadPhotoAlbumUseCase;
+  final UploadImage uploadImageUseCase;
 
-  AlbumProvider(this.getAlbumsUseCase, this.uploadPhotoAlbumUseCase);
+  AlbumProvider(
+    this.getAlbumsUseCase,
+    this.uploadPhotoAlbumUseCase,
+    this.uploadImageUseCase,
+  );
 
   List<Album> _albums = [];
   List<Album> get albums => _albums;
@@ -40,5 +48,14 @@ class AlbumProvider with ChangeNotifier {
   }) async {
     await uploadPhotoAlbumUseCase(campId, images: images);
     notifyListeners();
+  }
+
+  Future<void> uploadImage(File imageFile) async {
+    try {
+      await uploadImageUseCase(imageFile);
+    } catch (e) {
+      print("Lỗi upload ảnh: $e");
+      rethrow;
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:summercamp/features/album/data/models/album_model.dart';
 import 'package:summercamp/features/album/data/services/album_api_service.dart';
 import 'package:summercamp/features/album/domain/entities/album.dart';
@@ -19,5 +21,10 @@ class AlbumRepositoryImpl implements AlbumRepository {
     required List<String> images,
   }) async {
     return await service.uploadPhotoAlbum(campId, images: images);
+  }
+
+  @override
+  Future<void> uploadImage(File imageFile) async {
+    await service.uploadImage(imageFile);
   }
 }

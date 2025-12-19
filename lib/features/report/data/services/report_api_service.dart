@@ -21,7 +21,7 @@ class ReportApiService {
   }) async {
     try {
       final res = await client.post(
-        'report',
+        'report/incident-ticket',
         data: {
           'campId': campId,
           'camperId': camperId,
