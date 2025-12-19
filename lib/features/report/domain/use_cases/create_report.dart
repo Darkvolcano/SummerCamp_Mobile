@@ -8,17 +8,17 @@ class CreateReport {
     required int campId,
     required int camperId,
     required String note,
-    required String status,
-    required int activityId,
+    required int activityScheduleId,
     required String level,
+    required String imageUrl,
   }) async {
     return await repository.createReport(
       campId: campId,
       camperId: camperId,
       note: note,
-      status: status,
-      activityId: activityId,
+      activityScheduleId: activityScheduleId,
       level: level,
+      imageUrl: imageUrl,
     );
   }
 }

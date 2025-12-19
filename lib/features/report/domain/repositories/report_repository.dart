@@ -6,8 +6,8 @@ abstract class ReportRepository {
     required int campId,
     required int camperId,
     required String note,
-    required String status,
-    required int activityId,
+    required int activityScheduleId,
     required String level,
+    required String imageUrl,
   });
 }

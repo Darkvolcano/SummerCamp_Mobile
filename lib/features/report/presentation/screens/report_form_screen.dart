@@ -42,9 +42,9 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
         campId: widget.campId,
         camperId: int.tryParse(_camperIdController.text) ?? 0,
         note: _noteController.text,
-        status: _status,
-        activityId: int.tryParse(_activityIdController.text) ?? 0,
+        activityScheduleId: int.tryParse(_activityIdController.text) ?? 0,
         level: _level,
+        imageUrl: "",
       );
 
       if (mounted) {

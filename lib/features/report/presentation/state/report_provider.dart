@@ -31,9 +31,9 @@ class ReportProvider with ChangeNotifier {
     required int campId,
     required int camperId,
     required String note,
-    required String status,
-    required int activityId,
+    required int activityScheduleId,
     required String level,
+    required String imageUrl,
   }) async {
     _loading = true;
     _error = null;
@@ -44,9 +44,9 @@ class ReportProvider with ChangeNotifier {
         campId: campId,
         camperId: camperId,
         note: note,
-        status: status,
-        activityId: activityId,
+        activityScheduleId: activityScheduleId,
         level: level,
+        imageUrl: imageUrl,
       );
     } catch (e) {
       _error = e.toString();

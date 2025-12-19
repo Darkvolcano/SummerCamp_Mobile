@@ -15,9 +15,9 @@ class ReportApiService {
     required int campId,
     required int camperId,
     required String note,
-    required String status,
-    required int activityId,
+    required int activityScheduleId,
     required String level,
+    required String imageUrl,
   }) async {
     try {
       final res = await client.post(
@@ -25,10 +25,10 @@ class ReportApiService {
         data: {
           'campId': campId,
           'camperId': camperId,
-          'status': status,
           'note': note,
-          'activityId': activityId,
+          'activityScheduleId': activityScheduleId,
           'level': level,
+          'imageUrl': imageUrl,
         },
       );
 
