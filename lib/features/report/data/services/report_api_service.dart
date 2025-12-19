@@ -16,7 +16,7 @@ class ReportApiService {
     required int camperId,
     required String note,
     required int activityScheduleId,
-    required String level,
+    required int level,
     required String imageUrl,
   }) async {
     try {

@@ -1,7 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/album/presentation/state/album_provider.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
+import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
+import 'package:summercamp/features/activity/presentation/state/activity_provider.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 
 class ReportCreateScreen extends StatefulWidget {
@@ -14,37 +20,85 @@ class ReportCreateScreen extends StatefulWidget {
 
 class _ReportCreateScreenState extends State<ReportCreateScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _camperIdController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _activityIdController = TextEditingController();
-  String _status = "Pending";
-  String _level = "Low";
+
+  int _level = 1;
   bool _isSubmitting = false;
+
+  int? _selectedCamperId;
+  int? _selectedActivityId;
+
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  final Map<int, String> _levelLabels = {1: "Thấp", 2: "Trung bình", 3: "Cao"};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CamperProvider>().loadStaffCampGroup(widget.campId);
+      context.read<ActivityProvider>().loadActivitySchedulesByCampId(
+        widget.campId,
+      );
+    });
+  }
 
   @override
   void dispose() {
-    _camperIdController.dispose();
     _noteController.dispose();
-    _activityIdController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print("Lỗi chọn ảnh: $e");
+    }
   }
 
   Future<void> _submitReport() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (_selectedCamperId == null) {
+      showCustomDialog(
+        context,
+        title: "Thiếu thông tin",
+        message: "Vui lòng chọn Camper",
+        type: DialogType.warning,
+      );
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
     try {
-      final provider = context.read<ReportProvider>();
+      final reportProvider = context.read<ReportProvider>();
+      final albumProvider = context.read<AlbumProvider>();
 
-      await provider.createReport(
+      String imageUrl = "";
+
+      if (_selectedImage != null) {
+        imageUrl = await albumProvider.uploadImage(_selectedImage!);
+      }
+
+      await reportProvider.createReport(
         campId: widget.campId,
-        camperId: int.tryParse(_camperIdController.text) ?? 0,
+        camperId: _selectedCamperId!,
         note: _noteController.text,
-        activityScheduleId: int.tryParse(_activityIdController.text) ?? 0,
+        activityScheduleId: _selectedActivityId ?? 0,
         level: _level,
-        imageUrl: "",
+        imageUrl: imageUrl,
       );
 
       if (mounted) {
@@ -74,11 +128,17 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final camperProvider = context.watch<CamperProvider>();
+    final camperList = camperProvider.groupMembers;
+
+    final activityProvider = context.watch<ActivityProvider>();
+    final activityList = activityProvider.activitySchedules;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
-          "Tạo Báo Cáo Sự Cố",
+          "Sự Cố",
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
@@ -95,62 +155,175 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300, width: 1),
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    _buildTextField(
-                      controller: _camperIdController,
-                      label: "Mã Camper (ID)",
-                      icon: Icons.person_outline,
-                      isNumber: true,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _activityIdController,
-                      label: "Mã Hoạt động (ID)",
-                      icon: Icons.event_note,
-                      isNumber: true,
-                    ),
-                  ],
+                    child: _selectedImage != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              _selectedImage!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                size: 40,
+                                color: StaffTheme.staffPrimary.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Nhấn để tải ảnh sự cố",
+                                style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDropdown(
-                      label: "Mức độ",
-                      value: _level,
-                      items: ["Low", "Medium", "High"],
-                      icon: Icons.warning_amber_rounded,
-                      onChanged: (val) => setState(() => _level = val!),
+              if (_selectedImage != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Center(
+                    child: TextButton.icon(
+                      onPressed: () => setState(() => _selectedImage = null),
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      label: const Text(
+                        "Xóa ảnh",
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildDropdown(
-                      label: "Trạng thái",
-                      value: _status,
-                      items: ["Pending", "Resolved"],
-                      icon: Icons.info_outline,
-                      onChanged: (val) => setState(() => _status = val!),
+                ),
+
+              const SizedBox(height: 20),
+
+              Column(
+                children: [
+                  DropdownButtonFormField<int>(
+                    initialValue: _selectedCamperId,
+                    decoration: InputDecoration(
+                      labelText: "Chọn Camper",
+                      labelStyle: const TextStyle(
+                        fontFamily: "Quicksand",
+                        color: Colors.grey,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.person_outline,
+                        color: StaffTheme.staffPrimary,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
                     ),
+                    items: camperList.map((member) {
+                      return DropdownMenuItem<int>(
+                        value: member.camperName.camperId,
+                        child: Text(
+                          member.camperName.camperName,
+                          style: const TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) => setState(() => _selectedCamperId = val),
+                    validator: (value) =>
+                        value == null ? "Vui lòng chọn camper" : null,
+                    hint: camperList.isEmpty
+                        ? const Text(
+                            "Đang tải danh sách...",
+                            style: TextStyle(
+                              fontFamily: "Quicksand",
+                              fontSize: 13,
+                            ),
+                          )
+                        : null,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  DropdownButtonFormField<int>(
+                    initialValue: _selectedActivityId,
+                    decoration: InputDecoration(
+                      labelText: "Chọn Hoạt động",
+                      labelStyle: const TextStyle(
+                        fontFamily: "Quicksand",
+                        color: Colors.grey,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.event_note,
+                        color: StaffTheme.staffPrimary,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
+                    ),
+                    items: activityList.map((act) {
+                      String dateStr = DateFormatter.formatDate(act.startTime);
+
+                      return DropdownMenuItem<int>(
+                        value: act.activityScheduleId,
+                        child: SizedBox(
+                          width: 200,
+                          child: Text(
+                            "${act.activity?.name ?? "Hoạt động không tên"} ($dateStr)",
+                            style: const TextStyle(
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) =>
+                        setState(() => _selectedActivityId = val),
+                    hint: activityList.isEmpty
+                        ? const Text(
+                            "Đang tải danh sách...",
+                            style: TextStyle(
+                              fontFamily: "Quicksand",
+                              fontSize: 13,
+                            ),
+                          )
+                        : null,
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
+
+              _buildLevelDropdown(),
+
               const SizedBox(height: 20),
 
               Container(
@@ -209,7 +382,7 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                         )
                       : const Icon(Icons.send_rounded),
                   label: Text(
-                    _isSubmitting ? "Đang gửi..." : "Gửi Báo Cáo",
+                    _isSubmitting ? "Đang xử lý..." : "Gửi Báo Cáo",
                     style: const TextStyle(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
@@ -233,62 +406,13 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    bool isNumber = false,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      style: const TextStyle(
-        fontFamily: "Quicksand",
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          fontFamily: "Quicksand",
-          color: Colors.grey,
-        ),
-        prefixIcon: Icon(icon, color: StaffTheme.staffPrimary),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: StaffTheme.staffPrimary,
-            width: 2,
-          ),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      validator: (value) =>
-          value == null || value.isEmpty ? "Vui lòng nhập thông tin" : null,
-    );
-  }
-
-  Widget _buildDropdown({
-    required String label,
-    required String value,
-    required List<String> items,
-    required IconData icon,
-    required Function(String?) onChanged,
-  }) {
+  Widget _buildLevelDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
+        const Text(
+          "Mức độ sự cố",
+          style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -303,22 +427,26 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
+            child: DropdownButton<int>(
+              value: _level,
               isExpanded: true,
               icon: const Icon(
                 Icons.arrow_drop_down,
                 color: StaffTheme.staffPrimary,
               ),
-              items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
+              items: _levelLabels.entries.map((entry) {
+                return DropdownMenuItem<int>(
+                  value: entry.key,
                   child: Row(
                     children: [
-                      Icon(icon, size: 18, color: _getLevelColor(item)),
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        size: 18,
+                        color: _getLevelColor(entry.key),
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        item,
+                        entry.value,
                         style: const TextStyle(
                           fontFamily: "Quicksand",
                           fontWeight: FontWeight.w600,
@@ -328,7 +456,9 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
                   ),
                 );
               }).toList(),
-              onChanged: onChanged,
+              onChanged: (val) {
+                if (val != null) setState(() => _level = val);
+              },
             ),
           ),
         ),
@@ -336,13 +466,13 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
     );
   }
 
-  Color _getLevelColor(String level) {
+  Color _getLevelColor(int level) {
     switch (level) {
-      case "High":
+      case 3:
         return Colors.red;
-      case "Medium":
+      case 2:
         return Colors.orange;
-      case "Low":
+      case 1:
         return Colors.green;
       default:
         return StaffTheme.staffPrimary;

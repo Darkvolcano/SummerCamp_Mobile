@@ -9,7 +9,7 @@ class CreateReport {
     required int camperId,
     required String note,
     required int activityScheduleId,
-    required String level,
+    required int level,
     required String imageUrl,
   }) async {
     return await repository.createReport(
