@@ -26,10 +26,9 @@ class AlbumApiService {
     }
   }
 
-  Future<void> uploadImage(File imageFile) async {
+  Future<String> uploadImage(File imageFile) async {
     try {
       String fileName = imageFile.path.split('/').last;
-
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(
           imageFile.path,
@@ -37,11 +36,13 @@ class AlbumApiService {
         ),
       });
 
-      await client.post(
+      final response = await client.post(
         'upload/image',
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
       );
+
+      return response.data['url'] as String;
     } on DioException catch (e) {
       throw mapDioError(e);
     }

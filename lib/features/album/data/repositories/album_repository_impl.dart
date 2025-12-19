@@ -24,7 +24,7 @@ class AlbumRepositoryImpl implements AlbumRepository {
   }
 
   @override
-  Future<void> uploadImage(File imageFile) async {
-    await service.uploadImage(imageFile);
+  Future<String> uploadImage(File imageFile) async {
+    return await service.uploadImage(imageFile);
   }
 }

@@ -50,9 +50,9 @@ class AlbumProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadImage(File imageFile) async {
+  Future<String> uploadImage(File imageFile) async {
     try {
-      await uploadImageUseCase(imageFile);
+      return await uploadImageUseCase(imageFile);
     } catch (e) {
       print("Lỗi upload ảnh: $e");
       rethrow;
