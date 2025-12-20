@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
+import 'package:summercamp/features/report/presentation/screens/transport_report_form_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
@@ -355,6 +356,29 @@ class _StaffTransportScheduleAttedanceScreenState
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TransportReportCreateScreen(
+                campId: widget.schedule.campName.campId,
+                transportScheduleId: widget.schedule.transportScheduleId,
+              ),
+            ),
+          );
+        },
+        backgroundColor: StaffTheme.staffAccent,
+        icon: const Icon(Icons.report_problem_outlined, color: Colors.white),
+        label: const Text(
+          "Sự cố",
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: isLoading
           ? const Center(

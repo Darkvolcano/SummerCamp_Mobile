@@ -1,5 +1,6 @@
 import 'package:summercamp/core/enum/transport_schedule_status.enum.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule_camp.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_driver.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_route.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_vehicle.dart';
@@ -7,6 +8,7 @@ import 'package:summercamp/features/schedule/domain/entities/transport_schedule_
 class TransportScheduleModel extends TransportSchedule {
   const TransportScheduleModel({
     required super.transportScheduleId,
+    required super.campName,
     required super.routeName,
     required super.driverFullName,
     required super.vehicleName,
@@ -42,9 +44,11 @@ class TransportScheduleModel extends TransportSchedule {
     final route = json['routeName'];
     final driver = json['driverFullName'];
     final vehicle = json['vehicleName'];
+    final camp = json['campName'];
 
     return TransportScheduleModel(
       transportScheduleId: json['transportScheduleId'],
+      campName: TransportScheduleCamp.fromJson(camp),
       routeName: TransportScheduleRoute.fromJson(route),
       driverFullName: TransportScheduleDriver.fromJson(driver),
       vehicleName: TransportScheduleVehicle.fromJson(vehicle),
@@ -59,6 +63,7 @@ class TransportScheduleModel extends TransportSchedule {
 
   Map<String, dynamic> toJson() => {
     'transportScheduleId': transportScheduleId,
+    'campName': campName.toJson(),
     'routeName': routeName.toJson(),
     'driverFullName': driverFullName.toJson(),
     'vehicleName': vehicleName.toJson(),

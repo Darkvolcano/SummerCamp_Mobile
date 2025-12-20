@@ -1,10 +1,12 @@
 import 'package:summercamp/core/enum/transport_schedule_status.enum.dart';
+import 'package:summercamp/features/schedule/domain/entities/transport_schedule_camp.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_driver.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_route.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule_vehicle.dart';
 
 class TransportSchedule {
   final int transportScheduleId;
+  final TransportScheduleCamp campName;
   final TransportScheduleRoute routeName;
   final TransportScheduleDriver driverFullName;
   final TransportScheduleVehicle vehicleName;
@@ -17,6 +19,7 @@ class TransportSchedule {
 
   const TransportSchedule({
     required this.transportScheduleId,
+    required this.campName,
     required this.routeName,
     required this.driverFullName,
     required this.vehicleName,
