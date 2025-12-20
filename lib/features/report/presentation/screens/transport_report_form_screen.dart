@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 import 'package:summercamp/features/album/presentation/state/album_provider.dart';
 import 'package:summercamp/features/report/presentation/state/report_provider.dart';
-import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 
@@ -35,17 +34,26 @@ class _TransportReportCreateScreenState
 
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+  bool _isLoadingCampers = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<ScheduleProvider>()
-          .loadCampersTransportByTransportScheduleId(
-            widget.transportScheduleId,
-          );
+      _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    await context
+        .read<ScheduleProvider>()
+        .loadCampersTransportByTransportScheduleId(widget.transportScheduleId);
+
+    if (mounted) {
+      setState(() {
+        _isLoadingCampers = false;
+      });
+    }
   }
 
   @override
@@ -131,8 +139,8 @@ class _TransportReportCreateScreenState
 
   @override
   Widget build(BuildContext context) {
-    final camperProvider = context.watch<CamperProvider>();
-    final camperList = camperProvider.groupMembers;
+    final scheduleProvider = context.watch<ScheduleProvider>();
+    final transportCamperList = scheduleProvider.campersTransport;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -222,27 +230,15 @@ class _TransportReportCreateScreenState
                     initialValue: _selectedCamperId,
                     decoration: InputDecoration(
                       labelText: "Chọn Camper",
-                      labelStyle: const TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.grey,
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.person_outline,
-                        color: StaffTheme.staffPrimary,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 14,
-                      ),
+                      // ... (decoration giữ nguyên)
                     ),
-                    items: camperList.map((member) {
+                    // Map dữ liệu từ transportCamperList
+                    items: transportCamperList.map((transport) {
                       return DropdownMenuItem<int>(
-                        value: member.camperName.camperId,
+                        // Lấy ID camper từ object transport
+                        value: transport.camper.camperId,
                         child: Text(
-                          member.camperName.camperName,
+                          transport.camper.camperName, // Tên camper
                           style: const TextStyle(
                             fontFamily: "Quicksand",
                             fontWeight: FontWeight.w600,
@@ -254,7 +250,8 @@ class _TransportReportCreateScreenState
                     onChanged: (val) => setState(() => _selectedCamperId = val),
                     validator: (value) =>
                         value == null ? "Vui lòng chọn camper" : null,
-                    hint: camperList.isEmpty
+                    // Hiển thị hint dựa vào trạng thái loading
+                    hint: _isLoadingCampers
                         ? const Text(
                             "Đang tải danh sách...",
                             style: TextStyle(
@@ -262,7 +259,15 @@ class _TransportReportCreateScreenState
                               fontSize: 13,
                             ),
                           )
-                        : null,
+                        : (transportCamperList.isEmpty
+                              ? const Text(
+                                  "Không có camper nào",
+                                  style: TextStyle(
+                                    fontFamily: "Quicksand",
+                                    fontSize: 13,
+                                  ),
+                                )
+                              : null),
                   ),
                 ],
               ),

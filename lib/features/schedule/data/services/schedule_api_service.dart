@@ -28,7 +28,7 @@ class ScheduleApiService {
     int transportScheduleId,
   ) async {
     final res = await client.get(
-      'camper-transport/schedule/$transportScheduleId',
+      'camper-transport/schedule/$transportScheduleId/active',
     );
     return res.data as List;
   }

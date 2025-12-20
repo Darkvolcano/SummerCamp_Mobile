@@ -56,13 +56,13 @@ class _StaffTransportScheduleAttedanceScreenState
 
     if (!isCheckOut) {
       final start = _parseDateTime(schedule.date, schedule.startTime);
-      final validStart = start.subtract(const Duration(minutes: 30));
-      final validEnd = start.add(const Duration(minutes: 30));
+      final validStart = start.subtract(const Duration(minutes: 60));
+      final validEnd = start.add(const Duration(minutes: 60));
 
       return now.isAfter(validStart) && now.isBefore(validEnd);
     } else {
       final end = _parseDateTime(schedule.date, schedule.endTime);
-      final validStart = end.subtract(const Duration(minutes: 30));
+      final validStart = end.subtract(const Duration(minutes: 60));
       final validEnd = end.add(const Duration(minutes: 60));
 
       return now.isAfter(validStart) && now.isBefore(validEnd);

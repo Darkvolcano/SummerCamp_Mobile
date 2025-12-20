@@ -234,7 +234,28 @@ class _StaffTransportScheduleScreenState
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final provider = context.watch<ScheduleProvider>();
-    final schedules = provider.transportStaffSchedules;
+
+    final originalSchedules = provider.transportStaffSchedules;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final List<TransportSchedule> schedules = originalSchedules.where((
+      schedule,
+    ) {
+      final scheduleDate = DateTime.parse(schedule.date);
+      return !scheduleDate.isBefore(today);
+    }).toList();
+
+    schedules.sort((a, b) {
+      final dateA = DateTime.parse(a.date);
+      final dateB = DateTime.parse(b.date);
+
+      int dateCompare = dateA.compareTo(dateB);
+      if (dateCompare != 0) return dateCompare;
+
+      return a.startTime.compareTo(b.startTime);
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -385,6 +406,24 @@ class _StaffTransportScheduleScreenState
                           ],
                         ),
 
+                        // const SizedBox(height: 8),
+
+                        // Row(
+                        //   children: [
+                        //     const Icon(
+                        //       Icons.campaign,
+                        //       size: 18,
+                        //       color: Colors.grey,
+                        //     ),
+                        //     const SizedBox(width: 8),
+                        //     Text(
+                        //       "Trại: ${trip.campName.name}",
+                        //       style: textTheme.bodyMedium?.copyWith(
+                        //         fontFamily: "Quicksand",
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         const SizedBox(height: 8),
 
                         Row(
