@@ -20,7 +20,6 @@ class DriverRegisterScreen extends StatefulWidget {
 
 class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final String _apiKey = AppConstants.geminiApiKey;
 
   final _firstNameController = TextEditingController();
@@ -55,7 +54,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     super.dispose();
   }
 
-  // scan image using gemini AI
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
@@ -80,117 +78,62 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       final imageBytes = await _licenseImage!.readAsBytes();
       final imagePart = DataPart('image/jpeg', imageBytes);
 
-      // final promptText = """
-      //   Bạn là AI hỗ trợ nhập liệu. Hãy trích xuất thông tin từ Bằng Lái Xe này để điền vào form đăng ký.
-
-      //   Yêu cầu quan trọng:
-      //   1. Sửa lỗi chính tả tiếng Việt (ví dụ: Nguyền -> Nguyễn, So -> Số).
-      //   2. Phân biệt số 0 và chữ O chuẩn xác.
-      //   3. Tách riêng Họ và Tên.
-      //   4. Trả về JSON thuần túy (không markdown) theo cấu trúc sau:
-      //   {
-      //     "license_number": "Số giấy phép lái xe (chỉ lấy số)",
-      //     "first_name": "Họ và Tên đệm (Ví dụ: NGUYỄN VĂN)",
-      //     "last_name": "Tên (Ví dụ: A)",
-      //     "dob": "Ngày sinh (định dạng dd/MM/yyyy)",
-      //     "address": "Nơi cư trú / Địa chỉ đầy đủ (Viết liền 1 dòng, không xuống dòng)",
-      //     "expiry_date": "Ngày hết hạn (định dạng dd/MM/yyyy) hoặc 'Không thời hạn'"
-      //   }
-      // """;
       final promptText = """
         Bạn là hệ thống xác thực giấy tờ tự động (KYC). 
         
-        NHIỆM VỤ 1: KIỂM TRA HỢP LỆ (QUAN TRỌNG NHẤT)
+        NHIỆM VỤ 1: KIỂM TRA HỢP LỆ
         Hãy nhìn kỹ bức ảnh. Đây CÓ PHẢI là mặt trước của "Giấy Phép Lái Xe" (Driving License) của Việt Nam không?
-        - Phải có chữ "GIẤY PHÉP LÁI XE" hoặc "DRIVER'S LICENSE" rõ ràng.
-        - Phải có ảnh chân dung và quốc huy hoặc hoa văn đặc trưng.
         
-        *** NẾU KHÔNG PHẢI LÀ BẰNG LÁI XE (ví dụ: ảnh chụp màn hình chat, ảnh phong cảnh, thẻ sinh viên, thẻ ngân hàng...), BẮT BUỘC PHẢI TRẢ VỀ JSON DUY NHẤT SAU: ***
+        *** NẾU KHÔNG PHẢI LÀ BẰNG LÁI XE, TRẢ VỀ JSON DUY NHẤT: ***
         {"error": "invalid_license_image"}
 
-        NHIỆM VỤ 2: TRÍCH XUẤT DỮ LIỆU (Chỉ thực hiện nếu Nhiệm vụ 1 là ĐÚNG)
-        Nếu đúng là GPLX, hãy trích xuất và trả về JSON:
+        NHIỆM VỤ 2: TRÍCH XUẤT DỮ LIỆU (Nếu là GPLX)
+        Hãy trích xuất và trả về JSON thuần túy (không markdown):
         {
           "license_number": "Số giấy phép (chỉ lấy số)",
-          "first_name": "Họ và Tên đệm (Viết hoa, sửa lỗi chính tả tiếng Việt)",
+          "first_name": "Họ và Tên đệm (Viết hoa, sửa lỗi chính tả)",
           "last_name": "Tên (Viết hoa)",
           "dob": "Ngày sinh (dd/MM/yyyy)",
           "address": "Nơi cư trú (Viết liền 1 dòng, sửa lỗi chính tả)",
           "expiry_date": "Có giá trị đến (dd/MM/yyyy) hoặc 'Không thời hạn'"
         }
-
-        LƯU Ý: Chỉ trả về JSON thuần túy, không Markdown, không giải thích thêm.
       """;
 
-      final List<String> modelsToTry = ['gemini-2.0-flash'];
+      final model = GenerativeModel(
+        model: 'gemini-2.0-flash',
+        apiKey: _apiKey,
+        generationConfig: GenerationConfig(temperature: 0.0),
+      );
 
-      bool isSuccess = false;
+      final response = await model.generateContent([
+        Content.multi([TextPart(promptText), imagePart]),
+      ]);
 
-      for (String modelName in modelsToTry) {
-        if (!mounted) break;
-        try {
-          final model = GenerativeModel(
-            model: modelName,
-            apiKey: _apiKey,
-            generationConfig: GenerationConfig(temperature: 0.0),
-          );
+      if (response.text != null && response.text!.isNotEmpty) {
+        String cleanJson = response.text!
+            .replaceAll('```json', '')
+            .replaceAll('```', '')
+            .trim();
 
-          final response = await model.generateContent([
-            Content.multi([TextPart(promptText), imagePart]),
-          ]);
+        final Map<String, dynamic> data = jsonDecode(cleanJson);
 
-          if (response.text != null && response.text!.isNotEmpty) {
-            // clean json response
-            String cleanJson = response.text!
-                .replaceAll('```json', '')
-                .replaceAll('```', '')
-                .trim();
-
-            final Map<String, dynamic> data = jsonDecode(cleanJson);
-
-            if (data.containsKey('error') &&
-                data['error'] == 'invalid_license_image') {
-              throw Exception(
-                "Ảnh không hợp lệ. Vui lòng chụp đúng Bằng Lái Xe.",
-              );
-            }
-
-            if (data['license_number'] == null && data['first_name'] == null) {
-              throw Exception(
-                "Không tìm thấy thông tin trên ảnh. Vui lòng chụp rõ hơn.",
-              );
-            }
-
-            // fill data into form
-            _fillFormWithAiData(data);
-
-            isSuccess = true;
-            break;
-          }
-        } catch (e) {
-          print("Model $modelName thất bại: $e");
-          continue;
+        if (data.containsKey('error') &&
+            data['error'] == 'invalid_license_image') {
+          throw Exception("Ảnh không hợp lệ. Vui lòng chụp đúng Bằng Lái Xe.");
         }
-      }
 
-      if (!isSuccess && mounted) {
-        showCustomDialog(
-          context,
-          title: "Quét thất bại",
-          message:
-              "Không thể quét thông tin từ ảnh này. Vui lòng thử lại hoặc nhập tay.",
-          type: DialogType.error,
-        );
+        _fillFormWithAiData(data);
       }
     } catch (e) {
       if (mounted) {
         showCustomDialog(
           context,
           title: "Lỗi phân tích ảnh",
-          message: e.toString().replaceAll("Exception:", ""),
+          message:
+              "Không thể quét thông tin tự động. Vui lòng nhập tay.\nLỗi: ${e.toString().replaceAll("Exception:", "")}",
           type: DialogType.error,
         );
-        setState(() => _licenseImage = null);
+        // setState(() => _licenseImage = null);
       }
     } finally {
       if (mounted) {
@@ -199,7 +142,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     }
   }
 
-  // fill data into form
   void _fillFormWithAiData(Map<String, dynamic> data) {
     setState(() {
       if (data['license_number'] != null) {
@@ -219,7 +161,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         String cleanAddr = rawAddr.replaceAll('\n', ', ');
         cleanAddr = cleanAddr.replaceAll(RegExp(r'\s+'), ' ').trim();
         cleanAddr = cleanAddr.replaceAll(RegExp(r',\s*,'), ',');
-
         _addressController.text = cleanAddr;
       }
 
@@ -244,9 +185,56 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     showCustomDialog(
       context,
       title: "Thành công!",
-      message: "Đã trích xuất thông tin từ bằng lái xe.",
+      message:
+          "Đã trích xuất thông tin. Vui lòng kiểm tra và chỉnh sửa nếu cần.",
       type: DialogType.success,
     );
+  }
+
+  Future<void> _selectDate(
+    BuildContext context,
+    TextEditingController controller,
+    bool isExpiry,
+  ) async {
+    final DateTime now = DateTime.now();
+
+    final DateTime initialDate = isExpiry ? now : DateTime(2000);
+    final DateTime firstDate = isExpiry ? now : DateTime(1900);
+    final DateTime lastDate = isExpiry ? DateTime(2100) : now;
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      locale: const Locale('vi', 'VN'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppTheme.summerPrimary,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      final String formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+      final String apiDate = DateFormat('yyyy-MM-dd').format(picked);
+
+      setState(() {
+        controller.text = formattedDate;
+        if (isExpiry) {
+          _apiExpiry = apiDate;
+        } else {
+          _apiDob = apiDate;
+        }
+      });
+    }
   }
 
   String? _formatDateForApi(String dateStr) {
@@ -273,16 +261,12 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
           final provider = context.read<AuthProvider>();
           await provider.uploadLicense(imageFile, token);
           uploadSuccess = true;
-          print("Upload license thành công!");
         }
       } catch (e) {
         retryCount++;
-        print("Upload thất bại ($retryCount): $e. Thử lại sau 2s...");
         if (retryCount >= 5) {
           if (mounted) {
             Navigator.pop(context);
-          }
-          if (mounted) {
             showCustomDialog(
               context,
               title: "Lỗi tải ảnh",
@@ -309,6 +293,16 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
 
   Future<void> _submitRegister() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_licenseImage == null) {
+      showCustomDialog(
+        context,
+        title: "Thiếu ảnh",
+        message: "Vui lòng chụp hoặc tải lên ảnh Bằng Lái Xe.",
+        type: DialogType.warning,
+      );
+      return;
+    }
 
     if (_apiDob == null && _dobController.text.isNotEmpty) {
       _apiDob = _formatDateForApi(_dobController.text);
@@ -341,7 +335,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
 
       await Future.delayed(const Duration(seconds: 3));
-
       await _uploadLicenseWithRetry(oneTimeToken, _licenseImage!);
 
       if (mounted) {
@@ -483,33 +476,34 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                       ],
                     ),
                   ),
-
                 const SizedBox(height: 16),
 
                 _buildTextField(
                   controller: _licenseNumberController,
                   label: "Số GPLX",
                   icon: Icons.credit_card,
-                  readOnly: true,
+                  readOnly: false,
                 ),
 
-                const SizedBox(width: 12),
+                const SizedBox(height: 12),
 
                 _buildTextField(
                   controller: _licenseExpiryController,
                   label: "Hết hạn",
                   icon: Icons.event_busy,
                   readOnly: true,
+                  onTap: () =>
+                      _selectDate(context, _licenseExpiryController, true),
                 ),
 
-                const SizedBox(width: 12),
+                const SizedBox(height: 12),
 
                 _buildTextField(
                   controller: _addressController,
                   label: "Địa chỉ thường trú",
                   icon: Icons.home,
                   maxLines: 3,
-                  readOnly: true,
+                  readOnly: false,
                 ),
 
                 const SizedBox(height: 24),
@@ -521,33 +515,40 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                     color: AppTheme.summerPrimary,
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
-                _buildTextField(
-                  controller: _firstNameController,
-                  label: "Họ",
-                  icon: Icons.person,
-                  readOnly: true,
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTextField(
+                        controller: _firstNameController,
+                        label: "Họ",
+                        icon: Icons.person,
+                        readOnly: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildTextField(
+                        controller: _lastNameController,
+                        label: "Tên",
+                        icon: Icons.person_outline,
+                        readOnly: false,
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(width: 12),
-
-                _buildTextField(
-                  controller: _lastNameController,
-                  label: "Tên",
-                  icon: Icons.person_outline,
-                  readOnly: true,
-                ),
-
-                const SizedBox(width: 12),
+                const SizedBox(height: 12),
 
                 _buildTextField(
                   controller: _dobController,
                   label: "Ngày sinh",
                   icon: Icons.cake,
                   readOnly: true,
+                  onTap: () => _selectDate(context, _dobController, false),
                 ),
+
                 _buildTextField(
                   controller: _emailController,
                   label: "Email",
@@ -644,6 +645,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
+    VoidCallback? onTap,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -652,6 +654,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         readOnly: readOnly,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        onTap: onTap,
         style: const TextStyle(fontFamily: "Quicksand"),
         decoration: InputDecoration(
           labelText: label,
@@ -659,7 +662,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
           prefixIcon: Icon(icon, color: AppTheme.summerPrimary),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
-          fillColor: readOnly ? Colors.grey[100] : Colors.white,
+          fillColor: Colors.white,
         ),
         validator:
             validator ??

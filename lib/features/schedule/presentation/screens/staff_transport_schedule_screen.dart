@@ -104,7 +104,6 @@ class _StaffTransportScheduleScreenState
 
     try {
       if (trip.status == TransportScheduleStatus.NotYet) {
-        // if not start call this API
         await provider.updateTransportScheduleStartTrip(
           trip.transportScheduleId,
         );
@@ -112,7 +111,6 @@ class _StaffTransportScheduleScreenState
           _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
         }
       } else if (trip.status == TransportScheduleStatus.InProgress) {
-        // if in progress call this API
         await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
         if (mounted) {
           _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
@@ -170,65 +168,65 @@ class _StaffTransportScheduleScreenState
     }
   }
 
-  bool _isActionAllowed(TransportSchedule trip) {
-    final now = DateTime.now();
+  // bool _isActionAllowed(TransportSchedule trip) {
+  //   final now = DateTime.now();
 
-    final tripDate = DateTime.parse(trip.date);
-    final isToday =
-        tripDate.year == now.year &&
-        tripDate.month == now.month &&
-        tripDate.day == now.day;
+  //   final tripDate = DateTime.parse(trip.date);
+  //   final isToday =
+  //       tripDate.year == now.year &&
+  //       tripDate.month == now.month &&
+  //       tripDate.day == now.day;
 
-    if (!isToday) return false;
+  //   if (!isToday) return false;
 
-    final startDateTime = _parseDateTime(trip.date, trip.startTime);
-    final endDateTime = _parseDateTime(trip.date, trip.endTime);
+  //   final startDateTime = _parseDateTime(trip.date, trip.startTime);
+  //   final endDateTime = _parseDateTime(trip.date, trip.endTime);
 
-    if (trip.status == TransportScheduleStatus.NotYet) {
-      final allowedStartWindow = startDateTime.subtract(
-        const Duration(minutes: 30),
-      );
-      final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
-      return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
-    } else if (trip.status == TransportScheduleStatus.InProgress) {
-      final earliestEndTime = endDateTime.subtract(const Duration(minutes: 30));
-      final latestEndTime = endDateTime.add(const Duration(minutes: 90));
+  //   if (trip.status == TransportScheduleStatus.NotYet) {
+  //     final allowedStartWindow = startDateTime.subtract(
+  //       const Duration(minutes: 30),
+  //     );
+  //     final allowedEndWindow = startDateTime.add(const Duration(minutes: 60));
+  //     return now.isAfter(allowedStartWindow) && now.isBefore(allowedEndWindow);
+  //   } else if (trip.status == TransportScheduleStatus.InProgress) {
+  //     final earliestEndTime = endDateTime.subtract(const Duration(minutes: 30));
+  //     final latestEndTime = endDateTime.add(const Duration(minutes: 90));
 
-      return now.isAfter(earliestEndTime) && now.isBefore(latestEndTime);
-    }
+  //     return now.isAfter(earliestEndTime) && now.isBefore(latestEndTime);
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
-  void _showDisabledReason(TransportSchedule trip) {
-    final now = DateTime.now();
-    final tripDate = DateTime.parse(trip.date);
-    final isToday =
-        tripDate.year == now.year &&
-        tripDate.month == now.month &&
-        tripDate.day == now.day;
+  // void _showDisabledReason(TransportSchedule trip) {
+  //   final now = DateTime.now();
+  //   final tripDate = DateTime.parse(trip.date);
+  //   final isToday =
+  //       tripDate.year == now.year &&
+  //       tripDate.month == now.month &&
+  //       tripDate.day == now.day;
 
-    if (!isToday) {
-      _showStatusDialog("Chuyến đi không phải ngày hôm nay!", isSuccess: false);
-      return;
-    }
+  //   if (!isToday) {
+  //     _showStatusDialog("Chuyến đi không phải ngày hôm nay!", isSuccess: false);
+  //     return;
+  //   }
 
-    final startDateTime = _parseDateTime(trip.date, trip.startTime);
-    final endDateTime = _parseDateTime(trip.date, trip.endTime);
-    String message = "";
+  //   final startDateTime = _parseDateTime(trip.date, trip.startTime);
+  //   final endDateTime = _parseDateTime(trip.date, trip.endTime);
+  //   String message = "";
 
-    if (trip.status == TransportScheduleStatus.NotYet) {
-      message =
-          "Chỉ được bắt đầu từ ${DateFormatter.formatTime(startDateTime.subtract(const Duration(minutes: 30)))} đến ${DateFormatter.formatTime(startDateTime.add(const Duration(minutes: 60)))}";
-    } else if (trip.status == TransportScheduleStatus.InProgress) {
-      message =
-          "Đã quá thời gian cho phép kết thúc chuyến đi (${DateFormatter.formatTime(endDateTime.add(const Duration(minutes: 120)))})";
-    }
+  //   if (trip.status == TransportScheduleStatus.NotYet) {
+  //     message =
+  //         "Chỉ được bắt đầu từ ${DateFormatter.formatTime(startDateTime.subtract(const Duration(minutes: 30)))} đến ${DateFormatter.formatTime(startDateTime.add(const Duration(minutes: 60)))}";
+  //   } else if (trip.status == TransportScheduleStatus.InProgress) {
+  //     message =
+  //         "Đã quá thời gian cho phép kết thúc chuyến đi (${DateFormatter.formatTime(endDateTime.add(const Duration(minutes: 120)))})";
+  //   }
 
-    if (message.isNotEmpty) {
-      _showStatusDialog(message, isSuccess: false);
-    }
-  }
+  //   if (message.isNotEmpty) {
+  //     _showStatusDialog(message, isSuccess: false);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -284,29 +282,27 @@ class _StaffTransportScheduleScreenState
               itemCount: schedules.length,
               itemBuilder: (context, index) {
                 final trip = schedules[index];
-                final isCompleted =
-                    trip.status == TransportScheduleStatus.Completed;
-                final isCanceled =
-                    trip.status == TransportScheduleStatus.Canceled;
+                // final isCompleted =
+                //     trip.status == TransportScheduleStatus.Completed;
+                // final isCanceled =
+                //     trip.status == TransportScheduleStatus.Canceled;
 
-                // final canUpdate = !isCompleted && !isCanceled;
+                // String buttonLabel = "Cập nhật";
+                // IconData buttonIcon = Icons.update;
 
-                String buttonLabel = "Cập nhật";
-                IconData buttonIcon = Icons.update;
+                // if (trip.status == TransportScheduleStatus.NotYet) {
+                //   buttonLabel = "Bắt đầu chuyến đi";
+                //   buttonIcon = Icons.play_arrow;
+                // } else if (trip.status == TransportScheduleStatus.InProgress) {
+                //   buttonLabel = "Kết thúc chuyến đi";
+                //   buttonIcon = Icons.stop;
+                // } else if (isCompleted) {
+                //   buttonLabel = "Đã hoàn thành";
+                //   buttonIcon = Icons.check_circle;
+                // }
 
-                if (trip.status == TransportScheduleStatus.NotYet) {
-                  buttonLabel = "Bắt đầu chuyến đi";
-                  buttonIcon = Icons.play_arrow;
-                } else if (trip.status == TransportScheduleStatus.InProgress) {
-                  buttonLabel = "Kết thúc chuyến đi";
-                  buttonIcon = Icons.stop;
-                } else if (isCompleted) {
-                  buttonLabel = "Đã hoàn thành";
-                  buttonIcon = Icons.check_circle;
-                }
-
-                final startDateTime = _parseDateTime(trip.date, trip.startTime);
-                final endDateTime = _parseDateTime(trip.date, trip.endTime);
+                // final startDateTime = _parseDateTime(trip.date, trip.startTime);
+                // final endDateTime = _parseDateTime(trip.date, trip.endTime);
                 final actualStartDateTime = _parseDateTime(
                   trip.date,
                   trip.actualStartTime ?? '',
@@ -316,9 +312,58 @@ class _StaffTransportScheduleScreenState
                   trip.actualEndTime ?? '',
                 );
 
-                final bool isTimeAllowed = _isActionAllowed(trip);
-                final bool canUpdate =
-                    !isCompleted && !isCanceled && isTimeAllowed;
+                // final bool isTimeAllowed = _isActionAllowed(trip);
+                // final bool canUpdate =
+                //     !isCompleted && !isCanceled && isTimeAllowed;
+                final startDateTime = _parseDateTime(trip.date, trip.startTime);
+                final endDateTime = _parseDateTime(trip.date, trip.endTime);
+                Widget? actionButton;
+
+                if (trip.status == TransportScheduleStatus.NotYet) {
+                  actionButton = ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: StaffTheme.staffPrimary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () => _handleUpdateStatus(trip),
+                    icon: const Icon(Icons.play_arrow, size: 20),
+                    label: const Text(
+                      "Bắt đầu chuyến đi",
+                      style: TextStyle(
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else if (trip.status == TransportScheduleStatus.InProgress) {
+                  actionButton = ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: StaffTheme.staffPrimary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () => _handleUpdateStatus(trip),
+                    icon: const Icon(Icons.stop, size: 20),
+                    label: const Text(
+                      "Kết thúc chuyến đi",
+                      style: TextStyle(
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else if (trip.status == TransportScheduleStatus.Completed) {
+                  actionButton = null;
+                } else {
+                  actionButton = null;
+                }
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -406,24 +451,6 @@ class _StaffTransportScheduleScreenState
                           ],
                         ),
 
-                        // const SizedBox(height: 8),
-
-                        // Row(
-                        //   children: [
-                        //     const Icon(
-                        //       Icons.campaign,
-                        //       size: 18,
-                        //       color: Colors.grey,
-                        //     ),
-                        //     const SizedBox(width: 8),
-                        //     Text(
-                        //       "Trại: ${trip.campName.name}",
-                        //       style: textTheme.bodyMedium?.copyWith(
-                        //         fontFamily: "Quicksand",
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         const SizedBox(height: 8),
 
                         Row(
@@ -491,43 +518,44 @@ class _StaffTransportScheduleScreenState
 
                         const SizedBox(height: 16),
 
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: canUpdate
-                                  ? StaffTheme.staffPrimary
-                                  : Colors.grey,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            // onPressed: canUpdate
-                            //     ? () => _handleUpdateStatus(trip)
-                            //     : null,
-                            onPressed: canUpdate
-                                ? () => _handleUpdateStatus(trip)
-                                : () {
-                                    if (!isCompleted && !isCanceled) {
-                                      _showDisabledReason(trip);
-                                    }
-                                  },
-                            icon: Icon(
-                              buttonIcon,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                            label: Text(
-                              buttonLabel,
-                              style: const TextStyle(
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   child: ElevatedButton.icon(
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: canUpdate
+                        //           ? StaffTheme.staffPrimary
+                        //           : Colors.grey,
+                        //       padding: const EdgeInsets.symmetric(vertical: 12),
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(8),
+                        //       ),
+                        //     ),
+                        //     onPressed: canUpdate
+                        //         ? () => _handleUpdateStatus(trip)
+                        //         : () {
+                        //             if (!isCompleted && !isCanceled) {
+                        //               _showDisabledReason(trip);
+                        //             }
+                        //           },
+                        //     icon: Icon(
+                        //       buttonIcon,
+                        //       size: 20,
+                        //       color: Colors.white,
+                        //     ),
+                        //     label: Text(
+                        //       buttonLabel,
+                        //       style: const TextStyle(
+                        //         fontFamily: "Quicksand",
+                        //         fontWeight: FontWeight.bold,
+                        //         color: Colors.white,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        if (actionButton != null) ...[
+                          const SizedBox(height: 16),
+                          SizedBox(width: double.infinity, child: actionButton),
+                        ],
 
                         const SizedBox(height: 12),
                         SizedBox(

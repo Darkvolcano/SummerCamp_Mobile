@@ -6,8 +6,21 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
 
-class StaffScheduleScreen extends StatelessWidget {
+class StaffScheduleScreen extends StatefulWidget {
   const StaffScheduleScreen({super.key});
+
+  @override
+  State<StaffScheduleScreen> createState() => _StaffScheduleScreenState();
+}
+
+class _StaffScheduleScreenState extends State<StaffScheduleScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScheduleProvider>().loadStaffSchedules();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -54,10 +54,7 @@ class _StaffHomeContentState extends State<StaffHomeContent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<ScheduleProvider>();
-      if (provider.schedules.isEmpty) {
-        provider.loadStaffSchedules();
-      }
+      context.read<ScheduleProvider>().loadStaffSchedules();
     });
   }
 
@@ -71,7 +68,8 @@ class _StaffHomeContentState extends State<StaffHomeContent> {
         .where(
           (s) =>
               s.status == CampStatus.InProgress ||
-              s.status == CampStatus.OpenForRegistration,
+              s.status == CampStatus.OpenForRegistration ||
+              s.status == CampStatus.RegistrationClosed,
         )
         .take(3)
         .toList();
