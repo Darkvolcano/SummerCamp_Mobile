@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/app_routes.dart';
@@ -20,7 +19,6 @@ class DriverProfileScreen extends StatefulWidget {
 class _DriverProfileScreenState extends State<DriverProfileScreen> {
   bool _isFetching = false;
   File? _profileImage;
-  // final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -78,10 +76,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     final navigator = Navigator.of(context);
 
     try {
-      await provider.logout();
       if (mounted) {
         navigator.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
       }
+      await provider.logout();
     } catch (e) {
       if (mounted) {
         showCustomDialog(
@@ -93,13 +91,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       }
     }
   }
-
-  // Future<void> _pickImage() async {
-  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     setState(() => _profileImage = File(pickedFile.path));
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +129,96 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       );
     }
 
+    if (authProvider.user != null) {
+      return _buildLoggedInView(authProvider);
+    } else {
+      return _buildLoggedOutView(context);
+    }
+  }
+
+  Widget _buildLoggedOutView(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person_off_outlined,
+              size: 80,
+              color: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Bạn chưa đăng nhập",
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+                color: DriverTheme.driverPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Vui lòng đăng nhập để quản lý lịch trình và chuyến đi.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontFamily: "Quicksand",
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DriverTheme.driverAccent,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.login,
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                "Đăng nhập",
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: DriverTheme.driverPrimary),
+                foregroundColor: DriverTheme.driverPrimary,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.driverRegister);
+              },
+              child: const Text(
+                "Đăng ký tài xế",
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoggedInView(AuthProvider authProvider) {
     final user = authProvider.user!;
     final String staffName = '${user.firstName} ${user.lastName}'.trim();
     final String? staffEmail = user.email;
@@ -154,90 +235,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       }
     }
 
-    if (authProvider.error != null && authProvider.user == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 50),
-              const SizedBox(height: 10),
-              Text(
-                'Lỗi tải thông tin người dùng',
-                textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontFamily: "Quicksand"),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.refresh),
-                label: const Text('Thử lại'),
-                onPressed: _fetchUserData,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: DriverTheme.driverAccent,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (authProvider.user == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.person_off_outlined,
-                size: 80,
-                color: Colors.grey.shade300,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                "Bạn chưa đăng nhập",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  color: DriverTheme.driverPrimary,
-                ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: DriverTheme.driverAccent,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.login,
-                    (route) => false,
-                  );
-                },
-                child: const Text(
-                  "Đăng nhập",
-                  style: TextStyle(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    final String staffPosition = user.role ?? "Driver";
+    final String staffPosition = user.role ?? "Tài xế";
     final String? avatarUrl = user.avatar;
     final bool hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
 
@@ -277,22 +275,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                             )
                           : null,
                     ),
-                    // Positioned(
-                    //   bottom: 0,
-                    //   right: 0,
-                    //   child: InkWell(
-                    //     onTap: _pickImage,
-                    //     child: const CircleAvatar(
-                    //       backgroundColor: DriverTheme.driverAccent,
-                    //       radius: 20,
-                    //       child: Icon(
-                    //         Icons.camera_alt,
-                    //         color: Colors.white,
-                    //         size: 18,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -330,9 +312,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Card(
@@ -361,7 +341,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

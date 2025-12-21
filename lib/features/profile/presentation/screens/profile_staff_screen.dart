@@ -73,11 +73,11 @@ class _StaffProfileScreenState extends State<StaffProfileScreen> {
     final navigator = Navigator.of(context);
 
     try {
-      await provider.logout();
-
       if (mounted) {
         navigator.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
       }
+
+      await provider.logout();
     } catch (e) {
       if (mounted) {
         showCustomDialog(
