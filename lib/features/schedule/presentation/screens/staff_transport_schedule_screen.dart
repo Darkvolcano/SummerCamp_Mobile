@@ -99,6 +99,33 @@ class _StaffTransportScheduleScreenState
     );
   }
 
+  // Future<void> _handleUpdateStatus(TransportSchedule trip) async {
+  //   final provider = context.read<ScheduleProvider>();
+
+  //   try {
+  //     if (trip.status == TransportScheduleStatus.NotYet) {
+  //       await provider.updateTransportScheduleStartTrip(
+  //         trip.transportScheduleId,
+  //       );
+  //       if (mounted) {
+  //         _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
+  //       }
+  //     } else if (trip.status == TransportScheduleStatus.InProgress) {
+  //       await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
+  //       if (mounted) {
+  //         _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
+  //       }
+  //     }
+
+  //     if (mounted) {
+  //       provider.loadStaffTransportSchedules();
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       _showStatusDialog('Lỗi cập nhật: ${e.toString()}', isSuccess: false);
+  //     }
+  //   }
+  // }
   Future<void> _handleUpdateStatus(TransportSchedule trip) async {
     final provider = context.read<ScheduleProvider>();
 
@@ -111,6 +138,27 @@ class _StaffTransportScheduleScreenState
           _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
         }
       } else if (trip.status == TransportScheduleStatus.InProgress) {
+        await provider.loadCampersTransportByTransportScheduleId(
+          trip.transportScheduleId,
+        );
+
+        final campersList = provider.campersTransport;
+
+        final hasCamperOnboard = campersList.any((c) => c.status == 'Onboard');
+
+        if (hasCamperOnboard) {
+          // Tắt loading nếu có
+          // Navigator.pop(context);
+
+          if (mounted) {
+            _showStatusDialog(
+              'Chưa thể kết thúc! Vẫn còn camper trên xe chưa được điểm danh xuống xe.',
+              isSuccess: false,
+            );
+          }
+          return;
+        }
+
         await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
         if (mounted) {
           _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);

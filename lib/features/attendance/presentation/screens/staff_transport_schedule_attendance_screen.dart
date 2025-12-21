@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
-import 'package:summercamp/core/utils/date_formatter.dart';
+// import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/report/presentation/screens/transport_report_form_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/transport_schedule.dart';
@@ -33,74 +33,78 @@ class _StaffTransportScheduleAttedanceScreenState
 
   String _lastStopName = "Chưa cập nhật";
 
-  DateTime _parseDateTime(String dateStr, String timeStr) {
-    try {
-      if (timeStr.isEmpty) return DateTime.parse(dateStr);
-      return DateTime.parse("${dateStr}T$timeStr");
-    } catch (e) {
-      return DateTime.now();
-    }
-  }
+  bool get _isTripFinished =>
+      widget.schedule.actualEndTime != null &&
+      widget.schedule.actualEndTime!.isNotEmpty;
 
-  bool _isTimeValidToSubmit(bool isCheckOut) {
-    final now = DateTime.now();
-    final schedule = widget.schedule;
+  // DateTime _parseDateTime(String dateStr, String timeStr) {
+  //   try {
+  //     if (timeStr.isEmpty) return DateTime.parse(dateStr);
+  //     return DateTime.parse("${dateStr}T$timeStr");
+  //   } catch (e) {
+  //     return DateTime.now();
+  //   }
+  // }
 
-    final tripDate = DateTime.parse(schedule.date);
-    final isToday =
-        tripDate.year == now.year &&
-        tripDate.month == now.month &&
-        tripDate.day == now.day;
+  // bool _isTimeValidToSubmit(bool isCheckOut) {
+  //   final now = DateTime.now();
+  //   final schedule = widget.schedule;
 
-    if (!isToday) return false;
+  //   final tripDate = DateTime.parse(schedule.date);
+  //   final isToday =
+  //       tripDate.year == now.year &&
+  //       tripDate.month == now.month &&
+  //       tripDate.day == now.day;
 
-    if (!isCheckOut) {
-      final start = _parseDateTime(schedule.date, schedule.startTime);
-      final validStart = start.subtract(const Duration(minutes: 60));
-      final validEnd = start.add(const Duration(minutes: 60));
+  //   if (!isToday) return false;
 
-      return now.isAfter(validStart) && now.isBefore(validEnd);
-    } else {
-      final end = _parseDateTime(schedule.date, schedule.endTime);
-      final validStart = end.subtract(const Duration(minutes: 60));
-      final validEnd = end.add(const Duration(minutes: 60));
+  //   if (!isCheckOut) {
+  //     final start = _parseDateTime(schedule.date, schedule.startTime);
+  //     final validStart = start.subtract(const Duration(minutes: 60));
+  //     final validEnd = start.add(const Duration(minutes: 60));
 
-      return now.isAfter(validStart) && now.isBefore(validEnd);
-    }
-  }
+  //     return now.isAfter(validStart) && now.isBefore(validEnd);
+  //   } else {
+  //     final end = _parseDateTime(schedule.date, schedule.endTime);
+  //     final validStart = end.subtract(const Duration(minutes: 60));
+  //     final validEnd = end.add(const Duration(minutes: 60));
 
-  void _showTimeError(bool isCheckOut) {
-    final schedule = widget.schedule;
-    String msg;
+  //     return now.isAfter(validStart) && now.isBefore(validEnd);
+  //   }
+  // }
 
-    if (!isCheckOut) {
-      final start = _parseDateTime(schedule.date, schedule.startTime);
-      final sTime = DateFormatter.formatTime(
-        start.subtract(const Duration(minutes: 30)),
-      );
-      final eTime = DateFormatter.formatTime(
-        start.add(const Duration(minutes: 30)),
-      );
-      msg = "Chỉ được xác nhận lên xe từ $sTime đến $eTime";
-    } else {
-      final end = _parseDateTime(schedule.date, schedule.endTime);
-      final sTime = DateFormatter.formatTime(
-        end.subtract(const Duration(minutes: 30)),
-      );
-      final eTime = DateFormatter.formatTime(
-        end.add(const Duration(minutes: 60)),
-      );
-      msg = "Chỉ được xác nhận xuống xe từ $sTime đến $eTime";
-    }
+  // void _showTimeError(bool isCheckOut) {
+  //   final schedule = widget.schedule;
+  //   String msg;
 
-    showCustomDialog(
-      context,
-      title: "Chưa đến giờ",
-      message: msg,
-      type: DialogType.warning,
-      btnText: "Đã hiểu",
-    );
-  }
+  //   if (!isCheckOut) {
+  //     final start = _parseDateTime(schedule.date, schedule.startTime);
+  //     final sTime = DateFormatter.formatTime(
+  //       start.subtract(const Duration(minutes: 30)),
+  //     );
+  //     final eTime = DateFormatter.formatTime(
+  //       start.add(const Duration(minutes: 30)),
+  //     );
+  //     msg = "Chỉ được xác nhận lên xe từ $sTime đến $eTime";
+  //   } else {
+  //     final end = _parseDateTime(schedule.date, schedule.endTime);
+  //     final sTime = DateFormatter.formatTime(
+  //       end.subtract(const Duration(minutes: 30)),
+  //     );
+  //     final eTime = DateFormatter.formatTime(
+  //       end.add(const Duration(minutes: 60)),
+  //     );
+  //     msg = "Chỉ được xác nhận xuống xe từ $sTime đến $eTime";
+  //   }
+
+  //   showCustomDialog(
+  //     context,
+  //     title: "Chưa đến giờ",
+  //     message: msg,
+  //     type: DialogType.warning,
+  //     btnText: "Đã hiểu",
+  //   );
+  // }
 
   @override
   void initState() {
@@ -256,12 +260,105 @@ class _StaffTransportScheduleAttedanceScreenState
     );
   }
 
+  // Future<void> _submitAttendance() async {
+  //   final isCheckOutTab = _tabController.index == 1;
+
+  //   if (!_isTimeValidToSubmit(isCheckOutTab)) {
+  //     _showTimeError(isCheckOutTab);
+  //     return;
+  //   }
+
+  //   final provider = context.read<ScheduleProvider>();
+  //   final transports = provider.campersTransport;
+  //   final List<int> selectedIds = [];
+
+  //   for (var t in transports) {
+  //     bool isSelected = false;
+
+  //     bool originalSelected = false;
+  //     if (isCheckOutTab) {
+  //       originalSelected = t.status == "Completed";
+  //     } else {
+  //       originalSelected = t.status == "Onboard" || t.status == "Completed";
+  //     }
+
+  //     if (_selectionState.containsKey(t.camperTransportId)) {
+  //       isSelected = _selectionState[t.camperTransportId]!;
+  //     } else {
+  //       isSelected = originalSelected;
+  //     }
+
+  //     if (isSelected) {
+  //       selectedIds.add(t.camperTransportId);
+  //     }
+  //   }
+
+  //   if (selectedIds.isEmpty) {
+  //     showCustomDialog(
+  //       context,
+  //       title: "Chưa chọn camper",
+  //       message: "Vui lòng chọn ít nhất 1 camper để xác nhận.",
+  //       type: DialogType.warning,
+  //       btnText: "Đóng",
+  //     );
+  //     return;
+  //   }
+
+  //   final actionText = isCheckOutTab ? "xuống xe" : "lên xe";
+
+  //   try {
+  //     if (isCheckOutTab) {
+  //       await provider.submitAttendanceCamperTransportCheckOut(
+  //         camperTransportIds: selectedIds,
+  //       );
+  //     } else {
+  //       await provider.submitAttendanceCamperTransportCheckIn(
+  //         camperTransportIds: selectedIds,
+  //       );
+  //     }
+
+  //     if (mounted) {
+  //       _showStatusDialog(
+  //         'Đã cập nhật danh sách $actionText thành công!',
+  //         isSuccess: true,
+  //       );
+  //       _loadData();
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       String errorMessage = e.toString();
+  //       _showStatusDialog(errorMessage, isSuccess: false);
+  //     }
+  //   }
+  // }
   Future<void> _submitAttendance() async {
+    if (_isTripFinished) {
+      showCustomDialog(
+        context,
+        title: "Đã kết thúc",
+        message: "Chuyến đi này đã kết thúc, không thể điểm danh nữa.",
+        type: DialogType.warning,
+      );
+      return;
+    }
+
     final isCheckOutTab = _tabController.index == 1;
 
-    if (!_isTimeValidToSubmit(isCheckOutTab)) {
-      _showTimeError(isCheckOutTab);
-      return;
+    if (!isCheckOutTab) {
+      final bool isTripStarted =
+          widget.schedule.actualStartTime != null &&
+          widget.schedule.actualStartTime!.isNotEmpty;
+
+      if (!isTripStarted) {
+        showCustomDialog(
+          context,
+          title: "Chưa bắt đầu",
+          message:
+              "Chuyến đi chưa bắt đầu. Vui lòng đợi tài xế bắt đầu chuyến đi để điểm danh lên xe.",
+          type: DialogType.warning,
+        );
+        return;
+      }
     }
 
     final provider = context.read<ScheduleProvider>();
@@ -270,7 +367,6 @@ class _StaffTransportScheduleAttedanceScreenState
 
     for (var t in transports) {
       bool isSelected = false;
-
       bool originalSelected = false;
       if (isCheckOutTab) {
         originalSelected = t.status == "Completed";

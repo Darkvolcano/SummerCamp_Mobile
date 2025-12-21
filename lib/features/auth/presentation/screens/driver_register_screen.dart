@@ -38,7 +38,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
   File? _licenseImage;
-  bool _isScanning = false;
+  // bool _isScanning = false;
 
   @override
   void dispose() {
@@ -64,7 +64,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     if (pickedFile != null) {
       setState(() {
         _licenseImage = File(pickedFile.path);
-        _isScanning = true;
+        // _isScanning = true;
       });
 
       await _processImageWithGemini();
@@ -126,19 +126,19 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        showCustomDialog(
-          context,
-          title: "Lỗi phân tích ảnh",
-          message:
-              "Không thể quét thông tin tự động. Vui lòng nhập tay.\nLỗi: ${e.toString().replaceAll("Exception:", "")}",
-          type: DialogType.error,
-        );
+        // showCustomDialog(
+        //   context,
+        //   title: "Lỗi phân tích ảnh",
+        //   message:
+        //       "Không thể quét thông tin tự động. Vui lòng nhập tay.\nLỗi: ${e.toString().replaceAll("Exception:", "")}",
+        //   type: DialogType.error,
+        // );
         // setState(() => _licenseImage = null);
       }
     } finally {
-      if (mounted) {
-        setState(() => _isScanning = false);
-      }
+      // if (mounted) {
+      //   setState(() => _isScanning = false);
+      // }
     }
   }
 
@@ -455,27 +455,27 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                         : null,
                   ),
                 ),
-                if (_isScanning)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "AI đang phân tích & điền form...",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                // if (_isScanning)
+                //   const Padding(
+                //     padding: EdgeInsets.only(top: 10),
+                //     child: Row(
+                //       children: [
+                //         SizedBox(
+                //           width: 20,
+                //           height: 20,
+                //           child: CircularProgressIndicator(strokeWidth: 2),
+                //         ),
+                //         SizedBox(width: 10),
+                //         Text(
+                //           "AI đang phân tích & điền form...",
+                //           style: TextStyle(
+                //             color: Colors.blue,
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
                 const SizedBox(height: 16),
 
                 _buildTextField(
