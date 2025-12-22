@@ -7,7 +7,7 @@ class ReportApiService {
   ReportApiService(this.client);
 
   Future<List<dynamic>> fetchReports() async {
-    final res = await client.get('report');
+    final res = await client.get('report/my-reports');
     return res.data as List;
   }
 

@@ -30,7 +30,6 @@ class _TransportReportCreateScreenState
   bool _isSubmitting = false;
 
   int? _selectedCamperId;
-  int? _selectedActivityId;
 
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -108,7 +107,7 @@ class _TransportReportCreateScreenState
         campId: widget.campId,
         camperId: _selectedCamperId!,
         note: _noteController.text,
-        transportScheduleId: _selectedActivityId ?? 0,
+        transportScheduleId: widget.transportScheduleId,
         imageUrl: imageUrl,
       );
 
@@ -118,7 +117,9 @@ class _TransportReportCreateScreenState
           title: "Thành công",
           message: "Đã gửi báo cáo thành công",
           type: DialogType.success,
-          onConfirm: () => Navigator.pop(context),
+          onConfirm: () {
+            Navigator.of(context).pop(true);
+          },
         );
       }
     } catch (e) {

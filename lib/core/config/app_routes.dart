@@ -60,7 +60,7 @@ class AppRoutes {
   static const String chatDetail = '/chat-detail'; // hiện tại chưa có
   static const String chatAI = '/chat-ai';
   static const String joinLivestream = '/join-livestream';
-  static const String report = '/report'; // hiện tại chưa có
+  static const String report = '/report';
   static const String createReport = '/create-report';
   static const String registrationDetail = '/registration-detail';
   static const String registrationForm = '/registration-form';

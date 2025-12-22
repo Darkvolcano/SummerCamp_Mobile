@@ -15,8 +15,9 @@ class ReportListScreen extends StatefulWidget {
 class _ReportListScreenState extends State<ReportListScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  String _filterStatus = 'All';
+
   String _filterLevel = 'All';
+  String _filterType = 'All';
 
   int _currentPage = 1;
   final int _itemsPerPage = 10;
@@ -78,12 +79,14 @@ class _ReportListScreenState extends State<ReportListScreen> {
       return dateB.compareTo(dateA);
     });
 
-    if (_filterStatus != 'All') {
-      filtered = filtered.where((r) => r.status == _filterStatus).toList();
+    if (_filterLevel != 'All') {
+      int level = int.parse(_filterLevel);
+      // ignore: unrelated_type_equality_checks
+      filtered = filtered.where((r) => r.level == level).toList();
     }
 
-    if (_filterLevel != 'All') {
-      filtered = filtered.where((r) => r.level == _filterLevel).toList();
+    if (_filterType != 'All') {
+      filtered = filtered.where((r) => r.reportType == _filterType).toList();
     }
 
     if (_searchController.text.isNotEmpty) {
@@ -96,9 +99,50 @@ class _ReportListScreenState extends State<ReportListScreen> {
     return filtered;
   }
 
+  String _getLevelText(String level) {
+    switch (level) {
+      case '1':
+        return "Thấp";
+      case '2':
+        return "Trung bình";
+      case '3':
+        return "Cao";
+      default:
+        return "Không xác định";
+    }
+  }
+
+  Color _getLevelColor(String level) {
+    switch (level) {
+      case '1':
+        return Colors.green;
+      case '2':
+        return Colors.orange;
+      case '3':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getReportTypeText(String? type) {
+    if (type == 'Transport') return 'Vận chuyển';
+    if (type == 'Incident') return 'Sinh hoạt';
+    if (type == 'CheckOut') return 'Check-out';
+    return type ?? 'Khác';
+  }
+
+  IconData _getReportTypeIcon(String? type) {
+    if (type == 'Transport') return Icons.directions_bus;
+    if (type == 'Incident') return Icons.home_repair_service;
+    if (type == 'CheckOut') return Icons.logout;
+    return Icons.article;
+  }
+
   void _showFilterSheet() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -111,6 +155,17 @@ class _ReportListScreenState extends State<ReportListScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Text(
                     "Bộ lọc hiển thị",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -120,44 +175,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    "Trạng thái",
-                    style: TextStyle(
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: ["All", "Pending", "Resolved"].map((status) {
-                      final isSelected = _filterStatus == status;
-                      return ChoiceChip(
-                        label: Text(status),
-                        selected: isSelected,
-                        selectedColor: StaffTheme.staffAccent.withValues(
-                          alpha: 0.2,
-                        ),
-                        labelStyle: TextStyle(
-                          fontFamily: "Quicksand",
-                          color: isSelected
-                              ? StaffTheme.staffPrimary
-                              : Colors.black,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                        onSelected: (bool selected) {
-                          setModalState(() => _filterStatus = status);
-                          setState(() {
-                            _filterStatus = status;
-                            _currentPage = 1;
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
+
                   const Text(
                     "Mức độ nghiêm trọng",
                     style: TextStyle(
@@ -168,33 +186,97 @@ class _ReportListScreenState extends State<ReportListScreen> {
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: ["All", "High", "Medium", "Low"].map((level) {
-                      final isSelected = _filterLevel == level;
-                      return ChoiceChip(
-                        label: Text(level),
-                        selected: isSelected,
-                        selectedColor: _getLevelColor(
-                          level,
-                        ).withValues(alpha: 0.2),
-                        labelStyle: TextStyle(
-                          fontFamily: "Quicksand",
-                          color: isSelected
-                              ? _getLevelColor(level)
-                              : Colors.black,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                        onSelected: (bool selected) {
-                          setModalState(() => _filterLevel = level);
-                          setState(() {
-                            _filterLevel = level;
-                            _currentPage = 1;
-                          });
-                        },
-                      );
-                    }).toList(),
+                    children:
+                        [
+                          {"value": "All", "label": "Tất cả"},
+                          {"value": "1", "label": "Thấp"},
+                          {"value": "2", "label": "Trung bình"},
+                          {"value": "3", "label": "Cao"},
+                        ].map((levelMap) {
+                          final value = levelMap["value"]!;
+                          final label = levelMap["label"]!;
+                          final isSelected = _filterLevel == value;
+
+                          Color chipColor;
+                          if (value == "1") {
+                            chipColor = Colors.green;
+                          } else if (value == "2") {
+                            chipColor = Colors.orange;
+                          } else if (value == "3") {
+                            chipColor = Colors.red;
+                          } else {
+                            chipColor = StaffTheme.staffPrimary;
+                          }
+
+                          return ChoiceChip(
+                            label: Text(label),
+                            selected: isSelected,
+                            selectedColor: chipColor.withValues(alpha: 0.2),
+                            labelStyle: TextStyle(
+                              fontFamily: "Quicksand",
+                              color: isSelected ? chipColor : Colors.black,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                            onSelected: (bool selected) {
+                              setModalState(() => _filterLevel = value);
+                              setState(() {
+                                _filterLevel = value;
+                                _currentPage = 1;
+                              });
+                            },
+                          );
+                        }).toList(),
                   ),
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    "Loại báo cáo",
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children:
+                        [
+                          {"value": "All", "label": "Tất cả"},
+                          {"value": "Transport", "label": "Vận chuyển"},
+                          {"value": "Incident", "label": "Sinh hoạt"},
+                          {"value": "CheckOut", "label": "Check-out"},
+                        ].map((typeMap) {
+                          final value = typeMap["value"]!;
+                          final label = typeMap["label"]!;
+                          final isSelected = _filterType == value;
+                          return ChoiceChip(
+                            label: Text(label),
+                            selected: isSelected,
+                            selectedColor: StaffTheme.staffAccent.withValues(
+                              alpha: 0.2,
+                            ),
+                            labelStyle: TextStyle(
+                              fontFamily: "Quicksand",
+                              color: isSelected
+                                  ? StaffTheme.staffPrimary
+                                  : Colors.black,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                            onSelected: (bool selected) {
+                              setModalState(() => _filterType = value);
+                              setState(() {
+                                _filterType = value;
+                                _currentPage = 1;
+                              });
+                            },
+                          );
+                        }).toList(),
+                  ),
+
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
@@ -206,16 +288,19 @@ class _ReportListScreenState extends State<ReportListScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: const Text(
                         "Áp dụng",
                         style: TextStyle(
                           fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             );
@@ -256,7 +341,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
             icon: Stack(
               children: [
                 const Icon(Icons.filter_list_rounded),
-                if (_filterStatus != 'All' || _filterLevel != 'All')
+                if (_filterLevel != 'All' || _filterType != 'All')
                   Positioned(
                     right: 0,
                     top: 0,
@@ -376,17 +461,6 @@ class _ReportListScreenState extends State<ReportListScreen> {
     );
   }
 
-  Color _getLevelColor(String level) {
-    switch (level) {
-      case "High":
-        return Colors.red;
-      case "Medium":
-        return Colors.orange;
-      default:
-        return Colors.green;
-    }
-  }
-
   Widget _buildReportCard(
     BuildContext context,
     Report report,
@@ -395,19 +469,20 @@ class _ReportListScreenState extends State<ReportListScreen> {
     Color statusColor;
     Color statusBgColor;
 
-    switch (report.status) {
-      case "Resolved":
-        statusColor = Colors.green.shade700;
-        statusBgColor = Colors.green.shade50;
-        break;
-      case "Pending":
-      default:
-        statusColor = Colors.orange.shade800;
-        statusBgColor = Colors.orange.shade50;
-        break;
+    if (report.status == "Active") {
+      statusColor = Colors.blue.shade700;
+      statusBgColor = Colors.blue.shade50;
+    } else {
+      statusColor = Colors.orange.shade800;
+      statusBgColor = Colors.orange.shade50;
     }
 
     Color levelColor = _getLevelColor(report.level);
+    String levelText = _getLevelText(report.level);
+    String typeText = _getReportTypeText(report.reportType);
+    IconData typeIcon = _getReportTypeIcon(report.reportType);
+
+    String camperDisplayName = report.camperName;
 
     return Card(
       elevation: 2,
@@ -422,7 +497,6 @@ class _ReportListScreenState extends State<ReportListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -443,6 +517,36 @@ class _ReportListScreenState extends State<ReportListScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.blue.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(typeIcon, size: 12, color: Colors.blue.shade700),
+                        const SizedBox(width: 4),
+                        Text(
+                          typeText,
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -468,6 +572,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                 ],
               ),
               const SizedBox(height: 12),
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -506,7 +611,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Camper #${report.camperId}",
+                          'Camper $camperDisplayName',
                           style: textTheme.titleMedium?.copyWith(
                             fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
@@ -535,6 +640,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
               const SizedBox(height: 12),
               const Divider(height: 1),
               const SizedBox(height: 8),
+
               Row(
                 children: [
                   Icon(
@@ -544,7 +650,7 @@ class _ReportListScreenState extends State<ReportListScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    report.level,
+                    "Mức độ: $levelText",
                     style: TextStyle(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,

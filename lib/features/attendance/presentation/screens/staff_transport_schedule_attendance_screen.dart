@@ -454,8 +454,17 @@ class _StaffTransportScheduleAttedanceScreenState
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => TransportReportCreateScreen(
+          //       campId: widget.schedule.campName.campId,
+          //       transportScheduleId: widget.schedule.transportScheduleId,
+          //     ),
+          //   ),
+          // );
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => TransportReportCreateScreen(
@@ -464,6 +473,11 @@ class _StaffTransportScheduleAttedanceScreenState
               ),
             ),
           );
+
+          // Nếu tạo report thành công (trả về true), load lại dữ liệu
+          if (result == true) {
+            _loadData();
+          }
         },
         backgroundColor: StaffTheme.staffAccent,
         icon: const Icon(Icons.report_problem_outlined, color: Colors.white),
@@ -626,7 +640,7 @@ class _StaffTransportScheduleAttedanceScreenState
     if (transports.isEmpty) {
       return const Center(
         child: Text(
-          "Không có dữ liệu",
+          "Không có camper tham gia",
           style: TextStyle(fontFamily: "Quicksand"),
         ),
       );
