@@ -21,6 +21,8 @@ class ReportCreateScreen extends StatefulWidget {
 class _ReportCreateScreenState extends State<ReportCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _noteController = TextEditingController();
+  final GlobalKey _camperDropdownKey = GlobalKey();
+  final GlobalKey _activityDropdownKey = GlobalKey();
 
   int _level = 1;
   bool _isSubmitting = false;
@@ -67,6 +69,124 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
     }
   }
 
+  void _showCamperDropdown() async {
+    final camperProvider = context.read<CamperProvider>();
+    final camperList = camperProvider.groupMembers;
+
+    if (camperList.isEmpty) return;
+
+    final RenderBox? renderBox =
+        _camperDropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      offset.dx,
+      offset.dy + size.height,
+      offset.dx + size.width,
+      offset.dy + size.height + 300,
+    );
+
+    final int? selected = await showMenu<int>(
+      context: context,
+      position: position,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      elevation: 4,
+      constraints: BoxConstraints(
+        minWidth: size.width,
+        maxWidth: size.width,
+        maxHeight: 300,
+      ),
+      items: camperList.map((member) {
+        return PopupMenuItem<int>(
+          value: member.camperName.camperId,
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Text(
+            member.camperName.camperName,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _selectedCamperId = selected;
+      });
+    }
+  }
+
+  void _showActivityDropdown() async {
+    final activityProvider = context.read<ActivityProvider>();
+    final activityList = activityProvider.activitySchedules;
+
+    if (activityList.isEmpty) return;
+
+    final RenderBox? renderBox =
+        _activityDropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      offset.dx,
+      offset.dy + size.height,
+      offset.dx + size.width,
+      offset.dy + size.height + 300,
+    );
+
+    final int? selected = await showMenu<int>(
+      context: context,
+      position: position,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      elevation: 4,
+      constraints: BoxConstraints(
+        minWidth: size.width,
+        maxWidth: size.width,
+        maxHeight: 300,
+      ),
+      items: activityList.map((act) {
+        String dateStr = DateFormatter.formatDate(act.startTime);
+        String label =
+            "${act.activity?.name ?? "Hoạt động không tên"} ($dateStr)";
+
+        return PopupMenuItem<int>(
+          value: act.activityScheduleId,
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _selectedActivityId = selected;
+      });
+    }
+  }
+
   Future<void> _submitReport() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -107,7 +227,9 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
           title: "Thành công",
           message: "Đã gửi báo cáo thành công",
           type: DialogType.success,
-          onConfirm: () => Navigator.pop(context),
+          onConfirm: () {
+            Navigator.of(context).pop(true);
+          },
         );
       }
     } catch (e) {
@@ -130,9 +252,41 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
   Widget build(BuildContext context) {
     final camperProvider = context.watch<CamperProvider>();
     final camperList = camperProvider.groupMembers;
+    final bool isLoadingCampers = camperProvider.loading;
 
     final activityProvider = context.watch<ActivityProvider>();
     final activityList = activityProvider.activitySchedules;
+    final bool isLoadingActivities = activityProvider.loading;
+
+    String selectedCamperText = "Chọn Camper";
+    if (isLoadingCampers) {
+      selectedCamperText = "Đang tải danh sách...";
+    } else if (camperList.isEmpty) {
+      selectedCamperText = "Không có camper nào";
+    } else if (_selectedCamperId != null) {
+      try {
+        final selected = camperList.firstWhere(
+          (m) => m.camperName.camperId == _selectedCamperId,
+        );
+        selectedCamperText = selected.camperName.camperName;
+      } catch (_) {}
+    }
+
+    String selectedActivityText = "Chọn Hoạt động";
+    if (isLoadingActivities) {
+      selectedActivityText = "Đang tải danh sách...";
+    } else if (activityList.isEmpty) {
+      selectedActivityText = "Không có hoạt động nào";
+    } else if (_selectedActivityId != null) {
+      try {
+        final selected = activityList.firstWhere(
+          (a) => a.activityScheduleId == _selectedActivityId,
+        );
+        String dateStr = DateFormatter.formatDate(selected.startTime);
+        selectedActivityText =
+            "${selected.activity?.name ?? "Hoạt động không tên"} ($dateStr)";
+      } catch (_) {}
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -218,111 +372,219 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
 
               Column(
                 children: [
-                  DropdownButtonFormField<int>(
-                    initialValue: _selectedCamperId,
-                    decoration: InputDecoration(
-                      labelText: "Chọn Camper",
-                      labelStyle: const TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.grey,
+                  GestureDetector(
+                    key: _camperDropdownKey,
+                    onTap: isLoadingCampers || camperList.isEmpty
+                        ? null
+                        : _showCamperDropdown,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: "Chọn Camper",
+                        labelStyle: const TextStyle(
+                          fontFamily: "Quicksand",
+                          color: StaffTheme.staffPrimary,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: isLoadingCampers
+                                ? Colors.grey.shade300
+                                : StaffTheme.staffPrimary,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: StaffTheme.staffPrimary,
+                            width: 2.0,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: isLoadingCampers
+                              ? Colors.grey
+                              : StaffTheme.staffPrimary,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
                       ),
-                      prefixIcon: const Icon(
-                        Icons.person_outline,
-                        color: StaffTheme.staffPrimary,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 14,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              selectedCamperText,
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: _selectedCamperId != null
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: _selectedCamperId != null
+                                    ? Colors.black87
+                                    : Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                        ],
                       ),
                     ),
-                    items: camperList.map((member) {
-                      return DropdownMenuItem<int>(
-                        value: member.camperName.camperId,
-                        child: Text(
-                          member.camperName.camperName,
-                          style: const TextStyle(
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (val) => setState(() => _selectedCamperId = val),
-                    validator: (value) =>
-                        value == null ? "Vui lòng chọn camper" : null,
-                    hint: camperList.isEmpty
-                        ? const Text(
-                            "Đang tải danh sách...",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 13,
-                            ),
-                          )
-                        : null,
                   ),
+                ],
+              ),
 
-                  const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-                  DropdownButtonFormField<int>(
-                    initialValue: _selectedActivityId,
-                    decoration: InputDecoration(
-                      labelText: "Chọn Hoạt động",
-                      labelStyle: const TextStyle(
-                        fontFamily: "Quicksand",
-                        color: Colors.grey,
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.event_note,
-                        color: StaffTheme.staffPrimary,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 14,
-                      ),
-                    ),
-                    items: activityList.map((act) {
-                      String dateStr = DateFormatter.formatDate(act.startTime);
-
-                      return DropdownMenuItem<int>(
-                        value: act.activityScheduleId,
-                        child: SizedBox(
-                          width: 200,
-                          child: Text(
-                            "${act.activity?.name ?? "Hoạt động không tên"} ($dateStr)",
-                            style: const TextStyle(
-                              fontFamily: "Quicksand",
-                              fontWeight: FontWeight.w600,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+              Column(
+                children: [
+                  GestureDetector(
+                    key: _activityDropdownKey,
+                    onTap: isLoadingActivities || activityList.isEmpty
+                        ? null
+                        : _showActivityDropdown,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: "Chọn Hoạt động",
+                        labelStyle: const TextStyle(
+                          fontFamily: "Quicksand",
+                          color: StaffTheme.staffPrimary,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: isLoadingActivities
+                                ? Colors.grey.shade300
+                                : StaffTheme.staffPrimary,
+                            width: 1.0,
                           ),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedActivityId = val),
-                    hint: activityList.isEmpty
-                        ? const Text(
-                            "Đang tải danh sách...",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 13,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: StaffTheme.staffPrimary,
+                            width: 2.0,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.event_note,
+                          color: isLoadingActivities
+                              ? Colors.grey
+                              : StaffTheme.staffPrimary,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              selectedActivityText,
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: _selectedActivityId != null
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: _selectedActivityId != null
+                                    ? Colors.black87
+                                    : Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          )
-                        : null,
+                          ),
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
 
               const SizedBox(height: 20),
 
-              _buildLevelDropdown(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Mức độ sự cố",
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _level,
+                        isExpanded: true,
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: StaffTheme.staffPrimary,
+                        ),
+                        items: _levelLabels.entries.map((entry) {
+                          Color levelColor;
+                          switch (entry.key) {
+                            case 3:
+                              levelColor = Colors.red;
+                              break;
+                            case 2:
+                              levelColor = Colors.orange;
+                              break;
+                            default:
+                              levelColor = Colors.green;
+                          }
+
+                          return DropdownMenuItem<int>(
+                            value: entry.key,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  size: 18,
+                                  color: levelColor,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  entry.value,
+                                  style: const TextStyle(
+                                    fontFamily: "Quicksand",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) setState(() => _level = val);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
               const SizedBox(height: 20),
 
@@ -404,78 +666,5 @@ class _ReportCreateScreenState extends State<ReportCreateScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildLevelDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Mức độ sự cố",
-          style: TextStyle(
-            fontFamily: "Quicksand",
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: _level,
-              isExpanded: true,
-              icon: const Icon(
-                Icons.arrow_drop_down,
-                color: StaffTheme.staffPrimary,
-              ),
-              items: _levelLabels.entries.map((entry) {
-                return DropdownMenuItem<int>(
-                  value: entry.key,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.warning_amber_rounded,
-                        size: 18,
-                        color: _getLevelColor(entry.key),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        entry.value,
-                        style: const TextStyle(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: (val) {
-                if (val != null) setState(() => _level = val);
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Color _getLevelColor(int level) {
-    switch (level) {
-      case 3:
-        return Colors.red;
-      case 2:
-        return Colors.orange;
-      case 1:
-        return Colors.green;
-      default:
-        return StaffTheme.staffPrimary;
-    }
   }
 }

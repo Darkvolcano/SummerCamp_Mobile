@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/album/presentation/state/album_provider.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:summercamp/core/config/staff_theme.dart';
+import 'package:summercamp/core/widgets/custom_dialog.dart';
 
 class UploadPhotoScreen extends StatefulWidget {
   final Schedule schedule;
@@ -21,6 +21,8 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
 
   int? _selectedAlbumId;
   bool _isLoadingAlbums = true;
+
+  final GlobalKey _dropdownKey = GlobalKey();
 
   @override
   void initState() {
@@ -38,6 +40,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
         _isLoadingAlbums = false;
       });
     }
+  }
+
+  Future<void> _loadPhotos(int albumId) async {
+    final provider = context.read<AlbumProvider>();
+    await provider.loadPhotos(albumId);
   }
 
   Future<void> _pickMultiImages() async {
@@ -63,10 +70,94 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     }
   }
 
-  void _removeAt(int index) {
+  void _removePickedImage(int index) {
     setState(() {
       _picked.removeAt(index);
     });
+  }
+
+  void _viewImage(ImageProvider imageProvider, String tag) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
+          extendBodyBehindAppBar: true,
+          body: Center(
+            child: Hero(
+              tag: tag,
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image(image: imageProvider),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAlbumDropdown() async {
+    final albumProvider = context.read<AlbumProvider>();
+    final albums = albumProvider.albums;
+
+    if (albums.isEmpty) return;
+
+    final RenderBox? renderBox =
+        _dropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      offset.dx,
+      offset.dy + size.height,
+      offset.dx + size.width,
+      offset.dy + size.height + 300,
+    );
+
+    final int? selected = await showMenu<int>(
+      context: context,
+      position: position,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
+      elevation: 4,
+      constraints: BoxConstraints(
+        minWidth: size.width,
+        maxWidth: size.width,
+        maxHeight: 300,
+      ),
+      items: albums.map((album) {
+        return PopupMenuItem<int>(
+          value: album.albumId,
+          height: 30,
+          child: Text(
+            album.title,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selected != null && selected != _selectedAlbumId) {
+      setState(() {
+        _selectedAlbumId = selected;
+        _picked.clear();
+      });
+      _loadPhotos(selected);
+    }
   }
 
   Future<void> _uploadPhotos() async {
@@ -84,7 +175,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       showCustomDialog(
         context,
         title: "Chưa chọn ảnh",
-        message: "Vui lòng chọn ít nhất một ảnh để tải lên",
+        message: "Vui lòng chọn ít nhất một ảnh mới để tải lên",
         type: DialogType.warning,
       );
       return;
@@ -108,13 +199,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       showCustomDialog(
         context,
         title: "Thành công",
-        message: "Đã upload ${_picked.length} ảnh vào album thành công.",
+        message: "Đã upload ${_picked.length} ảnh mới thành công.",
         type: DialogType.success,
       );
 
       setState(() {
         _picked.clear();
       });
+      _loadPhotos(_selectedAlbumId!);
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -135,6 +227,19 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   Widget build(BuildContext context) {
     final albumProvider = context.watch<AlbumProvider>();
     final albums = albumProvider.albums;
+    final existingPhotos = albumProvider.albumPhotos;
+    final bool isLoadingPhotos = albumProvider.loading;
+
+    final int totalItemCount = existingPhotos.length + _picked.length;
+
+    String selectedAlbumTitle = "Vui lòng chọn Album";
+    if (_selectedAlbumId != null && albums.isNotEmpty) {
+      try {
+        selectedAlbumTitle = albums
+            .firstWhere((a) => a.albumId == _selectedAlbumId)
+            .title;
+      } catch (_) {}
+    }
 
     return Stack(
       children: [
@@ -185,51 +290,87 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                     ),
                   )
                 else
-                  DropdownButtonFormField<int>(
-                    initialValue: _selectedAlbumId,
-                    decoration: InputDecoration(
-                      labelText: "Chọn Album",
-                      labelStyle: const TextStyle(fontFamily: "Quicksand"),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.photo_album,
-                        color: StaffTheme.staffPrimary,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 14,
-                      ),
-                    ),
-                    items: albums.map((album) {
-                      return DropdownMenuItem<int>(
-                        value: album.albumId,
-                        child: Text(
-                          album.title,
-                          style: const TextStyle(
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                  GestureDetector(
+                    key: _dropdownKey,
+                    onTap: _showAlbumDropdown,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: "Chọn Album",
+                        labelStyle: const TextStyle(
+                          fontFamily: "Quicksand",
+                          color: StaffTheme.staffPrimary,
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedAlbumId = val;
-                      });
-                    },
-                    hint: const Text(
-                      "Vui lòng chọn Album",
-                      style: TextStyle(fontFamily: "Quicksand"),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: StaffTheme.staffPrimary,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: StaffTheme.staffPrimary,
+                            width: 2.0,
+                          ),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.photo_album,
+                          color: StaffTheme.staffPrimary,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              selectedAlbumTitle,
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: _selectedAlbumId != null
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: _selectedAlbumId != null
+                                    ? Colors.black87
+                                    : Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                        ],
+                      ),
                     ),
                   ),
 
                 const SizedBox(height: 16),
 
                 Expanded(
-                  child: _picked.isEmpty
+                  child: _selectedAlbumId == null
+                      ? Center(
+                          child: Text(
+                            "Vui lòng chọn Album để xem và thêm ảnh",
+                            style: TextStyle(
+                              fontFamily: "Quicksand",
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        )
+                      : isLoadingPhotos && existingPhotos.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: StaffTheme.staffPrimary,
+                          ),
+                        )
+                      : totalItemCount == 0
                       ? Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -250,7 +391,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                'Chưa có ảnh nào được chọn',
+                                'Album trống. Hãy thêm ảnh mới!',
                                 style: TextStyle(
                                   fontFamily: "Quicksand",
                                   color: Colors.grey.shade600,
@@ -261,7 +402,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                           ),
                         )
                       : GridView.builder(
-                          itemCount: _picked.length,
+                          itemCount: totalItemCount,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -270,35 +411,120 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                                 childAspectRatio: 1,
                               ),
                           itemBuilder: (context, index) {
-                            final file = _picked[index];
-                            return Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(file, fit: BoxFit.cover),
-                                ),
-                                Positioned(
-                                  top: 4,
-                                  right: 4,
-                                  child: InkWell(
-                                    onTap: () => _removeAt(index),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.red,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        size: 14,
-                                        color: Colors.white,
-                                      ),
+                            if (index < existingPhotos.length) {
+                              final photo = existingPhotos[index];
+                              final tag = 'existing_${photo.photo}';
+
+                              return GestureDetector(
+                                onTap: () =>
+                                    _viewImage(NetworkImage(photo.photo), tag),
+                                child: Hero(
+                                  tag: tag,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      photo.photo,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (ctx, err, stack) =>
+                                          Container(
+                                            color: Colors.grey.shade200,
+                                            child: const Icon(
+                                              Icons.broken_image,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value:
+                                                    loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                    : null,
+                                                strokeWidth: 2,
+                                              ),
+                                            );
+                                          },
                                     ),
                                   ),
                                 ),
-                              ],
-                            );
+                              );
+                            } else {
+                              final pickedIndex = index - existingPhotos.length;
+                              final file = _picked[pickedIndex];
+                              final tag = 'new_$pickedIndex';
+
+                              return GestureDetector(
+                                onTap: () => _viewImage(FileImage(file), tag),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Hero(
+                                      tag: tag,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.file(
+                                          file,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: InkWell(
+                                        onTap: () =>
+                                            _removePickedImage(pickedIndex),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 4,
+                                      left: 4,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Mới",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                           },
                         ),
                 ),
@@ -309,7 +535,9 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: _isUploading ? null : _pickMultiImages,
+                        onPressed: _isUploading || _selectedAlbumId == null
+                            ? null
+                            : _pickMultiImages,
                         icon: const Icon(Icons.add_a_photo),
                         label: const Text(
                           "Thêm ảnh",
@@ -327,6 +555,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          disabledForegroundColor: Colors.grey,
                         ),
                       ),
                     ),
@@ -340,9 +569,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                             ? null
                             : _uploadPhotos,
                         icon: const Icon(Icons.cloud_upload),
-                        label: const Text(
-                          "Tải lên",
-                          style: TextStyle(
+                        label: Text(
+                          _picked.isNotEmpty
+                              ? "Tải lên (${_picked.length})"
+                              : "Tải lên",
+                          style: const TextStyle(
                             fontFamily: "Quicksand",
                             fontWeight: FontWeight.bold,
                           ),

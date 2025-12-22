@@ -35,6 +35,8 @@ class _TransportReportCreateScreenState
   final ImagePicker _picker = ImagePicker();
   bool _isLoadingCampers = true;
 
+  final GlobalKey _camperDropdownKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +80,63 @@ class _TransportReportCreateScreenState
     }
   }
 
+  void _showCamperDropdown() async {
+    final scheduleProvider = context.read<ScheduleProvider>();
+    final transportCamperList = scheduleProvider.campersTransport;
+
+    if (transportCamperList.isEmpty) return;
+
+    final RenderBox? renderBox =
+        _camperDropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      offset.dx,
+      offset.dy + size.height,
+      offset.dx + size.width,
+      offset.dy + size.height + 300,
+    );
+
+    final int? selected = await showMenu<int>(
+      context: context,
+      position: position,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      elevation: 4,
+      constraints: BoxConstraints(
+        minWidth: size.width,
+        maxWidth: size.width,
+        maxHeight: 300,
+      ),
+      items: transportCamperList.map((transport) {
+        return PopupMenuItem<int>(
+          value: transport.camper.camperId,
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Text(
+            transport.camper.camperName,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _selectedCamperId = selected;
+      });
+    }
+  }
+
   Future<void> _submitReport() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -118,6 +177,7 @@ class _TransportReportCreateScreenState
           message: "Đã gửi báo cáo thành công",
           type: DialogType.success,
           onConfirm: () {
+            Navigator.of(context).pop();
             Navigator.of(context).pop(true);
           },
         );
@@ -142,6 +202,20 @@ class _TransportReportCreateScreenState
   Widget build(BuildContext context) {
     final scheduleProvider = context.watch<ScheduleProvider>();
     final transportCamperList = scheduleProvider.campersTransport;
+
+    String selectedCamperText = "Vui lòng chọn Camper";
+    if (_isLoadingCampers) {
+      selectedCamperText = "Đang tải danh sách...";
+    } else if (transportCamperList.isEmpty) {
+      selectedCamperText = "Không có camper nào";
+    } else if (_selectedCamperId != null) {
+      try {
+        final selected = transportCamperList.firstWhere(
+          (t) => t.camper.camperId == _selectedCamperId,
+        );
+        selectedCamperText = selected.camper.camperName;
+      } catch (_) {}
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -227,55 +301,74 @@ class _TransportReportCreateScreenState
 
               Column(
                 children: [
-                  DropdownButtonFormField<int>(
-                    initialValue: _selectedCamperId,
-                    decoration: InputDecoration(
-                      labelText: "Chọn Camper",
-                      // ... (decoration giữ nguyên)
-                    ),
-                    // Map dữ liệu từ transportCamperList
-                    items: transportCamperList.map((transport) {
-                      return DropdownMenuItem<int>(
-                        // Lấy ID camper từ object transport
-                        value: transport.camper.camperId,
-                        child: Text(
-                          transport.camper.camperName, // Tên camper
-                          style: const TextStyle(
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                  GestureDetector(
+                    key: _camperDropdownKey,
+                    onTap: _isLoadingCampers || transportCamperList.isEmpty
+                        ? null
+                        : _showCamperDropdown,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: "Chọn Camper",
+                        labelStyle: const TextStyle(
+                          fontFamily: "Quicksand",
+                          color: StaffTheme.staffPrimary,
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (val) => setState(() => _selectedCamperId = val),
-                    validator: (value) =>
-                        value == null ? "Vui lòng chọn camper" : null,
-                    // Hiển thị hint dựa vào trạng thái loading
-                    hint: _isLoadingCampers
-                        ? const Text(
-                            "Đang tải danh sách...",
-                            style: TextStyle(
-                              fontFamily: "Quicksand",
-                              fontSize: 13,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: _isLoadingCampers
+                                ? Colors.grey.shade300
+                                : StaffTheme.staffPrimary,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: StaffTheme.staffPrimary,
+                            width: 2.0,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: _isLoadingCampers
+                              ? Colors.grey
+                              : StaffTheme.staffPrimary,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              selectedCamperText,
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: _selectedCamperId != null
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: _selectedCamperId != null
+                                    ? Colors.black87
+                                    : Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          )
-                        : (transportCamperList.isEmpty
-                              ? const Text(
-                                  "Không có camper nào",
-                                  style: TextStyle(
-                                    fontFamily: "Quicksand",
-                                    fontSize: 13,
-                                  ),
-                                )
-                              : null),
+                          ),
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
-
-              _buildLevelDropdown(),
 
               const SizedBox(height: 20),
 
@@ -356,23 +449,6 @@ class _TransportReportCreateScreenState
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildLevelDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Mức độ sự cố",
-          style: TextStyle(
-            fontFamily: "Quicksand",
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-      ],
     );
   }
 }
