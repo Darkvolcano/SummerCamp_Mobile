@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/core/config/app_theme.dart';
 
 class InputMessage extends StatefulWidget {
   final Function(String) onSend;
@@ -18,8 +19,10 @@ class _InputMessageState extends State<InputMessage> {
         Expanded(
           child: TextField(
             controller: _controller,
+            style: const TextStyle(fontFamily: "Quicksand"),
             decoration: InputDecoration(
               hintText: 'Nhập tin nhắn...',
+              hintStyle: const TextStyle(fontFamily: "Quicksand"),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -34,7 +37,7 @@ class _InputMessageState extends State<InputMessage> {
           child: ElevatedButton(
             onPressed: _send,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFA05A2C),
+              backgroundColor: AppTheme.summerPrimary,
               padding: EdgeInsets.zero,
               shape: const CircleBorder(),
               alignment: Alignment.center,

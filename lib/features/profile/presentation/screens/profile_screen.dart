@@ -453,6 +453,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }),
         _buildProfileMenuItem(
+          "Trò chuyện",
+          Icons.chat,
+          () => Navigator.pushNamed(context, AppRoutes.chat),
+        ),
+        _buildProfileMenuItem(
           "Về ứng dụng",
           Icons.confirmation_number_outlined,
           () => _showMessageBox(

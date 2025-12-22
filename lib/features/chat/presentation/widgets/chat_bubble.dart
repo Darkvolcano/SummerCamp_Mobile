@@ -87,6 +87,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                   child: Text(
                     widget.text,
                     style: TextStyle(
+                      fontFamily: "Quicksand",
                       color: widget.isMe
                           ? Colors.white
                           : const Color(0xFF5D4037),
@@ -107,7 +108,11 @@ class _ChatBubbleState extends State<ChatBubble> {
                   padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
                   child: Text(
                     formatTimestamp(widget.time),
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    style: const TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ),

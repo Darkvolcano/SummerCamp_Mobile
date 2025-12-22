@@ -34,6 +34,13 @@ import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_group_
 import 'package:summercamp/features/camper/domain/use_cases/get_camper_by_optional_activity_id.dart';
 import 'package:summercamp/features/camper/domain/use_cases/get_group.dart';
 import 'package:summercamp/features/camper/domain/use_cases/update_upload_avatar_camper.dart';
+import 'package:summercamp/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:summercamp/features/chat/data/services/chat_api_service.dart';
+import 'package:summercamp/features/chat/domain/use_cases/create_private_room.dart';
+import 'package:summercamp/features/chat/domain/use_cases/get_messages.dart';
+import 'package:summercamp/features/chat/domain/use_cases/get_my_rooms.dart';
+import 'package:summercamp/features/chat/domain/use_cases/send_message.dart';
+import 'package:summercamp/features/chat/presentation/state/chat_provider.dart';
 import 'package:summercamp/features/livestream/data/repositories/livestream_repository_impl.dart';
 import 'package:summercamp/features/livestream/data/services/livestream_api_service.dart';
 import 'package:summercamp/features/livestream/domain/use_cases/update_livestream_room_id.dart';
@@ -218,6 +225,14 @@ Future<void> main() async {
   final getChatHistoryUseCase = GetChatHistory(aiChatRepo);
   final getConversationUseCase = GetConversation(aiChatRepo);
 
+  // Chat
+  final chatApi = ChatApiService(apiClient);
+  final chatRepo = ChatRepositoryImpl(chatApi);
+  final getMessagesUseCase = GetMessages(chatRepo);
+  final getMyRoomsUseCase = GetMyRooms(chatRepo);
+  final sendMessageUseCase = SendMessage(chatRepo);
+  final createPrivateRoomUseCase = CreatePrivateRoom(chatRepo);
+
   // Schedule
   final scheduleApi = ScheduleApiService(apiClient);
   final scheduleRepo = ScheduleRepositoryImpl(scheduleApi);
@@ -349,6 +364,16 @@ Future<void> main() async {
             sendChatMessageUseCase: sendChatMessageUseCase,
             getChatHistoryUseCase: getChatHistoryUseCase,
             getConversationUseCase: getConversationUseCase,
+          ),
+        ),
+
+        // ChatProvider need 4 usecases (GetMyRooms, GetMessages, SendMessage, CreatePrivateRoom)
+        ChangeNotifierProvider(
+          create: (_) => ChatProvider(
+            getMyRoomsUseCase: getMyRoomsUseCase,
+            getMessagesUseCase: getMessagesUseCase,
+            sendMessageUseCase: sendMessageUseCase,
+            createPrivateRoomUseCase: createPrivateRoomUseCase,
           ),
         ),
 

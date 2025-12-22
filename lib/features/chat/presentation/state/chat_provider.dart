@@ -1,187 +1,125 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:summercamp/core/network/socket_client.dart';
-import 'package:summercamp/features/auth/domain/entities/user.dart';
-import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
-import 'package:summercamp/features/chat/domain/entities/chat.dart';
+import 'package:summercamp/features/chat/domain/entities/chat_message.dart';
+import 'package:summercamp/features/chat/domain/entities/chat_room.dart';
+import 'package:summercamp/features/chat/domain/use_cases/create_private_room.dart';
 import 'package:summercamp/features/chat/domain/use_cases/get_messages.dart';
+import 'package:summercamp/features/chat/domain/use_cases/get_my_rooms.dart';
+import 'package:summercamp/features/chat/domain/use_cases/send_message.dart';
 
-class ChatProvider with ChangeNotifier {
+class ChatProvider extends ChangeNotifier {
+  final GetMyRooms getMyRoomsUseCase;
   final GetMessages getMessagesUseCase;
-  final SocketClient socketClient;
-  final AuthProvider auth;
+  final SendMessage sendMessageUseCase;
+  final CreatePrivateRoom createPrivateRoomUseCase;
 
-  ChatProvider(this.getMessagesUseCase, this.socketClient, this.auth);
+  ChatProvider({
+    required this.getMyRoomsUseCase,
+    required this.getMessagesUseCase,
+    required this.sendMessageUseCase,
+    required this.createPrivateRoomUseCase,
+  });
 
-  List<Chat> _messages = [];
-  List<Chat> _chats = [];
-  List<Chat> get messages => _messages;
-  User? selectedUser;
+  List<ChatRoom> _rooms = [];
+  List<ChatMessage> _currentMessages = [];
+  ChatRoom? _selectedRoom;
+  bool _isLoading = false;
+  bool _isSending = false;
+  String? _error;
 
-  bool isSending = false;
-  int? tempMessageId;
-  Timer? _ackTimer;
+  List<ChatRoom> get rooms => _rooms;
+  List<ChatMessage> get currentMessages => _currentMessages;
+  ChatRoom? get selectedRoom => _selectedRoom;
+  bool get isLoading => _isLoading;
+  bool get isSending => _isSending;
+  String? get error => _error;
 
-  StreamSubscription<Chat>? _msgSub;
-  StreamSubscription<Chat>? _ackSub;
-
-  bool _loading = false;
-  bool get loading => _loading;
-  List<Chat> get chats => _chats;
-
-  Future<void> init() async {
-    await loadChats();
-
-    socketClient.setToken(auth.token!);
-    socketClient.connect();
-
-    _listenSocket();
-  }
-
-  Future<void> loadChats() async {
-    _loading = true;
-    notifyListeners();
-
-    _messages = await getMessagesUseCase();
-    _loading = false;
-    notifyListeners();
-  }
-
-  void _listenSocket() {
-    _msgSub = socketClient.onMessage.listen((msg) {
-      if (selectedUser != null &&
-          (msg.senderId == selectedUser!.userId ||
-              msg.receiverId == selectedUser!.userId)) {
-        _chats.add(msg);
-        _chats.sort((a, b) => a.createAt.compareTo(b.createAt));
-      } else {
-        _messages.insert(0, msg);
-        _messages.sort((a, b) => b.createAt.compareTo(a.createAt));
-      }
-      notifyListeners();
-    });
-
-    _ackSub = socketClient.onAck.listen((ack) {
-      if (tempMessageId != null) {
-        _chats = _chats
-            .map((c) => c.chatId == tempMessageId ? ack : c)
-            .toList();
-        _messages.insert(0, ack);
-        _messages.sort((a, b) => b.createAt.compareTo(a.createAt));
-
-        isSending = false;
-        tempMessageId = null;
-        _ackTimer?.cancel();
-        notifyListeners();
-      }
-    });
-  }
-
-  void selectUser(User user) {
-    selectedUser = user;
-    final conv = _messages
-        .where(
-          (chat) =>
-              (chat.receiverId == user.userId || chat.senderId == user.userId),
-        )
-        .toList();
-    conv.sort((a, b) => a.createAt.compareTo(b.createAt));
-    _chats = conv;
-    notifyListeners();
-  }
-
-  void sendMessage(int receiverId, String content) {
-    final tempId = DateTime.now().millisecondsSinceEpoch;
-    tempMessageId = tempId;
-    isSending = true;
-
-    final tempChat = Chat(
-      chatId: tempId,
-      chatRoomId: null,
-      senderId: auth.user!.userId!,
-      receiverId: receiverId,
-      content: content,
-      createAt: DateTime.now(),
-    );
-
-    _chats.add(tempChat);
+  Future<void> loadMyRooms() async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      socketClient.sendMessage(receiverId, content);
-    } catch (_) {
-      isSending = false;
-      tempMessageId = null;
+      _rooms = await getMyRoomsUseCase();
+    } catch (e) {
+      _error = e.toString();
+      print("Error loading rooms: $e");
+    } finally {
+      _isLoading = false;
       notifyListeners();
-      return;
-    }
-
-    _ackTimer?.cancel();
-    _ackTimer = Timer(const Duration(seconds: 1), () {
-      if (isSending && tempMessageId == tempId) {
-        _messages.insert(0, tempChat);
-        _messages.sort((a, b) => b.createAt.compareTo(a.createAt));
-        isSending = false;
-        tempMessageId = null;
-        notifyListeners();
-      }
-    });
-  }
-
-  bool _isMessageBetweenUsers(Chat message, int userId1, int userId2) {
-    return (message.senderId == userId1 && message.receiverId == userId2) ||
-        (message.senderId == userId2 && message.receiverId == userId1);
-  }
-
-  String _formatMessageTime(DateTime messageTime) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(
-      messageTime.year,
-      messageTime.month,
-      messageTime.day,
-    );
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    final timeString =
-        '${messageTime.hour.toString().padLeft(2, '0')}:${messageTime.minute.toString().padLeft(2, '0')}';
-
-    if (messageDate == today) {
-      return timeString;
-    } else if (messageDate == yesterday) {
-      return 'Hôm qua $timeString';
-    } else if (messageTime.year == now.year) {
-      return '${messageTime.day} th${messageTime.month}';
-    } else {
-      return '${messageTime.day} th${messageTime.month} ${messageTime.year}';
     }
   }
 
-  Map<String, String>? getLastMessage(int accountId, int currentUserId) {
-    final conversationMessages = _chats
-        .where((chat) => _isMessageBetweenUsers(chat, currentUserId, accountId))
-        .toList();
-
-    if (conversationMessages.isEmpty) return null;
-
-    conversationMessages.sort((a, b) => b.createAt.compareTo(a.createAt));
-    final lastMessage = conversationMessages.first;
-
-    final prefix = lastMessage.senderId == currentUserId ? 'Bạn: ' : '';
-    final content = '$prefix${lastMessage.content}';
-    final timeText = _formatMessageTime(lastMessage.createAt);
-
-    return {'content': content, 'time': timeText};
+  Future<void> selectRoom(ChatRoom room) async {
+    _selectedRoom = room;
+    await _loadMessages(room.chatRoomId);
   }
 
-  void disconnectSocket() {
-    socketClient.disconnect();
+  Future<void> selectUserForChat(int recipientId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final result = await createPrivateRoomUseCase(recipientId);
+
+      final room = ChatRoom(
+        chatRoomId: result.chatRoomId,
+        name: result.recipientName,
+        type: 0,
+        avatarUrl: result.recipientAvatar,
+      );
+
+      _selectedRoom = room;
+
+      await _loadMessages(result.chatRoomId);
+
+      loadMyRooms();
+    } catch (e) {
+      _error = e.toString();
+      print("Error selecting user: $e");
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  void disposeProvider() {
-    _msgSub?.cancel();
-    _ackSub?.cancel();
-    _ackTimer?.cancel();
-    socketClient.dispose();
+  Future<void> _loadMessages(int roomId) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _currentMessages = await getMessagesUseCase(roomId);
+    } catch (e) {
+      print("Error loading messages: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> sendMessage(String content) async {
+    if (_selectedRoom == null || content.trim().isEmpty) return;
+
+    _isSending = true;
+    notifyListeners();
+
+    try {
+      final newMessage = await sendMessageUseCase(
+        _selectedRoom!.chatRoomId,
+        content,
+      );
+
+      _currentMessages.add(newMessage);
+    } catch (e) {
+      _error = e.toString();
+      print("Error sending message: $e");
+    } finally {
+      _isSending = false;
+      notifyListeners();
+    }
+  }
+
+  void clearSelection() {
+    _selectedRoom = null;
+    _currentMessages = [];
+    notifyListeners();
   }
 }

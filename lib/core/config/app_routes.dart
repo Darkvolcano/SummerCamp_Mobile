@@ -12,6 +12,8 @@ import 'package:summercamp/features/blog/domain/entities/blog.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_detail_screen.dart';
 import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
+import 'package:summercamp/features/chat/presentation/screens/chat_detail_screen.dart';
+import 'package:summercamp/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home_driver.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_driver_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
@@ -58,8 +60,10 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String verifyOTP = '/verify-otp';
   static const String campSearch = '/camp-search';
-  static const String chat = '/chat'; // hiện tại chưa có
-  static const String chatDetail = '/chat-detail'; // hiện tại chưa có
+  static const String chat = '/chat';
+  static const String chatDetail = '/chat-detail';
+  static const String staffChat = '/staff-chat';
+  static const String staffChatDetail = '/staff-chat-detail';
   static const String chatAI = '/chat-ai';
   static const String joinLivestream = '/join-livestream';
   static const String report = '/report';
@@ -211,6 +215,12 @@ class AppRoutes {
 
       case chatAI:
         return MaterialPageRoute(builder: (_) => AIChatScreen());
+
+      case chat:
+        return MaterialPageRoute(builder: (_) => const ChatListScreen());
+
+      case chatDetail:
+        return MaterialPageRoute(builder: (_) => const ChatDetailScreen());
 
       case campList:
         return MaterialPageRoute(builder: (_) => CampListScreen());

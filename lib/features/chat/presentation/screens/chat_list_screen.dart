@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:summercamp/core/config/app_routes.dart';
-import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/chat/presentation/state/chat_provider.dart';
+import 'package:summercamp/features/chat/domain/entities/chat_room.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -13,49 +15,78 @@ class ChatListScreen extends StatefulWidget {
 
 class _ChatListScreenState extends State<ChatListScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatProvider>().loadMyRooms();
+    });
+  }
+
+  String _formatTime(DateTime? time) {
+    if (time == null) return '';
+    return DateFormat('HH:mm').format(time);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final chatProv = Provider.of<ChatProvider>(context);
-    final authProv = Provider.of<AuthProvider>(context);
-
-    final userList = authProv.users;
+    final rooms = chatProv.rooms;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color(0xFFF5F7F8),
       appBar: AppBar(
-        title: const Text("Tin nhắn"),
-        backgroundColor: const Color(0xFFA05A2C),
+        title: const Text(
+          "Tin nhắn",
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: AppTheme.summerPrimary,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: userList.length,
+      body: chatProv.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppTheme.summerPrimary),
+            )
+          : rooms.isEmpty
+          ? const Center(
+              child: Text(
+                "Chưa có cuộc trò chuyện nào",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontFamily: "Quicksand",
+                  fontSize: 16,
+                ),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              itemCount: rooms.length,
               itemBuilder: (_, idx) {
-                final a = userList[idx];
+                final ChatRoom room = rooms[idx];
 
-                final lastMessage = chatProv.getLastMessage(
-                  a.userId!,
-                  authProv.user?.userId ?? 0,
-                );
-
-                final content = lastMessage?['content'] ?? 'Chưa có tin nhắn';
-                final time = lastMessage?['time'] ?? '';
-                final displayName = "${a.lastName} ${a.firstName}";
+                final displayName = room.name;
+                final content = room.lastMessage ?? 'Bắt đầu trò chuyện';
+                final time = _formatTime(room.lastMessageTime);
+                final avatarUrl = room.avatarUrl;
 
                 return InkWell(
                   onTap: () {
-                    chatProv.selectUser(a);
+                    chatProv.selectRoom(room);
                     Navigator.pushNamed(context, AppRoutes.chatDetail);
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 12,
+                      vertical: 16,
                     ),
                     margin: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+                      horizontal: 16,
+                      vertical: 6,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -63,59 +94,77 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 5,
-                          offset: const Offset(0, 2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          radius: 24,
-                          backgroundColor: const Color(0xFFA05A2C),
-                          child: Text(
-                            displayName.isNotEmpty ? displayName[0] : '?',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
+                          radius: 28,
+                          backgroundColor: AppTheme.summerPrimary.withValues(
+                            alpha: 0.1,
                           ),
+                          backgroundImage: avatarUrl != null
+                              ? NetworkImage(avatarUrl)
+                              : null,
+                          child: avatarUrl == null
+                              ? Text(
+                                  displayName.isNotEmpty
+                                      ? displayName[0].toUpperCase()
+                                      : '?',
+                                  style: const TextStyle(
+                                    color: AppTheme.summerPrimary,
+                                    fontSize: 20,
+                                    fontFamily: "Quicksand",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : null,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                displayName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      content,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                      displayName,
                                       style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        fontFamily: "Quicksand",
+                                        color: Colors.black87,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
                                   Text(
                                     time,
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+                                    style: TextStyle(
+                                      color: Colors.grey[500],
                                       fontSize: 12,
+                                      fontFamily: "Quicksand",
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                content,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                  fontFamily: "Quicksand",
+                                ),
                               ),
                             ],
                           ),
@@ -126,9 +175,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 );
               },
             ),
-          ),
-        ],
-      ),
     );
   }
 }

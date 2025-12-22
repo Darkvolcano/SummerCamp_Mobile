@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 import 'package:summercamp/features/chat/presentation/state/chat_provider.dart';
 import 'package:summercamp/features/chat/presentation/widgets/chat_bubble.dart';
@@ -12,12 +13,10 @@ class ChatDetailScreen extends StatelessWidget {
   String formatTimestamp(DateTime dt) {
     final now = DateTime.now();
 
-    // for today
     if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
       return DateFormat('HH:mm').format(dt);
     }
 
-    // in this week (from 2 -> CN)
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(
       const Duration(days: 6, hours: 23, minutes: 59),
@@ -36,7 +35,6 @@ class ChatDetailScreen extends StatelessWidget {
       return '${weekdays[dt.weekday]} lúc ${DateFormat('HH:mm').format(dt)}';
     }
 
-    // last week before
     return DateFormat('dd/MM HH:mm').format(dt);
   }
 
@@ -44,66 +42,111 @@ class ChatDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final chatProv = Provider.of<ChatProvider>(context);
     final authProv = Provider.of<AuthProvider>(context);
-    final selected = chatProv.selectedUser;
 
-    if (selected == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final selectedRoom = chatProv.selectedRoom;
+    final messages = chatProv.currentMessages;
+
+    if (selectedRoom == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppTheme.summerPrimary),
+        ),
+      );
     }
 
-    final displayName = "${selected.lastName} ${selected.firstName}";
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F7F8),
       appBar: AppBar(
+        backgroundColor: AppTheme.summerPrimary,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Row(
           children: [
-            CircleAvatar(backgroundColor: const Color(0xFFA05A2C)),
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.white,
+              backgroundImage: selectedRoom.avatarUrl != null
+                  ? NetworkImage(selectedRoom.avatarUrl!)
+                  : null,
+              child: selectedRoom.avatarUrl == null
+                  ? Text(
+                      selectedRoom.name.isNotEmpty
+                          ? selectedRoom.name[0].toUpperCase()
+                          : '?',
+                      style: const TextStyle(
+                        color: AppTheme.summerPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Quicksand",
+                      ),
+                    )
+                  : null,
+            ),
             const SizedBox(width: 12),
-            Text(displayName),
+            Expanded(
+              child: Text(
+                selectedRoom.name,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
-        backgroundColor: const Color(0xFFA05A2C),
       ),
       body: Column(
         children: [
           Expanded(
-            child: chatProv.chats.isEmpty
+            child: chatProv.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.summerPrimary,
+                    ),
+                  )
+                : messages.isEmpty
                 ? const Center(
                     child: Text(
-                      'Chưa có tin nhắn nào.',
-                      style: TextStyle(color: Colors.grey),
+                      'Chưa có tin nhắn nào.\nHãy bắt đầu trò chuyện!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontFamily: "Quicksand",
+                        fontSize: 16,
+                      ),
                     ),
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: chatProv.chats.length,
+                    itemCount: messages.length,
                     itemBuilder: (_, idx) {
-                      final c = chatProv.chats[idx];
-                      final isMe = c.senderId == authProv.user?.userId;
+                      final msg = messages[idx];
+                      final isMe = msg.senderId == authProv.user?.userId;
 
-                      // decide insert timestamp separator or not
                       bool showTimeSeparator = false;
                       String? timeText;
 
                       if (idx == 0) {
                         showTimeSeparator = true;
-                        timeText = formatTimestamp(c.createAt);
+                        timeText = formatTimestamp(msg.sentAt);
                       } else {
-                        final prev = chatProv.chats[idx - 1];
-                        final diff = c.createAt
-                            .difference(prev.createAt)
+                        final prev = messages[idx - 1];
+                        final diff = msg.sentAt
+                            .difference(prev.sentAt)
                             .inMinutes;
                         if (diff >= 10) {
                           showTimeSeparator = true;
-                          timeText = formatTimestamp(c.createAt);
+                          timeText = formatTimestamp(msg.sentAt);
                         }
                       }
+
                       return Column(
                         children: [
                           if (showTimeSeparator && timeText != null)
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
+                                vertical: 12.0,
                               ),
                               child: Center(
                                 child: Container(
@@ -112,23 +155,25 @@ class ChatDetailScreen extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
+                                    color: Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     timeText,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black87,
+                                      color: Colors.grey[600],
+                                      fontFamily: "Quicksand",
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ChatBubble(
-                            text: c.content,
+                            text: msg.content,
                             isMe: isMe,
-                            time: c.createAt,
+                            time: msg.sentAt,
                           ),
                         ],
                       );
@@ -136,14 +181,22 @@ class ChatDetailScreen extends StatelessWidget {
                   ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  offset: const Offset(0, -2),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: InputMessage(
-                    onSend: (text) =>
-                        chatProv.sendMessage(selected.userId!, text),
+                    onSend: (text) => chatProv.sendMessage(text),
                   ),
                 ),
               ],
