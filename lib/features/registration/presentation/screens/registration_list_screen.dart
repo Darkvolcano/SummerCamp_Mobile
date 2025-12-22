@@ -38,6 +38,8 @@ class _RegistrationListScreenState extends State<RegistrationListScreen>
     _TabInfo('Đã xác nhận', [RegistrationStatus.Confirmed]),
     _TabInfo('Hoàn thành', [RegistrationStatus.Completed]),
     _TabInfo('Đã hủy', [RegistrationStatus.Canceled]),
+    _TabInfo('Chờ hoàn tiến', [RegistrationStatus.PendingRefund]),
+    _TabInfo('Đã hoàn tiến', [RegistrationStatus.Refunded]),
   ];
 
   @override

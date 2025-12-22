@@ -5,9 +5,7 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/utils/price_formatter.dart';
 import 'package:summercamp/core/widgets/custom_dialog.dart';
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
-// import 'package:summercamp/features/registration/domain/entities/registration.dart';
 import 'package:summercamp/features/registration/presentation/screens/registration_confirm_screen.dart';
-// import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/camper/presentation/state/camper_provider.dart';
 import 'package:summercamp/features/camper/domain/entities/camper.dart';
 
@@ -35,8 +33,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     });
 
     if (widget.camp.promotion != null) {
-      _appliedPromotionCode = widget.camp.promotion!.name; // Hiển thị tên KM
-      _appliedPromotionId = widget.camp.promotion!.id; // Lưu ID
+      _appliedPromotionCode = widget.camp.promotion!.name;
+      _appliedPromotionId = widget.camp.promotion!.id;
     }
   }
 
@@ -47,9 +45,33 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     super.dispose();
   }
 
+  int? _calculateAge(String dobStr) {
+    DateTime? dobDate;
+    try {
+      dobDate = DateTime.parse(dobStr);
+    } catch (_) {
+      try {
+        final parts = dobStr.split('/');
+        if (parts.length == 3) {
+          dobDate = DateTime(
+            int.parse(parts[2]),
+            int.parse(parts[1]),
+            int.parse(parts[0]),
+          );
+        }
+      } catch (_) {
+        return null;
+      }
+    }
+
+    if (dobDate != null) {
+      return DateTime.now().year - dobDate.year;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final provider = context.read<RegistrationProvider>();
     final camperProvider = context.watch<CamperProvider>();
     final campers = camperProvider.campers;
     final camp = widget.camp;
@@ -154,9 +176,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                         decorationColor: Colors.grey[600],
                                       ),
                                     ),
-
                                     const SizedBox(width: 20),
-
                                     Text(
                                       PriceFormatter.format(finalPrice),
                                       style: textTheme.titleMedium?.copyWith(
@@ -183,9 +203,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   Text(
                     "Chọn Camper",
                     style: textTheme.titleMedium?.copyWith(
@@ -213,6 +231,26 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
                       return GestureDetector(
                         onTap: () {
+                          final int? age = _calculateAge(camper.dob);
+                          final int? minAge = widget.camp.minAge;
+                          final int? maxAge = widget.camp.maxAge;
+
+                          if (age != null) {
+                            bool isTooYoung = minAge != null && age < minAge;
+                            bool isTooOld = maxAge != null && age > maxAge;
+
+                            if (isTooYoung || isTooOld) {
+                              showCustomDialog(
+                                context,
+                                title: "Độ tuổi không phù hợp",
+                                message:
+                                    "Camper tham gia phải nằm trong độ tuổi từ ${minAge ?? '?'} đến ${maxAge ?? '?'} tuổi.",
+                                type: DialogType.warning,
+                              );
+                              return;
+                            }
+                          }
+
                           setState(() {
                             if (isSelected) {
                               _selectedCampers.removeWhere(
@@ -299,9 +337,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       );
                     },
                   ),
-
                   const SizedBox(height: 20),
-
                   Text(
                     "Phương thức thanh toán",
                     style: textTheme.titleMedium?.copyWith(
@@ -309,9 +345,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 8),
-
                   RadioGroup<int>(
                     groupValue: _selectedPaymentId,
                     onChanged: (value) {
@@ -337,9 +371,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   // TextField(
                   //   controller: _promotionCodeController,
                   //   style: TextStyle(
@@ -503,7 +535,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           ),
                         );
                       },
-
                       icon: const Icon(Icons.assignment),
                       label: Text(
                         "Xem lại & Xác nhận",

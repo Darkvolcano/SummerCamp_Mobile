@@ -15,6 +15,8 @@ import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/home/presentation/screens/home_driver.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_driver_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
+import 'package:summercamp/features/registration/presentation/screens/create_bank_user_screen.dart';
+import 'package:summercamp/features/registration/presentation/screens/refund_registration_screen.dart';
 import 'package:summercamp/features/schedule/domain/entities/schedule.dart';
 import 'package:summercamp/features/attendance/presentation/screens/attendance_screen.dart';
 import 'package:summercamp/features/camp/presentation/screens/camp_detail_screen.dart';
@@ -101,6 +103,8 @@ class AppRoutes {
   static const String driverScheduleDetail = '/driver-schedule-detail';
   static const String driverProfile = '/driver-profile';
   static const String driverAttendance = '/driver-attendance';
+  static const String refundRegistration = '/refund-registration';
+  static const String createBankUser = '/create-bank-user';
 
   // Generate route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -224,6 +228,16 @@ class AppRoutes {
           builder: (_) =>
               RegistrationDetailScreen(registrationId: registrationId),
         );
+
+      case refundRegistration:
+        final registrationId = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (_) =>
+              RefundRegistrationScreen(registrationId: registrationId),
+        );
+
+      case createBankUser:
+        return MaterialPageRoute(builder: (_) => CreateBankUserScreen());
 
       case campDetail:
         final camp = settings.arguments as Camp;

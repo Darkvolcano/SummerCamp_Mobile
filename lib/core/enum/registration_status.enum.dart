@@ -7,6 +7,8 @@ enum RegistrationStatus {
   Confirmed,
   Completed,
   Canceled,
+  PendingRefund,
+  Refunded,
   // PendingCompletion,
   // PendingAssignGroup,
 }

@@ -32,6 +32,7 @@ class RegistrationDetailScreen extends StatefulWidget {
 class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
   Camp? _campDetails;
   bool _isLoadingPayment = false;
+  final bool _isLoadingRefund = false;
   final Map<int, Set<int>> _selectedOptionalChoices = {};
 
   @override
@@ -137,6 +138,27 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
     }
   }
 
+  Future<void> _handleRefundClick(int registrationId) async {
+    final result = await Navigator.pushNamed(
+      context,
+      AppRoutes.refundRegistration,
+      arguments: registrationId,
+    );
+
+    if (result == true) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Yêu cầu hoàn tiền đã được gửi thành công"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      _fetchInitialData();
+    }
+  }
+
   Future<void> _showCountdownDialog() {
     return showDialog(
       context: context,
@@ -213,9 +235,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           if (registrationProvider.loading && registration == null) {
             return const Center(child: CircularProgressIndicator());
           }
-          // if (registrationProvider.error != null && registration == null) {
-          //   return Center(child: Text("Lỗi: ${registrationProvider.error}"));
-          // }
           if (registration == null) {
             return const Center(
               child: Text("Không tìm thấy thông tin đăng ký."),
@@ -260,8 +279,38 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
       );
     }
 
-    // if (registration.status == RegistrationStatus.Confirmed ||
-    //     registration.status == RegistrationStatus.Completed) {
+    if (registration.status == RegistrationStatus.Confirmed) {
+      final now = DateTime.now();
+      if (_campDetails != null &&
+          now.isBefore(_campDetails!.registrationEndDate)) {
+        return FloatingActionButton.extended(
+          onPressed: _isLoadingRefund
+              ? null
+              : () => _handleRefundClick(registration.registrationId),
+          backgroundColor: Colors.orangeAccent,
+          icon: _isLoadingRefund
+              ? Container(
+                  width: 24,
+                  height: 24,
+                  padding: const EdgeInsets.all(2.0),
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3,
+                  ),
+                )
+              : const Icon(Icons.money_off, color: Colors.white),
+          label: Text(
+            "Hoàn tiền",
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        );
+      }
+    }
+
     if (registration.status == RegistrationStatus.Completed) {
       return FloatingActionButton.extended(
         onPressed: () {
@@ -316,10 +365,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
           const SizedBox(height: 24),
 
           if (registration.status == RegistrationStatus.Completed ||
-              registration.status == RegistrationStatus.Confirmed
-          // ||    registration.status == RegistrationStatus.PendingCompletion ||
-          //     registration.status == RegistrationStatus.PendingAssignGroup
-          )
+              registration.status == RegistrationStatus.Confirmed)
             Text(
               "Lịch trình hoạt động (Chính)",
               style: textTheme.titleLarge?.copyWith(
@@ -341,13 +387,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                 ),
               ),
             )
-          // else if (coreActivities.isEmpty)
-          //   const Center(
-          //     child: Text(
-          //       "Chưa có lịch trình hoạt động chính.",
-          //       style: TextStyle(fontFamily: "Quicksand"),
-          //     ),
-          //   )
           else if (registration.status == RegistrationStatus.Completed ||
               registration.status == RegistrationStatus.Confirmed)
             _buildSchedule(context, groupedActivities),
@@ -672,7 +711,7 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
             children: [
               Text(
                 DateFormatter.formatTime(act.startTime),
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: "Quicksand",
                   fontWeight: FontWeight.bold,
                   color: AppTheme.summerAccent,
@@ -702,8 +741,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
                     fontSize: 15,
                   ),
                 ),
-                // const SizedBox(height: 4),
-                // _buildDetailRow(Icons.place_outlined, act.location, size: 14),
               ],
             ),
           ),
@@ -760,16 +797,6 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         textColor = Colors.yellow.shade900;
         text = "Chờ thanh toán";
         break;
-      // case RegistrationStatus.PendingCompletion:
-      //   backgroundColor = Colors.purple.shade100;
-      //   textColor = Colors.purple.shade800;
-      //   text = "Chờ hoàn thành";
-      //   break;
-      // case RegistrationStatus.PendingAssignGroup:
-      //   backgroundColor = Colors.indigo.shade100;
-      //   textColor = Colors.indigo.shade800;
-      //   text = "Chờ phân nhóm";
-      //   break;
       case RegistrationStatus.Confirmed:
         backgroundColor = Colors.teal.shade100;
         textColor = Colors.teal.shade800;
@@ -784,6 +811,16 @@ class _RegistrationDetailScreenState extends State<RegistrationDetailScreen> {
         backgroundColor = Colors.red.shade100;
         textColor = Colors.red.shade800;
         text = "Đã hủy";
+        break;
+      case RegistrationStatus.PendingRefund:
+        backgroundColor = Colors.purple.shade100;
+        textColor = Colors.purple.shade800;
+        text = "Chờ hoàn tiền";
+        break;
+      case RegistrationStatus.Refunded:
+        backgroundColor = Colors.grey.shade300;
+        textColor = Colors.grey.shade800;
+        text = "Đã hoàn tiền";
         break;
     }
 

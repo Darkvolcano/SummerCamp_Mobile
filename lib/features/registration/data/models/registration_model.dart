@@ -38,6 +38,10 @@ class RegistrationModel extends Registration {
         return RegistrationStatus.Completed;
       case 'Canceled':
         return RegistrationStatus.Canceled;
+      case 'PendingRefund':
+        return RegistrationStatus.PendingRefund;
+      case 'Refunded':
+        return RegistrationStatus.Refunded;
       // case 'PendingCompletion':
       //   return RegistrationStatus.PendingCompletion;
       // case 'PendingAssignGroup':

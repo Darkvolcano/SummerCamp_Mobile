@@ -56,6 +56,16 @@ class RegistrationCard extends StatelessWidget {
         textColor = Colors.red.shade800;
         text = "Đã hủy";
         break;
+      case RegistrationStatus.PendingRefund:
+        backgroundColor = Colors.purple.shade100;
+        textColor = Colors.purple.shade800;
+        text = "Chờ hoàn tiền";
+        break;
+      case RegistrationStatus.Refunded:
+        backgroundColor = Colors.grey.shade300;
+        textColor = Colors.grey.shade800;
+        text = "Đã hoàn tiền";
+        break;
     }
 
     return Container(
