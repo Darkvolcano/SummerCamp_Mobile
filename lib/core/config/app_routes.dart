@@ -14,6 +14,8 @@ import 'package:summercamp/features/blog/presentation/screens/blog_list_screen.d
 import 'package:summercamp/features/camp/domain/entities/camp.dart';
 import 'package:summercamp/features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:summercamp/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:summercamp/features/chat/presentation/screens/staff_chat_detail_screen.dart';
+import 'package:summercamp/features/chat/presentation/screens/staff_chat_list_screen.dart';
 import 'package:summercamp/features/home/presentation/screens/home_driver.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_driver_screen.dart';
 import 'package:summercamp/features/profile/presentation/screens/profile_staff_screen.dart';
@@ -221,6 +223,12 @@ class AppRoutes {
 
       case chatDetail:
         return MaterialPageRoute(builder: (_) => const ChatDetailScreen());
+
+      case staffChat:
+        return MaterialPageRoute(builder: (_) => const StaffChatListScreen());
+
+      case staffChatDetail:
+        return MaterialPageRoute(builder: (_) => const StaffChatDetailScreen());
 
       case campList:
         return MaterialPageRoute(builder: (_) => CampListScreen());
