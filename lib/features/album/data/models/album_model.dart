@@ -7,6 +7,7 @@ class AlbumModel extends Album {
     required super.date,
     required super.title,
     required super.description,
+    required super.photoCount,
   });
 
   factory AlbumModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +17,7 @@ class AlbumModel extends Album {
       date: json['date'],
       title: json['title'],
       description: json['description'],
+      photoCount: json['photoCount'],
     );
   }
 
@@ -25,5 +27,6 @@ class AlbumModel extends Album {
     'date': date,
     'title': title,
     'description': description,
+    'photoCount': photoCount,
   };
 }

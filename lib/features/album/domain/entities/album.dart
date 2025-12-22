@@ -4,6 +4,7 @@ class Album {
   final String date;
   final String title;
   final String description;
+  final int photoCount;
 
   const Album({
     required this.albumId,
@@ -11,5 +12,6 @@ class Album {
     required this.date,
     required this.title,
     required this.description,
+    required this.photoCount,
   });
 }

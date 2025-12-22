@@ -8,17 +8,40 @@ class AlbumApiService {
   final ApiClient client;
   AlbumApiService(this.client);
 
-  Future<List<dynamic>> fetchAlbums() async {
-    final res = await client.get('albums');
-    return res.data as List;
+  Future<List<dynamic>> fetchAlbumsByCampId(int campId) async {
+    try {
+      final res = await client.get('album/camp/$campId');
+      return res.data as List;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
   }
 
-  Future<void> uploadPhotoAlbum(
-    int campId, {
-    required List<String> images,
+  Future<void> uploadPhotoToAlbum(
+    int albumId, {
+    required List<File> images,
   }) async {
     try {
-      await client.post('album/$campId/upload', data: {'images': images});
+      FormData formData = FormData.fromMap({'albumId': albumId});
+
+      for (var file in images) {
+        String fileName = file.path.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'photos',
+            await MultipartFile.fromFile(file.path, filename: fileName),
+          ),
+        );
+      }
+
+      await client.post(
+        'album-photo/bulk',
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+          sendTimeout: const Duration(minutes: 5),
+        ),
+      );
     } on DioException catch (e) {
       throw mapDioError(e);
     } catch (e) {

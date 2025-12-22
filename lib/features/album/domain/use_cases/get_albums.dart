@@ -5,7 +5,7 @@ class GetAlbums {
   final AlbumRepository repository;
   GetAlbums(this.repository);
 
-  Future<List<Album>> call() async {
-    return await repository.getAlbums();
+  Future<List<Album>> call(int campId) async {
+    return await repository.getAlbumsByCampId(campId);
   }
 }

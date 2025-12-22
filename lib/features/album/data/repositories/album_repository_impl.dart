@@ -10,17 +10,17 @@ class AlbumRepositoryImpl implements AlbumRepository {
   AlbumRepositoryImpl(this.service);
 
   @override
-  Future<List<Album>> getAlbums() async {
-    final list = await service.fetchAlbums();
+  Future<List<Album>> getAlbumsByCampId(int campId) async {
+    final list = await service.fetchAlbumsByCampId(campId);
     return list.map((e) => AlbumModel.fromJson(e)).toList();
   }
 
   @override
   Future<void> uploadAlbumPhoto(
-    int campId, {
-    required List<String> images,
+    int albumId, {
+    required List<File> images,
   }) async {
-    return await service.uploadPhotoAlbum(campId, images: images);
+    return await service.uploadPhotoToAlbum(albumId, images: images);
   }
 
   @override

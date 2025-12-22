@@ -27,27 +27,33 @@ class AlbumProvider with ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
-  Future<void> loadAlbums() async {
-    _loading = true;
-    notifyListeners();
+  String? _error;
+  String? get error => _error;
 
+  Future<void> loadAlbums(int campId) async {
+    _loading = true;
+    _error = null;
     try {
-      _albums = await getAlbumsUseCase();
+      _albums = await getAlbumsUseCase(campId);
     } catch (e) {
       print("Lỗi load albums: $e");
+      _error = e.toString();
       _albums = [];
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
-
-    _loading = false;
-    notifyListeners();
   }
 
-  Future<void> uploadPhotoAlbum(
-    int campId, {
-    required List<String> images,
+  Future<void> uploadPhotoToAlbum(
+    int albumId, {
+    required List<File> images,
   }) async {
-    await uploadPhotoAlbumUseCase(campId, images: images);
-    notifyListeners();
+    try {
+      await uploadPhotoAlbumUseCase(albumId, images: images);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<String> uploadImage(File imageFile) async {
