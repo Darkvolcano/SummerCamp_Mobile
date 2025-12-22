@@ -91,4 +91,25 @@ class RegistrationApiService {
       throw mapDioError(e);
     }
   }
+
+  Future<void> refundRegistration({
+    required int registrationId,
+    required int bankUserId,
+    required String reason,
+  }) async {
+    try {
+      await client.post(
+        'refund/request-cancel',
+        data: {
+          'registrationId': registrationId,
+          'bankUserId': bankUserId,
+          'reason': reason,
+        },
+      );
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

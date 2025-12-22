@@ -72,4 +72,17 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
 
     return list;
   }
+
+  @override
+  Future<void> refundRegistration({
+    required int registrationId,
+    required int bankUserId,
+    required String reason,
+  }) async {
+    await service.refundRegistration(
+      registrationId: registrationId,
+      bankUserId: bankUserId,
+      reason: reason,
+    );
+  }
 }

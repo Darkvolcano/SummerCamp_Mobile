@@ -21,4 +21,9 @@ abstract class RegistrationRepository {
     required int activityId,
   });
   Future<List<RegistrationCamperResponse>> getRegistrationCamper();
+  Future<void> refundRegistration({
+    required int registrationId,
+    required int bankUserId,
+    required String reason,
+  });
 }

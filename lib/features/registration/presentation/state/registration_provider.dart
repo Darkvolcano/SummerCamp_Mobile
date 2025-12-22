@@ -10,6 +10,7 @@ import 'package:summercamp/features/registration/domain/use_cases/get_registraio
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
+import 'package:summercamp/features/registration/domain/use_cases/refund_registration.dart';
 
 class RegistrationProvider with ChangeNotifier {
   final CreateRegister createRegisterUseCase;
@@ -20,6 +21,7 @@ class RegistrationProvider with ChangeNotifier {
   final CreateRegisterOptionalCamperActivity
   createRegisterOptionalCamperActivityUseCase;
   final GetRegistrationCamper getRegistrationCamperUseCase;
+  final RefundRegistration refundRegistrationUseCase;
 
   RegistrationProvider(
     this.getRegistrationsUseCase,
@@ -29,6 +31,7 @@ class RegistrationProvider with ChangeNotifier {
     this.createRegisterPaymentLinkUseCase,
     this.createRegisterOptionalCamperActivityUseCase,
     this.getRegistrationCamperUseCase,
+    this.refundRegistrationUseCase,
   );
 
   List<Registration> _registrations = [];
@@ -170,6 +173,30 @@ class RegistrationProvider with ChangeNotifier {
       _error = e.toString();
       _registrationCampers = [];
       print("Lỗi load registration campers: $e");
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> refundRegistration({
+    required int registrationId,
+    required int bankUserId,
+    required String reason,
+  }) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await refundRegistrationUseCase(
+        registrationId: registrationId,
+        bankUserId: bankUserId,
+        reason: reason,
+      );
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
     } finally {
       _loading = false;
       notifyListeners();

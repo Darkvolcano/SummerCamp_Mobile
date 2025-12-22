@@ -39,6 +39,7 @@ import 'package:summercamp/features/livestream/data/services/livestream_api_serv
 import 'package:summercamp/features/livestream/domain/use_cases/update_livestream_room_id.dart';
 import 'package:summercamp/features/livestream/presentation/state/livestream_provider.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
+import 'package:summercamp/features/registration/domain/use_cases/refund_registration.dart';
 import 'package:summercamp/features/report/domain/use_cases/create_transport_report.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_camper_transport_by_transport_schedule_id.dart';
 import 'package:summercamp/features/schedule/domain/use_cases/get_driver_schedules.dart';
@@ -177,6 +178,7 @@ Future<void> main() async {
   final createRegisterOptionalCamperActivityUseCase =
       CreateRegisterOptionalCamperActivity(registrationRepo);
   final getRegistrationCamperUseCase = GetRegistrationCamper(registrationRepo);
+  final refundRegistrationUseCase = RefundRegistration(registrationRepo);
 
   // Blog
   final blogApi = BlogApiService(apiClient);
@@ -298,7 +300,7 @@ Future<void> main() async {
           ),
         ),
 
-        // RegistrationProvider need 7 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetRegistrationCamper)
+        // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetRegistrationCamper, RefundRegistration)
         ChangeNotifierProvider(
           create: (_) => RegistrationProvider(
             getRegistrationsUseCase,
@@ -308,6 +310,7 @@ Future<void> main() async {
             createRegisterPaymentLinkUseCase,
             createRegisterOptionalCamperActivityUseCase,
             getRegistrationCamperUseCase,
+            refundRegistrationUseCase,
           ),
         ),
 

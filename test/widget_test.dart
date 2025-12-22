@@ -81,6 +81,7 @@ import 'package:summercamp/features/registration/domain/use_cases/get_registraio
 import 'package:summercamp/features/registration/domain/use_cases/get_registration.dart';
 import 'package:summercamp/features/registration/domain/use_cases/create_register.dart';
 import 'package:summercamp/features/registration/domain/use_cases/get_registration_camper.dart';
+import 'package:summercamp/features/registration/domain/use_cases/refund_registration.dart';
 import 'package:summercamp/features/registration/presentation/state/registration_provider.dart';
 import 'package:summercamp/features/report/data/repositories/report_repository_impl.dart';
 import 'package:summercamp/features/report/data/services/report_api_service.dart';
@@ -313,6 +314,7 @@ void main() {
     final getRegistrationCamperUseCase = GetRegistrationCamper(
       registrationRepo,
     );
+    final refundRegistrationUseCase = RefundRegistration(registrationRepo);
 
     // Blog
     final blogApi = BlogApiService(apiClient);
@@ -435,7 +437,7 @@ void main() {
             ),
           ),
 
-          // RegistrationProvider need 7 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetRegistrationCamper)
+          // RegistrationProvider need 8 usecases (GetRegistrations, RegisterCamper, CancelRegistration, GetRegistrationDetail, CreateRegisterPaymentLink, CreateRegisterOptionalCamperActivity, GetRegistrationCamper, RefundRegistration)
           ChangeNotifierProvider(
             create: (_) => RegistrationProvider(
               getRegistrationsUseCase,
@@ -445,6 +447,7 @@ void main() {
               createRegisterPaymentLinkUseCase,
               createRegisterOptionalCamperActivityUseCase,
               getRegistrationCamperUseCase,
+              refundRegistrationUseCase,
             ),
           ),
 
