@@ -15,7 +15,8 @@ import 'package:summercamp/features/ai_chat/domain/use_cases/send_chat_message.d
 import 'package:summercamp/features/ai_chat/presentation/state/ai_chat_provider.dart';
 import 'package:summercamp/features/album/data/repositories/album_repository_impl.dart';
 import 'package:summercamp/features/album/data/services/album_api_service.dart';
-import 'package:summercamp/features/album/domain/use_cases/get_albums.dart';
+import 'package:summercamp/features/album/domain/use_cases/get_albums_by_camp_id.dart';
+import 'package:summercamp/features/album/domain/use_cases/get_photos_by_album_id.dart';
 import 'package:summercamp/features/album/domain/use_cases/upload_image.dart';
 import 'package:summercamp/features/album/domain/use_cases/upload_photo_album.dart';
 import 'package:summercamp/features/album/presentation/state/album_provider.dart';
@@ -389,8 +390,9 @@ void main() {
     // Album
     final albumApiService = AlbumApiService(apiClient);
     final albumRepo = AlbumRepositoryImpl(albumApiService);
-    final getAlbumsUseCase = GetAlbums(albumRepo);
+    final getAlbumsByCampIdUseCase = GetAlbumsByCampId(albumRepo);
     final uploadPhotoAlbumUseCase = UploadPhotoAlbum(albumRepo);
+    final getPhotosByAlbumIdUseCase = GetPhotosByAlbumId(albumRepo);
     final uploadImageUseCase = UploadImage(albumRepo);
 
     await tester.pumpWidget(
@@ -514,11 +516,12 @@ void main() {
             create: (_) => LivestreamProvider(updateLivestreamRoomIdUseCase),
           ),
 
-          // Album need 1 usecases (GetAlbums, UploadPhotoAlbum, UploadImage)
+          // Album need 4 usecases (GetAlbumsByCampId, UploadPhotoAlbum, GetPhotosByAlbumId, UploadImage)
           ChangeNotifierProvider(
             create: (_) => AlbumProvider(
-              getAlbumsUseCase,
+              getAlbumsByCampIdUseCase,
               uploadPhotoAlbumUseCase,
+              getPhotosByAlbumIdUseCase,
               uploadImageUseCase,
             ),
           ),

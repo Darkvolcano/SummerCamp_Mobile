@@ -1,9 +1,9 @@
 import 'package:summercamp/features/album/domain/entities/album.dart';
 import 'package:summercamp/features/album/domain/repositories/album_repository.dart';
 
-class GetAlbums {
+class GetAlbumsByCampId {
   final AlbumRepository repository;
-  GetAlbums(this.repository);
+  GetAlbumsByCampId(this.repository);
 
   Future<List<Album>> call(int campId) async {
     return await repository.getAlbumsByCampId(campId);

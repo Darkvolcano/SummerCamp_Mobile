@@ -49,6 +49,15 @@ class AlbumApiService {
     }
   }
 
+  Future<List<dynamic>> fetchPhotoByAlbumId(int albumId) async {
+    try {
+      final res = await client.get('album-photo/album/$albumId');
+      return res.data as List;
+    } on DioException catch (e) {
+      throw mapDioError(e);
+    }
+  }
+
   Future<String> uploadImage(File imageFile) async {
     try {
       String fileName = imageFile.path.split('/').last;
