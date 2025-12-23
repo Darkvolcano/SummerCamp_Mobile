@@ -4,12 +4,14 @@ import 'package:intl/intl.dart';
 class ChatBubble extends StatefulWidget {
   final String text;
   final bool isMe;
+  final bool isStaff;
   final DateTime time;
 
   const ChatBubble({
     super.key,
     required this.text,
     required this.isMe,
+    this.isStaff = false,
     required this.time,
   });
 
@@ -59,6 +61,27 @@ class _ChatBubbleState extends State<ChatBubble> {
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width * 0.7;
 
+    const staffPrimaryColor = Color(0xFF1565C0);
+    const staffLightBgColor = Color(0xFFE3F2FD);
+    const staffTextColorDark = Color(0xFF0D47A1);
+
+    const userPrimaryColor = Color(0xFFA05A2C);
+    const userLightBgColor = Color(0xFFF5EAD9);
+    const userTextColorDark = Color(0xFF5D4037);
+
+    Color backgroundColor;
+    Color textColor;
+
+    if (widget.isMe) {
+      backgroundColor = widget.isStaff ? staffPrimaryColor : userPrimaryColor;
+      textColor = Colors.white;
+    } else {
+      backgroundColor = widget.isStaff ? staffLightBgColor : userLightBgColor;
+      textColor = widget.isStaff ? staffTextColorDark : userTextColorDark;
+    }
+
+    final displayTime = widget.time.add(const Duration(hours: 7));
+
     return GestureDetector(
       onTap: _toggleTime,
       child: Padding(
@@ -79,19 +102,30 @@ class _ChatBubbleState extends State<ChatBubble> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.isMe
-                        ? const Color(0xFFA05A2C)
-                        : const Color(0xFFF5EAD9),
-                    borderRadius: BorderRadius.circular(12),
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(12),
+                      topRight: const Radius.circular(12),
+                      bottomLeft: widget.isMe
+                          ? const Radius.circular(12)
+                          : const Radius.circular(4),
+                      bottomRight: widget.isMe
+                          ? const Radius.circular(4)
+                          : const Radius.circular(12),
+                    ),
+                    border: (!widget.isMe && widget.isStaff)
+                        ? Border.all(color: Colors.blue.shade200, width: 1)
+                        : null,
                   ),
                   child: Text(
                     widget.text,
                     style: TextStyle(
                       fontFamily: "Quicksand",
-                      color: widget.isMe
-                          ? Colors.white
-                          : const Color(0xFF5D4037),
+                      color: textColor,
                       fontSize: 15,
+                      fontWeight: widget.isStaff && !widget.isMe
+                          ? FontWeight.w500
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -107,7 +141,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
                   child: Text(
-                    formatTimestamp(widget.time),
+                    formatTimestamp(displayTime),
                     style: const TextStyle(
                       fontFamily: "Quicksand",
                       fontSize: 11,

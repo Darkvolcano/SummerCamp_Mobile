@@ -3,7 +3,8 @@ import 'package:summercamp/core/config/app_theme.dart';
 
 class InputMessage extends StatefulWidget {
   final Function(String) onSend;
-  const InputMessage({super.key, required this.onSend});
+  final bool isStaff;
+  const InputMessage({super.key, required this.onSend, this.isStaff = false});
 
   @override
   State<InputMessage> createState() => _InputMessageState();
@@ -14,17 +15,30 @@ class _InputMessageState extends State<InputMessage> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = widget.isStaff
+        ? const Color(0xFF1565C0)
+        : AppTheme.summerPrimary;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
           child: TextField(
             controller: _controller,
             style: const TextStyle(fontFamily: "Quicksand"),
+            cursorColor: primaryColor,
+            keyboardType: TextInputType.multiline,
+            minLines: 1,
+            maxLines: 5,
+            textInputAction: TextInputAction.newline,
             decoration: InputDecoration(
               hintText: 'Nhập tin nhắn...',
               hintStyle: const TextStyle(fontFamily: "Quicksand"),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: primaryColor, width: 1.5),
               ),
             ),
             onSubmitted: (_) => _send(),
@@ -37,7 +51,7 @@ class _InputMessageState extends State<InputMessage> {
           child: ElevatedButton(
             onPressed: _send,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.summerPrimary,
+              backgroundColor: primaryColor,
               padding: EdgeInsets.zero,
               shape: const CircleBorder(),
               alignment: Alignment.center,

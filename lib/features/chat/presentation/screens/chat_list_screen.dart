@@ -23,8 +23,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   String _formatTime(DateTime? time) {
-    if (time == null) return '';
-    return DateFormat('HH:mm').format(time);
+    final displayTime = time?.add(const Duration(hours: 7));
+    if (displayTime == null) return '';
+    return DateFormat('HH:mm').format(displayTime);
   }
 
   @override

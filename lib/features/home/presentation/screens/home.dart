@@ -4,6 +4,7 @@ import 'package:summercamp/core/config/app_routes.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/widgets/parent_bottom_nav_bar.dart';
 import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
+import 'package:summercamp/features/chat/presentation/state/chat_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,6 +24,20 @@ class _HomeState extends State<Home> {
     const _RouteWrapper(AppRoutes.blogList),
     const _RouteWrapper(AppRoutes.profile),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = context.read<AuthProvider>();
+      final chatProvider = context.read<ChatProvider>();
+
+      if (authProvider.token != null) {
+        print("Parent connecting to SignalR...");
+        chatProvider.connectSignalR(authProvider.token!);
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {

@@ -7,6 +7,8 @@ import 'package:summercamp/core/utils/date_formatter.dart';
 import 'package:summercamp/core/widgets/staff_bottom_nav_bar.dart';
 import 'package:summercamp/features/home/presentation/widgets/schedule_calendar.dart';
 import 'package:summercamp/features/schedule/presentation/state/schedule_provider.dart';
+import 'package:summercamp/features/chat/presentation/state/chat_provider.dart';
+import 'package:summercamp/features/auth/presentation/state/auth_provider.dart';
 
 class StaffHome extends StatefulWidget {
   const StaffHome({super.key});
@@ -55,6 +57,13 @@ class _StaffHomeContentState extends State<StaffHomeContent> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ScheduleProvider>().loadStaffSchedules();
+      final authProvider = context.read<AuthProvider>();
+      final chatProvider = context.read<ChatProvider>();
+
+      if (authProvider.token != null) {
+        print("Staff connecting to SignalR...");
+        chatProvider.connectSignalR(authProvider.token!);
+      }
     });
   }
 

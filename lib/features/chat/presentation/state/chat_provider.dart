@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:summercamp/features/chat/data/models/chat_message_model.dart';
+import 'package:summercamp/features/chat/data/services/signalr_service.dart';
 import 'package:summercamp/features/chat/domain/entities/chat_message.dart';
 import 'package:summercamp/features/chat/domain/entities/chat_room.dart';
 import 'package:summercamp/features/chat/domain/use_cases/create_private_room.dart';
@@ -11,13 +13,16 @@ class ChatProvider extends ChangeNotifier {
   final GetMessages getMessagesUseCase;
   final SendMessage sendMessageUseCase;
   final CreatePrivateRoom createPrivateRoomUseCase;
+  final SignalRService _signalRService = SignalRService();
 
   ChatProvider({
     required this.getMyRoomsUseCase,
     required this.getMessagesUseCase,
     required this.sendMessageUseCase,
     required this.createPrivateRoomUseCase,
-  });
+  }) {
+    _initSignalRListener();
+  }
 
   List<ChatRoom> _rooms = [];
   List<ChatMessage> _currentMessages = [];
@@ -33,25 +38,63 @@ class ChatProvider extends ChangeNotifier {
   bool get isSending => _isSending;
   String? get error => _error;
 
-  Future<void> loadMyRooms() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+  Future<void> connectSignalR(String token) async {
+    await _signalRService.initSignalR(token);
+  }
 
+  void _initSignalRListener() {
+    _signalRService.onMessageReceived = (data) {
+      print("DATA RAW FROM SIGNALR: $data");
+
+      try {
+        final newMessage = ChatMessageModel.fromJson(data);
+        print("Parsed Message RoomID: ${newMessage.chatRoomId}");
+
+        if (_selectedRoom != null &&
+            _selectedRoom!.chatRoomId == newMessage.chatRoomId) {
+          final exists = _currentMessages.any(
+            (m) => m.messageId == newMessage.messageId,
+          );
+
+          if (!exists) {
+            _currentMessages.add(newMessage);
+            notifyListeners();
+            print("MATCH ROOM! Added message to list.");
+          } else {
+            print("DUPLICATE MESSAGE IGNORED: ${newMessage.messageId}");
+          }
+        }
+
+        loadMyRooms();
+      } catch (e) {
+        print("SignalR Parse Error: $e");
+      }
+    };
+  }
+
+  Future<void> loadMyRooms() async {
     try {
       _rooms = await getMyRoomsUseCase();
+      notifyListeners();
     } catch (e) {
       _error = e.toString();
       print("Error loading rooms: $e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
   }
 
   Future<void> selectRoom(ChatRoom room) async {
     _selectedRoom = room;
-    await _loadMessages(room.chatRoomId);
+    _currentMessages = [];
+    notifyListeners();
+
+    try {
+      print("Joining SignalR Room: ${room.chatRoomId}");
+      await _signalRService.joinRoom(room.chatRoomId.toString());
+
+      await _loadMessages(room.chatRoomId);
+    } catch (e) {
+      print("Error selectRoom: $e");
+    }
   }
 
   Future<void> selectUserForChat(int recipientId) async {
@@ -70,13 +113,17 @@ class ChatProvider extends ChangeNotifier {
       );
 
       _selectedRoom = room;
+      _currentMessages = [];
+
+      print("Joining SignalR Room (Private): ${room.chatRoomId}");
+      await _signalRService.joinRoom(room.chatRoomId.toString());
 
       await _loadMessages(result.chatRoomId);
-
       loadMyRooms();
     } catch (e) {
       _error = e.toString();
       print("Error selecting user: $e");
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
@@ -107,7 +154,16 @@ class ChatProvider extends ChangeNotifier {
         content,
       );
 
-      _currentMessages.add(newMessage);
+      final exists = _currentMessages.any(
+        (m) => m.messageId == newMessage.messageId,
+      );
+
+      if (!exists) {
+        _currentMessages.add(newMessage);
+        notifyListeners();
+      }
+
+      loadMyRooms();
     } catch (e) {
       _error = e.toString();
       print("Error sending message: $e");
@@ -118,6 +174,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void clearSelection() {
+    if (_selectedRoom != null) {
+      _signalRService.leaveRoom(_selectedRoom!.chatRoomId.toString());
+    }
     _selectedRoom = null;
     _currentMessages = [];
     notifyListeners();
