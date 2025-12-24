@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:summercamp/features/album/domain/entities/album.dart';
 import 'package:summercamp/features/album/domain/entities/album_photo.dart';
@@ -32,6 +31,61 @@ class AlbumProvider with ChangeNotifier {
 
   String? _error;
   String? get error => _error;
+
+  final List<Album> _album = [];
+  List<Album> get album => _album;
+
+  final Map<int, List<AlbumPhoto>> _albumPhoto = {};
+
+  bool _loadingAlbum = false;
+  bool get loadingAlbum => _loadingAlbum;
+
+  final Set<int> _fetchingAlbums = {};
+
+  List<AlbumPhoto>? getPhotosByAlbumId(int albumId) {
+    return _albumPhoto[albumId];
+  }
+
+  Future<void> loadAlbum(int campId) async {
+    _loadingAlbum = true;
+    notifyListeners();
+
+    try {
+      final result = await getAlbumsByCampIdUseCase.call(campId);
+
+      _albums = result;
+    } catch (e) {
+      debugPrint("AlbumProvider Error (loadAlbums): $e");
+      _albums = [];
+    } finally {
+      _loadingAlbum = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadPhoto(int albumId) async {
+    if (_albumPhoto.containsKey(albumId) && _albumPhoto[albumId]!.isNotEmpty) {
+      return;
+    }
+
+    if (_fetchingAlbums.contains(albumId)) {
+      return;
+    }
+
+    _fetchingAlbums.add(albumId);
+
+    try {
+      final result = await getPhotosByAlbumIdUseCase.call(albumId);
+
+      _albumPhoto[albumId] = result;
+    } catch (e) {
+      debugPrint("AlbumProvider Error (loadPhotos - $albumId): $e");
+      _albumPhoto[albumId] = [];
+    } finally {
+      _fetchingAlbums.remove(albumId);
+      notifyListeners();
+    }
+  }
 
   Future<void> loadAlbums(int campId) async {
     _loading = true;

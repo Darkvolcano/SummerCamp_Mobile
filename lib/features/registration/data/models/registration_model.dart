@@ -53,13 +53,16 @@ class RegistrationModel extends Registration {
 
   factory RegistrationModel.fromJson(Map<String, dynamic> json) {
     final campData = json['camp'];
+    int campId = 0;
     String campName = '';
     String campStartDate = '';
 
     if (campData != null && campData is Map<String, dynamic>) {
+      campId = campData['campId'];
       campName = campData['name']?.toString() ?? '';
       campStartDate = campData['startDate']?.toString() ?? '';
     } else {
+      campId = json['campId'];
       campName = json['campName']?.toString() ?? '';
     }
 
@@ -87,6 +90,7 @@ class RegistrationModel extends Registration {
           (json['finalPrice'] as num?)?.toInt() ??
           (json['price'] as num?)?.toInt(),
 
+      campId: campId,
       campName: campName,
 
       campDescription: json['campDescription']?.toString(),

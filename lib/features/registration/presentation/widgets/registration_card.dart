@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:summercamp/core/config/app_theme.dart';
 import 'package:summercamp/core/enum/registration_status.enum.dart';
 import 'package:summercamp/core/utils/date_formatter.dart';
+import 'package:summercamp/features/album/presentation/screens/camp_album_screen.dart';
 import 'package:summercamp/features/registration/domain/entities/registration.dart';
 
 class RegistrationCard extends StatelessWidget {
@@ -177,6 +178,49 @@ class RegistrationCard extends StatelessWidget {
                           Icons.date_range_outlined,
                           "${registration.campStartDate} → ${registration.campEndDate}",
                         ),
+
+                      if (registration.status == RegistrationStatus.Completed ||
+                          registration.status ==
+                              RegistrationStatus.Confirmed) ...[
+                        const SizedBox(height: 12),
+                        const Divider(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CampAlbumScreen(
+                                    campId: registration.campId!,
+                                    campName: registration.campName,
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.photo_library_outlined,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              "Xem ảnh",
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.summerPrimary,
+                              side: const BorderSide(
+                                color: AppTheme.summerPrimary,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
