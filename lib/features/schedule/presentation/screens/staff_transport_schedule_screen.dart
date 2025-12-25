@@ -21,11 +21,22 @@ class _StaffTransportScheduleScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScheduleProvider>().loadStaffTransportSchedules();
+      loadData();
     });
   }
 
-  void _showStatusDialog(String message, {bool isSuccess = true}) {
+  Future<void> loadData() async {
+    final provider = context.read<ScheduleProvider>();
+    await provider.loadStaffTransportSchedules();
+
+    if (provider.transportStaffSchedules.isNotEmpty) {
+      for (var schedule in provider.transportStaffSchedules) {
+        provider.loadRouteStopByRouteId(schedule.routeName.routeId);
+      }
+    }
+  }
+
+  void showStatusDialog(String message, {bool isSuccess = true}) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -135,7 +146,7 @@ class _StaffTransportScheduleScreenState
           trip.transportScheduleId,
         );
         if (mounted) {
-          _showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
+          showStatusDialog('Đã bắt đầu chuyến đi!', isSuccess: true);
         }
       } else if (trip.status == TransportScheduleStatus.InProgress) {
         await provider.loadCampersTransportByTransportScheduleId(
@@ -151,7 +162,7 @@ class _StaffTransportScheduleScreenState
           // Navigator.pop(context);
 
           if (mounted) {
-            _showStatusDialog(
+            showStatusDialog(
               'Chưa thể kết thúc! Vẫn còn camper trên xe chưa được điểm danh xuống xe.',
               isSuccess: false,
             );
@@ -161,7 +172,7 @@ class _StaffTransportScheduleScreenState
 
         await provider.updateTransportScheduleEndTrip(trip.transportScheduleId);
         if (mounted) {
-          _showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
+          showStatusDialog('Đã hoàn thành chuyến đi!', isSuccess: true);
         }
       }
 
@@ -170,12 +181,12 @@ class _StaffTransportScheduleScreenState
       }
     } catch (e) {
       if (mounted) {
-        _showStatusDialog('Lỗi cập nhật: ${e.toString()}', isSuccess: false);
+        showStatusDialog('Lỗi cập nhật: ${e.toString()}', isSuccess: false);
       }
     }
   }
 
-  String _getStatusText(TransportScheduleStatus status) {
+  String getTransportScheduleStatusText(TransportScheduleStatus status) {
     switch (status) {
       case TransportScheduleStatus.NotYet:
         return "Chưa bắt đầu";
@@ -190,7 +201,7 @@ class _StaffTransportScheduleScreenState
     }
   }
 
-  Color _getStatusColor(TransportScheduleStatus status) {
+  Color getTransportScheduleStatusColor(TransportScheduleStatus status) {
     switch (status) {
       case TransportScheduleStatus.NotYet:
         return Colors.orange;
@@ -203,6 +214,18 @@ class _StaffTransportScheduleScreenState
       default:
         return Colors.grey;
     }
+  }
+
+  String getTransportTypeText(String transportType) {
+    if (transportType == 'PickUp') return "Đón";
+    if (transportType == 'DropOff') return "Trả";
+    return transportType;
+  }
+
+  Color getTransportTypeColor(String transportType) {
+    if (transportType == 'PickUp') return Colors.teal;
+    if (transportType == 'DropOff') return Colors.deepOrange;
+    return Colors.grey;
   }
 
   DateTime _parseDateTime(String dateStr, String timeStr) {
@@ -351,6 +374,10 @@ class _StaffTransportScheduleScreenState
 
                 // final startDateTime = _parseDateTime(trip.date, trip.startTime);
                 // final endDateTime = _parseDateTime(trip.date, trip.endTime);
+
+                final routeStops =
+                    provider.routeStopsMap[trip.routeName.routeId] ?? [];
+
                 final actualStartDateTime = _parseDateTime(
                   trip.date,
                   trip.actualStartTime ?? '',
@@ -436,27 +463,57 @@ class _StaffTransportScheduleScreenState
                               ),
                             ),
                             Container(
+                              margin: const EdgeInsets.only(right: 8),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(
+                                color: getTransportTypeColor(
+                                  trip.transportType,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: getTransportTypeColor(
+                                    trip.transportType,
+                                  ).withValues(alpha: 0.5),
+                                ),
+                              ),
+                              child: Text(
+                                getTransportTypeText(trip.transportType),
+                                style: textTheme.bodySmall?.copyWith(
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.bold,
+                                  color: getTransportTypeColor(
+                                    trip.transportType,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: getTransportScheduleStatusColor(
                                   trip.status,
                                 ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: _getStatusColor(
+                                  color: getTransportScheduleStatusColor(
                                     trip.status,
                                   ).withValues(alpha: 0.5),
                                 ),
                               ),
                               child: Text(
-                                _getStatusText(trip.status),
+                                getTransportScheduleStatusText(trip.status),
                                 style: textTheme.bodySmall?.copyWith(
                                   fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
-                                  color: _getStatusColor(trip.status),
+                                  color: getTransportScheduleStatusColor(
+                                    trip.status,
+                                  ),
                                 ),
                               ),
                             ),
@@ -479,6 +536,108 @@ class _StaffTransportScheduleScreenState
                             color: Colors.grey[600],
                           ),
                         ),
+
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(),
+                        ),
+
+                        const Text(
+                          "Lộ trình:",
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        if (routeStops.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: StaffTheme.staffPrimary,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: routeStops.length,
+                            itemBuilder: (ctx, stopIndex) {
+                              final stop = routeStops[stopIndex];
+                              final isLast = stopIndex == routeStops.length - 1;
+
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: StaffTheme.staffPrimary,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (!isLast)
+                                        Container(
+                                          width: 2,
+                                          height: 30,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          stop.location.name,
+                                          style: const TextStyle(
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Thứ tự: ${stop.stopOrder} • ${stop.estimatedTime} phút",
+                                          style: TextStyle(
+                                            fontFamily: "Quicksand",
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
 
                         const Divider(height: 24),
 

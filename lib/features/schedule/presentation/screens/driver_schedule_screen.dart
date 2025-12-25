@@ -20,11 +20,11 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // context.read<ScheduleProvider>().loadDriverSchedules();
-      _loadData();
+      loadData();
     });
   }
 
-  Future<void> _loadData() async {
+  Future<void> loadData() async {
     final provider = context.read<ScheduleProvider>();
     await provider.loadDriverSchedules();
 
@@ -139,7 +139,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
   //   }
   // }
 
-  String _getStatusText(TransportScheduleStatus status) {
+  String getTransportScheduleStatusText(TransportScheduleStatus status) {
     switch (status) {
       case TransportScheduleStatus.NotYet:
         return "Chưa bắt đầu";
@@ -154,7 +154,7 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
     }
   }
 
-  Color _getStatusColor(TransportScheduleStatus status) {
+  Color getTransportScheduleStatusColor(TransportScheduleStatus status) {
     switch (status) {
       case TransportScheduleStatus.NotYet:
         return Colors.orange;
@@ -167,6 +167,18 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
       default:
         return Colors.grey;
     }
+  }
+
+  String getTransportTypeText(String transportType) {
+    if (transportType == 'PickUp') return "Đón";
+    if (transportType == 'DropOff') return "Trả";
+    return transportType;
+  }
+
+  Color getTransportTypeColor(String transportType) {
+    if (transportType == 'PickUp') return Colors.teal;
+    if (transportType == 'DropOff') return Colors.deepOrange;
+    return Colors.grey;
   }
 
   DateTime _parseDateTime(String dateStr, String timeStr) {
@@ -330,27 +342,57 @@ class _DriverScheduleScreenState extends State<DriverScheduleScreen> {
                               ),
                             ),
                             Container(
+                              margin: const EdgeInsets.only(right: 8),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(
+                                color: getTransportTypeColor(
+                                  trip.transportType,
+                                ).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: getTransportTypeColor(
+                                    trip.transportType,
+                                  ).withValues(alpha: 0.5),
+                                ),
+                              ),
+                              child: Text(
+                                getTransportTypeText(trip.transportType),
+                                style: textTheme.bodySmall?.copyWith(
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.bold,
+                                  color: getTransportTypeColor(
+                                    trip.transportType,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: getTransportScheduleStatusColor(
                                   trip.status,
                                 ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: _getStatusColor(
+                                  color: getTransportScheduleStatusColor(
                                     trip.status,
                                   ).withValues(alpha: 0.5),
                                 ),
                               ),
                               child: Text(
-                                _getStatusText(trip.status),
+                                getTransportScheduleStatusText(trip.status),
                                 style: textTheme.bodySmall?.copyWith(
                                   fontFamily: "Quicksand",
                                   fontWeight: FontWeight.bold,
-                                  color: _getStatusColor(trip.status),
+                                  color: getTransportScheduleStatusColor(
+                                    trip.status,
+                                  ),
                                 ),
                               ),
                             ),

@@ -16,6 +16,7 @@ class TransportSchedule {
   final String? actualStartTime;
   final String? actualEndTime;
   final TransportScheduleStatus status;
+  final String transportType;
 
   const TransportSchedule({
     required this.transportScheduleId,
@@ -29,5 +30,6 @@ class TransportSchedule {
     this.actualStartTime,
     this.actualEndTime,
     required this.status,
+    required this.transportType,
   });
 }

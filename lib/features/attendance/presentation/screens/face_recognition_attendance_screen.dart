@@ -702,8 +702,12 @@ class FaceAttendanceScreen extends StatefulWidget {
 
 class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
   CameraController? _controller;
-  bool _isCameraInitialized = false;
-  bool _isProcessing = false;
+  List<CameraDescription> cameras = [];
+  int selectedCameraIndex = 0;
+
+  bool isCameraInitialized = false;
+  bool isCameraVisible = false;
+  bool isProcessing = false;
   File? _capturedImage;
   bool _isDataReady = false;
   int _currentGroupId = 0;
@@ -714,8 +718,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
-
+    _setupCameras();
     _initializeAttendanceData();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -739,38 +742,82 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
     }
   }
 
-  Future<void> _initializeCamera() async {
+  Future<void> _setupCameras() async {
     try {
-      final cameras = await availableCameras();
+      cameras = await availableCameras();
       if (cameras.isEmpty) {
         _showErrorDialog('Không tìm thấy camera trên thiết bị');
-        return;
+      } else {
+        int index = cameras.indexWhere(
+          (c) => c.lensDirection == CameraLensDirection.front,
+        );
+        if (index != -1) {
+          selectedCameraIndex = index;
+        }
       }
+    } catch (e) {
+      _showErrorDialog('Lỗi tìm thiết bị camera: $e');
+    }
+  }
 
-      final firstCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first,
-      );
+  Future<void> _initCamera(CameraDescription cameraDescription) async {
+    if (_controller != null) {
+      await _controller!.dispose();
+    }
 
-      _controller = CameraController(
-        firstCamera,
-        ResolutionPreset.low,
-        enableAudio: false,
-        imageFormatGroup: Platform.isAndroid
-            ? ImageFormatGroup.jpeg
-            : ImageFormatGroup.bgra8888,
-      );
+    _controller = CameraController(
+      cameraDescription,
+      ResolutionPreset.medium,
+      enableAudio: false,
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.jpeg
+          : ImageFormatGroup.bgra8888,
+    );
 
+    try {
       await _controller!.initialize();
-
       if (mounted) {
         setState(() {
-          _isCameraInitialized = true;
+          isCameraInitialized = true;
         });
       }
     } catch (e) {
       _showErrorDialog('Lỗi khởi tạo camera: $e');
     }
+  }
+
+  void _toggleCamera() {
+    if (cameras.isEmpty) {
+      _showErrorDialog("Không tìm thấy camera nào.");
+      return;
+    }
+
+    setState(() {
+      isCameraVisible = !isCameraVisible;
+      _capturedImage = null;
+    });
+
+    if (isCameraVisible) {
+      _initCamera(cameras[selectedCameraIndex]);
+    } else {
+      isCameraInitialized = false;
+      _controller?.dispose();
+      _controller = null;
+    }
+  }
+
+  void _switchCamera() {
+    if (cameras.length < 2) {
+      _showErrorDialog("Chỉ tìm thấy 1 camera trên thiết bị này.");
+      return;
+    }
+
+    setState(() {
+      isCameraInitialized = false;
+      selectedCameraIndex = (selectedCameraIndex + 1) % cameras.length;
+    });
+
+    _initCamera(cameras[selectedCameraIndex]);
   }
 
   @override
@@ -800,7 +847,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
 
   Future<void> _takePictureAndRecognize() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
-    if (_isProcessing) return;
+    if (isProcessing) return;
 
     if (_currentGroupId == 0) {
       _showErrorDialog("Chưa có thông tin Nhóm. Vui lòng thử lại.");
@@ -809,7 +856,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
     }
 
     try {
-      setState(() => _isProcessing = true);
+      setState(() => isProcessing = true);
 
       final XFile image = await _controller!.takePicture();
       final File imageFile = File(image.path);
@@ -821,7 +868,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
       await _processFaceRecognition(imageFile);
     } catch (e) {
       setState(() {
-        _isProcessing = false;
+        isProcessing = false;
         _capturedImage = null;
       });
       _showErrorDialog('Lỗi chụp ảnh: $e');
@@ -886,8 +933,8 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
       _showErrorDialog(errorMessage);
     } finally {
       setState(() {
-        _isProcessing = false;
-        _capturedImage = null;
+        isProcessing = false;
+        // _capturedImage = null;
       });
     }
   }
@@ -1060,7 +1107,7 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Điểm danh',
+          'Điểm danh khuôn mặt',
           style: TextStyle(
             fontFamily: "Quicksand",
             fontWeight: FontWeight.bold,
@@ -1080,29 +1127,6 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.all(8),
-                  // decoration: BoxDecoration(
-                  //   color: Colors.black,
-                  //   borderRadius: BorderRadius.circular(12),
-                  //   border: Border.all(
-                  //     color: StaffTheme.staffPrimary,
-                  //     width: 2,
-                  //   ),
-                  // ),
-                  // child: ClipRRect(
-                  //   borderRadius: BorderRadius.circular(10),
-                  //   child: _isCameraInitialized
-                  //       ? AspectRatio(
-                  //           aspectRatio: 1,
-                  //           child: _capturedImage != null
-                  //               ? Image.file(_capturedImage!, fit: BoxFit.cover)
-                  //               : CameraPreview(_controller!),
-                  //         )
-                  //       : const Center(
-                  //           child: CircularProgressIndicator(
-                  //             color: Colors.white,
-                  //           ),
-                  //         ),
-                  // ),
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(16),
@@ -1113,58 +1137,142 @@ class _FaceAttendanceScreenState extends State<FaceAttendanceScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(14),
-                    child: _isCameraInitialized
+                    child: isCameraVisible && isCameraInitialized
                         ? AspectRatio(
                             aspectRatio: 1 / _controller!.value.aspectRatio,
-                            // child: CameraPreview(_controller!),
                             child: _capturedImage != null
                                 ? Image.file(_capturedImage!, fit: BoxFit.cover)
                                 : CameraPreview(_controller!),
                           )
-                        : const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                        : Container(
+                            color: Colors.black87,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 60,
+                                  color: Colors.white54,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  isCameraVisible
+                                      ? "Đang khởi động..."
+                                      : "Camera đang tắt",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Quicksand",
+                                  ),
+                                ),
+                                if (!isCameraVisible)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: ElevatedButton(
+                                      onPressed: _toggleCamera,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: StaffTheme.staffAccent,
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      child: const Text("Bật Camera"),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: ElevatedButton.icon(
-                    onPressed:
-                        (_isProcessing ||
-                            !_isDataReady ||
-                            !_isCameraInitialized)
-                        ? null
-                        : _takePictureAndRecognize,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: StaffTheme.staffAccent.withValues(
-                        alpha: 0.9,
-                      ),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    icon: _isProcessing
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
+
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: Column(
+                    children: [
+                      if (isCameraVisible && cameras.length > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: FloatingActionButton.small(
+                            heroTag: "switch_cam",
+                            onPressed: isProcessing ? null : _switchCamera,
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.8,
                             ),
-                          )
-                        : const Icon(Icons.camera_alt),
-                    label: Text(
-                      _isProcessing ? "Đang xử lý..." : "Chụp & Quét",
-                    ),
+                            child: const Icon(
+                              Icons.flip_camera_ios,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      if (isCameraVisible)
+                        FloatingActionButton.small(
+                          heroTag: "close_cam",
+                          onPressed: isProcessing ? null : _toggleCamera,
+                          backgroundColor: Colors.red.withValues(alpha: 0.8),
+                          child: const Icon(Icons.close, color: Colors.white),
+                        ),
+                    ],
                   ),
                 ),
+
+                if (isCameraVisible && _capturedImage == null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          (isProcessing ||
+                              !_isDataReady ||
+                              !isCameraInitialized)
+                          ? null
+                          : _takePictureAndRecognize,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: StaffTheme.staffAccent.withValues(
+                          alpha: 0.9,
+                        ),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      icon: isProcessing
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.camera),
+                      label: Text(
+                        isProcessing ? "Đang xử lý..." : "Chụp & Quét",
+                      ),
+                    ),
+                  ),
+
+                if (_capturedImage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _capturedImage = null;
+                        });
+                        _controller?.resumePreview();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("Chụp lại"),
+                    ),
+                  ),
               ],
             ),
           ),

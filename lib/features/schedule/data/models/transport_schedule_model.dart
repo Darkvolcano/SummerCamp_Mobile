@@ -18,6 +18,7 @@ class TransportScheduleModel extends TransportSchedule {
     super.actualStartTime,
     super.actualEndTime,
     required super.status,
+    required super.transportType,
   });
 
   static TransportScheduleStatus _statusFromString(String statusString) {
@@ -58,6 +59,7 @@ class TransportScheduleModel extends TransportSchedule {
       actualStartTime: json['actualStartTime'],
       actualEndTime: json['actualEndTime'],
       status: _statusFromString(json['status']),
+      transportType: json['transportType'],
     );
   }
 
@@ -73,5 +75,6 @@ class TransportScheduleModel extends TransportSchedule {
     'actualStartTime': actualStartTime,
     'actualEndTime': actualEndTime,
     'status': status,
+    'transportType': transportType,
   };
 }
